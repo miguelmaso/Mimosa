@@ -26,6 +26,7 @@ function inner32(Ten1::TensorValue, Ten2::TensorValue)
     Ten1.data[3] * Ten2.data[1] + Ten1.data[6] * Ten2.data[2] + Ten1.data[9] * Ten2.data[3] + Ten1.data[12] * Ten2.data[4] + Ten1.data[15] * Ten2.data[5] + Ten1.data[18] * Ten2.data[6] + Ten1.data[21] * Ten2.data[7] + Ten1.data[24] * Ten2.data[8] + Ten1.data[27] * Ten2.data[9])
 end
 
+ 
 
 
 @inline function (*)(Ten1::TensorValue, Ten2::VectorValue)

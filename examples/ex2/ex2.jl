@@ -1,12 +1,13 @@
 using Gridap
 using GridapGmsh
 using Gridap.TensorValues
+import Gridap.Fields: ∇
 using ForwardDiff
 using BenchmarkTools
 using LinearAlgebra
 using Mimosa
 
-
+# ∇(u)=∇(u)'
 
 # Material parameters
 const λ = 10.0
@@ -53,7 +54,7 @@ labels = get_face_labeling(model)
 add_tag_from_tags!(labels, "dirm_u0", [3])
 add_tag_from_tags!(labels, "dire_mid", [1])
 add_tag_from_tags!(labels, "dire_top", [2])
-
+ 
 #Define reference FE (Q2/P1(disc) pair)
 order = 1
 reffeu = ReferenceFE(lagrangian, VectorValue{3,Float64}, order)
@@ -71,16 +72,16 @@ dΩ = Measure(Ωₕ, degree)
 
 # # Weak form
 function res((u, φ), (v, vφ))
-  return ∫((∇(v) ⊙ (∂Ψu ∘ (∇(u), ∇(φ)))) + (∇(vφ) ⋅ (∂Ψφ ∘ (∇(u), ∇(φ))))) * dΩ
+  return ∫((∇(v)' ⊙ (∂Ψu ∘ (∇(u)', ∇(φ)))) + (∇(vφ)' ⋅ (∂Ψφ ∘ (∇(u)', ∇(φ))))) * dΩ
 end
 
 function jac((u, φ), (du, dφ), (v, vφ))
-  return ∫(∇(v) ⊙ (inner42 ∘ ((∂Ψuu ∘ (∇(u), ∇(φ))), ∇(du)))) * dΩ +
-         ∫(∇(dφ) ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(u), ∇(φ))), ∇(v)))) * dΩ +
-         ∫(∇(vφ) ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(u), ∇(φ))), ∇(du)))) * dΩ +
-         ∫(∇(vφ) ⋅ ((∂Ψφφ ∘ (∇(u), ∇(φ))) ⋅ ∇(dφ))) * dΩ
+  return ∫(∇(v)' ⊙ (inner42 ∘ ((∂Ψuu ∘ (∇(u)', ∇(φ))), ∇(du)'))) * dΩ +
+         ∫(∇(dφ) ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(u)', ∇(φ))), ∇(v)'))) * dΩ +
+         ∫(∇(vφ)' ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(u)', ∇(φ))), ∇(du)'))) * dΩ +
+         ∫(∇(vφ)' ⋅ ((∂Ψφφ ∘ (∇(u)', ∇(φ))) ⋅ ∇(dφ))) * dΩ
 end
-
+ 
 # Setup non-linear solver
 nls = NLSolver(
   show_trace=true,
@@ -128,7 +129,7 @@ function NewtonRaphson(x0, φap, φ_max, loadinc, ndofm, cache)
 end
 
 function SolveSteps()
-  φ_max = 1.0
+  φ_max = 0.25
   nsteps = 30
   φ_inc = φ_max / nsteps
 
