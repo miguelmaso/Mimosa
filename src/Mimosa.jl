@@ -1,6 +1,7 @@
 module Mimosa
 using Gridap.TensorValues
 import Base: *
+using Base.Filesystem
 
 
 export inner42

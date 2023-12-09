@@ -1,12 +1,10 @@
 
-using Base.Filesystem
-using Gridap
+ using Gridap
 using Mimosa
 
 mesh_file = joinpath(dirname(@__FILE__), "solid.json")
 model = DiscreteModelFromFile(mesh_file)
-writevtk(model,"model")
- 
+  
 order = 1
 reffe = ReferenceFE(lagrangian,VectorValue{3,Float64},order)
 V0 = TestFESpace(model,reffe;
