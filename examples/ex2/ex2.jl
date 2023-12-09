@@ -1,13 +1,11 @@
 using Gridap
 using GridapGmsh
 using Gridap.TensorValues
-import Gridap.Fields: ∇
 using ForwardDiff
 using BenchmarkTools
 using LinearAlgebra
 using Mimosa
 
-# ∇(u)=∇(u)'
 
 # Material parameters
 const λ = 10.0
@@ -121,7 +119,7 @@ function NewtonRaphson(x0, φap, φ_max, loadinc, ndofm, cache)
   flag::Bool = (cache.result.f_converged || cache.result.x_converged)
 
   if (flag == true)
-    writevtk(Ωₕ, "results/results_$(loadinc)", cellfields=["uh" => ph[1], "phi" => ph[2]])
+    writevtk(Ωₕ, "results/ex2/results_$(loadinc)", cellfields=["uh" => ph[1], "phi" => ph[2]])
     return get_free_dof_values(ph), cache, flag
   else
     return x0_old, cacheold, flag
@@ -142,6 +140,7 @@ function SolveSteps()
   loadinc = 0
   maxbisect = 10
   nbisect = 0
+  setupfolder("results/ex2")
   while (φap / φ_max) < 1.0 - 1e-6
     φap += φ_inc
     φap = min(φap, φ_max)
