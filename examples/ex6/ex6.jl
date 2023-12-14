@@ -42,7 +42,6 @@ HEHE(∇u, ∇φ) = HE(∇u, ∇φ) ⋅ HE(∇u, ∇φ)
 
 # model
 #include("electro/model_electrobeam.jl")
-mesh_file = joinpath(dirname(@__FILE__), "mesh_platebeam_elec.msh")
 model = GmshDiscreteModel(mesh_file)
 writevtk(model, result_folder)
 

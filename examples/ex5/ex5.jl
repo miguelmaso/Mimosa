@@ -190,7 +190,7 @@ function Mat_descent(w, v)
     return ∫(a_f(r, w, v) + v * w) * dΩ
 end
 
-function Vec_descent(ph, uh, Brh, Bah, ∂Br)
+function Vec_descent(ph::FEFunction, uh::FEFunction, Brh::FEFunction, Bah::FEFunction, ∂Br::FEFunction)
     return (v) -> ∫(-(∇(ph)' ⊙ (inner31 ∘ ((∂ΨuBr ∘ (∇(uh)', Brh, Bah)), ∂Br))) * v) * dΩ
 end
 
