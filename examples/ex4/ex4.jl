@@ -10,7 +10,7 @@ using AlgebraicMultigrid: aspreconditioner
 using Mimosa
 
 solvertype = "cg"
-mesh_file = joinpath(dirname(@__FILE__), "solid.json")
+mesh_file = "./models/crank.json"
 model = DiscreteModelFromFile(mesh_file)
   
  

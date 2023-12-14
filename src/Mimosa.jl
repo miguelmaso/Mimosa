@@ -6,6 +6,7 @@ using Base.Filesystem
 
 export inner42
 export inner32
+export inner31
 export logreg
 export (*)
 export setupfolder
@@ -29,7 +30,17 @@ function inner32(Ten1::TensorValue, Ten2::TensorValue)
 end
 
  
-
+function inner31(Ten1::TensorValue, Ten2::VectorValue)
+  TensorValue( Ten1.data[1]*Ten2.data[1] + Ten1.data[10]*Ten2.data[2] + Ten1.data[19]*Ten2.data[3],
+               Ten1.data[2]*Ten2.data[1] + Ten1.data[11]*Ten2.data[2] + Ten1.data[20]*Ten2.data[3],
+               Ten1.data[3]*Ten2.data[1] + Ten1.data[12]*Ten2.data[2] + Ten1.data[21]*Ten2.data[3],
+               Ten1.data[4]*Ten2.data[1] + Ten1.data[13]*Ten2.data[2] + Ten1.data[22]*Ten2.data[3],
+               Ten1.data[5]*Ten2.data[1] + Ten1.data[14]*Ten2.data[2] + Ten1.data[23]*Ten2.data[3],
+               Ten1.data[6]*Ten2.data[1] + Ten1.data[15]*Ten2.data[2] + Ten1.data[24]*Ten2.data[3],
+               Ten1.data[7]*Ten2.data[1] + Ten1.data[16]*Ten2.data[2] + Ten1.data[25]*Ten2.data[3],
+               Ten1.data[8]*Ten2.data[1] + Ten1.data[17]*Ten2.data[2] + Ten1.data[26]*Ten2.data[3],
+               Ten1.data[9]*Ten2.data[1] + Ten1.data[18]*Ten2.data[2] + Ten1.data[27]*Ten2.data[3] )
+end
 
 @inline function (*)(Ten1::TensorValue, Ten2::VectorValue)
   return (⋅)(Ten1, Ten2)

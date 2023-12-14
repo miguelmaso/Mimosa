@@ -44,7 +44,8 @@ end
 
 # model
 #include("electro/model_electrobeam.jl")
-mesh_file = joinpath(dirname(@__FILE__), "ex2_mesh.msh")
+# mesh_file = joinpath(dirname(@__FILE__), "ex2_mesh.msh")
+mesh_file = "./models/platebeam.msh"
 model = GmshDiscreteModel(mesh_file)
 writevtk(model, "results/model")
 

@@ -1,28 +1,13 @@
 using Gridap
 using GridapGmsh
 using Gridap.TensorValues
-using Gridap.Algebra
-import Base: *
-using LineSearches: BackTracking
 using ForwardDiff
 using BenchmarkTools
 using LinearAlgebra
 using Mimosa
-
-
-
-@inline function (*)(Ten1::TensorValue, Ten2::VectorValue)
-  return (⋅)(Ten1, Ten2)
-end
-
-@inline function (*)(Ten1::TensorValue, Ten2::TensorValue)
-  return (⋅)(Ten1, Ten2)
-end
-
+ 
  
 
-gradu = TensorValue(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9)
-graduar = get_array(gradu)
 Br   =  VectorValue(0.0, 0.0, 1.0)
 Ba   =  VectorValue(0.0, 15e-5, 0.0)
 
@@ -76,11 +61,11 @@ Bah = interpolate_everywhere(Ba,V)
 
 # # Weak form
 function res(u, v)
-    return ∫((∇(v) ⊙ (∂Ψu ∘ (∇(u), Brh, Bah)))) * dΩ
+    return ∫((∇(v)' ⊙ (∂Ψu ∘ (∇(u)', Brh, Bah)))) * dΩ
 end
  
 function jac(u, du , v)
-  return ∫(∇(v)  ⊙ (inner42∘((∂Ψuu ∘ (∇(u),Brh, Bah)), ∇(du)))) * dΩ
+  return ∫(∇(v)'  ⊙ (inner42∘((∂Ψuu ∘ (∇(u)',Brh, Bah)), ∇(du)'))) * dΩ
 end 
  
 # # Setup non-linear solver
@@ -122,13 +107,7 @@ function run(x0, Bapp, Bapp_old, Ba, step, nsteps, cache)
   #Define trial FESpaces from Dirichlet values
   u0         = VectorValue(0.0, 0.0,0.0)
   U          = TrialFESpace(V, [u0])
-  #uh        = FEFunction(U, x0)
-
-  #Get initial guess more appropriately
-#   op_linear  = AffineFEOperator(a,l,U,V)
-  #uh         = solve(op_linear)  
-  #error("Fuck")
-  #Update Dirichlet values FE problem
+  
   op         = FEOperator(res,jac, U, V)
   uh, cache  = solve!(uh, solver, op, cache)
   writevtk(Ωₕ, "results/results_$(lpad(step,3,'0'))", cellfields=["uh" => uh])
