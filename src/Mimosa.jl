@@ -10,6 +10,7 @@ export inner31
 export logreg
 export (*)
 export setupfolder
+export numfiles
 
 function inner42(Ten1::TensorValue, Ten2::TensorValue)
   TensorValue(Ten1.data[1] * Ten2.data[1] + Ten1.data[10] * Ten2.data[2] + Ten1.data[19] * Ten2.data[3] + Ten1.data[28] * Ten2.data[4] + Ten1.data[37] * Ten2.data[5] + Ten1.data[46] * Ten2.data[6] + Ten1.data[55] * Ten2.data[7] + Ten1.data[64] * Ten2.data[8] + Ten1.data[73] * Ten2.data[9],
@@ -69,6 +70,22 @@ function setupfolder(folder_path::String)
     mkdir(folder_path)
   end
 end
+
+
+function numfiles(foldername)
+  files_and_dirs = readdir(foldername)  # reading files and directory
+  num::Int64 = 0
+  for i in files_and_dirs
+      fullpath = joinpath(foldername, i)  # join foldername with file/directory name
+      if isfile(fullpath)
+          num += 1
+      end
+  end
+  return num
+end
+
+
+
 # Ten1 = TensorValue(0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,
 # 0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,
 # 0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,
