@@ -5,8 +5,6 @@ using ForwardDiff
 using Mimosa
 using NLopt
 
-using BenchmarkTools
-
 # Initialisation result folder
 mesh_file = "./models/mesh_platebeam_mag.msh"
 result_folder = "./results/ex5"
@@ -16,7 +14,6 @@ setupfolder(result_folder)
 const λ = 10.0
 const μ = 1.0
 const μ0 = 1.0
-
 
 Bₐ = VectorValue(0.0, 0.0, 30.0e-5)
 
@@ -42,7 +39,8 @@ FBr_Ba(∇u, Br, Ba) = (FBr(∇u, Br)) ⋅ Ba
 model = GmshDiscreteModel(mesh_file)
 labels = get_face_labeling(model)
 add_tag_from_tags!(labels, "dirm_u0", [1])
-writevtk(model, result_folder)
+model_file = joinpath(result_folder, "model")
+writevtk(model, model_file)
 
 #Define Finite Element Collections
 order = 1
@@ -68,8 +66,10 @@ U = TrialFESpace(V, [u0])
 npt = num_free_dofs(UΦ1)
 Qₕ = CellQuadrature(Ωₕ, 4 * 2)
 fem_params = (; nel, npt, UΦ2, UΦ1, UB1, Ωₕ, dΩ, Qₕ)
+
 Bah = interpolate_everywhere(Bₐ, V)
 phys_params = (; Bₐ)
+
 r = 1.3 * minimum(get_cell_measure(Ωₕ))
 N = VectorValue(0.0, 0.0, 1.0)
 Nh = interpolate_everywhere(N, U)
@@ -78,7 +78,6 @@ opt_params = (; r, N, uᵗ)
 
 
 a_f(r, u, v) = r^2 * (∇(v) ⋅ ∇(u))
-
 function Filter(p0, r, fem_params)
     ph = FEFunction(fem_params.UΦ2, p0)
     op = AffineFEOperator(fem_params.UΦ1, fem_params.UΦ1) do u, v
@@ -158,13 +157,11 @@ function Vec_adjoint(uh::FEFunction)
     return (v) -> ∫((uh ⋅ Nh - uᵗ) * (Nh ⋅ v)) * dΩ
 end
 
-function AdjointEquation(u, Φ; fem_params, opt_params)
+function AdjointEquation(xstate, Φ; fem_params, opt_params)
 
     Br, _, _ = mapΦ_Br(Φ; fem_params, opt_params)
     Brh = FEFunction(fem_params.UB1, Br)
-    uh = FEFunction(U, u)
-    p = zeros(Float64, num_free_dofs(V))
-    ph = FEFunction(V, p)
+    uh = FEFunction(U, xstate)
     op = AffineFEOperator(Mat_adjoint(uh, Bah, Brh), Vec_adjoint(uh), V, V)
     ph = solve(op)
     return get_free_dof_values(ph)
@@ -253,5 +250,7 @@ function magnet_optimize(x_init; TOL=1e-4, MAX_ITER=500, fem_params, opt_params)
     return f_opt, x_opt, ret
 end
 
- a, b, ret=magnet_optimize(x0; TOL = 1e-8, MAX_ITER=500, fem_params, opt_params)
+
+  a, b, ret=magnet_optimize(x0; TOL = 1e-8, MAX_ITER=500, fem_params, opt_params)
 # @show ret
+ 

@@ -1,6 +1,4 @@
 using Mimosa
 using Test
 
-@testset "Mimosa.jl" begin
-    # Write your tests here.
-end
+@time @testset "ConstitutiveModels" begin include("ConstitutiveModels.jl") end

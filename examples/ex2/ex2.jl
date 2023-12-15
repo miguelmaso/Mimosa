@@ -45,7 +45,7 @@ end
 # model
 #include("electro/model_electrobeam.jl")
 # mesh_file = joinpath(dirname(@__FILE__), "ex2_mesh.msh")
-mesh_file = "./models/platebeam.msh"
+mesh_file = "./models/mesh_platebeam_elec.msh"
 model = GmshDiscreteModel(mesh_file)
 writevtk(model, "results/model")
 
@@ -128,7 +128,7 @@ function NewtonRaphson(x0, φap, φ_max, loadinc, ndofm, cache)
 end
 
 function SolveSteps()
-  φ_max = 0.25
+  φ_max = 0.2
   nsteps = 30
   φ_inc = φ_max / nsteps
 
