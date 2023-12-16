@@ -179,109 +179,109 @@ end
 #     return (v,vφ)->∫(((uh - uᵗ)⋅Nh)*(Nh⋅v) + vφ*0.0)*dΩ
 # end
 
- function Mat_adjoint(uh::FEFunction, φh::FEFunction)
-    return ((p,pφ),(v,vφ))->∫(∇(v)' ⊙ (inner42 ∘ ((∂Ψuu ∘ (∇(uh)', ∇(φh))), ∇(p)')) +
-    ∇(pφ) ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(uh)', ∇(φh))), ∇(v)')) +
-    ∇(vφ)' ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(uh)', ∇(φh))), ∇(p)')) +
-    ∇(vφ)' ⋅ ((∂Ψφφ ∘ (∇(uh)', ∇(φh))) ⋅ ∇(pφ)))*dΩ
+function Mat_adjoint(uh::FEFunction, φh::FEFunction)
+    return ((p, pφ), (v, vφ)) -> ∫(∇(v)' ⊙ (inner42 ∘ ((∂Ψuu ∘ (∇(uh)', ∇(φh))), ∇(p)')) +
+                                   ∇(pφ) ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(uh)', ∇(φh))), ∇(v)')) +
+                                   ∇(vφ)' ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(uh)', ∇(φh))), ∇(p)')) +
+                                   ∇(vφ)' ⋅ ((∂Ψφφ ∘ (∇(uh)', ∇(φh))) ⋅ ∇(pφ))) * dΩ
 end
 
 function AdjointEquation(xstate, φmax; fem_params)
-    u                      =  xstate[1:fem_params.ndofm];
-    φ                      =  xstate[fem_params.ndofm+1:end];
-    Uφ                     =  TrialFESpace(Vφ, [0.0, φmax])
-    uh                     =  FEFunction(Uu,u)
-    φh                     =  FEFunction(Uφ,φ)
-    Vec_adjoint((v,vφ))        =  ∫(((uh - uᵗ)⋅Nh)*(Nh⋅v) + vφ*0.0)*dΩ
-    op                     =  AffineFEOperator(Mat_adjoint(uh,φh), Vec_adjoint,V, V)
-    ph                     =  solve(op)
+    u = xstate[1:fem_params.ndofm]
+    φ = xstate[fem_params.ndofm+1:end]
+    Uφ = TrialFESpace(Vφ, [0.0, φmax])
+    uh = FEFunction(Uu, u)
+    φh = FEFunction(Uφ, φ)
+    Vec_adjoint((v, vφ)) = ∫(((uh - uᵗ) ⋅ Nh) * (Nh ⋅ v) + vφ * 0.0) * dΩ
+    op = AffineFEOperator(Mat_adjoint(uh, φh), Vec_adjoint, V, V)
+    ph = solve(op)
     return get_free_dof_values(ph)
-  end
+end
 
 
 #---------------------------------------------
 # Objective Function
 #---------------------------------------------
 
-function  𝒥(xstate, φap; fem_params)
-    u    =  xstate[1:fem_params.ndofm];
-    φ    =  xstate[fem_params.ndofm+1:end];
-    uh   =  FEFunction(Uu,u)
-    Uφ   =  TrialFESpace(Vφ, [0.0, φap])
-    φh   =  FEFunction(Uφ,φ)
+function 𝒥(xstate, φap; fem_params)
+    u = xstate[1:fem_params.ndofm]
+    φ = xstate[fem_params.ndofm+1:end]
+    uh = FEFunction(Uu, u)
+    Uφ = TrialFESpace(Vφ, [0.0, φap])
+    φh = FEFunction(Uφ, φ)
     iter = numfiles("results/ex6") + 1
-    obj=∑(∫(0.5*((uh-uᵗ)⋅N)*((uh- uᵗ)⋅N))Qₕ)
+    obj = ∑(∫(0.5 * ((uh - uᵗ) ⋅ N) * ((uh - uᵗ) ⋅ N))Qₕ)
     println("Iter: $iter, 𝒥 = $obj")
     writevtk(fem_params.Ωₕ, "results/ex6/results_$(iter)", cellfields=["uh" => uh, "φh" => φh])
     return obj
-  end
+end
 
 
 #---------------------------------------------
 # Derivatives
 #---------------------------------------------
 
-function Vec_descent(uh,φh, puh, pφh)
-    return (vφ)->∫(-∇(vφ) ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(uh)', ∇(φh))), ∇(puh)'))  -
-    ∇(vφ)' ⋅ ((∂Ψφφ ∘ (∇(uh)', ∇(φh))) ⋅ ∇(pφh)))*dΩ 
+function Vec_descent(uh, φh, puh, pφh)
+    return (vφ) -> ∫(-∇(vφ) ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(uh)', ∇(φh))), ∇(puh)')) -
+                     ∇(vφ)' ⋅ ((∂Ψφφ ∘ (∇(uh)', ∇(φh))) ⋅ ∇(pφh))) * dΩ
 end
 
 function D𝒥Dφmax(xstate, xadjoint; fem_params, opt_params)
 
-    u              =  xstate[1:fem_params.ndofm];
-    φ              =  xstate[fem_params.ndofm+1:end];
-    pu             =  xadjoint[1:fem_params.ndofm];
-    pφ             =  xadjoint[fem_params.ndofm+1:end];
-    
-    Uφ             =  TrialFESpace(Vφ, [0.0, opt_params.φmax])
-    uh             =  FEFunction(Uu,u)
-    puh            =  FEFunction(Vu,pu)
-    φh             =  FEFunction(Uφ,φ)
-    pφh            =  FEFunction(Vφ,pφ)
+    u = xstate[1:fem_params.ndofm]
+    φ = xstate[fem_params.ndofm+1:end]
+    pu = xadjoint[1:fem_params.ndofm]
+    pφ = xadjoint[fem_params.ndofm+1:end]
 
-    D𝒥Dφmaxᵛ   =  assemble_vector(Vec_descent(uh,φh, puh, pφh), fem_params.Uφᵛ)
-    D𝒥Dφmaxᵛₕ  =  FEFunction(fem_params.Uφᵛ, D𝒥Dφmaxᵛ)
-    D𝒥Dφmaxˢₕ  =  interpolate_everywhere(D𝒥Dφmaxᵛₕ, fem_params.Uφˢ)
-    D𝒥Dφmaxˢ  =  get_free_dof_values(D𝒥Dφmaxˢₕ)
-    
+    Uφ = TrialFESpace(Vφ, [0.0, opt_params.φmax])
+    uh = FEFunction(Uu, u)
+    puh = FEFunction(Vu, pu)
+    φh = FEFunction(Uφ, φ)
+    pφh = FEFunction(Vφ, pφ)
+
+    D𝒥Dφmaxᵛ = assemble_vector(Vec_descent(uh, φh, puh, pφh), fem_params.Uφᵛ)
+    D𝒥Dφmaxᵛₕ = FEFunction(fem_params.Uφᵛ, D𝒥Dφmaxᵛ)
+    D𝒥Dφmaxˢₕ = interpolate_everywhere(D𝒥Dφmaxᵛₕ, fem_params.Uφˢ)
+    D𝒥Dφmaxˢ = get_free_dof_values(D𝒥Dφmaxˢₕ)
+
     return [sum(D𝒥Dφmaxˢ)]
-  end
+end
 
 
 
 #---------------------------------------------
 # Initialization of optimization variables
 #---------------------------------------------
-φmax   =   0.2
-xini   =  [0.01]
-grad   =  [0.0]
+φmax = 0.2
+xini = [0.01]
+grad = [0.0]
 opt_params = (; N, uᵗ, φmax)
 
-function fopt(x::Vector,grad::Vector; fem_params, opt_params)
-    φap         =  x[1]*opt_params.φmax
-    xstate        =  StateEquation(φap; fem_params)
-    xadjoint      =  AdjointEquation(xstate, φap; fem_params)    
-    if length(grad)>0
-       dobjdΦ     =  D𝒥Dφmax(xstate, xadjoint; fem_params, opt_params)
-       grad[:]    =  opt_params.φmax*dobjdΦ
+function fopt(x::Vector, grad::Vector; fem_params, opt_params)
+    φap = x[1] * opt_params.φmax
+    xstate = StateEquation(φap; fem_params)
+    xadjoint = AdjointEquation(xstate, φap; fem_params)
+    if length(grad) > 0
+        dobjdΦ = D𝒥Dφmax(xstate, xadjoint; fem_params, opt_params)
+        grad[:] = opt_params.φmax * dobjdΦ
     end
-    fo = 𝒥(xstate,φap; fem_params)
+    fo = 𝒥(xstate, φap; fem_params)
     return fo
-  end
+end
 
-  function electro_optimize(x_init; TOL=1e-4, MAX_ITER=500, fem_params, opt_params)
+function electro_optimize(x_init; TOL=1e-4, MAX_ITER=500, fem_params, opt_params)
     ##################### Optimize #################
-    opt                 =  Opt(:LD_MMA, 1)
-    opt.lower_bounds    =  0
-    opt.upper_bounds    =  1
-    opt.ftol_rel        =  TOL
-    opt.maxeval         =  MAX_ITER
+    opt = Opt(:LD_MMA, 1)
+    opt.lower_bounds = 0
+    opt.upper_bounds = 1
+    opt.ftol_rel = TOL
+    opt.maxeval = MAX_ITER
     opt.min_objective = (x0, grad) -> fopt(x0, grad; fem_params, opt_params)
-    (f_opt, x_opt, ret) =  optimize(opt, x_init)
-    @show numevals      =  opt.numevals # the number of function evaluations
+    (f_opt, x_opt, ret) = optimize(opt, x_init)
+    @show numevals = opt.numevals # the number of function evaluations
     return f_opt, x_opt, ret
-  end
+end
 
 
-  @time fopt(xini,grad ; fem_params, opt_params)
+@time fopt(xini, grad; fem_params, opt_params)
 #  a, b, ret=electro_optimize(xini; TOL = 1e-8, MAX_ITER=500, fem_params, opt_params)
