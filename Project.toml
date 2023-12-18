@@ -20,6 +20,7 @@ NLopt = "76087f3c-5699-56af-9a33-bf431cd00edd"
 PackageCompiler = "9b87118b-4619-50d2-8e1e-99f35a4d4d9d"
 PartitionedArrays = "5a9dfac6-5c52-46f7-8278-5e2210713be9"
 ReverseDiff = "37e2e3b7-166d-5795-8a7a-e32c996b4267"
+STLCutters = "284f087d-c8bb-44c4-af3c-39d0e1f330a5"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
