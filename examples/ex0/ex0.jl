@@ -35,6 +35,9 @@ l(v) = 0
 op = AffineFEOperator(a,l,U,V0)
 uh = solve(op)
  
+ 
+
+
 setupfolder("results/ex0")
 writevtk(Ω,"results/ex0/results",cellfields=["uh"=>uh,"epsi"=>ε(uh),"sigma"=>σ∘ε(uh)])
   

@@ -138,7 +138,7 @@ function StateEquationIter(x0, φap, loadinc, ndofm, cache)
     #Check convergence
     #----------------------------------------------
     if (flag == true)
-        writevtk(Ωₕ, "results/ex6/results_$(loadinc)", cellfields=["uh" => ph[1], "phi" => ph[2]])
+        # writevtk(Ωₕ, "results/ex6/results_$(loadinc)", cellfields=["uh" => ph[1], "phi" => ph[2]])
         return get_free_dof_values(ph), cache, flag
     else
         return x0_old, cacheold, flag
@@ -226,14 +226,15 @@ function Vec_descent(uh, φh, puh, pφh)
                      ∇(vφ)' ⋅ ((∂Ψφφ ∘ (∇(uh)', ∇(φh))) ⋅ ∇(pφh))) * dΩ
 end
 
-function D𝒥Dφmax(xstate, xadjoint; fem_params, opt_params)
+function D𝒥Dφmax(x::Vector,xstate, xadjoint; fem_params, opt_params)
 
+    φap = x[1] * opt_params.φmax
     u = xstate[1:fem_params.ndofm]
     φ = xstate[fem_params.ndofm+1:end]
     pu = xadjoint[1:fem_params.ndofm]
     pφ = xadjoint[fem_params.ndofm+1:end]
 
-    Uφ = TrialFESpace(Vφ, [0.0, opt_params.φmax])
+    Uφ = TrialFESpace(Vφ, [0.0, φap])
     uh = FEFunction(Uu, u)
     puh = FEFunction(Vu, pu)
     φh = FEFunction(Uφ, φ)
@@ -262,7 +263,7 @@ function fopt(x::Vector, grad::Vector; fem_params, opt_params)
     xstate = StateEquation(φap; fem_params)
     xadjoint = AdjointEquation(xstate, φap; fem_params)
     if length(grad) > 0
-        dobjdΦ = D𝒥Dφmax(xstate, xadjoint; fem_params, opt_params)
+        dobjdΦ = D𝒥Dφmax(x, xstate, xadjoint; fem_params, opt_params)
         grad[:] = opt_params.φmax * dobjdΦ
     end
     fo = 𝒥(xstate, φap; fem_params)
@@ -283,5 +284,5 @@ function electro_optimize(x_init; TOL=1e-4, MAX_ITER=500, fem_params, opt_params
 end
 
 
-@time fopt(xini, grad; fem_params, opt_params)
-#  a, b, ret=electro_optimize(xini; TOL = 1e-8, MAX_ITER=500, fem_params, opt_params)
+# @time fopt(xini, grad; fem_params, opt_params)
+ a, b, ret=electro_optimize(xini; TOL = 1e-8, MAX_ITER=500, fem_params, opt_params)
