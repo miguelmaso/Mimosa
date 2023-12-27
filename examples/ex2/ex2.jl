@@ -7,11 +7,12 @@ using ForwardDiff
 using BenchmarkTools
 using LinearAlgebra
 using Mimosa
+using WriteVTK
 
 
 # Initialisation result folder
 mesh_file = "./models/mesh_platebeam_elec.msh"
-result_folder = "./results/ex2"
+result_folder = "./results/ex2/"
 setupfolder(result_folder)
 
 # Material parameters
@@ -107,6 +108,7 @@ nls = NLSolver(ls_;
   iterations=20)
 
 solver = FESolver(nls)
+pvd_results = paraview_collection(result_folder*"results", append=false)
 
 function NewtonRaphson(x0, φap, φ_max, loadinc, ndofm, cache)
 
@@ -140,7 +142,8 @@ function NewtonRaphson(x0, φap, φ_max, loadinc, ndofm, cache)
   flag::Bool = (cache.result.f_converged || cache.result.x_converged)
 
   if (flag == true)
-    writevtk(Ωₕ, "results/ex2/results_$(loadinc)", cellfields=["uh" => ph[1], "phi" => ph[2]])
+    pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "_$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
+    # writevtk(Ωₕ, "results/ex2/results_$(loadinc)", cellfields=["uh" => ph[1], "phi" => ph[2]])
     return get_free_dof_values(ph), cache, flag
   else
     return x0_old, cacheold, flag
@@ -176,6 +179,9 @@ function SolveSteps()
     end
     loadinc += 1
   end
+
+  vtk_save(pvd_results)
+
 
 end
 

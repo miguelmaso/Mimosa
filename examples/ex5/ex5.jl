@@ -7,10 +7,11 @@ using Gridap.TensorValues
 using ForwardDiff
 using Mimosa
 using NLopt
+using WriteVTK
 
 # Initialisation result folder
 mesh_file = "./models/mesh_platebeam_mag.msh"
-result_folder = "./results/ex5"
+result_folder = "./results/ex5/"
 setupfolder(result_folder)
 
 # Material parameters
@@ -111,6 +112,7 @@ nls = NLSolver(LUSolver(),
     show_trace=false,
     method=:newton)
 solver = FESolver(nls)
+pvd_results = paraview_collection(result_folder*"results", append=false)
 
 #---------------------------------------------
 # State equation
@@ -178,7 +180,8 @@ function 𝒥(u, fem_params)
     iter = numfiles("results/ex5") + 1
     obj=∑(∫(0.5*(uh⋅Nh-uᵗ)*(uh⋅Nh- uᵗ))fem_params.Qₕ)
     println("Iter: $iter, 𝒥 = $obj")
-    writevtk(fem_params.Ωₕ, "results/ex5/results_$(iter)", cellfields=["uh" => uh])
+    # writevtk(fem_params.Ωₕ, "results/ex5/results_$(iter)", cellfields=["uh" => uh])
+    pvd_results[iter] = createvtk(fem_params.Ωₕ,result_folder * "_$iter.vtu", cellfields=["uh" => uh],order=2)
     return obj
 end
  
@@ -256,4 +259,4 @@ end
 
   a, b, ret=magnet_optimize(x0; TOL = 1e-8, MAX_ITER=500, fem_params, opt_params)
 # @show ret
- 
+vtk_save(pvd_results)

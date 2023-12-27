@@ -12,6 +12,7 @@ macro publish(mod,name)
 
   @publish FileManagement setupfolder
   @publish FileManagement numfiles
+  @publish FileManagement _get_kwarg
 
   @publish ConstitutiveModels logreg
 

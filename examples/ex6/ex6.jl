@@ -7,11 +7,12 @@ using Gridap.TensorValues
 using ForwardDiff
 using Mimosa
 using NLopt
+using WriteVTK
 
 
 # Initialisation result folder
 mesh_file = "./models/mesh_platebeam_elec.msh"
-result_folder = "./results/ex6"
+result_folder = "./results/ex6/"
 setupfolder(result_folder)
 
 # Material parameters
@@ -92,6 +93,7 @@ nls = NLSolver(
     iterations=20)
 
 solver = FESolver(nls)
+pvd_results = paraview_collection(result_folder*"results", append=false)
 
 #---------------------------------------------
 # State equation
@@ -215,7 +217,9 @@ function 𝒥(xstate, φap; fem_params)
     iter = numfiles("results/ex6") + 1
     obj = ∑(∫(0.5 * ((uh - uᵗ) ⋅ N) * ((uh - uᵗ) ⋅ N))Qₕ)
     println("Iter: $iter, 𝒥 = $obj")
-    writevtk(fem_params.Ωₕ, "results/ex6/results_$(iter)", cellfields=["uh" => uh, "φh" => φh])
+    pvd_results[iter] = createvtk(fem_params.Ωₕ,result_folder * "_$iter.vtu", cellfields=["uh" => uh, "φh" => φh],order=2)
+
+    # writevtk(fem_params.Ωₕ, "results/ex6/results_$(iter)", cellfields=["uh" => uh, "φh" => φh])
     return obj
 end
 
@@ -289,3 +293,4 @@ end
 
 # @time fopt(xini, grad; fem_params, opt_params)
  a, b, ret=electro_optimize(xini; TOL = 1e-8, MAX_ITER=500, fem_params, opt_params)
+ vtk_save(pvd_results)

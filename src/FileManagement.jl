@@ -29,5 +29,22 @@ function setupfolder(folder_path::String)
   end
 
 
+function _get_kwarg(kwarg,kwargs)
+  try
+      return kwargs[kwarg]
+  catch
+      s = "The key-word argument $(kwarg) is mandatory in the $problem driver"
+      error(s)
+  end
+end
+
+function _get_kwarg(kwarg,kwargs,value)
+  try
+      return kwargs[kwarg]
+  catch
+      return value
+  end
+end
+
 
 end

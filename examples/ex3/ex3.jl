@@ -7,8 +7,14 @@ using ForwardDiff
 using BenchmarkTools
 using LinearAlgebra
 using Mimosa
+using WriteVTK
+
  
- 
+
+# Initialisation result folder
+mesh_file = "./models/mesh_platebeam_mag.msh"
+result_folder = "./results/ex3/"
+setupfolder(result_folder)
 
 Br   =  VectorValue(0.0, 0.0, 1.0)
 Ba   =  VectorValue(0.0, 15e-5, 0.0)
@@ -38,13 +44,11 @@ FBr_Ba(∇u,Br,Ba) =  (FBr(∇u,Br)) ⋅ Ba
    # model
 #include("electro/model_electrobeam.jl")
 
-mesh_file = joinpath(dirname(@__FILE__), "ex3_mesh.msh")
+# mesh_file = joinpath(dirname(@__FILE__), "ex3_mesh.msh")
 model = GmshDiscreteModel(mesh_file) 
 labels = get_face_labeling(model)
-add_tag_from_tags!(labels, "dirm_u0",  [4])
-add_tag_from_tags!(labels, "dire_mid", [1])
-add_tag_from_tags!(labels, "dire_top", [2])
- 
+add_tag_from_tags!(labels, "dirm_u0", [1])
+
 #Define reference FE (Q2/P1(disc) pair)
 order = 1
 reffe = ReferenceFE(lagrangian, VectorValue{3,Float64}, order)
@@ -71,18 +75,16 @@ function jac(u, du , v)
 end 
  
 # # Setup non-linear solver
-# nls = NLSolver(LUSolver(),
-#     show_trace=true,
-#     method=:newton)
 
 
-nls=NewtonRaphsonSolver(
-    LUSolver(),
-    1e-9,
-    15)
+    nls = NLSolver(;
+    show_trace=true,
+    method=:newton,
+    iterations=20)
 
 solver = FESolver(nls)
- 
+pvd_results = paraview_collection(result_folder*"results", append=false)
+
 function run(x0, Bapp, Bapp_old, Ba, step, nsteps, cache)
 
   Ba      =  Ba*Bapp
@@ -112,7 +114,8 @@ function run(x0, Bapp, Bapp_old, Ba, step, nsteps, cache)
   
   op         = FEOperator(res,jac, U, V)
   uh, cache  = solve!(uh, solver, op, cache)
-  writevtk(Ωₕ, "results/results_$(lpad(step,3,'0'))", cellfields=["uh" => uh])
+  pvd_results[step] = createvtk(Ωₕ,result_folder * "_$step.vtu", cellfields=["uh" => uh],order=2)
+  # writevtk(Ωₕ, "results/results_$(lpad(step,3,'0'))", cellfields=["uh" => uh])
   return get_free_dof_values(uh), cache
 end
 #end
@@ -128,9 +131,9 @@ function runs()
   for step in 1:nsteps
     Bapp_old   =  Bapp
     Bapp       =  step * Bapp_max / nsteps
-    println(Bapp)
     x0, cache  =  run(x0, Bapp, Bapp_old, Ba, step, nsteps, cache)
   end
+  vtk_save(pvd_results)
 
 end
 
