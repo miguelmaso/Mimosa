@@ -1,9 +1,9 @@
+using Pkg
+Pkg.activate(".")
 
 using Gridap
 using Gridap.Geometry
 
-using IterativeSolvers: cg
-using AlgebraicMultigrid
 using AlgebraicMultigrid: smoothed_aggregation
 using AlgebraicMultigrid: aspreconditioner
 
@@ -65,12 +65,18 @@ l(v) = 0
 op = AffineFEOperator(a,l,U,V0)
 
 if solvertype == "cg"
-  A = get_matrix(op)
-  b = get_vector(op)
-  p = aspreconditioner(smoothed_aggregation(A))
-  x = cg(A,b,verbose=true,Pl=p,reltol=1e-10)
-  uh = FEFunction(U,x)
- else
+  pp(x) = aspreconditioner(smoothed_aggregation(x))
+  ls = IterativeSolver("cg"; Pl=pp, verbose=true, reltol=1e-7)
+  solver = LinearFESolver(ls)
+  uh = solve(solver, op)
+ 
+  #  A = get_matrix(op)
+  # b = get_vector(op)
+  # p = aspreconditioner(smoothed_aggregation(A))
+  # x = cg(A,b,verbose=true,Pl=p,reltol=1e-10)
+  # uh = FEFunction(U,x)
+else
+
   uh = solve(op)
 end
 

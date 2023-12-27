@@ -1,3 +1,6 @@
+using Pkg
+Pkg.activate(".")
+
 using Gridap
 using GridapGmsh
 using Gridap.TensorValues
@@ -50,7 +53,7 @@ writevtk(model, model_file)
 
 
 #Define Finite Element Collections
-order = 1
+order = 2
 reffeu = ReferenceFE(lagrangian, VectorValue{3,Float64}, order)
 reffeφ = ReferenceFE(lagrangian, Float64, order)
 

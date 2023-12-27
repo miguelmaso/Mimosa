@@ -18,6 +18,12 @@ const nw=8; # Y element size
 const nt=2; # Z element size
 
 
+# const nl=58; # X element size
+# const nw=22; # Y element size
+# const nt=2; # Z element size
+
+
+
 const lc = 1.0; # characteristic length for meshing
  
 geo = gmsh.model.geo
@@ -121,7 +127,7 @@ gmsh.write(output_file)
 
  # Launch the GUI to see the results:
 if !("-nopopup" in ARGS)
-      #  gmsh.fltk.run()
+         gmsh.fltk.run()
 end
 
 Gmsh.finalize()

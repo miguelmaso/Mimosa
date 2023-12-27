@@ -14,3 +14,7 @@ macro publish(mod,name)
   @publish FileManagement numfiles
 
   @publish ConstitutiveModels logreg
+
+  @publish LinearSolvers IterativeSolver
+  @publish LinearSolvers solve
+  @publish LinearSolvers solve!

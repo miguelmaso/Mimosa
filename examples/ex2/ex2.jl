@@ -1,3 +1,5 @@
+using Pkg
+Pkg.activate(".")
 using Gridap
 using GridapGmsh
 using Gridap.TensorValues
@@ -7,11 +9,18 @@ using LinearAlgebra
 using Mimosa
 
 
+# Initialisation result folder
+mesh_file = "./models/mesh_platebeam_elec.msh"
+result_folder = "./results/ex2"
+setupfolder(result_folder)
+
 # Material parameters
 const λ = 10.0
 const μ = 1.0
 const ε = 1.0
 const autodif = true
+solvertype = "direct"
+
 # Kinematics
 F(∇u) = one(∇u) + ∇u
 J(F) = det(F)
@@ -22,6 +31,7 @@ HEHE(∇u, ∇φ) = HE(∇u, ∇φ) ⋅ HE(∇u, ∇φ)
 Ψm(∇u) = μ / 2 * tr((F(∇u))' * F(∇u)) - μ * logreg(J(F(∇u))) + (λ / 2) * (J(F(∇u)) - 1)^2
 Ψe(∇u, ∇φ) = (-ε / (2 * J(F(∇u)))) * HEHE(∇u, ∇φ)
 Ψ(∇u, ∇φ) = Ψm(∇u) + Ψe(∇u, ∇φ)
+
 
 if autodif == true
   ∂Ψ_∂∇u(∇u, ∇φ) = ForwardDiff.gradient(∇u -> Ψ(∇u, get_array(∇φ)), get_array(∇u))
@@ -45,9 +55,9 @@ end
 # model
 #include("electro/model_electrobeam.jl")
 # mesh_file = joinpath(dirname(@__FILE__), "ex2_mesh.msh")
-mesh_file = "./models/mesh_platebeam_elec.msh"
 model = GmshDiscreteModel(mesh_file)
-writevtk(model, "results/model")
+model_file = joinpath(result_folder, "model")
+writevtk(model, model_file)
 
 labels = get_face_labeling(model)
 add_tag_from_tags!(labels, "dirm_u0", [3])
@@ -82,7 +92,16 @@ function jac((u, φ), (du, dφ), (v, vφ))
 end
  
 # Setup non-linear solver
-nls = NLSolver(
+if solvertype == "amgcg"
+using AlgebraicMultigrid: smoothed_aggregation
+using AlgebraicMultigrid: aspreconditioner
+pp(x) = aspreconditioner(smoothed_aggregation(x))
+ls_ = IterativeSolver("cg"; Pl=pp, verbose=false, reltol=1e-7)
+else
+ls_= BackslashSolver()
+end
+
+nls = NLSolver(ls_;
   show_trace=true,
   method=:newton,
   iterations=20)
@@ -115,8 +134,9 @@ function NewtonRaphson(x0, φap, φ_max, loadinc, ndofm, cache)
   println("\n+++ Loadinc $loadinc:  φap $φap in loadfact $loadfact +++\n")
 
   cacheold = cache
+  @time begin
   ph, cache = solve!(ph, solver, op, cache)
-
+  end
   flag::Bool = (cache.result.f_converged || cache.result.x_converged)
 
   if (flag == true)
@@ -141,7 +161,6 @@ function SolveSteps()
   loadinc = 0
   maxbisect = 10
   nbisect = 0
-  setupfolder("results/ex2")
   while (φap / φ_max) < 1.0 - 1e-6
     φap += φ_inc
     φap = min(φap, φ_max)

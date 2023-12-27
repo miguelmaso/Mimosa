@@ -4,5 +4,5 @@
 # ex3: Nonlinear MagnetoMechanics
 # ex4: Linear Elasticity multimaterial. AlgebraicMultigrid preconditioner.
 # ex5: Optimal desing in Nonlinear MagnetoMechanics 
-# ex5: Optimal control in Nonlinear ElectroMechanics 
+# ex6: Optimal control in Nonlinear ElectroMechanics 
 

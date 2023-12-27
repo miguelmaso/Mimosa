@@ -1,3 +1,6 @@
+using Pkg
+Pkg.activate(".")
+
 using Gridap
 using GridapGmsh
 using Gridap.TensorValues
