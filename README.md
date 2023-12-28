@@ -31,4 +31,4 @@ Project funded by:
 
 - Grant 21996/PI/22  funded by Autonomous Community of the Region of Murcia, Spain, through the programme for the development of scientific and technical research by competitive groups (21996/PI/22), Promotion of Scientific and Technical Research of Fundacion Seneca –Agencia de Ciencia y Tecnologia de la Region de Murcia.
 
-![Alt text](./docs/imgs/seneca.png)
+![Alt text](https://github.com/jmartfrut/Mimosa/blob/main/docs/imgs/seneca.png)
