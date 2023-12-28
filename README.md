@@ -8,7 +8,8 @@
 # **M**ultiphysics **I**nformed **M**achine learning for **O**ptimal design of **S**mart m**A**terials
 
 # MiniApps included 
-ex0: Linear Elasticity
+ex0: Linear Elasticity 
+
 ex1: Hyperelastic materials
 ex2: Nonlinear ElectroMechanics
 ex3: Nonlinear MagnetoMechanics
