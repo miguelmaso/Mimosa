@@ -24,6 +24,8 @@ ex6: Optimal control in Nonlinear ElectroMechanics
 
 ex7: Linear Elasticity with periodic bcs
 
+ex8: Linear Elasticity with periodic bcs using CutFEM
+
 
 Project funded by:
 
