@@ -6,7 +6,7 @@ using Mimosa
 result_folder = "./results/periodic/"
 setupfolder(result_folder)
 
-nely,nelx,nelz = 20,20,20
+nely,nelx,nelz = 21,21,21
 domain = (0.0, 1, 0.0, 1, 0.0, 1);
 model = CartesianDiscreteModel(domain,(nelx,nely,nelz); isperiodic=(true,true,true));
 
@@ -26,8 +26,8 @@ u0= VectorValue(0.0,0.0,0.0)
 U = TrialFESpace(V,u0)
 
 
-const E = 70.0e9
-const ν = 0.33
+const E = 1
+const ν = 0.2
 const λ = (E*ν)/((1+ν)*(1-2*ν))
 const μ = E/(2*(1+ν))
 σ(ε) = λ*tr(ε)*one(ε) + 2*μ*ε
@@ -36,16 +36,16 @@ degree = 2*order
 Ω = Triangulation(model)
 dΩ = Measure(Ω,degree)
 
-f= VectorValue(0.0,0.0,1000000.0)
+f= VectorValue(0.0,0.0,0.005)
 
 a(u,v) = ∫( ε(v) ⊙ ( σ∘ε(u)) )*dΩ
 l(v) = ∫( v⋅f )*dΩ 
 
 op = AffineFEOperator(a,l,U,V)
 uh = solve(op)
+ 
+@show ∑(∫(∇(uh))dΩ) 
 
-Qₕ = CellQuadrature(Ω, 4 * 2)
-obj = ∑(∫( ∇(uh))Qₕ)
 
 writevtk(Ω,result_folder * "results",cellfields=["uh"=>uh,"epsi"=>ε(uh),"sigma"=>σ∘ε(uh)])
   

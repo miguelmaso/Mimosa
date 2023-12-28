@@ -17,16 +17,21 @@ function main(; n, result_folder=nothing)
   partition = (n, n, n)
   pmin = Point(0.0, 0.0, 0.0)
   pmax = pmin + L
-  bgmodel = CartesianDiscreteModel(pmin, pmax, partition; isperiodic=(true, true, true))
-  Ω_bg = Triangulation(bgmodel)
-
+  periodicbs=true
+  if periodicbs
+   bgmodel = CartesianDiscreteModel(pmin, pmax, partition; isperiodic=(true, true, true))
   # Identify Dirichlet boundaries
   labeling = get_face_labeling(bgmodel)
   entity = num_entities(labeling) + 1
   labeling.d_to_dface_to_entity[1][1] = entity
   add_tag!(labeling, "support0", [entity])
   # Define geometry
-
+  else
+  bgmodel = CartesianDiscreteModel(pmin, pmax, partition)
+  labeling = get_face_labeling(bgmodel)
+  add_tag_from_tags!(labeling,"support0",[1,2,3,4,5,6,7,8])
+  end
+  Ω_bg = Triangulation(bgmodel)
 
   origin = Point(0.6, 0.5, 0.6)
   R = 0.2
@@ -39,13 +44,13 @@ function main(; n, result_folder=nothing)
   geo4 = !(geo3, name = "matrix")
 
   # Material parameters inclusion
-  E1 = 4.0
+  E1 = 1
   ν1 = 0.2
   λ1, μ1 = lame_parameters(E1, ν1)
   σ1(ε) = λ1 * tr(ε) * one(ε) + 2 * μ1 * ε
 
   # Material parameters matrix
-  E2 = 1.0
+  E2 = 1
   ν2 = 0.2
   λ2, μ2 = lame_parameters(E2, ν2)
   σ2(ε) = λ2 * tr(ε) * one(ε) + 2 * μ2 * ε
@@ -118,7 +123,8 @@ function main(; n, result_folder=nothing)
       -
       n_Γ ⋅ mean_t(v1, v2) ⋅ jump_u(u1, u2)) * dΓ
 
-  f = VectorValue(0.005, 0, 0)
+  f= VectorValue(0.0,0.0,0.005)
+
   l((v1, v2)) = ∫(v1 ⋅ f)dΩ1 + ∫(v2 ⋅ f)dΩ2
 
 
@@ -126,10 +132,8 @@ function main(; n, result_folder=nothing)
   op = AffineFEOperator(a, l, U, V)
   uh1, uh2 = solve(op)
   uh = (uh1, uh2)
-
-
+ 
   @show ∑(∫(∇(uh1))dΩ1)+ ∑(∫(∇(uh2))dΩ2)
-
   # Postprocess
   if result_folder !== nothing
     writevtk(Ω1,result_folder * "inclusion", cellfields=["uh" => uh1, "sigma" => σ1 ∘ ε(uh1)])
@@ -138,7 +142,8 @@ function main(; n, result_folder=nothing)
 
 end
 
-folder = "./results/periodic/"
+folder = "./results/periodic_embed/"
 setupfolder(folder)
-main(n=8, result_folder=folder)
+main(n=21, result_folder=folder)
+ 
  
