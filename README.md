@@ -24,3 +24,11 @@ ex6: Optimal control in Nonlinear ElectroMechanics
 
 ex7: Linear Elasticity with periodic bcs
 
+
+Project funded by:
+
+- Grant PID2022-141957OA-C22 funded by MCIN/AEI/ 10.13039/501100011033  and by ''ERDF A way of making Europe''
+
+- Grant 21996/PI/22  funded by Autonomous Community of the Region of Murcia, Spain, through the programme for the development of scientific and technical research by competitive groups (21996/PI/22), Promotion of Scientific and Technical Research of Fundacion Seneca –Agencia de Ciencia y Tecnologia de la Region de Murcia.
+
+![Alt text](./docs/imgs/seneca.png)
