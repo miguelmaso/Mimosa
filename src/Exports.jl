@@ -17,5 +17,5 @@ macro publish(mod,name)
   @publish ConstitutiveModels logreg
 
   @publish LinearSolvers IterativeSolver
-  @publish LinearSolvers solve
-  @publish LinearSolvers solve!
+  # @publish LinearSolvers solve
+  # @publish LinearSolvers solve!

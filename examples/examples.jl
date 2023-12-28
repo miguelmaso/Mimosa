@@ -5,4 +5,5 @@
 # ex4: Linear Elasticity multimaterial. AlgebraicMultigrid preconditioner.
 # ex5: Optimal desing in Nonlinear MagnetoMechanics 
 # ex6: Optimal control in Nonlinear ElectroMechanics 
+# ex7: Linear Elasticity with periodic bcs
 

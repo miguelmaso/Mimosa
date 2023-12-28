@@ -136,9 +136,7 @@ function NewtonRaphson(x0, φap, φ_max, loadinc, ndofm, cache)
   println("\n+++ Loadinc $loadinc:  φap $φap in loadfact $loadfact +++\n")
 
   cacheold = cache
-  @time begin
   ph, cache = solve!(ph, solver, op, cache)
-  end
   flag::Bool = (cache.result.f_converged || cache.result.x_converged)
 
   if (flag == true)
