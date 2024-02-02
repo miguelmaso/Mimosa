@@ -5,10 +5,9 @@ macro publish(mod,name)
     end
   end
   
-  @publish TensorAlgebra inner42
-  @publish TensorAlgebra inner32
-  @publish TensorAlgebra inner31
+
   @publish TensorAlgebra (*)
+  @publish TensorAlgebra cross_I4
 
   @publish FileManagement setupfolder
   @publish FileManagement numfiles

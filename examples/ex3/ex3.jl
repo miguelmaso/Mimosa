@@ -71,7 +71,7 @@ function res(u, v)
 end
  
 function jac(u, du , v)
-  return ∫(∇(v)'  ⊙ (inner42∘((∂Ψuu ∘ (∇(u)',Brh, Bah)), ∇(du)'))) * dΩ
+  return ∫(∇(v)'  ⊙ ((∂Ψuu ∘ (∇(u)',Brh, Bah))⊙ (∇(du)'))) * dΩ
 end 
  
 # # Setup non-linear solver
@@ -100,11 +100,12 @@ function run(x0, Bapp, Bapp_old, Ba, step, nsteps, cache)
 #   BaOldh         = interpolate_everywhere(BaOld,V)
   uh             = FEFunction(V,x0)
   function l(v)
-    return ∫(-(∇(v) ⊙ (∂Ψu ∘ (∇(uh), Brh, Bah)))) * dΩ + ∫(∇(v)  ⊙ (inner42∘((∂Ψuu ∘ (∇(uh),Brh, BahOld)), ∇(uh)))) * dΩ
+    return ∫(-(∇(v) ⊙ (∂Ψu ∘ (∇(uh), Brh, Bah)))) * dΩ + ∫(∇(v)  ⊙   ((∂Ψuu ∘ (∇(uh),Brh, BahOld)) ⊙ (∇(uh)))) * dΩ
     #
   end
+ 
   function a(u, v)
-    return ∫(∇(v)  ⊙ (inner42∘((∂Ψuu ∘ (∇(uh),Brh, BahOld)), ∇(u)))) * dΩ
+    return ∫(∇(v)  ⊙   ((∂Ψuu ∘ (∇(uh),Brh, BahOld)) ⊙ (∇(u)))) * dΩ
   end 
    
  

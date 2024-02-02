@@ -1,7 +1,9 @@
 using Gridap
 using Mimosa
 
-mesh_file = joinpath(dirname(@__FILE__), "solid.json")
+mesh_file = "./models/crank.json"
+
+# mesh_file = joinpath(dirname(@__FILE__), "../models/crank.json")
 model = DiscreteModelFromFile(mesh_file)
 
 order = 1

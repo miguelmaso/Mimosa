@@ -122,10 +122,10 @@ function res_state(Bah::FEFunction, Brh::FEFunction)
     return (u, v) -> ∫((∇(v)' ⊙ (∂Ψu ∘ (∇(u)', Brh, Bah)))) * dΩ
 end
 function jac_state(Bah::FEFunction, Brh::FEFunction)
-    return (u, du, v) -> ∫(∇(v)' ⊙ (inner42 ∘ ((∂Ψuu ∘ (∇(u)', Brh, Bah)), ∇(du)'))) * dΩ
+    return (u, du, v) -> ∫(∇(v)' ⊙ ((∂Ψuu ∘ (∇(u)', Brh, Bah))⊙ (∇(du)'))) * dΩ
 end
 
-
+ 
 function StateEquationIter(u, Bah, Brh, step, nsteps, cache)
     # Update FEFunction uh from vector u
     uh = FEFunction(U, u)
@@ -156,7 +156,7 @@ end
 #---------------------------------------------
 
 function Mat_adjoint(uh::FEFunction, Bah::FEFunction, Brh::FEFunction)
-    return (p, v) -> ∫(∇(v)' ⊙ (inner42 ∘ ((∂Ψuu ∘ (∇(uh)', Brh, Bah)), ∇(p)'))) * dΩ
+    return (p, v) -> ∫(∇(v)' ⊙ ((∂Ψuu ∘ (∇(uh)', Brh, Bah))⊙ (∇(p)'))) * dΩ
 end
 function Vec_adjoint(uh::FEFunction)
     return (v) -> ∫((uh ⋅ Nh - uᵗ) * (Nh ⋅ v)) * dΩ
@@ -194,9 +194,10 @@ function Mat_descent(w, v)
 end
 
 function Vec_descent(ph::FEFunction, uh::FEFunction, Brh::FEFunction, Bah::FEFunction, ∂Br::FEFunction)
-    return (v) -> ∫(-(∇(ph)' ⊙ (inner31 ∘ ((∂ΨuBr ∘ (∇(uh)', Brh, Bah)), ∂Br))) * v) * dΩ
+    return (v) -> ∫(-(∇(ph)' ⊙  ((∂ΨuBr ∘ (∇(uh)', Brh, Bah))  ⊙  ∂Br)) * v) * dΩ
 end
 
+ 
 function D𝒥DΦ(Φ, u, p; fem_params, opt_params)
 
     Br, ∂Br_∂θ, ∂Br_∂φ = mapΦ_Br(Φ; fem_params, opt_params)

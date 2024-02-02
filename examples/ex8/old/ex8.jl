@@ -10,6 +10,7 @@ using WriteVTK
 using ForwardDiff
 
 
+
 result_folder = "./results/periodic_embed/"
 setupfolder(result_folder)
 # function main(; n, result_folder=nothing)
@@ -140,29 +141,29 @@ end
 function res(Λ::Float64)
   return ((u1, u2), (v1, v2)) -> ∫(∇(v1)' ⊙ (∂Ψ1u ∘ (∇(u1)', Fmh(Λ)))) * dΩ1 + ∫(∇(v2)' ⊙ (∂Ψ2u ∘ (∇(u2)', Fmh(Λ)))) * dΩ2 +
                                  ∫(β * jump_u(v1, v2) ⋅ jump_u(u1, u2) -
-                                   n_Γ ⋅ (mean_t(Fmh(Λ))(u1, u2)) ⋅ jump_u(v1, v2) -
-                                   n_Γ ⋅ (mean_t(Fmh(Λ))(v1, v2)) ⋅ jump_u(u1, u2)) * dΓ
+                                   n_Γ ⋅ (mean_t(Λ)(u1, u2)) ⋅ jump_u(v1, v2) ) * dΓ
+                                  #  n_Γ ⋅ (mean_t(Fmh(Λ))(v1, v2)) ⋅ jump_u(u1, u2)) * dΓ
 end
 
 x0 = zeros(Float64, num_free_dofs(U))
 uh = FEFunction(U, x0)
 # fun1(v)=∫(∇(v[1])' ⊙ (∂Ψ1u ∘ (∇(uh[1])', Fmh(1.0)))) * dΩ1 + ∫(∇(v[2])' ⊙ (∂Ψ2u ∘ (∇(uh[2])', Fmh(1.0)))) * dΩ2 +
 # fun1(v)=∫(mean_t(1.0)(v[1], uh[1]))* dΩ1
-fun1(v)=∫(κ1 * (∂Ψ1u ∘ (∇(v[1])', Fmh(1.0))) + κ2 * (∂Ψ2u ∘ (∇(uh[1])',  Fmh(1.0))))* dΩ1
-# ∫(β * jump_u(v[1], v[2]) ⋅ jump_u(uh[1], uh[2]) -
-# n_Γ ⋅ (mean_t(1.0)(uh[1], uh[2])) ⋅ jump_u(v[1], v[2]) -
-# n_Γ ⋅ (mean_t(1.0)(v[1], v[2])) ⋅ jump_u(uh[1], uh[2])) * dΓ
-out = assemble_vector(fun1, U)
-@show norm(out)
+# fun1(v)=∫(κ1 * (∂Ψ1u ∘ (∇(v[1])', Fmh(1.0))) + κ2 * (∂Ψ2u ∘ (∇(uh[1])',  Fmh(1.0))))* dΩ1
+# # ∫(β * jump_u(v[1], v[2]) ⋅ jump_u(uh[1], uh[2]) -
+# # n_Γ ⋅ (mean_t(1.0)(uh[1], uh[2])) ⋅ jump_u(v[1], v[2]) -
+# # n_Γ ⋅ (mean_t(1.0)(v[1], v[2])) ⋅ jump_u(uh[1], uh[2])) * dΓ
+# out = assemble_vector(fun1, U)
+# @show norm(out)
 
-error("stop")
+# error("stop")
 function jac(Λ::Float64)
-  return ((u1, u2), (du1, du2), (v1, v2)) -> ∫(∇(v1)' ⊙ (inner42 ∘ ((∂Ψ1uu ∘ (∇(u1)', Fmh(Λ))), ∇(du1)'))) * dΩ1 +
-                                             ∫(∇(v2)' ⊙ (inner42 ∘ ((∂Ψ2uu ∘ (∇(u2)', Fmh(Λ))), ∇(du2)'))) * dΩ2 +
-                                             ∫(β * jump_u(v1, v2) ⋅ jump_u(du1, du2) -
-                                               n_Γ ⋅ (inner42 ∘ (κ1 * (∂Ψ1uu ∘ (∇(u1)', Fmh(Λ))), ∇(du1)')) ⋅ jump_u(v1, v2) -
-                                               n_Γ ⋅ (inner42 ∘ (κ2 * (∂Ψ2uu ∘ (∇(u2)', Fmh(Λ))), ∇(du2)')) ⋅ jump_u(v1, v2) -
-                                               n_Γ ⋅ (mean_t(Λ)(v1, v2)) ⋅ jump_u(du1, du2)) * dΓ
+  return ((u1, u2), (du1, du2), (v1, v2)) -> ∫(∇(v1)' ⊙  ((∂Ψ1uu ∘ (∇(u1)', Fmh(Λ)))⊙ ∇(du1)')) * dΩ1 +
+                                             ∫(∇(v2)' ⊙  ((∂Ψ2uu ∘ (∇(u2)', Fmh(Λ)))⊙ ∇(du2)')) * dΩ2 +
+                                             ∫(β * jump_u(v1, v2) ⋅ jump_u(du1, du2) ) * dΓ
+                                              #  n_Γ ⋅ (inner42 ∘ (κ1 * (∂Ψ1uu ∘ (∇(u1)', Fmh(Λ))), ∇(du1)')) ⋅ jump_u(v1, v2) -
+                                              #  n_Γ ⋅ (inner42 ∘ (κ2 * (∂Ψ2uu ∘ (∇(u2)', Fmh(Λ))), ∇(du2)')) ⋅ jump_u(v1, v2) -
+                                              #  n_Γ ⋅ (mean_t(Λ)(v1, v2)) ⋅ jump_u(du1, du2)) * dΓ
 end
 
 
