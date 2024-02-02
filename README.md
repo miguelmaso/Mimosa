@@ -28,7 +28,7 @@ ex8: NonLinear Elasticity with periodic bcs using CutFEM
 
 ex9: Nonlinear ElectroMechanics with parametric Dirichlet BCs
 
-ex9: Linear Elasticity with periodic bcs using CutFEM
+ex10: Linear Elasticity with periodic bcs using CutFEM
 
 
 Project funded by:
