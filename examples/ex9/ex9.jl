@@ -64,6 +64,7 @@ labels = get_face_labeling(model)
 add_tag_from_tags!(labels, "dirm_u0", [3])
 add_tag_from_tags!(labels, "dire_mid", [1])
 add_tag_from_tags!(labels, "dire_top", [2])
+add_tag_from_tags!(labels, "dire_bot", [4])
  
 #Define reference FE (Q2/P1(disc) pair)
 order = 1
@@ -73,7 +74,7 @@ reffe_int = ReferenceFE(lagrangian, Float64, order)
 
 #Define test FESpaces
 Vu = TestFESpace(model, reffeu, labels=labels, dirichlet_tags=["dirm_u0"], conformity=:H1)
-Vφ = TestFESpace(model, reffeφ, labels=labels, dirichlet_tags=["dire_mid", "dire_top"], conformity=:H1)
+Vφ = TestFESpace(model, reffeφ, labels=labels, dirichlet_tags=["dire_mid", "dire_top","dire_bot"], conformity=:H1)
 V = MultiFieldFESpace([Vu, Vφ])
 
 #Setup integration
@@ -115,18 +116,24 @@ function NewtonRaphson(x0, Λ, ndofm, cache,loadinc)
 
 
   function ϕap(x)
-#    println("The value of Λ entering ϕap is $Λ")
+    if x[3]>=20
+      return 0.0*Λ
+    else 
+      return 0.2*Λ 
+    end
+  end
+   function ϕbot(x)
     if x[3]>=20
       return 0.2*Λ
     else 
-      return -0.2*Λ 
+      return 0.0*Λ 
     end
-  end
+  end 
   #Define trial FESpaces from Dirichlet values
   u0 = VectorValue(0.0, 0.0, 0.0)
-  φ_bot = 0.0
+  φmid = 0.0
   Uu = TrialFESpace(Vu, [u0])
-  Uφ = TrialFESpace(Vφ, [φ_bot,ϕap])
+  Uφ = TrialFESpace(Vφ, [φmid,ϕap,ϕbot])
   U = MultiFieldFESpace([Uu, Uφ])
 
   x0_old = copy(x0)

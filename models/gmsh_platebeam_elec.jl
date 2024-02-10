@@ -116,8 +116,8 @@ gmsh.model.addPhysicalGroup(0, [1,3,10,5,14,4], 3,"fixedup")
 gmsh.model.addPhysicalGroup(1, [1,3,4,2,15,20,24], 3, "fixedup")  
 gmsh.model.addPhysicalGroup(2, [1, 25], 3, "fixedup")  
 
-# gmsh.model.addPhysicalGroup(1, [4,7,10,12], 3, "botsurf")  
-# gmsh.model.addPhysicalGroup(2, [6], 3, "botsurf")  
+gmsh.model.addPhysicalGroup(1, [4,7,10,12], 4, "botsurf")  
+gmsh.model.addPhysicalGroup(2, [6], 4, "botsurf")  
 
 gmsh.model.addPhysicalGroup(3, [1,2], 1, "Volume")  
 

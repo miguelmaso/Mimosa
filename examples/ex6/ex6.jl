@@ -54,7 +54,7 @@ writevtk(model, model_file)
 
 
 #Define Finite Element Collections
-order = 2
+order = 1
 reffeu = ReferenceFE(lagrangian, VectorValue{3,Float64}, order)
 reffeφ = ReferenceFE(lagrangian, Float64, order)
 
@@ -199,8 +199,8 @@ function AdjointEquation(xstate, φmax; fem_params)
     φh = FEFunction(Uφ, φ)
     Vec_adjoint((v, vφ)) = ∫(((uh - uᵗ) ⋅ Nh) * (Nh ⋅ v) + vφ * 0.0) * dΩ
     op = AffineFEOperator(Mat_adjoint(uh, φh), Vec_adjoint, V, V)
-    ph = solve(op)
-    return get_free_dof_values(ph)
+    kh = solve(op)
+    return get_free_dof_values(kh)
 end
 
 
@@ -247,10 +247,10 @@ function D𝒥Dφmax(x::Vector,xstate, xadjoint; fem_params, opt_params)
     φh = FEFunction(Uφ, φ)
     pφh = FEFunction(Vφ, pφ)
 
-    D𝒥Dφmaxᵛ = assemble_vector(Vec_descent(uh, φh, puh, pφh), fem_params.Uφᵛ)
-    D𝒥Dφmaxᵛₕ = FEFunction(fem_params.Uφᵛ, D𝒥Dφmaxᵛ)
-    D𝒥Dφmaxˢₕ = interpolate_everywhere(D𝒥Dφmaxᵛₕ, fem_params.Uφˢ)
-    D𝒥Dφmaxˢ = get_free_dof_values(D𝒥Dφmaxˢₕ)
+    D𝒥Dφmaxᵛ = assemble_vector(Vec_descent(uh, φh, puh, pφh), fem_params.Uφᵛ) #Volumen
+    D𝒥Dφmaxᵛₕ = FEFunction(fem_params.Uφᵛ, D𝒥Dφmaxᵛ) # Convierte a una FE
+    D𝒥Dφmaxˢₕ = interpolate_everywhere(D𝒥Dφmaxᵛₕ, fem_params.Uφˢ) #Interpola en una superficie la FE
+    D𝒥Dφmaxˢ = get_free_dof_values(D𝒥Dφmaxˢₕ) # Saca un vector
 
     return [sum(D𝒥Dφmaxˢ)]
 end
