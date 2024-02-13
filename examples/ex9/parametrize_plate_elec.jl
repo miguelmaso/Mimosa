@@ -13,8 +13,8 @@ const divmeshx = 20; # X element size in each electrode
 const divmeshy = 8; # Y element size in each  electrode
 const divmeshz = 2; # Z element size in each  electrode
 
-const elecdivx = 20; # number of electrodes in X
-const elecdivy = 5; # number of electrodes in Y
+const elecdivx = 2; # number of electrodes in X
+const elecdivy = 1; # number of electrodes in Y
 
 const lc = 1.0; # characteristic length for meshing
 

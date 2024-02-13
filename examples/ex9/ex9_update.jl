@@ -11,7 +11,7 @@ using WriteVTK
 
 
 # Initialisation result folder
-mesh_file = "./models/mesh_platebeam_elec.msh"
+mesh_file = "./examples/ex9/parametrize_plate_elec.msh"
 result_folder = "./results/ex9/"
 setupfolder(result_folder)
 
@@ -61,20 +61,24 @@ model_file = joinpath(result_folder, "model")
 writevtk(model, model_file)
 
 labels = get_face_labeling(model)
-add_tag_from_tags!(labels, "dirm_u0", [3])
-add_tag_from_tags!(labels, "dire_mid", [1])
-add_tag_from_tags!(labels, "dire_top", [2])
-add_tag_from_tags!(labels, "dire_bot", [4])
- 
+add_tag_from_tags!(labels, "fix", [7])
+add_tag_from_tags!(labels, "b1", [1])
+add_tag_from_tags!(labels, "b2", [2])
+add_tag_from_tags!(labels, "m1", [3])
+add_tag_from_tags!(labels, "m2", [4])
+add_tag_from_tags!(labels, "t1", [5])
+add_tag_from_tags!(labels, "t2", [6])
+
 #Define reference FE (Q2/P1(disc) pair)
-order = 1
+order = 2
 reffeu = ReferenceFE(lagrangian, VectorValue{3,Float64}, order)
 reffeφ = ReferenceFE(lagrangian, Float64, order)
 reffe_int = ReferenceFE(lagrangian, Float64, order)
-
+println("Im here!")
 #Define test FESpaces
-Vu = TestFESpace(model, reffeu, labels=labels, dirichlet_tags=["dirm_u0"], conformity=:H1)
-Vφ = TestFESpace(model, reffeφ, labels=labels, dirichlet_tags=["dire_mid", "dire_top","dire_bot"], conformity=:H1)
+Vu = TestFESpace(model, reffeu, labels=labels, dirichlet_tags=["fix"], conformity=:H1)
+Vφ = TestFESpace(model, reffeφ, labels=labels, dirichlet_tags=["t1","t2","m1","m2","b1","b2"], conformity=:H1)
+
 V = MultiFieldFESpace([Vu, Vφ])
 
 #Setup integration
@@ -87,6 +91,7 @@ function res((u, φ), (v, vφ))
   return ∫((∇(v)' ⊙ (∂Ψu ∘ (∇(u)', ∇(φ)))) + (∇(vφ)' ⋅ (∂Ψφ ∘ (∇(u)', ∇(φ))))) * dΩ
 end
 
+println("Got here")
 function jac((u, φ), (du, dφ), (v, vφ))
   return ∫(∇(v)' ⊙ (inner42 ∘ ((∂Ψuu ∘ (∇(u)', ∇(φ))), ∇(du)'))) * dΩ +
          ∫(∇(dφ) ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(u)', ∇(φ))), ∇(v)'))) * dΩ +
@@ -115,35 +120,24 @@ pvd_results = paraview_collection(result_folder*"results", append=false)
 function NewtonRaphson(x0, Λ, ndofm, cache,loadinc)
 
 
-  function ϕap(x)
-    if x[3]>=20
-      return 0.0*Λ
-    else 
-      return 0.2*Λ 
-    end
-  end
-   function ϕbot(x)
-    if x[3]>=20
-      return 0.2*Λ
-    else 
-      return 0.0*Λ 
-    end
-  end 
+  ϕt1 = 0.1*Λ
+  ϕt2 = 0.0*Λ
+  ϕb1 = 0.0*Λ
+  ϕb2 = 0.1*Λ
   #Define trial FESpaces from Dirichlet values
   u0 = VectorValue(0.0, 0.0, 0.0)
-  φmid = 0.0
+  ϕmid = 0.0
   Uu = TrialFESpace(Vu, [u0])
-  Uφ = TrialFESpace(Vφ, [φmid,ϕap,ϕbot])
+  Uφ = TrialFESpace(Vφ, [ϕt1,ϕt2,0.0,0.0,ϕb1,ϕb2])
   U = MultiFieldFESpace([Uu, Uφ])
 
   x0_old = copy(x0)
-
   #Update Dirichlet values
   uh = FEFunction(Uu, x0[1:ndofm])
   aφ(φ, vφ) = ∫(∇(vφ) ⋅ (∂Ψφ ∘ (∇(uh), ∇(φ)))) * dΩ
   lφ(vφ) = 0.0
-  opφ = AffineFEOperator(aφ, lφ, Uφ, Vφ)
-  φh = solve(opφ)
+  opϕ = AffineFEOperator(aφ, lφ, Uφ, Vφ)
+  φh = solve(opϕ)
   x0[ndofm+1:end] = get_free_dof_values(φh)
   ph = FEFunction(U, x0)
 

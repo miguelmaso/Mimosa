@@ -28,6 +28,8 @@ ex8: Linear Elasticity with periodic bcs using CutFEM
 
 ex9: Nonlinear ElectroMechanics with parametric Dirichlet BCs
 
+ex10: Optimal control in Nonlinear ElectroMechanics with parametric Dirichlet BCs
+
 
 Project funded by:
 
