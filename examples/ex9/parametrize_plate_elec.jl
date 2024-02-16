@@ -9,8 +9,8 @@ const Ly = 8;       # beam width
 const Lz = 0.4;     # beam thickness
 
 
-const divmeshx = 20; # X element size in each electrode
-const divmeshy = 8; # Y element size in each  electrode
+const divmeshx = 10; # X element size in each electrode
+const divmeshy = 4; # Y element size in each  electrode
 const divmeshz = 2; # Z element size in each  electrode
 
 const elecdivx = 2; # number of electrodes in X

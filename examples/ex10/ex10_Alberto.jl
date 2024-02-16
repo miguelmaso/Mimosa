@@ -11,7 +11,9 @@ using WriteVTK
 
 
 # Initialisation result folder
-mesh_file = "./examples/ex9/parametrize_plate_elec.msh"
+#mesh_file = "../examples/ex6/parametrize_plate_elec.msh"
+mesh_file = joinpath(dirname(@__FILE__), "parametrize_plate_elec.msh")
+
 result_folder = "./results/ex10/"
 setupfolder(result_folder)
 
@@ -45,6 +47,9 @@ HEHE(∇u, ∇φ) = HE(∇u, ∇φ) ⋅ HE(∇u, ∇φ)
 
 # Grid model
 model = GmshDiscreteModel(mesh_file)
+
+
+
 labels = get_face_labeling(model)
 add_tag_from_tags!(labels, "fix", [7])
 add_tag_from_tags!(labels, "b1", [1])
@@ -92,14 +97,13 @@ fem_params = (; Ωₕ, dΩ, ndofm, ndofe, Uφᵛ, Uφˢt1, Uφˢt2, Uφˢb1, Uφ
 
 N = VectorValue(0.0, 1.0, 0.0)
 Nh = interpolate_everywhere(N, Uu)
-#uᵗ(x) = VectorValue([0.0, -((0.3 * 40.0) * (x[3] / 40.0)^2.0), 0.0])
 uᵗ(x) = VectorValue([0.0, -((0.3 * 40.0) * (x[3] / 40.0)^2.0), 0.0])
 opt_params = (; N, uᵗ)
 
 
 # Setup non-linear solver
 nls = NLSolver(
-    show_trace=false,
+    show_trace=true,
     method=:newton,
     iterations=20)
 
@@ -124,24 +128,15 @@ function jac_state((u, φ), (du, dφ), (v, vφ))
              ∇(vφ)' ⋅ ((∂Ψφφ ∘ (∇(u)', ∇(φ))) ⋅ ∇(dφ))) * dΩ
 end
 
-function StateEquationIter(x0,Λ, loadinc, ndofm, cache)
+function StateEquationIter(x0, ϕ_app, loadinc, ndofm, cache)
     #----------------------------------------------
     #Define trial FESpaces from Dirichlet values
     #----------------------------------------------
-    println("SSSDASDASDAWSDASD")
-    ϕt1 = 0.2*Λ
-    ϕt2 = 0.0
-    ϕb1 = 0.0
-    ϕb2 = 0.2*Λ
-    
-    
-    Uφ = TrialFESpace(Vφ, [ϕt1,ϕt2,0.0,0.0,ϕb1,ϕb2])
-    U = MultiFieldFESpace([Uu, Uφ])
-    
+    Uφ = TrialFESpace(Vφ, [ϕ_app[1],ϕ_app[2],0.0,0.0,ϕ_app[3],ϕ_app[4]])
+    U = MultiFieldFESpace([Uu, Uφ])    
     #----------------------------------------------
     #Update Dirichlet values solving electro problem
-    #----------------------------------------------
-    
+    #----------------------------------------------    
     x0_old = copy(x0)
     uh = FEFunction(Uu, x0[1:ndofm])
     lφ(vφ) = 0.0
@@ -154,7 +149,7 @@ function StateEquationIter(x0,Λ, loadinc, ndofm, cache)
     #----------------------------------------------
     op = FEOperator(res_state, jac_state, U, V)
     # loadfact = round(φap / φmax, digits=2)
-    println("+++ Loadinc is  $Λ    +++\n")
+    println("+++ Loadinc is  $loadinc    +++\n")
     cacheold = cache
     ph, cache = solve!(ph, solver, op, cache)
     flag::Bool = (cache.result.f_converged || cache.result.x_converged)
@@ -164,29 +159,28 @@ function StateEquationIter(x0,Λ, loadinc, ndofm, cache)
     #----------------------------------------------
     if (flag == true)
         #writevtk(Ωₕ, "results/ex10/results_$(loadinc)", cellfields=["uh" => ph[1], "phi" => ph[2]])
-        pvd_results[Λ] = createvtk(Ωₕ,result_folder * "Results_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
+        pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Results_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
         return get_free_dof_values(ph), cache, flag
     else
         return x0_old, cacheold, flag
     end
 end
-function StateEquation(p_max::Float64; fem_params)
-    nsteps = 30
-    φ_inc = φmax / nsteps
+function StateEquation(ϕ_app::Vector; fem_params)
+    nsteps = 5
+    Λ_inc = 1.0 / nsteps
     x0 = zeros(Float64, num_free_dofs(V))
     cache = nothing
-    p_ap = 0.0
-    @show p_max
+    Λ     = 0.0
     loadinc = 0
     maxbisect = 10
     nbisect = 0
-    while (p_ap / p_max) < 1.0 - 1e-6
-        p_ap += φ_inc
-        p_ap = min(p_ap, p_max)
-        x0, cache, flag = StateEquationIter(x0,p_ap/p_max, loadinc, fem_params.ndofm, cache)
+    while Λ < 1.0 - 1e-6
+        Λ += Λ_inc
+        Λ = min(1.0, Λ)
+        x0, cache, flag = StateEquationIter(x0,Λ*ϕ_app, loadinc, fem_params.ndofm, cache)
         if (flag == false)
-            p_ap -= φ_inc
-            φ_inc = φ_inc / 2
+            Λ    -= Λ_inc
+            Λ_inc = Λ_inc / 2
             nbisect += 1
         end
         if nbisect > maxbisect
@@ -211,10 +205,10 @@ function Mat_adjoint(uh::FEFunction, φh::FEFunction)
                                    ∇(vφ)' ⋅ ((∂Ψφφ ∘ (∇(uh)', ∇(φh))) ⋅ ∇(pφ))) * dΩ
 end
 
-function AdjointEquation(xstate, φmax; fem_params)
+function AdjointEquation(xstate, ϕ_app; fem_params)
     u = xstate[1:fem_params.ndofm]
     φ = xstate[fem_params.ndofm+1:end]
-    Uφ = TrialFESpace(Vφ, [0.01,0.0,0.0,0.0,0.0,0.01])
+    Uφ = TrialFESpace(Vφ, [ϕ_app[1],ϕ_app[2],0.0,0.0,ϕ_app[3],ϕ_app[4]])
     uh = FEFunction(Uu, u)
     φh = FEFunction(Uφ, φ)
     Vec_adjoint((v, vφ)) = ∫(((uh - uᵗ) ⋅ Nh) * (Nh ⋅ v) + vφ * 0.0) * dΩ
@@ -228,14 +222,15 @@ end
 # Objective Function
 #---------------------------------------------
 
-function 𝒥(xstate, φap; fem_params)
+function 𝒥(xstate, ϕ_app; fem_params)
     u = xstate[1:fem_params.ndofm]
     φ = xstate[fem_params.ndofm+1:end]
     uh = FEFunction(Uu, u)
-    Uφ = TrialFESpace(Vφ, [0.01,0.0,0.0,0.0,0.0,0.01])
+    Uφ = TrialFESpace(Vφ, [ϕ_app[1],ϕ_app[2],0.0,0.0,ϕ_app[3],ϕ_app[4]])
     φh = FEFunction(Uφ, φ)
     iter = numfiles("results/ex10") + 1
     obj = ∑(∫(0.5 * ((uh - uᵗ) ⋅ N) * ((uh - uᵗ) ⋅ N))Qₕ)
+    iter=1
     println("Iter: $iter, 𝒥 = $obj")
     pvd_results[iter] = createvtk(fem_params.Ωₕ,result_folder * "_$iter.vtu", cellfields=["uh" => uh, "φh" => φh],order=2)
 
@@ -255,13 +250,13 @@ end
 
 function D𝒥Dφmax(x::Vector,xstate, xadjoint; fem_params, opt_params)
 
-    p_ap = x[1] * opt_params.φmax
+    ϕ_app = x * opt_params.ϕ_max
     u = xstate[1:fem_params.ndofm]
     φ = xstate[fem_params.ndofm+1:end]
     pu = xadjoint[1:fem_params.ndofm]
     pφ = xadjoint[fem_params.ndofm+1:end]
 
-    Uφ = TrialFESpace(Vφ, [ϕap,0.0,0.0,0.0,0.0,ϕap])
+    Uφ = TrialFESpace(Vφ, [ϕ_app[1],ϕ_app[2],0.0,0.0,ϕ_app[3],ϕ_app[4]])
     uh = FEFunction(Uu, u)
     puh = FEFunction(Vu, pu)
     φh = FEFunction(Uφ, φ)
@@ -278,7 +273,7 @@ function D𝒥Dφmax(x::Vector,xstate, xadjoint; fem_params, opt_params)
     D𝒥Dφmaxˢsb1 = get_free_dof_values(D𝒥Dφmaxˢb1) # Saca un vector
     D𝒥Dφmaxˢsb2 = get_free_dof_values(D𝒥Dφmaxˢb2) # Saca un vector
 
-    return [sum(D𝒥Dφmaxˢ),sum(D𝒥Dφmaxˢst1),sum(D𝒥Dφmaxˢst2),sum(D𝒥Dφmaxˢsb1),sum(D𝒥Dφmaxˢsb2)]
+    return [sum(D𝒥Dφmaxˢst1),sum(D𝒥Dφmaxˢst2),sum(D𝒥Dφmaxˢsb1),sum(D𝒥Dφmaxˢsb2)]
 end
 
 
@@ -286,37 +281,93 @@ end
 #---------------------------------------------
 # Initialization of optimization variables
 #---------------------------------------------
-p_max = 0.2
-xini = [0.01,0.01,0.01,0.01]
-grad = [0.0,0.0,0.0,0.0]
-opt_params = (; N, ph[1], p_max)
+ϕ_max = 0.2
+xini = [0.01;0.01;0.01;0.01]
+grad = [0.0;0.0;0.0;0.0]
+opt_params = (; N, uᵗ, ϕ_max)
+
+#ϕ_app = xini * opt_params.ϕ_max
+#xstate = StateEquation(ϕ_app; fem_params)
+#xadjoint = AdjointEquation(xstate, ϕ_app; fem_params)
+#println("Descend direction")
+#dobjdΦ = D𝒥Dφmax(xini, xstate, xadjoint; fem_params, opt_params)
+#fo = 𝒥(xstate, ϕ_app; fem_params)
+
+
 
 function fopt(x::Vector, grad::Vector; fem_params, opt_params)
-    p_ap = x[1] * opt_params.p_maxφ
-    xstate = StateEquation(p_ap; fem_params)
-    xadjoint = AdjointEquation(xstate, p_ap; fem_params)
+    ϕ_app = x * opt_params.ϕ_max
+    xstate = StateEquation(ϕ_app; fem_params)
+    xadjoint = AdjointEquation(xstate, ϕ_app; fem_params)
     if length(grad) > 0
         dobjdΦ = D𝒥Dφmax(x, xstate, xadjoint; fem_params, opt_params)
-        grad[:] = opt_params.p_max * dobjdΦ
+        grad[:] = opt_params.ϕ_max * dobjdΦ
     end
-    fo = 𝒥(xstate, p_ap; fem_params)
+    fo = 𝒥(xstate, ϕ_app; fem_params)
     return fo
 end
 
 function electro_optimize(x_init; TOL=1e-4, MAX_ITER=500, fem_params, opt_params)
     ##################### Optimize #################
-    opt = Opt(:LD_MMA, 1)
+    opt = Opt(:LD_MMA, 4)
     opt.lower_bounds = 0
     opt.upper_bounds = 1
     opt.ftol_rel = TOL
     opt.maxeval = MAX_ITER
     opt.min_objective = (x0, grad) -> fopt(x0, grad; fem_params, opt_params)
+
     (f_opt, x_opt, ret) = optimize(opt, x_init)
     @show numevals = opt.numevals # the number of function evaluations
     return f_opt, x_opt, ret
 end
 
 
+
+#---------------------------------------------
+# Numerical evaluation of sensitivies
+#---------------------------------------------
+xrand   =  rand(4)*0.4
+NumericalDerivativesTest  =  0.0
+if NumericalDerivativesTest==1.0
+   println("I am here!")
+   δx =  1e-6
+   gradAp  =  zeros(4)
+   xm    =  copy(xrand)
+   xp    =  copy(xrand)
+   f     =  fopt(xrand, grad; fem_params, opt_params)
+   @show grad
+   println("I am here")
+   for i in 1:4
+      println("------ $(i)\n")
+      xm[:]  =  xrand
+      xp[:]  =  xrand
+      xp[i]  =  xp[i] + δx
+      xm[i]  =  xm[i] - δx
+      fplus  =  fopt(xp, []; fem_params, opt_params)
+      fminus =  fopt(xm, []; fem_params, opt_params)      
+      gradAp[i]  =  (fplus - fminus)/(2.0*δx)
+   end
+   @show(grad)
+   println("------------------------\n")
+   @show(gradAp)
+   println("------------------------\n")
+   @show(norm(grad - gradAp)/norm(grad))
+   println("------------------------\n")
+   #@show(gradf[1:nfinal])
+end
+
+#error("d")
+
+
+
+
 # @time fopt(xini, grad; fem_params, opt_params)
+ϕ_app = xini * opt_params.ϕ_max
+xstate = StateEquation(ϕ_app; fem_params)
+xadjoint = AdjointEquation(xstate, ϕ_app; fem_params)
+dobjdΦ = D𝒥Dφmax(xini, xstate, xadjoint; fem_params, opt_params)
+grad[:] = opt_params.ϕ_max * dobjdΦ
+@show size(grad)
+fo = 𝒥(xstate, ϕ_app; fem_params)
  a, b, ret=electro_optimize(xini; TOL = 1e-8, MAX_ITER=500, fem_params, opt_params)
  vtk_save(pvd_results)
