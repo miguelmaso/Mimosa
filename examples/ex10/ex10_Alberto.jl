@@ -97,8 +97,129 @@ fem_params = (; Ωₕ, dΩ, ndofm, ndofe, Uφᵛ, Uφˢt1, Uφˢt2, Uφˢb1, Uφ
 
 N = VectorValue(0.0, 1.0, 0.0)
 Nh = interpolate_everywhere(N, Uu)
-uᵗ(x) = VectorValue([0.0, -((0.3 * 40.0) * (x[3] / 40.0)^2.0), 0.0])
-opt_params = (; N, uᵗ)
+
+#-----------------------------------------------------
+# Solve an FE problem to get the target displacements
+#-----------------------------------------------------
+println("------------------------------")
+println("Target FE started")
+println("------------------------------")
+# # Weak form
+function res((u, φ), (v, vφ))
+  return ∫((∇(v)' ⊙ (∂Ψu ∘ (∇(u)', ∇(φ)))) + (∇(vφ)' ⋅ (∂Ψφ ∘ (∇(u)', ∇(φ))))) * dΩ
+end
+
+function jac((u, φ), (du, dφ), (v, vφ))
+  return ∫(∇(v)' ⊙ (inner42 ∘ ((∂Ψuu ∘ (∇(u)', ∇(φ))), ∇(du)'))) * dΩ +
+         ∫(∇(dφ) ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(u)', ∇(φ))), ∇(v)'))) * dΩ +
+         ∫(∇(vφ)' ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(u)', ∇(φ))), ∇(du)'))) * dΩ +
+         ∫(∇(vφ)' ⋅ ((∂Ψφφ ∘ (∇(u)', ∇(φ))) ⋅ ∇(dφ))) * dΩ
+end
+ 
+
+
+nls = NLSolver(
+  show_trace=true,
+  method=:newton,
+  iterations=20)
+
+solver = FESolver(nls)
+pvd_results = paraview_collection(result_folder*"results", append=false)
+
+function NewtonRaphson(x0, Λ, ndofm, cache,loadinc)
+
+
+  ϕt1 = 0.1*Λ
+  ϕt2 = 0.0*Λ
+  ϕb1 = 0.0*Λ
+  ϕb2 = 0.1*Λ
+  #Define trial FESpaces from Dirichlet values
+  u0 = VectorValue(0.0, 0.0, 0.0)
+  ϕmid = 0.0
+  Uu = TrialFESpace(Vu, [u0])
+  Uφ = TrialFESpace(Vφ, [ϕt1,ϕt2,0.0,0.0,ϕb1,ϕb2])
+  U = MultiFieldFESpace([Uu, Uφ])
+
+  x0_old = copy(x0)
+  #Update Dirichlet values
+  uh = FEFunction(Uu, x0[1:ndofm])
+  aφ(φ, vφ) = ∫(∇(vφ) ⋅ (∂Ψφ ∘ (∇(uh), ∇(φ)))) * dΩ
+  lφ(vφ) = 0.0
+  opϕ = AffineFEOperator(aφ, lφ, Uφ, Vφ)
+  φh = solve(opϕ)
+  x0[ndofm+1:end] = get_free_dof_values(φh)
+  ph = FEFunction(U, x0)
+
+  #FE problem
+  op = FEOperator(res, jac, U, V)
+    #  pvd_results[Λ] = createvtk(Ωₕ,result_folder * "_$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
+  println("\n+++ Loadinc for target is $Λ  +++\n")
+
+  cacheold = cache
+  ph, cache = solve!(ph, solver, op, cache)
+  flag::Bool = (cache.result.f_converged || cache.result.x_converged)
+
+  if (flag == true)
+    pvd_results[Λ] = createvtk(Ωₕ,result_folder * "Target-Results_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
+    # writevtk(Ωₕ, "results/ex2/results_$(loadinc)", cellfields=["uh" => ph[1], "phi" => ph[2]])
+    return get_free_dof_values(ph), cache, flag
+  else
+    return x0_old, cacheold, flag 
+  end
+end
+
+function SolveSteps()
+  p_max = 0.1
+  nsteps = 20
+  ϕ_inc = p_max / nsteps
+
+  x0 = zeros(Float64, num_free_dofs(V))
+  ndofm::Int = num_free_dofs(Vu)
+
+
+  cache = nothing
+  p_ap = 0.0
+
+
+  loadinc = 0
+  maxbisect = 10
+  nbisect = 0 
+  while (p_ap / p_max) < 1.0 - 1e-6
+    p_ap += ϕ_inc
+    p_ap = min(p_ap, p_max)
+    x0, cache, flag = NewtonRaphson(x0, p_ap/p_max, ndofm, cache,loadinc)
+    if (flag == false)
+      p_ap -= φ_inc
+      ϕ_inc = φ_inc / 2
+      nbisect += 1
+    end
+    if nbisect > maxbisect
+      println("Maximum number of bisections reached")
+      break
+    end
+    loadinc += 1
+  end
+    println("------------------------------")
+    println("Target FE problem ended")
+    println("------------------------------")
+  vtk_save(pvd_results)
+
+return x0
+end
+
+u_target=SolveSteps()
+u_values_target = u_target[1:ndofm]
+u_tt = FEFunction(Uu, u_values_target)
+#------------------------------------------------
+# End FE target problema
+#------------------------------------------------
+
+
+println("The value of uᵗ is $u_tt")
+sleep(3)
+
+#uᵗ(x) = VectorValue([0.0, -((0.3 * 40.0) * (x[3] / 40.0)^2.0), 0.0])
+opt_params = (; N, u_tt)
 
 
 # Setup non-linear solver
@@ -153,7 +274,6 @@ function StateEquationIter(x0, ϕ_app, loadinc, ndofm, cache)
     cacheold = cache
     ph, cache = solve!(ph, solver, op, cache)
     flag::Bool = (cache.result.f_converged || cache.result.x_converged)
-    #FIXME ϕap seems not to work; strangely it does not seems to be recognized...? You cant even print it
     #----------------------------------------------
     #Check convergence
     #----------------------------------------------
@@ -162,7 +282,7 @@ function StateEquationIter(x0, ϕ_app, loadinc, ndofm, cache)
         pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Results_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
         return get_free_dof_values(ph), cache, flag
     else
-        return x0_old, cacheold, flag
+        return x0_old, cacheold, flag 
     end
 end
 function StateEquation(ϕ_app::Vector; fem_params)
@@ -177,7 +297,7 @@ function StateEquation(ϕ_app::Vector; fem_params)
     while Λ < 1.0 - 1e-6
         Λ += Λ_inc
         Λ = min(1.0, Λ)
-        x0, cache, flag = StateEquationIter(x0,Λ*ϕ_app, loadinc, fem_params.ndofm, cache)
+        x0, cache, flag  = StateEquationIter(x0,Λ*ϕ_app, loadinc, fem_params.ndofm, cache)
         if (flag == false)
             Λ    -= Λ_inc
             Λ_inc = Λ_inc / 2
@@ -189,7 +309,7 @@ function StateEquation(ϕ_app::Vector; fem_params)
         end
         loadinc += 1
     end
-    return x0
+    return x0 
 end
 
 #---------------------------------------------
@@ -211,7 +331,7 @@ function AdjointEquation(xstate, ϕ_app; fem_params)
     Uφ = TrialFESpace(Vφ, [ϕ_app[1],ϕ_app[2],0.0,0.0,ϕ_app[3],ϕ_app[4]])
     uh = FEFunction(Uu, u)
     φh = FEFunction(Uφ, φ)
-    Vec_adjoint((v, vφ)) = ∫(((uh - uᵗ) ⋅ Nh) * (Nh ⋅ v) + vφ * 0.0) * dΩ
+    Vec_adjoint((v, vφ)) = ∫(((uh - u_tt) ⋅ Nh) * (Nh ⋅ v) + vφ * 0.0) * dΩ
     op = AffineFEOperator(Mat_adjoint(uh, φh), Vec_adjoint, V, V)
     kh = solve(op)
     return get_free_dof_values(kh)
@@ -229,7 +349,7 @@ function 𝒥(xstate, ϕ_app; fem_params)
     Uφ = TrialFESpace(Vφ, [ϕ_app[1],ϕ_app[2],0.0,0.0,ϕ_app[3],ϕ_app[4]])
     φh = FEFunction(Uφ, φ)
     iter = numfiles("results/ex10") + 1
-    obj = ∑(∫(0.5 * ((uh - uᵗ) ⋅ N) * ((uh - uᵗ) ⋅ N))Qₕ)
+    obj = ∑(∫(0.5 * ((uh - u_tt) ⋅ N) * ((uh - u_tt) ⋅ N))Qₕ)
     iter=1
     println("Iter: $iter, 𝒥 = $obj")
     pvd_results[iter] = createvtk(fem_params.Ωₕ,result_folder * "_$iter.vtu", cellfields=["uh" => uh, "φh" => φh],order=2)
@@ -281,10 +401,10 @@ end
 #---------------------------------------------
 # Initialization of optimization variables
 #---------------------------------------------
-ϕ_max = 0.2
+ϕ_max = 0.1
 xini = [0.01;0.01;0.01;0.01]
 grad = [0.0;0.0;0.0;0.0]
-opt_params = (; N, uᵗ, ϕ_max)
+opt_params = (; N, u_tt, ϕ_max)
 
 #ϕ_app = xini * opt_params.ϕ_max
 #xstate = StateEquation(ϕ_app; fem_params)
@@ -369,5 +489,5 @@ dobjdΦ = D𝒥Dφmax(xini, xstate, xadjoint; fem_params, opt_params)
 grad[:] = opt_params.ϕ_max * dobjdΦ
 @show size(grad)
 fo = 𝒥(xstate, ϕ_app; fem_params)
- a, b, ret=electro_optimize(xini; TOL = 1e-8, MAX_ITER=500, fem_params, opt_params)
+ a, b, ret=electro_optimize(xini; TOL = 1e-6, MAX_ITER=200, fem_params, opt_params)
  vtk_save(pvd_results)
