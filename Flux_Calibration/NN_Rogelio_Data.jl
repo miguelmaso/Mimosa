@@ -3,21 +3,35 @@ using Flux: train!
 using Statistics
 using Plots
 using Zygote
+using DelimitedFiles
 #-------------------------------------------------------------------------------
 # Test and training data
 #-------------------------------------------------------------------------------
-actual(x) = 4x +2
-x_train, x_test = hcat(0:5...), hcat(6:10...)
-#x_train, x_test = [0.0,1.0,2.0,3.0,4.0,5.0], [6.0,7.0,8.0,9.0,10.0]
-y_train, y_test = actual.(x_train), actual.(x_test)
+x_train = readdlm("Input_Alberto_.txt", ',')
+x_test = readdlm("Input_Alberto_.txt", ',')
+y_train = readdlm("Output_Alberto_.txt", ',')
+y_test = readdlm("Output_Alberto_.txt", ',')
+
+x_train = x_train[1:30,:]'
+y_train = y_train[1:30]'
+x_test = x_test[1:30,:]'
+y_test = y_test[1:30]'
 
 #-------------------------------------------------------------------------------
 # Build a model. Now it's just a simple layer with one input and one output
 #-------------------------------------------------------------------------------
-model = Dense(1 => 1) # Specified sigmoid activation function
-model.weight # Initialized weight
-model.bias   # Initialized bias
+#Let's create a multi-layer perceptron
+model = Chain(
+    Dense(5=>3),
+    BatchNorm(3),
+    Dense(3=>3),
+    BatchNorm(3),
+    Dense(3 => 1)
+)
 
+
+
+#model = Dense(5 => 1) # Specified sigmoid activation function
 
 #-------------------------------------------------------------------------------
 # Train the model
@@ -33,34 +47,34 @@ function evaluation(flux_model, x ) # Alternative definition using Flux's versio
 end;
 initial_loss = loss(model, x_train, y_train)
 printstyled("The initial loss is $initial_loss \n"; color = :red)
-opt = Descent() # Define an optimisation strategy. In this case, just the gradient descent. But could de Adams, etc. 
+opt = Descent(0.1) # Define an optimisation strategy. In this case, just the gradient descent. But could de Adams, etc. 
 printstyled("The learning rate of the gradient descent is $opt \n"; color = :green)
 
 data = [(x_train,y_train)]
 # Now we iteratively train the model with the training data, minimizing the loss function by updating the weights and biases following the gradient descent
-function iterative_training(model, x_train, y_train, tol)
-epoch = 1
-iter = 1
-Weights = zeros(0)
-Biases = zeros(0) 
-GradientX = zeros(0)
-    while loss(model, x_train, y_train) > tol && iter<500
+function iterative_training(model, x_train, y_train)
+    epoch = 1
+    iter = 1
+    Losses = zeros(0)
+    while  epoch<1000
      train!(loss, model, data, opt)
      L = loss(model, x_train, y_train)
-#     println("Epoch number $epoch with a loss $L ")
+     println("Epoch number $epoch with a loss $L ")
      iter += 1
      epoch += 1
      #-------------------
      #Store the gradients
      #-------------------
-     dLdm, dLdx, _= gradient(loss,model, x_test, y_test)
-     append!(Weights, dLdm.weight)
-     append!(Biases, dLdm.bias)
-     append!(GradientX, dLdx)
+#     dLdm, dLdx, _= gradient(loss,model, x_test, y_test)
+#     append!(Weights, dLdm.weight)
+#     append!(Biases, dLdm.bias)
+#     append!(GradientX, dLdx)
+      append!(Losses,L)
     end
-return Weights, Biases, GradientX
+    return Losses
 end
-Weights , Biases, GradientX= iterative_training(model, x_train, y_train, 1e-6)
+
+Losses=iterative_training(model, x_train, y_train)
 
 
 #-------------------------------------------------------------------------------
@@ -69,10 +83,10 @@ Weights , Biases, GradientX= iterative_training(model, x_train, y_train, 1e-6)
 #_, dLdx, _= gradient(loss,model, x_test, y_test)
 new_model(x) = sum(model(x)) # This is to obtain a scalar output for the model; which is a vector by default
 grad = gradient(new_model, x_test)
-println(grad)
+#println(grad)
 
 #printstyled("Predicted data is: \n"; color= :green)
 #println(model(x_test))
 #printstyled("Actual data is:\n"; color= :green)
 #println(y_test)
-#plot(vec(x_test),[vec(y_test),vec(model(x_test))], seriestype = :scatter, label=["Original Test" "Fitting Results"])
+plot([vec(y_train),vec(model(x_train))], seriestype = :scatter, label=["Original Test" "Fitting Results"])
