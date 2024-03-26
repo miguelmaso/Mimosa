@@ -7,13 +7,13 @@ using DelimitedFiles
 #-------------------------------------------------------------------------------
 # Test and training data
 #-------------------------------------------------------------------------------
-x_train = readdlm("Input_Alberto_3.txt", ',')
-x_test = readdlm("Input_Alberto_3.txt", ',')
-y_train = readdlm("Output_Alberto_3.txt", ',')
-y_test = readdlm("Output_Alberto_3.txt", ',')
+x_train = readdlm("Input_Alberto_2.txt", ',')
+x_test = readdlm("Input_Alberto_2.txt", ',')
+y_train = readdlm("Output_Alberto_2.txt", ',')
+y_test = readdlm("Output_Alberto_2.txt", ',')
 
-#x_train_n = hcat(x_train[:,1:2],x_train[:,4:5])
-x_train_n = x_train[:,1:2]
+x_train_n = hcat(x_train[:,1:2],x_train[:,4:5])
+#x_train_n = x_train[:,1:2]
 y_train_n= y_train[:,1]
 @show size(x_train_n)
 @show size(y_train_n)
@@ -43,7 +43,7 @@ y_train_norm=normalise(y_train)
 #-------------------------------------------------------------------------------
 #Let's create a multi-layer perceptron
 model = Chain(
-   Dense(2=>6, softplus),
+   Dense(4=>6, softplus),
    BatchNorm(6),
    Dense(6=>6,softplus),
    BatchNorm(6),
@@ -96,7 +96,7 @@ end
 initial_loss = loss(model, x_train_norm, y_train_norm)
 printstyled("The initial loss is $initial_loss \n"; color = :red)
 #opt = Descent(0.02) # Define an optimisation strategy. In this case, just the gradient descent. But could de Adams, etc. 
-opt = Flux.setup(Adam(0.01), model)
+opt = Flux.setup(Adam(0.008), model)
 printstyled("The learning rate of the gradient descent is $opt \n"; color = :green)
 
 data = [(x_train_norm,y_train_norm)]
@@ -105,7 +105,7 @@ function iterative_training(model, x_train, y_train)
     epoch = 1
     iter = 1
     Losses = zeros(0)
-    while  loss(model,x_train,y_train)>0.00001
+    while  loss(model,x_train,y_train)>0.00005
      train!(loss, model, data, opt)
      L = loss(model, x_train, y_train)
      println("Epoch number $epoch with a loss $L ")
@@ -133,8 +133,8 @@ Losses=iterative_training(model, x_train_norm, y_train_norm)
 # Predict the model
 #-------------------------------------------------------------------------------
 #_, dLdx, _= gradient(loss,model, x_test, y_test)
-#new_model(x) = sum(model(x)) # This is to obtain a scalar output for the model; which is a vector by default
-#grad = gradient(new_model, x_test)
+new_model(x) = sum(model(x)) # This is to obtain a scalar output for the model; which is a vector by default
+Piola = gradient(new_model, x_train)
 #println(grad)
 
 
