@@ -14,6 +14,14 @@ macro publish(mod,name)
   @publish FileManagement _get_kwarg
 
   @publish ConstitutiveModels logreg
+  @publish ConstitutiveModels NeoHookean3D
+  @publish ConstitutiveModels DerivativeStrategy
+  @publish ConstitutiveModels MoneyRivlin3D
+
+   
+
+
+
 
   @publish LinearSolvers IterativeSolver
   # @publish LinearSolvers solve

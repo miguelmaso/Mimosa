@@ -3,233 +3,255 @@ module TensorAlgebra
 using Gridap
 using Gridap.TensorValues
 import Base: *
+import Base: +
 
 export (*)
 export cross_I4
+export (+)
+
+# outer ⊗ \otimes
+# inner ⊙ \odot
+# cross × \times
+# sum +
+# dot ⋅ * 
 
 
-function Gridap.TensorValues.cross(A::TensorValue{3,3,Float64}, C::TensorValue{9,9,Float64})
-  TensorValue(A.data[9] * C.data[37] - A.data[8] * C.data[46] - A.data[6] * C.data[64] + A.data[5] * C.data[73],
-    A.data[9] * C.data[38] - A.data[8] * C.data[47] - A.data[6] * C.data[65] + A.data[5] * C.data[74],
-    A.data[9] * C.data[39] - A.data[8] * C.data[48] - A.data[6] * C.data[66] + A.data[5] * C.data[75],
-    A.data[9] * C.data[40] - A.data[8] * C.data[49] - A.data[6] * C.data[67] + A.data[5] * C.data[76],
-    A.data[9] * C.data[41] - A.data[8] * C.data[50] - A.data[6] * C.data[68] + A.data[5] * C.data[77],
-    A.data[9] * C.data[42] - A.data[8] * C.data[51] - A.data[6] * C.data[69] + A.data[5] * C.data[78],
-    A.data[9] * C.data[43] - A.data[8] * C.data[52] - A.data[6] * C.data[70] + A.data[5] * C.data[79],
-    A.data[9] * C.data[44] - A.data[8] * C.data[53] - A.data[6] * C.data[71] + A.data[5] * C.data[80],
-    A.data[9] * C.data[45] - A.data[8] * C.data[54] - A.data[6] * C.data[72] + A.data[5] * C.data[81],
-    A.data[7] * C.data[46] - A.data[9] * C.data[28] + A.data[6] * C.data[55] - A.data[4] * C.data[73],
-    A.data[7] * C.data[47] - A.data[9] * C.data[29] + A.data[6] * C.data[56] - A.data[4] * C.data[74],
-    A.data[7] * C.data[48] - A.data[9] * C.data[30] + A.data[6] * C.data[57] - A.data[4] * C.data[75],
-    A.data[7] * C.data[49] - A.data[9] * C.data[31] + A.data[6] * C.data[58] - A.data[4] * C.data[76],
-    A.data[7] * C.data[50] - A.data[9] * C.data[32] + A.data[6] * C.data[59] - A.data[4] * C.data[77],
-    A.data[7] * C.data[51] - A.data[9] * C.data[33] + A.data[6] * C.data[60] - A.data[4] * C.data[78],
-    A.data[7] * C.data[52] - A.data[9] * C.data[34] + A.data[6] * C.data[61] - A.data[4] * C.data[79],
-    A.data[7] * C.data[53] - A.data[9] * C.data[35] + A.data[6] * C.data[62] - A.data[4] * C.data[80],
-    A.data[7] * C.data[54] - A.data[9] * C.data[36] + A.data[6] * C.data[63] - A.data[4] * C.data[81],
-    A.data[8] * C.data[28] - A.data[7] * C.data[37] - A.data[5] * C.data[55] + A.data[4] * C.data[64],
-    A.data[8] * C.data[29] - A.data[7] * C.data[38] - A.data[5] * C.data[56] + A.data[4] * C.data[65],
-    A.data[8] * C.data[30] - A.data[7] * C.data[39] - A.data[5] * C.data[57] + A.data[4] * C.data[66],
-    A.data[8] * C.data[31] - A.data[7] * C.data[40] - A.data[5] * C.data[58] + A.data[4] * C.data[67],
-    A.data[8] * C.data[32] - A.data[7] * C.data[41] - A.data[5] * C.data[59] + A.data[4] * C.data[68],
-    A.data[8] * C.data[33] - A.data[7] * C.data[42] - A.data[5] * C.data[60] + A.data[4] * C.data[69],
-    A.data[8] * C.data[34] - A.data[7] * C.data[43] - A.data[5] * C.data[61] + A.data[4] * C.data[70],
-    A.data[8] * C.data[35] - A.data[7] * C.data[44] - A.data[5] * C.data[62] + A.data[4] * C.data[71],
-    A.data[8] * C.data[36] - A.data[7] * C.data[45] - A.data[5] * C.data[63] + A.data[4] * C.data[72],
-    A.data[8] * C.data[19] - A.data[9] * C.data[10] + A.data[3] * C.data[64] - A.data[2] * C.data[73],
-    A.data[8] * C.data[20] - A.data[9] * C.data[11] + A.data[3] * C.data[65] - A.data[2] * C.data[74],
-    A.data[8] * C.data[21] - A.data[9] * C.data[12] + A.data[3] * C.data[66] - A.data[2] * C.data[75],
-    A.data[8] * C.data[22] - A.data[9] * C.data[13] + A.data[3] * C.data[67] - A.data[2] * C.data[76],
-    A.data[8] * C.data[23] - A.data[9] * C.data[14] + A.data[3] * C.data[68] - A.data[2] * C.data[77],
-    A.data[8] * C.data[24] - A.data[9] * C.data[15] + A.data[3] * C.data[69] - A.data[2] * C.data[78],
-    A.data[8] * C.data[25] - A.data[9] * C.data[16] + A.data[3] * C.data[70] - A.data[2] * C.data[79],
-    A.data[8] * C.data[26] - A.data[9] * C.data[17] + A.data[3] * C.data[71] - A.data[2] * C.data[80],
-    A.data[8] * C.data[27] - A.data[9] * C.data[18] + A.data[3] * C.data[72] - A.data[2] * C.data[81],
-    A.data[9] * C.data[1] - A.data[7] * C.data[19] - A.data[3] * C.data[55] + A.data[1] * C.data[73],
-    A.data[9] * C.data[2] - A.data[7] * C.data[20] - A.data[3] * C.data[56] + A.data[1] * C.data[74],
-    A.data[9] * C.data[3] - A.data[7] * C.data[21] - A.data[3] * C.data[57] + A.data[1] * C.data[75],
-    A.data[9] * C.data[4] - A.data[7] * C.data[22] - A.data[3] * C.data[58] + A.data[1] * C.data[76],
-    A.data[9] * C.data[5] - A.data[7] * C.data[23] - A.data[3] * C.data[59] + A.data[1] * C.data[77],
-    A.data[9] * C.data[6] - A.data[7] * C.data[24] - A.data[3] * C.data[60] + A.data[1] * C.data[78],
-    A.data[9] * C.data[7] - A.data[7] * C.data[25] - A.data[3] * C.data[61] + A.data[1] * C.data[79],
-    A.data[9] * C.data[8] - A.data[7] * C.data[26] - A.data[3] * C.data[62] + A.data[1] * C.data[80],
-    A.data[9] * C.data[9] - A.data[7] * C.data[27] - A.data[3] * C.data[63] + A.data[1] * C.data[81],
-    A.data[7] * C.data[10] - A.data[8] * C.data[1] + A.data[2] * C.data[55] - A.data[1] * C.data[64],
-    A.data[7] * C.data[11] - A.data[8] * C.data[2] + A.data[2] * C.data[56] - A.data[1] * C.data[65],
-    A.data[7] * C.data[12] - A.data[8] * C.data[3] + A.data[2] * C.data[57] - A.data[1] * C.data[66],
-    A.data[7] * C.data[13] - A.data[8] * C.data[4] + A.data[2] * C.data[58] - A.data[1] * C.data[67],
-    A.data[7] * C.data[14] - A.data[8] * C.data[5] + A.data[2] * C.data[59] - A.data[1] * C.data[68],
-    A.data[7] * C.data[15] - A.data[8] * C.data[6] + A.data[2] * C.data[60] - A.data[1] * C.data[69],
-    A.data[7] * C.data[16] - A.data[8] * C.data[7] + A.data[2] * C.data[61] - A.data[1] * C.data[70],
-    A.data[7] * C.data[17] - A.data[8] * C.data[8] + A.data[2] * C.data[62] - A.data[1] * C.data[71],
-    A.data[7] * C.data[18] - A.data[8] * C.data[9] + A.data[2] * C.data[63] - A.data[1] * C.data[72],
-    A.data[6] * C.data[10] - A.data[5] * C.data[19] - A.data[3] * C.data[37] + A.data[2] * C.data[46],
-    A.data[6] * C.data[11] - A.data[5] * C.data[20] - A.data[3] * C.data[38] + A.data[2] * C.data[47],
-    A.data[6] * C.data[12] - A.data[5] * C.data[21] - A.data[3] * C.data[39] + A.data[2] * C.data[48],
-    A.data[6] * C.data[13] - A.data[5] * C.data[22] - A.data[3] * C.data[40] + A.data[2] * C.data[49],
-    A.data[6] * C.data[14] - A.data[5] * C.data[23] - A.data[3] * C.data[41] + A.data[2] * C.data[50],
-    A.data[6] * C.data[15] - A.data[5] * C.data[24] - A.data[3] * C.data[42] + A.data[2] * C.data[51],
-    A.data[6] * C.data[16] - A.data[5] * C.data[25] - A.data[3] * C.data[43] + A.data[2] * C.data[52],
-    A.data[6] * C.data[17] - A.data[5] * C.data[26] - A.data[3] * C.data[44] + A.data[2] * C.data[53],
-    A.data[6] * C.data[18] - A.data[5] * C.data[27] - A.data[3] * C.data[45] + A.data[2] * C.data[54],
-    A.data[4] * C.data[19] - A.data[6] * C.data[1] + A.data[3] * C.data[28] - A.data[1] * C.data[46],
-    A.data[4] * C.data[20] - A.data[6] * C.data[2] + A.data[3] * C.data[29] - A.data[1] * C.data[47],
-    A.data[4] * C.data[21] - A.data[6] * C.data[3] + A.data[3] * C.data[30] - A.data[1] * C.data[48],
-    A.data[4] * C.data[22] - A.data[6] * C.data[4] + A.data[3] * C.data[31] - A.data[1] * C.data[49],
-    A.data[4] * C.data[23] - A.data[6] * C.data[5] + A.data[3] * C.data[32] - A.data[1] * C.data[50],
-    A.data[4] * C.data[24] - A.data[6] * C.data[6] + A.data[3] * C.data[33] - A.data[1] * C.data[51],
-    A.data[4] * C.data[25] - A.data[6] * C.data[7] + A.data[3] * C.data[34] - A.data[1] * C.data[52],
-    A.data[4] * C.data[26] - A.data[6] * C.data[8] + A.data[3] * C.data[35] - A.data[1] * C.data[53],
-    A.data[4] * C.data[27] - A.data[6] * C.data[9] + A.data[3] * C.data[36] - A.data[1] * C.data[54],
-    A.data[5] * C.data[1] - A.data[4] * C.data[10] - A.data[2] * C.data[28] + A.data[1] * C.data[37],
-    A.data[5] * C.data[2] - A.data[4] * C.data[11] - A.data[2] * C.data[29] + A.data[1] * C.data[38],
-    A.data[5] * C.data[3] - A.data[4] * C.data[12] - A.data[2] * C.data[30] + A.data[1] * C.data[39],
-    A.data[5] * C.data[4] - A.data[4] * C.data[13] - A.data[2] * C.data[31] + A.data[1] * C.data[40],
-    A.data[5] * C.data[5] - A.data[4] * C.data[14] - A.data[2] * C.data[32] + A.data[1] * C.data[41],
-    A.data[5] * C.data[6] - A.data[4] * C.data[15] - A.data[2] * C.data[33] + A.data[1] * C.data[42],
-    A.data[5] * C.data[7] - A.data[4] * C.data[16] - A.data[2] * C.data[34] + A.data[1] * C.data[43],
-    A.data[5] * C.data[8] - A.data[4] * C.data[17] - A.data[2] * C.data[35] + A.data[1] * C.data[44],
-    A.data[5] * C.data[9] - A.data[4] * C.data[18] - A.data[2] * C.data[36] + A.data[1] * C.data[45])
+@generated function Gridap.TensorValues.outer(A::TensorValue{D,D,Float64}, B::TensorValue{D,D,Float64}) where {D}
+  str = ""
+  for iB in 1:D*D
+      for iA in 1:D*D
+      str *= "A.data[$iA] * B.data[$iB], "
+      end
+  end
+  Meta.parse("TensorValue{D*D,D*D, Float64}($str)")
 end
-
-
-
-
-function Gridap.TensorValues.outer(A::TensorValue{3,3,Float64}, B::TensorValue{3,3,Float64})
-  TensorValue(A.data[1] * B.data[1],
-    A.data[2] * B.data[1],
-    A.data[3] * B.data[1],
-    A.data[4] * B.data[1],
-    A.data[5] * B.data[1],
-    A.data[6] * B.data[1],
-    A.data[7] * B.data[1],
-    A.data[8] * B.data[1],
-    A.data[9] * B.data[1],
-    A.data[1] * B.data[2],
-    A.data[2] * B.data[2],
-    A.data[3] * B.data[2],
-    A.data[4] * B.data[2],
-    A.data[5] * B.data[2],
-    A.data[6] * B.data[2],
-    A.data[7] * B.data[2],
-    A.data[8] * B.data[2],
-    A.data[9] * B.data[2],
-    A.data[1] * B.data[3],
-    A.data[2] * B.data[3],
-    A.data[3] * B.data[3],
-    A.data[4] * B.data[3],
-    A.data[5] * B.data[3],
-    A.data[6] * B.data[3],
-    A.data[7] * B.data[3],
-    A.data[8] * B.data[3],
-    A.data[9] * B.data[3],
-    A.data[1] * B.data[4],
-    A.data[2] * B.data[4],
-    A.data[3] * B.data[4],
-    A.data[4] * B.data[4],
-    A.data[5] * B.data[4],
-    A.data[6] * B.data[4],
-    A.data[7] * B.data[4],
-    A.data[8] * B.data[4],
-    A.data[9] * B.data[4],
-    A.data[1] * B.data[5],
-    A.data[2] * B.data[5],
-    A.data[3] * B.data[5],
-    A.data[4] * B.data[5],
-    A.data[5] * B.data[5],
-    A.data[6] * B.data[5],
-    A.data[7] * B.data[5],
-    A.data[8] * B.data[5],
-    A.data[9] * B.data[5],
-    A.data[1] * B.data[6],
-    A.data[2] * B.data[6],
-    A.data[3] * B.data[6],
-    A.data[4] * B.data[6],
-    A.data[5] * B.data[6],
-    A.data[6] * B.data[6],
-    A.data[7] * B.data[6],
-    A.data[8] * B.data[6],
-    A.data[9] * B.data[6],
-    A.data[1] * B.data[7],
-    A.data[2] * B.data[7],
-    A.data[3] * B.data[7],
-    A.data[4] * B.data[7],
-    A.data[5] * B.data[7],
-    A.data[6] * B.data[7],
-    A.data[7] * B.data[7],
-    A.data[8] * B.data[7],
-    A.data[9] * B.data[7],
-    A.data[1] * B.data[8],
-    A.data[2] * B.data[8],
-    A.data[3] * B.data[8],
-    A.data[4] * B.data[8],
-    A.data[5] * B.data[8],
-    A.data[6] * B.data[8],
-    A.data[7] * B.data[8],
-    A.data[8] * B.data[8],
-    A.data[9] * B.data[8],
-    A.data[1] * B.data[9],
-    A.data[2] * B.data[9],
-    A.data[3] * B.data[9],
-    A.data[4] * B.data[9],
-    A.data[5] * B.data[9],
-    A.data[6] * B.data[9],
-    A.data[7] * B.data[9],
-    A.data[8] * B.data[9],
-    A.data[9] * B.data[9])
-end
-
+ 
   
 function cross_I4(A::TensorValue{3,3,Float64})
-  TensorValue(0.0, 0.0, 0.0, 0.0, A.data[9], -A.data[8], 0.0, -A.data[6], A.data[5], 0.0,0.0,0.0,-A.data[9],
-  0.0, A.data[7], A.data[6], 0.0, -A.data[4], 0.0,0.0,0.0, A.data[8], -A.data[7], 0.0, -A.data[5], A.data[4], 0.0, 0.0, -A.data[9],
- A.data[8], 0.0, 0.0, 0.0,0.0, A.data[3], -A.data[2], A.data[9], 0.0, -A.data[7], 0.0, 0.0, 0.0, -A.data[3], 0.0,
- A.data[1], -A.data[8], A.data[7], 0.0, 0.0, 0.0, 0.0, A.data[2], -A.data[1], 0.0, 0.0, A.data[6], -A.data[5], 0.0,
--A.data[3], A.data[2], 0.0, 0.0, 0.0, -A.data[6], 0.0, A.data[4], A.data[3], 0.0, -A.data[1],
-  0.0, 0.0, 0.0, A.data[5], -A.data[4], 0.0, -A.data[2], A.data[1], 0.0, 0.0, 0.0, 0.0)
+  TensorValue(0.0, 0.0, 0.0, 0.0, A[9], -A[8], 0.0, -A[6], A[5], 0.0,0.0,0.0,-A[9],
+  0.0, A[7], A[6], 0.0, -A[4], 0.0,0.0,0.0, A[8], -A[7], 0.0, -A[5], A[4], 0.0, 0.0, -A[9],
+ A[8], 0.0, 0.0, 0.0,0.0, A[3], -A[2], A[9], 0.0, -A[7], 0.0, 0.0, 0.0, -A[3], 0.0,
+ A[1], -A[8], A[7], 0.0, 0.0, 0.0, 0.0, A[2], -A[1], 0.0, 0.0, A[6], -A[5], 0.0,
+-A[3], A[2], 0.0, 0.0, 0.0, -A[6], 0.0, A[4], A[3], 0.0, -A[1],
+  0.0, 0.0, 0.0, A[5], -A[4], 0.0, -A[2], A[1], 0.0, 0.0, 0.0, 0.0)
 end
+
+
 
 function Gridap.TensorValues.cross(A::TensorValue{3,3,Float64}, B::TensorValue{3,3,Float64})
-  TensorValue(A.data[5] * B.data[9] - A.data[6] * B.data[8] - A.data[8] * B.data[6] + A.data[9] * B.data[5],
-    A.data[6] * B.data[7] - A.data[4] * B.data[9] + A.data[7] * B.data[6] - A.data[9] * B.data[4],
-    A.data[4] * B.data[8] - A.data[5] * B.data[7] - A.data[7] * B.data[5] + A.data[8] * B.data[4],
-    A.data[3] * B.data[8] - A.data[2] * B.data[9] + A.data[8] * B.data[3] - A.data[9] * B.data[2],
-    A.data[1] * B.data[9] - A.data[3] * B.data[7] - A.data[7] * B.data[3] + A.data[9] * B.data[1],
-    A.data[2] * B.data[7] - A.data[1] * B.data[8] + A.data[7] * B.data[2] - A.data[8] * B.data[1],
-    A.data[2] * B.data[6] - A.data[3] * B.data[5] - A.data[5] * B.data[3] + A.data[6] * B.data[2],
-    A.data[3] * B.data[4] - A.data[1] * B.data[6] + A.data[4] * B.data[3] - A.data[6] * B.data[1],
-    A.data[1] * B.data[5] - A.data[2] * B.data[4] - A.data[4] * B.data[2] + A.data[5] * B.data[1])
+  TensorValue(A[5] * B[9] - A[6] * B[8] - A[8] * B[6] + A[9] * B[5],
+    A[6] * B[7] - A[4] * B[9] + A[7] * B[6] - A[9] * B[4],
+    A[4] * B[8] - A[5] * B[7] - A[7] * B[5] + A[8] * B[4],
+    A[3] * B[8] - A[2] * B[9] + A[8] * B[3] - A[9] * B[2],
+    A[1] * B[9] - A[3] * B[7] - A[7] * B[3] + A[9] * B[1],
+    A[2] * B[7] - A[1] * B[8] + A[7] * B[2] - A[8] * B[1],
+    A[2] * B[6] - A[3] * B[5] - A[5] * B[3] + A[6] * B[2],
+    A[3] * B[4] - A[1] * B[6] + A[4] * B[3] - A[6] * B[1],
+    A[1] * B[5] - A[2] * B[4] - A[4] * B[2] + A[5] * B[1])
 end
 
+
+function Gridap.TensorValues.cross(H::TensorValue{9,9,Float64}, A::TensorValue{3,3,Float64})
+
+  TensorValue(A[9]*H[37] - A[8]*H[46] - A[6]*H[64] + A[5]*H[73],
+  A[9]*H[38] - A[8]*H[47] - A[6]*H[65] + A[5]*H[74],
+  A[9]*H[39] - A[8]*H[48] - A[6]*H[66] + A[5]*H[75],
+  A[9]*H[40] - A[8]*H[49] - A[6]*H[67] + A[5]*H[76],
+  A[9]*H[41] - A[8]*H[50] - A[6]*H[68] + A[5]*H[77],
+  A[9]*H[42] - A[8]*H[51] - A[6]*H[69] + A[5]*H[78],
+  A[9]*H[43] - A[8]*H[52] - A[6]*H[70] + A[5]*H[79],
+  A[9]*H[44] - A[8]*H[53] - A[6]*H[71] + A[5]*H[80],
+  A[9]*H[45] - A[8]*H[54] - A[6]*H[72] + A[5]*H[81],
+  A[7]*H[46] - A[9]*H[28] + A[6]*H[55] - A[4]*H[73],
+  A[7]*H[47] - A[9]*H[29] + A[6]*H[56] - A[4]*H[74],
+  A[7]*H[48] - A[9]*H[30] + A[6]*H[57] - A[4]*H[75],
+  A[7]*H[49] - A[9]*H[31] + A[6]*H[58] - A[4]*H[76],
+  A[7]*H[50] - A[9]*H[32] + A[6]*H[59] - A[4]*H[77],
+  A[7]*H[51] - A[9]*H[33] + A[6]*H[60] - A[4]*H[78],
+  A[7]*H[52] - A[9]*H[34] + A[6]*H[61] - A[4]*H[79],
+  A[7]*H[53] - A[9]*H[35] + A[6]*H[62] - A[4]*H[80],
+  A[7]*H[54] - A[9]*H[36] + A[6]*H[63] - A[4]*H[81],
+  A[8]*H[28] - A[7]*H[37] - A[5]*H[55] + A[4]*H[64],
+  A[8]*H[29] - A[7]*H[38] - A[5]*H[56] + A[4]*H[65],
+  A[8]*H[30] - A[7]*H[39] - A[5]*H[57] + A[4]*H[66],
+  A[8]*H[31] - A[7]*H[40] - A[5]*H[58] + A[4]*H[67],
+  A[8]*H[32] - A[7]*H[41] - A[5]*H[59] + A[4]*H[68],
+  A[8]*H[33] - A[7]*H[42] - A[5]*H[60] + A[4]*H[69],
+  A[8]*H[34] - A[7]*H[43] - A[5]*H[61] + A[4]*H[70],
+  A[8]*H[35] - A[7]*H[44] - A[5]*H[62] + A[4]*H[71],
+  A[8]*H[36] - A[7]*H[45] - A[5]*H[63] + A[4]*H[72],
+  A[8]*H[19] - A[9]*H[10] + A[3]*H[64] - A[2]*H[73],
+  A[8]*H[20] - A[9]*H[11] + A[3]*H[65] - A[2]*H[74],
+  A[8]*H[21] - A[9]*H[12] + A[3]*H[66] - A[2]*H[75],
+  A[8]*H[22] - A[9]*H[13] + A[3]*H[67] - A[2]*H[76],
+  A[8]*H[23] - A[9]*H[14] + A[3]*H[68] - A[2]*H[77],
+  A[8]*H[24] - A[9]*H[15] + A[3]*H[69] - A[2]*H[78],
+  A[8]*H[25] - A[9]*H[16] + A[3]*H[70] - A[2]*H[79],
+  A[8]*H[26] - A[9]*H[17] + A[3]*H[71] - A[2]*H[80],
+  A[8]*H[27] - A[9]*H[18] + A[3]*H[72] - A[2]*H[81],
+  A[9]*H[1] - A[7]*H[19] - A[3]*H[55] + A[1]*H[73],
+  A[9]*H[2] - A[7]*H[20] - A[3]*H[56] + A[1]*H[74],
+  A[9]*H[3] - A[7]*H[21] - A[3]*H[57] + A[1]*H[75],
+  A[9]*H[4] - A[7]*H[22] - A[3]*H[58] + A[1]*H[76],
+  A[9]*H[5] - A[7]*H[23] - A[3]*H[59] + A[1]*H[77],
+  A[9]*H[6] - A[7]*H[24] - A[3]*H[60] + A[1]*H[78],
+  A[9]*H[7] - A[7]*H[25] - A[3]*H[61] + A[1]*H[79],
+  A[9]*H[8] - A[7]*H[26] - A[3]*H[62] + A[1]*H[80],
+  A[9]*H[9] - A[7]*H[27] - A[3]*H[63] + A[1]*H[81],
+  A[7]*H[10] - A[8]*H[1] + A[2]*H[55] - A[1]*H[64],
+  A[7]*H[11] - A[8]*H[2] + A[2]*H[56] - A[1]*H[65],
+  A[7]*H[12] - A[8]*H[3] + A[2]*H[57] - A[1]*H[66],
+  A[7]*H[13] - A[8]*H[4] + A[2]*H[58] - A[1]*H[67],
+  A[7]*H[14] - A[8]*H[5] + A[2]*H[59] - A[1]*H[68],
+  A[7]*H[15] - A[8]*H[6] + A[2]*H[60] - A[1]*H[69],
+  A[7]*H[16] - A[8]*H[7] + A[2]*H[61] - A[1]*H[70],
+  A[7]*H[17] - A[8]*H[8] + A[2]*H[62] - A[1]*H[71],
+  A[7]*H[18] - A[8]*H[9] + A[2]*H[63] - A[1]*H[72],
+  A[6]*H[10] - A[5]*H[19] - A[3]*H[37] + A[2]*H[46],
+  A[6]*H[11] - A[5]*H[20] - A[3]*H[38] + A[2]*H[47],
+  A[6]*H[12] - A[5]*H[21] - A[3]*H[39] + A[2]*H[48],
+  A[6]*H[13] - A[5]*H[22] - A[3]*H[40] + A[2]*H[49],
+  A[6]*H[14] - A[5]*H[23] - A[3]*H[41] + A[2]*H[50],
+  A[6]*H[15] - A[5]*H[24] - A[3]*H[42] + A[2]*H[51],
+  A[6]*H[16] - A[5]*H[25] - A[3]*H[43] + A[2]*H[52],
+  A[6]*H[17] - A[5]*H[26] - A[3]*H[44] + A[2]*H[53],
+  A[6]*H[18] - A[5]*H[27] - A[3]*H[45] + A[2]*H[54],
+  A[4]*H[19] - A[6]*H[1] + A[3]*H[28] - A[1]*H[46],
+  A[4]*H[20] - A[6]*H[2] + A[3]*H[29] - A[1]*H[47],
+  A[4]*H[21] - A[6]*H[3] + A[3]*H[30] - A[1]*H[48],
+  A[4]*H[22] - A[6]*H[4] + A[3]*H[31] - A[1]*H[49],
+  A[4]*H[23] - A[6]*H[5] + A[3]*H[32] - A[1]*H[50],
+  A[4]*H[24] - A[6]*H[6] + A[3]*H[33] - A[1]*H[51],
+  A[4]*H[25] - A[6]*H[7] + A[3]*H[34] - A[1]*H[52],
+  A[4]*H[26] - A[6]*H[8] + A[3]*H[35] - A[1]*H[53],
+  A[4]*H[27] - A[6]*H[9] + A[3]*H[36] - A[1]*H[54],
+  A[5]*H[1] - A[4]*H[10] - A[2]*H[28] + A[1]*H[37],
+  A[5]*H[2] - A[4]*H[11] - A[2]*H[29] + A[1]*H[38],
+  A[5]*H[3] - A[4]*H[12] - A[2]*H[30] + A[1]*H[39],
+  A[5]*H[4] - A[4]*H[13] - A[2]*H[31] + A[1]*H[40],
+  A[5]*H[5] - A[4]*H[14] - A[2]*H[32] + A[1]*H[41],
+  A[5]*H[6] - A[4]*H[15] - A[2]*H[33] + A[1]*H[42],
+  A[5]*H[7] - A[4]*H[16] - A[2]*H[34] + A[1]*H[43],
+  A[5]*H[8] - A[4]*H[17] - A[2]*H[35] + A[1]*H[44],
+  A[5]*H[9] - A[4]*H[18] - A[2]*H[36] + A[1]*H[45])
+end
+
+function Gridap.TensorValues.cross(A::TensorValue{3,3,Float64}, H::TensorValue{9,9,Float64})
+  TensorValue(A[5]*H[9] - A[6]*H[8] - A[8]*H[6] + A[9]*H[5],
+  A[6]*H[7] - A[4]*H[9] + A[7]*H[6] - A[9]*H[4],
+  A[4]*H[8] - A[5]*H[7] - A[7]*H[5] + A[8]*H[4],
+  A[3]*H[8] - A[2]*H[9] + A[8]*H[3] - A[9]*H[2],
+  A[1]*H[9] - A[3]*H[7] - A[7]*H[3] + A[9]*H[1],
+  A[2]*H[7] - A[1]*H[8] + A[7]*H[2] - A[8]*H[1],
+  A[2]*H[6] - A[3]*H[5] - A[5]*H[3] + A[6]*H[2],
+  A[3]*H[4] - A[1]*H[6] + A[4]*H[3] - A[6]*H[1],
+  A[1]*H[5] - A[2]*H[4] - A[4]*H[2] + A[5]*H[1],
+  A[5]*H[18] - A[6]*H[17] - A[8]*H[15] + A[9]*H[14],
+  A[6]*H[16] - A[4]*H[18] + A[7]*H[15] - A[9]*H[13],
+  A[4]*H[17] - A[5]*H[16] - A[7]*H[14] + A[8]*H[13],
+  A[3]*H[17] - A[2]*H[18] + A[8]*H[12] - A[9]*H[11],
+  A[1]*H[18] - A[3]*H[16] - A[7]*H[12] + A[9]*H[10],
+  A[2]*H[16] - A[1]*H[17] + A[7]*H[11] - A[8]*H[10],
+  A[2]*H[15] - A[3]*H[14] - A[5]*H[12] + A[6]*H[11],
+  A[3]*H[13] - A[1]*H[15] + A[4]*H[12] - A[6]*H[10],
+  A[1]*H[14] - A[2]*H[13] - A[4]*H[11] + A[5]*H[10],
+  A[5]*H[27] - A[6]*H[26] - A[8]*H[24] + A[9]*H[23],
+  A[6]*H[25] - A[4]*H[27] + A[7]*H[24] - A[9]*H[22],
+  A[4]*H[26] - A[5]*H[25] - A[7]*H[23] + A[8]*H[22],
+  A[3]*H[26] - A[2]*H[27] + A[8]*H[21] - A[9]*H[20],
+  A[1]*H[27] - A[3]*H[25] - A[7]*H[21] + A[9]*H[19],
+  A[2]*H[25] - A[1]*H[26] + A[7]*H[20] - A[8]*H[19],
+  A[2]*H[24] - A[3]*H[23] - A[5]*H[21] + A[6]*H[20],
+  A[3]*H[22] - A[1]*H[24] + A[4]*H[21] - A[6]*H[19],
+  A[1]*H[23] - A[2]*H[22] - A[4]*H[20] + A[5]*H[19],
+  A[5]*H[36] - A[6]*H[35] - A[8]*H[33] + A[9]*H[32],
+  A[6]*H[34] - A[4]*H[36] + A[7]*H[33] - A[9]*H[31],
+  A[4]*H[35] - A[5]*H[34] - A[7]*H[32] + A[8]*H[31],
+  A[3]*H[35] - A[2]*H[36] + A[8]*H[30] - A[9]*H[29],
+  A[1]*H[36] - A[3]*H[34] - A[7]*H[30] + A[9]*H[28],
+  A[2]*H[34] - A[1]*H[35] + A[7]*H[29] - A[8]*H[28],
+  A[2]*H[33] - A[3]*H[32] - A[5]*H[30] + A[6]*H[29],
+  A[3]*H[31] - A[1]*H[33] + A[4]*H[30] - A[6]*H[28],
+  A[1]*H[32] - A[2]*H[31] - A[4]*H[29] + A[5]*H[28],
+  A[5]*H[45] - A[6]*H[44] - A[8]*H[42] + A[9]*H[41],
+  A[6]*H[43] - A[4]*H[45] + A[7]*H[42] - A[9]*H[40],
+  A[4]*H[44] - A[5]*H[43] - A[7]*H[41] + A[8]*H[40],
+  A[3]*H[44] - A[2]*H[45] + A[8]*H[39] - A[9]*H[38],
+  A[1]*H[45] - A[3]*H[43] - A[7]*H[39] + A[9]*H[37],
+  A[2]*H[43] - A[1]*H[44] + A[7]*H[38] - A[8]*H[37],
+  A[2]*H[42] - A[3]*H[41] - A[5]*H[39] + A[6]*H[38],
+  A[3]*H[40] - A[1]*H[42] + A[4]*H[39] - A[6]*H[37],
+  A[1]*H[41] - A[2]*H[40] - A[4]*H[38] + A[5]*H[37],
+  A[5]*H[54] - A[6]*H[53] - A[8]*H[51] + A[9]*H[50],
+  A[6]*H[52] - A[4]*H[54] + A[7]*H[51] - A[9]*H[49],
+  A[4]*H[53] - A[5]*H[52] - A[7]*H[50] + A[8]*H[49],
+  A[3]*H[53] - A[2]*H[54] + A[8]*H[48] - A[9]*H[47],
+  A[1]*H[54] - A[3]*H[52] - A[7]*H[48] + A[9]*H[46],
+  A[2]*H[52] - A[1]*H[53] + A[7]*H[47] - A[8]*H[46],
+  A[2]*H[51] - A[3]*H[50] - A[5]*H[48] + A[6]*H[47],
+  A[3]*H[49] - A[1]*H[51] + A[4]*H[48] - A[6]*H[46],
+  A[1]*H[50] - A[2]*H[49] - A[4]*H[47] + A[5]*H[46],
+  A[5]*H[63] - A[6]*H[62] - A[8]*H[60] + A[9]*H[59],
+  A[6]*H[61] - A[4]*H[63] + A[7]*H[60] - A[9]*H[58],
+  A[4]*H[62] - A[5]*H[61] - A[7]*H[59] + A[8]*H[58],
+  A[3]*H[62] - A[2]*H[63] + A[8]*H[57] - A[9]*H[56],
+  A[1]*H[63] - A[3]*H[61] - A[7]*H[57] + A[9]*H[55],
+  A[2]*H[61] - A[1]*H[62] + A[7]*H[56] - A[8]*H[55],
+  A[2]*H[60] - A[3]*H[59] - A[5]*H[57] + A[6]*H[56],
+  A[3]*H[58] - A[1]*H[60] + A[4]*H[57] - A[6]*H[55],
+  A[1]*H[59] - A[2]*H[58] - A[4]*H[56] + A[5]*H[55],
+  A[5]*H[72] - A[6]*H[71] - A[8]*H[69] + A[9]*H[68],
+  A[6]*H[70] - A[4]*H[72] + A[7]*H[69] - A[9]*H[67],
+  A[4]*H[71] - A[5]*H[70] - A[7]*H[68] + A[8]*H[67],
+  A[3]*H[71] - A[2]*H[72] + A[8]*H[66] - A[9]*H[65],
+  A[1]*H[72] - A[3]*H[70] - A[7]*H[66] + A[9]*H[64],
+  A[2]*H[70] - A[1]*H[71] + A[7]*H[65] - A[8]*H[64],
+  A[2]*H[69] - A[3]*H[68] - A[5]*H[66] + A[6]*H[65],
+  A[3]*H[67] - A[1]*H[69] + A[4]*H[66] - A[6]*H[64],
+  A[1]*H[68] - A[2]*H[67] - A[4]*H[65] + A[5]*H[64],
+  A[5]*H[81] - A[6]*H[80] - A[8]*H[78] + A[9]*H[77],
+  A[6]*H[79] - A[4]*H[81] + A[7]*H[78] - A[9]*H[76],
+  A[4]*H[80] - A[5]*H[79] - A[7]*H[77] + A[8]*H[76],
+  A[3]*H[80] - A[2]*H[81] + A[8]*H[75] - A[9]*H[74],
+  A[1]*H[81] - A[3]*H[79] - A[7]*H[75] + A[9]*H[73],
+  A[2]*H[79] - A[1]*H[80] + A[7]*H[74] - A[8]*H[73],
+  A[2]*H[78] - A[3]*H[77] - A[5]*H[75] + A[6]*H[74],
+  A[3]*H[76] - A[1]*H[78] + A[4]*H[75] - A[6]*H[73],
+  A[1]*H[77] - A[2]*H[76] - A[4]*H[74] + A[5]*H[73])
+end
+
+
+
+
 function Gridap.TensorValues.inner(Ten1::TensorValue{9,9,Float64}, Ten2::TensorValue{3,3,Float64})
-  TensorValue(Ten1.data[1] * Ten2.data[1] + Ten1.data[10] * Ten2.data[2] + Ten1.data[19] * Ten2.data[3] + Ten1.data[28] * Ten2.data[4] + Ten1.data[37] * Ten2.data[5] + Ten1.data[46] * Ten2.data[6] + Ten1.data[55] * Ten2.data[7] + Ten1.data[64] * Ten2.data[8] + Ten1.data[73] * Ten2.data[9],
-    Ten1.data[2] * Ten2.data[1] + Ten1.data[11] * Ten2.data[2] + Ten1.data[20] * Ten2.data[3] + Ten1.data[29] * Ten2.data[4] + Ten1.data[38] * Ten2.data[5] + Ten1.data[47] * Ten2.data[6] + Ten1.data[56] * Ten2.data[7] + Ten1.data[65] * Ten2.data[8] + Ten1.data[74] * Ten2.data[9],
-    Ten1.data[3] * Ten2.data[1] + Ten1.data[12] * Ten2.data[2] + Ten1.data[21] * Ten2.data[3] + Ten1.data[30] * Ten2.data[4] + Ten1.data[39] * Ten2.data[5] + Ten1.data[48] * Ten2.data[6] + Ten1.data[57] * Ten2.data[7] + Ten1.data[66] * Ten2.data[8] + Ten1.data[75] * Ten2.data[9],
-    Ten1.data[4] * Ten2.data[1] + Ten1.data[13] * Ten2.data[2] + Ten1.data[22] * Ten2.data[3] + Ten1.data[31] * Ten2.data[4] + Ten1.data[40] * Ten2.data[5] + Ten1.data[49] * Ten2.data[6] + Ten1.data[58] * Ten2.data[7] + Ten1.data[67] * Ten2.data[8] + Ten1.data[76] * Ten2.data[9],
-    Ten1.data[5] * Ten2.data[1] + Ten1.data[14] * Ten2.data[2] + Ten1.data[23] * Ten2.data[3] + Ten1.data[32] * Ten2.data[4] + Ten1.data[41] * Ten2.data[5] + Ten1.data[50] * Ten2.data[6] + Ten1.data[59] * Ten2.data[7] + Ten1.data[68] * Ten2.data[8] + Ten1.data[77] * Ten2.data[9],
-    Ten1.data[6] * Ten2.data[1] + Ten1.data[15] * Ten2.data[2] + Ten1.data[24] * Ten2.data[3] + Ten1.data[33] * Ten2.data[4] + Ten1.data[42] * Ten2.data[5] + Ten1.data[51] * Ten2.data[6] + Ten1.data[60] * Ten2.data[7] + Ten1.data[69] * Ten2.data[8] + Ten1.data[78] * Ten2.data[9],
-    Ten1.data[7] * Ten2.data[1] + Ten1.data[16] * Ten2.data[2] + Ten1.data[25] * Ten2.data[3] + Ten1.data[34] * Ten2.data[4] + Ten1.data[43] * Ten2.data[5] + Ten1.data[52] * Ten2.data[6] + Ten1.data[61] * Ten2.data[7] + Ten1.data[70] * Ten2.data[8] + Ten1.data[79] * Ten2.data[9],
-    Ten1.data[8] * Ten2.data[1] + Ten1.data[17] * Ten2.data[2] + Ten1.data[26] * Ten2.data[3] + Ten1.data[35] * Ten2.data[4] + Ten1.data[44] * Ten2.data[5] + Ten1.data[53] * Ten2.data[6] + Ten1.data[62] * Ten2.data[7] + Ten1.data[71] * Ten2.data[8] + Ten1.data[80] * Ten2.data[9],
-    Ten1.data[9] * Ten2.data[1] + Ten1.data[18] * Ten2.data[2] + Ten1.data[27] * Ten2.data[3] + Ten1.data[36] * Ten2.data[4] + Ten1.data[45] * Ten2.data[5] + Ten1.data[54] * Ten2.data[6] + Ten1.data[63] * Ten2.data[7] + Ten1.data[72] * Ten2.data[8] + Ten1.data[81] * Ten2.data[9])
+  TensorValue(Ten1[1] * Ten2[1] + Ten1[10] * Ten2[2] + Ten1[19] * Ten2[3] + Ten1[28] * Ten2[4] + Ten1[37] * Ten2[5] + Ten1[46] * Ten2[6] + Ten1[55] * Ten2[7] + Ten1[64] * Ten2[8] + Ten1[73] * Ten2[9],
+    Ten1[2] * Ten2[1] + Ten1[11] * Ten2[2] + Ten1[20] * Ten2[3] + Ten1[29] * Ten2[4] + Ten1[38] * Ten2[5] + Ten1[47] * Ten2[6] + Ten1[56] * Ten2[7] + Ten1[65] * Ten2[8] + Ten1[74] * Ten2[9],
+    Ten1[3] * Ten2[1] + Ten1[12] * Ten2[2] + Ten1[21] * Ten2[3] + Ten1[30] * Ten2[4] + Ten1[39] * Ten2[5] + Ten1[48] * Ten2[6] + Ten1[57] * Ten2[7] + Ten1[66] * Ten2[8] + Ten1[75] * Ten2[9],
+    Ten1[4] * Ten2[1] + Ten1[13] * Ten2[2] + Ten1[22] * Ten2[3] + Ten1[31] * Ten2[4] + Ten1[40] * Ten2[5] + Ten1[49] * Ten2[6] + Ten1[58] * Ten2[7] + Ten1[67] * Ten2[8] + Ten1[76] * Ten2[9],
+    Ten1[5] * Ten2[1] + Ten1[14] * Ten2[2] + Ten1[23] * Ten2[3] + Ten1[32] * Ten2[4] + Ten1[41] * Ten2[5] + Ten1[50] * Ten2[6] + Ten1[59] * Ten2[7] + Ten1[68] * Ten2[8] + Ten1[77] * Ten2[9],
+    Ten1[6] * Ten2[1] + Ten1[15] * Ten2[2] + Ten1[24] * Ten2[3] + Ten1[33] * Ten2[4] + Ten1[42] * Ten2[5] + Ten1[51] * Ten2[6] + Ten1[60] * Ten2[7] + Ten1[69] * Ten2[8] + Ten1[78] * Ten2[9],
+    Ten1[7] * Ten2[1] + Ten1[16] * Ten2[2] + Ten1[25] * Ten2[3] + Ten1[34] * Ten2[4] + Ten1[43] * Ten2[5] + Ten1[52] * Ten2[6] + Ten1[61] * Ten2[7] + Ten1[70] * Ten2[8] + Ten1[79] * Ten2[9],
+    Ten1[8] * Ten2[1] + Ten1[17] * Ten2[2] + Ten1[26] * Ten2[3] + Ten1[35] * Ten2[4] + Ten1[44] * Ten2[5] + Ten1[53] * Ten2[6] + Ten1[62] * Ten2[7] + Ten1[71] * Ten2[8] + Ten1[80] * Ten2[9],
+    Ten1[9] * Ten2[1] + Ten1[18] * Ten2[2] + Ten1[27] * Ten2[3] + Ten1[36] * Ten2[4] + Ten1[45] * Ten2[5] + Ten1[54] * Ten2[6] + Ten1[63] * Ten2[7] + Ten1[72] * Ten2[8] + Ten1[81] * Ten2[9])
 end
 
 function Gridap.TensorValues.inner(Ten1::TensorValue{3,9,Float64}, Ten2::TensorValue{3,3,Float64})
-  VectorValue(Ten1.data[1] * Ten2.data[1] + Ten1.data[4] * Ten2.data[2] + Ten1.data[7] * Ten2.data[3] + Ten1.data[10] * Ten2.data[4] + Ten1.data[13] * Ten2.data[5] + Ten1.data[16] * Ten2.data[6] + Ten1.data[19] * Ten2.data[7] + Ten1.data[22] * Ten2.data[8] + Ten1.data[25] * Ten2.data[9],
-    Ten1.data[2] * Ten2.data[1] + Ten1.data[5] * Ten2.data[2] + Ten1.data[8] * Ten2.data[3] + Ten1.data[11] * Ten2.data[4] + Ten1.data[14] * Ten2.data[5] + Ten1.data[17] * Ten2.data[6] + Ten1.data[20] * Ten2.data[7] + Ten1.data[23] * Ten2.data[8] + Ten1.data[26] * Ten2.data[9],
-    Ten1.data[3] * Ten2.data[1] + Ten1.data[6] * Ten2.data[2] + Ten1.data[9] * Ten2.data[3] + Ten1.data[12] * Ten2.data[4] + Ten1.data[15] * Ten2.data[5] + Ten1.data[18] * Ten2.data[6] + Ten1.data[21] * Ten2.data[7] + Ten1.data[24] * Ten2.data[8] + Ten1.data[27] * Ten2.data[9])
+  VectorValue(Ten1[1] * Ten2[1] + Ten1[4] * Ten2[2] + Ten1[7] * Ten2[3] + Ten1[10] * Ten2[4] + Ten1[13] * Ten2[5] + Ten1[16] * Ten2[6] + Ten1[19] * Ten2[7] + Ten1[22] * Ten2[8] + Ten1[25] * Ten2[9],
+    Ten1[2] * Ten2[1] + Ten1[5] * Ten2[2] + Ten1[8] * Ten2[3] + Ten1[11] * Ten2[4] + Ten1[14] * Ten2[5] + Ten1[17] * Ten2[6] + Ten1[20] * Ten2[7] + Ten1[23] * Ten2[8] + Ten1[26] * Ten2[9],
+    Ten1[3] * Ten2[1] + Ten1[6] * Ten2[2] + Ten1[9] * Ten2[3] + Ten1[12] * Ten2[4] + Ten1[15] * Ten2[5] + Ten1[18] * Ten2[6] + Ten1[21] * Ten2[7] + Ten1[24] * Ten2[8] + Ten1[27] * Ten2[9])
 end
 
 
 function Gridap.TensorValues.inner(Ten1::TensorValue{3,9,Float64}, Ten2::VectorValue{3,Float64})
-  TensorValue(Ten1.data[1] * Ten2.data[1] + Ten1.data[10] * Ten2.data[2] + Ten1.data[19] * Ten2.data[3],
-    Ten1.data[2] * Ten2.data[1] + Ten1.data[11] * Ten2.data[2] + Ten1.data[20] * Ten2.data[3],
-    Ten1.data[3] * Ten2.data[1] + Ten1.data[12] * Ten2.data[2] + Ten1.data[21] * Ten2.data[3],
-    Ten1.data[4] * Ten2.data[1] + Ten1.data[13] * Ten2.data[2] + Ten1.data[22] * Ten2.data[3],
-    Ten1.data[5] * Ten2.data[1] + Ten1.data[14] * Ten2.data[2] + Ten1.data[23] * Ten2.data[3],
-    Ten1.data[6] * Ten2.data[1] + Ten1.data[15] * Ten2.data[2] + Ten1.data[24] * Ten2.data[3],
-    Ten1.data[7] * Ten2.data[1] + Ten1.data[16] * Ten2.data[2] + Ten1.data[25] * Ten2.data[3],
-    Ten1.data[8] * Ten2.data[1] + Ten1.data[17] * Ten2.data[2] + Ten1.data[26] * Ten2.data[3],
-    Ten1.data[9] * Ten2.data[1] + Ten1.data[18] * Ten2.data[2] + Ten1.data[27] * Ten2.data[3])
+  TensorValue(Ten1[1] * Ten2[1] + Ten1[10] * Ten2[2] + Ten1[19] * Ten2[3],
+    Ten1[2] * Ten2[1] + Ten1[11] * Ten2[2] + Ten1[20] * Ten2[3],
+    Ten1[3] * Ten2[1] + Ten1[12] * Ten2[2] + Ten1[21] * Ten2[3],
+    Ten1[4] * Ten2[1] + Ten1[13] * Ten2[2] + Ten1[22] * Ten2[3],
+    Ten1[5] * Ten2[1] + Ten1[14] * Ten2[2] + Ten1[23] * Ten2[3],
+    Ten1[6] * Ten2[1] + Ten1[15] * Ten2[2] + Ten1[24] * Ten2[3],
+    Ten1[7] * Ten2[1] + Ten1[16] * Ten2[2] + Ten1[25] * Ten2[3],
+    Ten1[8] * Ten2[1] + Ten1[17] * Ten2[2] + Ten1[26] * Ten2[3],
+    Ten1[9] * Ten2[1] + Ten1[18] * Ten2[2] + Ten1[27] * Ten2[3])
 end
 
 
@@ -241,6 +263,16 @@ end
 @inline function (*)(Ten1::TensorValue, Ten2::TensorValue)
   return (⋅)(Ten1, Ten2)
 end
+
+
+@generated function (+)(A::TensorValue{D,D,Float64}, B::TensorValue{D,D,Float64}) where {D}
+  str = ""
+  for i in 1:D*D
+      str *= "A.data[$i] + B.data[$i], "
+  end
+  Meta.parse("TensorValue{D,D, Float64}($str)")
+end
+
 
 
 end
