@@ -2,3 +2,5 @@
 **/.DS_Store
 examples/old/
 results/
+examples/ex9/parametrize_plate_elec.msh
+examples/ex10/Manifest.toml
