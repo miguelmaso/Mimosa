@@ -284,13 +284,12 @@ end
 # end
 
 
-
 #---------------------------------------------
 # Initialization of optimization variables
 #---------------------------------------------
 ϕ_max = 0.15
-xini = [0.01;0.01;0.01;0.01]
-grad = [0.0;0.0;0.0;0.0]
+#xini = [0.01;0.01;0.01;0.01]
+#grad = [0.0;0.0;0.0;0.0]
 #ϕ_app = xini * opt_params.ϕ_max
 #xstate = StateEquation(ϕ_app; fem_params)
 #xadjoint = AdjointEquation(xstate, ϕ_app; fem_params)
@@ -372,8 +371,23 @@ printstyled("--------------------------------\n"; color=:yellow)
 printstyled("Starting the target generation\n"; color = :yellow)
 printstyled("--------------------------------\n";color = :yellow)
 xstate = StateEquation(1,ϕ_app; fem_params)
-xh = FEFunction(V, xstate)
-u_tt = xh[1]
+
+#---------------------------------------------------------------
+# We get the displacements and project them in a given surface
+#--------------------------------------------------------------
+#D𝒥Dφmaxᵛ = assemble_vector(xstate, fem_params.Uφᵛ) #Volumen
+u_Fe_Function = FEFunction(fem_params.Uφᵛ, xstate[1:fem_params.ndofm]) # Convierte a una FE
+u_Projected = interpolate_everywhere(u_Fe_Function, fem_params.Uφˢt1) #Interpola en una superficie la FE
+u_Vector_on_Surface = get_free_dof_values(u_Projected) # Saca un vector
+
+
+
+
+
+
+
+#xh = FEFunction(V, xstate)
+#u_tt = xh[1]
 
 #opt_params = (; N, u_tt, ϕ_max)
 # ----------------------------
