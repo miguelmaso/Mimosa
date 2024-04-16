@@ -8,6 +8,7 @@ using ForwardDiff
 using Mimosa
 using NLopt
 using WriteVTK
+using DelimitedFiles
 
 
 # Initialisation result folder
@@ -26,7 +27,7 @@ const ε = 1.0
 #---------------------------
 
 
-function CompactCall(input_potential::Vector)
+function CompactCall(input_potential::Vector, folder_name)
 
 
 
@@ -107,12 +108,6 @@ function CompactCall(input_potential::Vector)
     Nh = interpolate_everywhere(N, Uu)
 
 
-
-
-    #uᵗ(x) = VectorValue([0.0, -((0.3 * 40.0) * (x[3] / 40.0)^2.0), 0.0])
-
-
-
     # Setup non-linear solver
     nls = NLSolver(
         show_trace=true,
@@ -181,7 +176,7 @@ function CompactCall(input_potential::Vector)
         end
     end
     function StateEquation(target_gen,ϕ_app::Vector; fem_params)
-        nsteps = 12
+        nsteps = 5
         Λ_inc = 1.0 / nsteps
         x0 = zeros(Float64, num_free_dofs(V))
         cache = nothing
@@ -193,6 +188,15 @@ function CompactCall(input_potential::Vector)
             Λ += Λ_inc
             Λ = min(1.0, Λ)
             x0, cache, flag  = StateEquationIter(target_gen, x0,Λ*ϕ_app, loadinc, fem_params.ndofm, cache)
+            u_Fe_Function = FEFunction(fem_params.Uφᵛ, x0[1:fem_params.ndofm]) # Convierte a una FE
+            u_Projected = interpolate_everywhere(u_Fe_Function, fem_params.Uφˢt1) #Interpola en una superficie la FE
+            u_Vector_on_Surface = get_free_dof_values(u_Projected) # Saca un vector
+            cd("Potential $folder_name")
+            filename = string.(round.(Λ*ϕ_app,digits=4))
+            open("$filename.txt","w") do io
+                writedlm(io,u_Vector_on_Surface)
+            end
+            cd(dirname(@__FILE__))
             if (flag == false)
                 Λ    -= Λ_inc
                 Λ_inc = Λ_inc / 2
@@ -206,31 +210,6 @@ function CompactCall(input_potential::Vector)
         end
         return x0 
     end
-
-    # #---------------------------------------------
-    # # Adjoint equation
-    # #---------------------------------------------
-    # # function Vec_adjoint(uh::FEFunction)
-    # #     return (v,vφ)->∫(((uh - uᵗ)⋅Nh)*(Nh⋅v) + vφ*0.0)*dΩ
-    # # end
-    # function Mat_adjoint(uh::FEFunction, φh::FEFunction)
-    #     return ((p, pφ), (v, vφ)) -> ∫(∇(v)' ⊙ (inner42 ∘ ((∂Ψuu ∘ (∇(uh)', ∇(φh))), ∇(p)')) +
-    #                                    ∇(pφ) ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(uh)', ∇(φh))), ∇(v)')) +
-    #                                    ∇(vφ)' ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(uh)', ∇(φh))), ∇(p)')) +
-    #                                    ∇(vφ)' ⋅ ((∂Ψφφ ∘ (∇(uh)', ∇(φh))) ⋅ ∇(pφ))) * dΩ
-    # end
-
-    # function AdjointEquation(xstate, ϕ_app; fem_params)
-    #     u = xstate[1:fem_params.ndofm]
-    #     φ = xstate[fem_params.ndofm+1:end]
-    #     Uφ = TrialFESpace(Vφ, [ϕ_app[1],ϕ_app[2],0.0,0.0,ϕ_app[3],ϕ_app[4]])
-    #     uh = FEFunction(Uu, u)
-    #     φh = FEFunction(Uφ, φ)
-    #     Vec_adjoint((v, vφ)) = ∫(((uh - u_tt) ⋅ Nh) * (Nh ⋅ v) + vφ * 0.0) * dΩ
-    #     op = AffineFEOperator(Mat_adjoint(uh, φh), Vec_adjoint, V, V)
-    #     kh = solve(op)
-    #     return get_free_dof_values(kh)
-    # end
 
 
     # #---------------------------------------------
@@ -291,131 +270,33 @@ function CompactCall(input_potential::Vector)
     #     return [sum(D𝒥Dφmaxˢst1),sum(D𝒥Dφmaxˢst2),sum(D𝒥Dφmaxˢsb1),sum(D𝒥Dφmaxˢsb2)]
     # end
 
-
-    #---------------------------------------------
-    # Initialization of optimization variables
-    #---------------------------------------------
-
-    #xini = [0.01;0.01;0.01;0.01]
-    #grad = [0.0;0.0;0.0;0.0]
-    #ϕ_app = xini * opt_params.ϕ_max
-    #xstate = StateEquation(ϕ_app; fem_params)
-    #xadjoint = AdjointEquation(xstate, ϕ_app; fem_params)
-    #println("Descend direction")
-    #dobjdΦ = D𝒥Dφmax(xini, xstate, xadjoint; fem_params, opt_params)
-    #fo = 𝒥(xstate, ϕ_app; fem_params)
-
-
-
-    # function fopt(x::Vector, grad::Vector; fem_params, opt_params)
-    #     ϕ_app = [1.0,0.0,0.0,1.0] * opt_params.ϕ_max
-    #     xstate = StateEquation(0,ϕ_app; fem_params)
-    #     xadjoint = AdjointEquation(xstate, ϕ_app; fem_params)
-    #     if length(grad) > 0
-    #         dobjdΦ = D𝒥Dφmax(x, xstate, xadjoint; fem_params, opt_params)
-    #         grad[:] = opt_params.ϕ_max * dobjdΦ
-    #     end
-    #     fo = 𝒥(xstate, ϕ_app; fem_params)
-    #     return fo
-    # end
-
-    # function electro_optimize(x_init; TOL=1e-4, MAX_ITER=500, fem_params, opt_params)
-    #     ##################### Optimize #################
-    #     opt = Opt(:LD_MMA, 4)
-    #     opt.lower_bounds = 0
-    #     opt.upper_bounds = 1
-    #     opt.ftol_rel = TOL
-    #     opt.maxeval = MAX_ITER
-    #     opt.min_objective = (x0, grad) -> fopt(x0, grad; fem_params, opt_params)
-
-    #     (f_opt, x_opt, ret) = optimize(opt, x_init)
-    #     @show numevals = opt.numevals # the number of function evaluations
-    #     return f_opt, x_opt, ret
-    # end
-
-
-
-    # #---------------------------------------------
-    # # Numerical evaluation of sensitivies
-    # #---------------------------------------------
-    # xrand   =  rand(4)*0.4
-    # NumericalDerivativesTest  =  0.0
-    # if NumericalDerivativesTest==1.0
-    #    println("I am here!")
-    #    δx =  1e-6
-    #    gradAp  =  zeros(4)
-    #    xm    =  copy(xrand)
-    #    xp    =  copy(xrand)
-    #    f     =  fopt(xrand, grad; fem_params, opt_params)
-    #    @show grad
-    #    println("I am here")
-    #    for i in 1:4
-    #       println("------ $(i)\n")
-    #       xm[:]  =  xrand
-    #       xp[:]  =  xrand
-    #       xp[i]  =  xp[i] + δx
-    #       xm[i]  =  xm[i] - δx
-    #       fplus  =  fopt(xp, []; fem_params, opt_params)
-    #       fminus =  fopt(xm, []; fem_params, opt_params)      
-    #       gradAp[i]  =  (fplus - fminus)/(2.0*δx)
-    #    end
-    #    @show(grad)
-    #    println("------------------------\n")
-    #    @show(gradAp)
-    #    println("------------------------\n")
-    #    @show(norm(grad - gradAp)/norm(grad))
-    #    println("------------------------\n")
-    #    #@show(gradf[1:nfinal])
-    # end
-
-    #error("d")
-
     # ----------------------------
     # We generate the target
     # ----------------------------
-    #ϕ_max = 0.15
-    #xpre = [1.0,0.0,0.0,1.0] # 
-    #ϕ_app = xpre * ϕ_max
-    ϕ_app = input_potential
-
     printstyled("--------------------------------\n"; color=:yellow)
     printstyled("Starting the target generation\n"; color = :yellow)
     printstyled("--------------------------------\n";color = :yellow)
-    xstate = StateEquation(1,ϕ_app; fem_params)
+    xstate = StateEquation(1,input_potential; fem_params)
 
     #---------------------------------------------------------------
     # We get the displacements and project them in a given surface
     #--------------------------------------------------------------
-    #D𝒥Dφmaxᵛ = assemble_vector(xstate, fem_params.Uφᵛ) #Volumen
     u_Fe_Function = FEFunction(fem_params.Uφᵛ, xstate[1:fem_params.ndofm]) # Convierte a una FE
     u_Projected = interpolate_everywhere(u_Fe_Function, fem_params.Uφˢt1) #Interpola en una superficie la FE
     u_Vector_on_Surface = get_free_dof_values(u_Projected) # Saca un vector
 
-    #xh = FEFunction(V, xstate)
-    #u_tt = xh[1]
-
-    #opt_params = (; N, u_tt, ϕ_max)
-    # ----------------------------
-    # We start the optimization trying to match the previous target
-    # ----------------------------
-    # @time fopt(xini, grad; fem_params, opt_params)
-    #ϕ_app = xini * opt_params.ϕ_max
-    #xstate = StateEquation(ϕ_app; fem_params)
-    #xadjoint = AdjointEquation(xstate, ϕ_app; fem_params)
-    #dobjdΦ = D𝒥Dφmax(xini, xstate, xadjoint; fem_params, opt_params)
-    #grad[:] = opt_params.ϕ_max * dobjdΦ
-    #@show size(grad)
-    #fo = 𝒥(xstate, ϕ_app; fem_params)
-    # printstyled("--------------------------------\n"; color=:blue)
-    # printstyled("Starting the optimization\n"; color = :blue)
-    # printstyled("--------------------------------\n";color = :blue)
-    #  a, b, ret=electro_optimize(xini; TOL = 1e-6, MAX_ITER=500, fem_params, opt_params)
-    #  vtk_save(pvd_results)
    return u_Vector_on_Surface
 end
 
 
-input = [0.15, 0.0, 0.0, 0.15]
-output = CompactCall(input);
+input = [0.01, 0.0, 0.0, 0.01]
+
+folder_name = string.(input)
+mkdir("Potential $folder_name")
+#cd("Potential $folder_name")
+
+output = CompactCall(input, folder_name);
+
+
 #TODO Naming para el archivo output. He pensado que puedes crear una carpeta que se llame
 # como el vector de input y que, dentro de la carpeta, pongas los resultados  del StateEquation que te va sacando para cada loadstep
