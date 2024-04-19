@@ -298,5 +298,6 @@ mkdir("Potential $folder_name")
 output = CompactCall(input, folder_name);
 
 
-#TODO Naming para el archivo output. He pensado que puedes crear una carpeta que se llame
-# como el vector de input y que, dentro de la carpeta, pongas los resultados  del StateEquation que te va sacando para cada loadstep
+#TODO We now need to ORGANIZE THE DATA GENERATION. We will create n points in the N faces of the cube, thus we will have a=nxN sampling points
+# The file outputted will be a 4xa matrix, with each column being the potential prescribed in each electrode. We will take a 4 zone electrode
+
