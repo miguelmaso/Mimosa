@@ -89,11 +89,13 @@ function CompactCall(input_potential::Vector, folder_name)
     Uu = TrialFESpace(Vu, [u0])
 
     Uφᵛ = FESpace(Ωₕ, reffeφ, conformity=:H1)
+    Uuv = FESpace(Ωₕ, reffeu, conformity=:H1)
     Γt1 = BoundaryTriangulation(model, tags="t1")
     Γt2 = BoundaryTriangulation(model, tags="t2")
     Γb1 = BoundaryTriangulation(model, tags="b1")
     Γb2 = BoundaryTriangulation(model, tags="b2")
     Uφˢt1 = FESpace(Γt1, reffeφ)
+    Uuˢt1 = FESpace(Γt1, reffeu)
     Uφˢt2 = FESpace(Γt2, reffeφ)
     Uφˢb1 = FESpace(Γb1, reffeφ)
     Uφˢb2 = FESpace(Γb2, reffeφ)
@@ -102,7 +104,7 @@ function CompactCall(input_potential::Vector, folder_name)
     ndofm::Int = num_free_dofs(Vu)
     ndofe::Int = num_free_dofs(Vφ)
     Qₕ = CellQuadrature(Ωₕ, 4 * 2)
-    fem_params = (; Ωₕ, dΩ, ndofm, ndofe, Uφᵛ, Uφˢt1, Uφˢt2, Uφˢb1, Uφˢb2, Qₕ)
+    fem_params = (; Ωₕ, dΩ, ndofm, ndofe, Uφᵛ,Uuv, Uφˢt1,Uuˢt1, Uφˢt2, Uφˢb1, Uφˢb2, Qₕ)
 
     N = VectorValue(0.0, 0.0, 1.0)
     Nh = interpolate_everywhere(N, Uu)
@@ -176,7 +178,7 @@ function CompactCall(input_potential::Vector, folder_name)
         end
     end
     function StateEquation(target_gen,ϕ_app::Vector; fem_params)
-        nsteps = 5
+        nsteps = 5 
         Λ_inc = 1.0 / nsteps
         x0 = zeros(Float64, num_free_dofs(V))
         cache = nothing
@@ -188,8 +190,8 @@ function CompactCall(input_potential::Vector, folder_name)
             Λ += Λ_inc
             Λ = min(1.0, Λ)
             x0, cache, flag  = StateEquationIter(target_gen, x0,Λ*ϕ_app, loadinc, fem_params.ndofm, cache)
-            u_Fe_Function = FEFunction(fem_params.Uφᵛ, x0[1:fem_params.ndofm]) # Convierte a una FE
-            u_Projected = interpolate_everywhere(u_Fe_Function, fem_params.Uφˢt1) #Interpola en una superficie la FE
+            u_Fe_Function = FEFunction(fem_params.Uuv, x0[1:fem_params.ndofm]) # Convierte a una FE
+            u_Projected = interpolate_everywhere(u_Fe_Function, fem_params.Uuˢt1) #Interpola en una superficie la FE
             u_Vector_on_Surface = get_free_dof_values(u_Projected) # Saca un vector
             cd("Potential $folder_name")
             filename = string.(round.(Λ*ϕ_app,digits=4))
@@ -278,12 +280,12 @@ function CompactCall(input_potential::Vector, folder_name)
     printstyled("--------------------------------\n";color = :yellow)
     xstate = StateEquation(1,input_potential; fem_params)
 
-    #---------------------------------------------------------------
-    # We get the displacements and project them in a given surface
-    #--------------------------------------------------------------
-    u_Fe_Function = FEFunction(fem_params.Uφᵛ, xstate[1:fem_params.ndofm]) # Convierte a una FE
-    u_Projected = interpolate_everywhere(u_Fe_Function, fem_params.Uφˢt1) #Interpola en una superficie la FE
-    u_Vector_on_Surface = get_free_dof_values(u_Projected) # Saca un vector
+    # #---------------------------------------------------------------
+    # # We get the displacements and project them in a given surface
+    # #--------------------------------------------------------------
+    # u_Fe_Function = FEFunction(fem_params.Uφᵛ, xstate[1:fem_params.ndofm]) # Convierte a una FE
+    # u_Projected = interpolate_everywhere(u_Fe_Function, fem_params.Uφˢt1) #Interpola en una superficie la FE
+    # u_Vector_on_Surface = get_free_dof_values(u_Projected) # Saca un vector
 
    return u_Vector_on_Surface
 end
