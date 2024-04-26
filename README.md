@@ -14,12 +14,6 @@ First, include the main Mimosa module:
 ```julia
 using Mimosa
 ```
-
-## Usage
-First, include the main GridapFSI module:
-```julia
-using GridapFSI
-```
 Then, execute the `main()` function especifying the driver name and the optional arguments. By default the `ElectroMechanics` driver is called, with the default parameters corresponding to the EM_Plate test case. Other drivers can be called with the following sintax:
 ```julia
 main(; problemName="<driverName>",kwargs...)
