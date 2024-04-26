@@ -8,32 +8,16 @@
 # **M**ultiphysics **I**nformed **M**achine learning for **O**ptimal design of **S**mart m**A**terials
 
 # MiniApps included 
-ex0: Linear Elasticity 
 
-ex1: Hyperelastic materials
-
-ex2: Nonlinear ElectroMechanics
-
-ex3: Nonlinear MagnetoMechanics
-
-ex4: Linear Elasticity multimaterial. AlgebraicMultigrid preconditioner.
-
-ex5: Optimal desing in Nonlinear MagnetoMechanics 
-
-ex6: Optimal control in Nonlinear ElectroMechanics 
-
-ex7: Linear Elasticity with periodic bcs
-
-ex8: NonLinear Elasticity with periodic bcs using CutFEM
-
-ex9: Nonlinear ElectroMechanics with parametric Dirichlet BCs
-
-ex10: Linear Elasticity with periodic bcs using CutFEM
-
+scripts/EM_Plate: Nonlinear ElectroMechanics
+scripts/M_Plate: Nonlinear Hyperelasticity
+scripts/TEM_StaticSquare: Nonlinear ThermoElectroMechanics
 
 Project funded by:
 
 - Grant PID2022-141957OA-C22 funded by MCIN/AEI/ 10.13039/501100011033  and by ''ERDF A way of making Europe''
+
+- Grant PID2022-141957OB-C22 funded by MCIN/AEI/ 10.13039/501100011033  and by ''ERDF A way of making Europe''
 
 - Grant 21996/PI/22  funded by Autonomous Community of the Region of Murcia, Spain, through the programme for the development of scientific and technical research by competitive groups (21996/PI/22), Promotion of Scientific and Technical Research of Fundacion Seneca –Agencia de Ciencia y Tecnologia de la Region de Murcia.
 
