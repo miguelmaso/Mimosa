@@ -26,5 +26,6 @@ Project funded by:
  <p align="center"> 
 &nbsp; &nbsp; &nbsp; &nbsp;
 <img alt="Dark"
-src="https://github.com/jmartfrut/RVEs/blob/main/docs/imgs/aei.png" width="60%">
+src=" https://github.com/jmartfrut/Mimosa/blob/main/docs/imgs/aei.png?raw=true" width="60%">
 </p>
+ 
