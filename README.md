@@ -10,7 +10,9 @@
 # MiniApps included 
 
 scripts/EM_Plate: Nonlinear ElectroMechanics
+
 scripts/M_Plate: Nonlinear Hyperelasticity
+
 scripts/TEM_StaticSquare: Nonlinear ThermoElectroMechanics
 
 Project funded by:
@@ -19,12 +21,10 @@ Project funded by:
 
 - Grant PID2022-141957OB-C22 funded by MCIN/AEI/ 10.13039/501100011033  and by ''ERDF A way of making Europe''
 
-- Grant 21996/PI/22  funded by Autonomous Community of the Region of Murcia, Spain, through the programme for the development of scientific and technical research by competitive groups (21996/PI/22), Promotion of Scientific and Technical Research of Fundacion Seneca –Agencia de Ciencia y Tecnologia de la Region de Murcia.
 
 
  <p align="center"> 
-<img alt="Light" src="https://github.com/jmartfrut/Mimosa/blob/main/docs/imgs/seneca.png" width="35%">
 &nbsp; &nbsp; &nbsp; &nbsp;
 <img alt="Dark"
-src="https://github.com/jmartfrut/Mimosa/blob/main/docs/imgs/aei.png" width="45%">
+src="https://github.com/jmartfrut/RVEs/blob/main/docs/imgs/aei.png" width="60%">
 </p>
