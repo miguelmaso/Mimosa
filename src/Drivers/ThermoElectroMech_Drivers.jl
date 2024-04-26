@@ -1,0 +1,132 @@
+
+function execute(problem::ThermoElectroMechProblem{:TEM_StaticSquare}; kwargs...)
+    println("Executing ThermoElectroMechProblem{:StaticSquare}")
+
+    # Problem setting
+    couplingstrategy = _get_kwarg(:couplingstrategy, kwargs, "monolithic")
+    ctype = CouplingStrategy{Symbol(couplingstrategy)}()
+    mesh_file = _get_kwarg(:model, kwargs, "TEMStaticSquare.msh")
+    pname = "TEM_StaticSquare"
+    ptype = "ThermoElectroMechanics"
+    simdir_ = datadir("sims", pname)
+    setupfolder(simdir_)
+
+    # mechanical properties
+    μ = _get_kwarg(:μ, kwargs, 1e6)
+    λ = _get_kwarg(:λ, kwargs, 1e7)
+
+    # thermal properties
+    c0 = _get_kwarg(:c0, kwargs, 100.0)
+    θR = _get_kwarg(:θR, kwargs, 293.15)
+    β = _get_kwarg(:β, kwargs, 2.233e-4)
+    e = _get_kwarg(:e, kwargs, 5209)
+
+    # electrical properties
+    ε0 = _get_kwarg(:ε0, kwargs, 1.0)
+    εr = _get_kwarg(:εr, kwargs, 4.0)
+    ε = _get_kwarg(:ε, kwargs, 4.0)
+
+    # coupling parameters
+    κ = _get_kwarg(:κ, kwargs, 10)
+    f = _get_kwarg(:f, kwargs)
+    df = _get_kwarg(:df, kwargs)
+    @assert(typeof(f) <: Function)
+    @assert(typeof(df) <: Function)
+
+    order = _get_kwarg(:order, kwargs, 1)
+
+    printinfo = @dict pname ptype couplingstrategy mesh_file μ λ β e θR c0 ε0 εr ε κ order
+    print_heading(printinfo)
+
+    # Constitutive models
+    modmec = NeoHookean3D(λ, μ)
+    modelec = IdealDielectric(ε)
+    modterm = ThermalModel(c0, θR, β * e)
+    modTEM = ThermoElectroMech(modterm, modelec, modmec, f, df)
+
+    # Derivatives
+    Ψ, ∂Ψu, ∂Ψφ, ∂Ψθ, ∂Ψuu, ∂Ψφφ, ∂Ψθθ, ∂Ψφu, ∂Ψuθ, ∂Ψφθ = modTEM(DerivativeStrategy{:analytic}())
+    DΨ = @ntuple ∂Ψu ∂Ψφ ∂Ψθ ∂Ψuu ∂Ψφφ ∂Ψθθ ∂Ψφu ∂Ψuθ ∂Ψφθ
+
+    # grid model
+    model = GmshDiscreteModel(datadir("models", mesh_file))
+    labels = get_face_labeling(model)
+    add_tag_from_tags!(labels, "fix", [4])
+    add_tag_from_tags!(labels, "bottom", [1])
+    add_tag_from_tags!(labels, "top", [3])
+    writevtk(model, simdir_ * "/DiscreteModel")
+
+    # Setup integration
+    degree = 2 * order
+    Ω = Triangulation(model)
+    dΩ = Measure(Ω, degree)
+
+    # Dirichlet boundary conditions
+    dirichletbc_ = _get_kwarg(:dirichletbc, kwargs)
+    dirichletbc = get_bc_func(dirichletbc_[:tags], dirichletbc_[:values])
+
+    # FE spaces
+    fe_spaces = get_FE_spaces(problem, ctype, model, order, dirichletbc)
+
+    # WeakForms
+    res((u, φ, θ), (v, vφ, vθ)) = residual_TEM(ctype, (u, φ, θ), (v, vφ, vθ), (∂Ψu, ∂Ψφ), κ, dΩ)
+    jac((u, φ, θ), (du, dφ, dθ), (v, vφ, vθ)) = jacobian_TEM(ctype, (u, φ, θ), (du, dφ, dθ), (v, vφ, vθ), (∂Ψuu, ∂Ψφφ, ∂Ψφu, ∂Ψuθ, ∂Ψφθ), κ, dΩ)
+
+    @timeit pname begin
+        println("Defining Nonlinear solver")
+        # NewtonRaphson solver
+        solveropt = _get_kwarg(:solveropt, kwargs)
+        nlsolver = get_FE_solver(solveropt)
+
+        # Initialization
+        xu = zeros(Float64, num_free_dofs(fe_spaces.Vu))
+        xφ = zeros(Float64, num_free_dofs(fe_spaces.Vφ))
+        xθ = θR * ones(Float64, num_free_dofs(fe_spaces.Vθ))
+        x0 = vcat(xu, xφ, xθ)
+        ph = FEFunction(fe_spaces.U, x0)
+
+        solver_params = @dict fe_spaces dirichletbc Ω dΩ DΨ κ res jac solveropt nlsolver
+
+         ph = Solver(problem, ctype, ph, solver_params)
+    end
+
+
+end
+
+
+
+function ΔSolver!(problem::ThermoElectroMechProblem, ctype::CouplingStrategy{:monolithic}, ph, Λ, Λ_inc, params, cache)
+
+    fe_spaces = _get_kwarg(:fe_spaces, params)
+    dirichletbc = _get_kwarg(:dirichletbc, params)
+    res = _get_kwarg(:res, params)
+    jac = _get_kwarg(:jac, params)
+    nlsolver = _get_kwarg(:nlsolver, params)
+    DΨ = _get_kwarg(:DΨ, params)
+    dΩ = _get_kwarg(:dΩ, params)
+
+    # update x0 with dirichlet incrementos   
+    uh = ph[1] # not hard copy
+    φh = ph[2] # not hard copy
+    θh = ph[3] # not hard copy
+    # Test and trial spaces for Λ_inc
+    fe_spaces = get_FE_spaces!(problem, ctype, fe_spaces, dirichletbc, Λ_inc)
+    # Update Dirichlet for electro problem
+    lφ(vφ) = -1.0 * residual_TEM(CouplingStrategy{:staggered_E}(), (uh, φh, θh), vφ, DΨ.∂Ψφ, dΩ)
+    aφ(dφ, vφ) = jacobian_TEM(CouplingStrategy{:staggered_E}(), (uh, φh, θh), dφ, vφ, DΨ.∂Ψφφ, dΩ)
+    opφ = AffineFEOperator(aφ, lφ, fe_spaces.Uφ, fe_spaces.Vφ)
+    dφh = solve(opφ)
+
+    pφh = get_free_dof_values(φh)
+    pdφh = get_free_dof_values(dφh)
+    pφh .+= pdφh
+
+    fe_spaces = get_FE_spaces!(problem, ctype, fe_spaces, dirichletbc, Λ)
+
+    op = FEOperator(res, jac, fe_spaces.U, fe_spaces.V)
+    ph, cache = solve!(ph, nlsolver, op, cache)
+
+    return ph, cache
+end
+
+ 

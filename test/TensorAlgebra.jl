@@ -1,21 +1,52 @@
-using Gridap
+using Gridap.TensorValues
 
 
 @testset "outer" begin
   A = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3
   B = TensorValue(4.6, 2.1, 1.7, 3.2, 6.5, 1.4, 9.2, 8.0, 9.0) * 1e-3
+  V1 = VectorValue(1.0, 2.0, 3.0)
+  V2 = VectorValue(1.5, 2.5, 3.5)
   @test norm(A ⊗ B) == 0.0002984572833756952
+  @test norm(A ⊗₁₂³⁴ B)== 0.0002984572833756952
+  @test norm(V1 ⊗ V2) == 17.04406054905931
+  @test norm(V1 ⊗₁² V2) == 17.04406054905931
+  @test norm(V1 ⊗₁²³ A)== 0.06316644678941503
+  @test norm(A ⊗₁₂³ V1)== 0.06316644678941503
+  @test norm(A ⊗₁₃² V1)== 0.06316644678941503
+  @test norm(A ⊗₁₃²⁴ B)== 0.00029845728337569516
 end
+ 
+ 
+
+# @benchmark (A ⊗₁₃²⁴ B)
+# @benchmark (A ⊗₁₂³ V1)
+# @benchmark (A ⊗₁₃² V1)
+# @benchmark (V1 ⊗₁²³ A)
+# @benchmark (A ⊗₁₃²⁴ B)
+# @benchmark (D × A)
+
+# @code_warntype (A ⊗₁₃²⁴ B)
+# @code_warntype (A ⊗₁₂³ V1)
+# @code_warntype (A ⊗₁₃² V1)
+# @code_warntype (V1 ⊗₁²³ A)
+# @code_warntype (A ⊗₁₃²⁴ B)
+# @code_warntype (D × A)
+
+ 
 
 @testset "cross" begin
   A = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3
   B = TensorValue(4.6, 2.1, 1.7, 3.2, 6.5, 1.4, 9.2, 8.0, 9.0) * 1e-3
   C = A ⊗ B
-  @test norm(cross_I4(A)) == 0.033763886032268264
+  D = TensorValue([4.6 2.1 1.7 3.2 6.5 1.4 9.2 8.0 9.0;
+  1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0;
+  5.3 2.0 3.1 1.9 5.4 9.8 0.4 8.8 3.1] * 1e-3)
+  @test norm(×ᵢ⁴(A)) == 0.033763886032268264
   @test norm(A × B) == 6.246230863488799e-5
   @test norm(C × B) == 2.4491455542698976e-6
   @test norm(B × C) == 1.104276381618298e-6
-end
+  @test norm(D × A) == 0.00012378691368638284
+ end
 
 @testset "inner" begin
   A = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3

@@ -1,28 +1,51 @@
 
-macro publish(mod,name)
-    quote
-      using Mimosa.$mod: $name; export $name
-    end
+macro publish(mod, name)
+  quote
+    using Mimosa.$mod: $name
+    export $name
   end
-  
-
-  @publish TensorAlgebra (*)
-  @publish TensorAlgebra cross_I4
-
-  @publish FileManagement setupfolder
-  @publish FileManagement numfiles
-  @publish FileManagement _get_kwarg
-
-  @publish ConstitutiveModels logreg
-  @publish ConstitutiveModels NeoHookean3D
-  @publish ConstitutiveModels DerivativeStrategy
-  @publish ConstitutiveModels MoneyRivlin3D
-
-   
+end
 
 
+@publish TensorAlgebra (*)
+@publish TensorAlgebra (×ᵢ⁴)
+@publish TensorAlgebra (⊗₁₂³)
+@publish TensorAlgebra (⊗₁₃²)
+@publish TensorAlgebra (⊗₁²³)
+@publish TensorAlgebra (⊗₁₃²⁴)
+@publish TensorAlgebra (⊗₁₂³⁴)
+@publish TensorAlgebra (⊗₁²)
 
 
-  @publish LinearSolvers IterativeSolver
-  # @publish LinearSolvers solve
-  # @publish LinearSolvers solve!
+@publish ConstitutiveModels logreg
+@publish ConstitutiveModels DerivativeStrategy
+@publish ConstitutiveModels LinearElasticity3D
+@publish ConstitutiveModels NeoHookean3D
+@publish ConstitutiveModels MoneyRivlin3D
+@publish ConstitutiveModels ThermalModel
+@publish ConstitutiveModels IdealDielectric
+@publish ConstitutiveModels ElectroMech
+@publish ConstitutiveModels ThermoElectroMech
+@publish ConstitutiveModels ThermoMech
+
+@publish WeakForms CouplingStrategy
+@publish WeakForms residual_EM
+@publish WeakForms jacobian_EM
+@publish WeakForms residual_M
+@publish WeakForms jacobian_M
+@publish WeakForms residual_TEM
+@publish WeakForms jacobian_TEM
+@publish WeakForms  residual_TM
+@publish WeakForms  jacobian_TM
+
+
+@publish Drivers Problem
+@publish Drivers execute
+@publish Drivers ElectroMechProblem
+@publish Drivers MechanicalProblem
+@publish Drivers ThermoElectroMechProblem
+@publish Drivers get_problem
+
+@publish LinearSolvers IterativeSolver
+# @publish LinearSolvers solve
+# @publish LinearSolvers solve!
