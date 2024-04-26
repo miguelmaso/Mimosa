@@ -12,7 +12,7 @@ include("Drivers/Drivers.jl")
 include("Exports.jl")
 
 
-function main(; problemName::String="Mechanical", kwargs...)
+function main(; problemName::String="EM_Plate", kwargs...)
 
     reset_timer!()
 

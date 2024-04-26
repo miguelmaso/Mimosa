@@ -27,7 +27,7 @@ struct ThermoElectroMechProblem{Kind} <: MultiPhysicalProblem end
 
 function get_problem(problemName::String, kwargs)
 
-  ptype = _get_kwarg(:ptype,kwargs,"Mechanics")
+  ptype = _get_kwarg(:ptype,kwargs,"ElectroMechanics")
   if ptype == "ElectroMechanics"
     return ElectroMechProblem{Symbol(problemName)}()
   elseif ptype == "ThermoElectroMechanics"
