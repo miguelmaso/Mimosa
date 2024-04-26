@@ -18,11 +18,11 @@ function get_parameters()
   εr = 1.0
   ε = εr * ε0
  
-  # boundary conditions 
+  # Boundary conditions 
   dir_u_tags = ["fixedup"]
   dir_φ_tags = ["midsuf", "topsuf"]
   dir_u_values = [[0.0, 0.0, 0.0]]
-  dir_φ_values = [0.0, 0.01]
+  dir_φ_values = [0.0, 0.1]
 
     
   dir_tags=[dir_u_tags, dir_φ_tags]
@@ -34,16 +34,20 @@ function get_parameters()
   order = 1
 
   # NewtonRaphson parameters
-  nr_show_trace = true
+  nr_show_trace = false
   nr_iter = 20
   nr_ftol = 1e-12
 
+  # Incremental solver
   nsteps = 5
   nbisec = 10
 
   solveropt = @dict nr_show_trace nr_iter nr_ftol nsteps nbisec
 
-  return @dict problemName ptype couplingstrategy model μ λ ε0 εr ε dirichletbc order solveropt
+  # Postprocessing
+  is_vtk = true
+
+  return @dict problemName ptype couplingstrategy model μ λ ε0 εr ε dirichletbc order solveropt is_vtk
 end
 
 main(; get_parameters()...)

@@ -91,38 +91,6 @@ function print_heading(input::Dict)
   println("\e[31m__________________________________________________________________________________________\e[0m")
 end
 
-function ϝ(v::Float64)
-  (x)->v
-end
-
-function ϝ(v::Vector{Float64})
-  (x)->VectorValue(v)
-end
-
-function get_bc_func(tags_::Vector{String}, values_)
-  bc_func_ =Vector{Function}(undef, length(tags_))
-  @inbounds for i in eachindex(tags_)
-      @assert(length(tags_) == length(values_))
-           # get funcion generators for boundary conditions
-              u_bc(Λ::Float64) = (x) -> ϝ(values_[i])(x) * Λ
-              bc_func_[i] = u_bc
-  end
-   return (bc_tags=tags_, bc_func=bc_func_,)
-end
- 
-
-function get_bc_func(tags_::Vector{Vector{String}}, values_)
-  bc_func_ =Vector{Vector{Function}}(undef, length(tags_))
-  @inbounds for i in eachindex(tags_)
-      @assert(length(tags_[i]) == length(values_[i]))
-        _, bc_func__ = get_bc_func(tags_[i], values_[i])
-        bc_func_[i]=bc_func__
-
-  end
-   
-  return (bc_tags=tags_, bc_func=bc_func_,)
-end
-
 
 function get_FE_solver(solveropt::Dict{Symbol,Real})
   nls_ = NLSolver(show_trace=solveropt[:nr_show_trace],
@@ -133,10 +101,15 @@ function get_FE_solver(solveropt::Dict{Symbol,Real})
 end
 
 
-function Solver(problem::Problem, ctype::CouplingStrategy{:monolithic}, ph::FEFunction, params::Dict{Symbol,Any})
+function IncrementalSolver(problem::Problem, ctype::CouplingStrategy{:monolithic}, ph::FEFunction, params::Dict{Symbol,Any})
 
-  nsteps = _get_kwarg(:nsteps, params[:solveropt])
-  maxbisec = _get_kwarg(:nbisec, params[:solveropt])
+  nsteps     = _get_kwarg(:nsteps, params[:solveropt])
+  maxbisec   = _get_kwarg(:nbisec, params[:solveropt])
+  filePath   = _get_kwarg(:simdir_, params[:post_params])
+  is_vtk     = _get_kwarg(:is_vtk, params[:post_params])
+  post_params     = _get_kwarg(:post_params, params)
+
+  pvd        = paraview_collection(filePath*"/Results", append=false)
 
   Λ = 0.0
   Λ_inc = 1.0 / nsteps
@@ -144,7 +117,7 @@ function Solver(problem::Problem, ctype::CouplingStrategy{:monolithic}, ph::FEFu
   cache = nothing
   nbisect = 0
   ph_view = get_free_dof_values(ph)
-
+  Λ_ = 0
   while Λ < 1.0 - 1e-6
       Λ += Λ_inc
       Λ = min(1.0, Λ)
@@ -154,11 +127,10 @@ function Solver(problem::Problem, ctype::CouplingStrategy{:monolithic}, ph::FEFu
 
       #Check convergence
       if (flag == true)
-          Λstring = replace("$Λ", "." => "_")
-
-          # writevtk(Ω, "./results/result_" * Λstring, cellfields=["uh" => ph])
+          Λ_ +=1
+          # Write to PVD
+          pvd = computeOutputs!(problem, pvd, ph, Λ, Λ_, post_params)
       else
-
           ph_view[:] = ph_
           # go back to previous ph
           Λ -= Λ_inc
@@ -169,30 +141,18 @@ function Solver(problem::Problem, ctype::CouplingStrategy{:monolithic}, ph::FEFu
       @assert(nbisect <= maxbisec, "Maximum number of bisections reached")
 
   end
+  if is_vtk
+  vtk_save(pvd)
+  end
   return ph
 end
 
 
-# Output function
-function writePVD(filePath::String, trian::Triangulation, sol; append=false)
-  outfiles = paraview_collection(filePath, append=append) do pvd
-      for (i, (xh, t)) in enumerate(sol)
-          println("STEP: $i, Lambda: $t")
-          println("============================")
-          uh = xh[1]
-          vh = xh[2]
-          ph = xh[3]
-          pvd[t] = createvtk(
-              trian,
-              filePath * "_$t.vtu",
-              cellfields = ["uh" => uh, "vh" => vh, "ph" => ph]
-          )
-      end
-  end
-end
 
 
 include("FESpaces.jl")
+include("BoundaryCond.jl")
+
 include("ElectroMech_Drivers.jl")
 include("ThermoElectroMech_Drivers.jl")
 include("Mech_Drivers.jl")

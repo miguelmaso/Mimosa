@@ -20,7 +20,7 @@ function get_parameters()
   c0 = 100.0
 
   # electrical properties
-  ε0 = 1
+  ε0 = 1.0
   εr = 4.0
   ε = εr * ε0
 
@@ -34,14 +34,14 @@ function get_parameters()
   dir_u_tags = ["fix"]
   dir_φ_tags = ["top", "bottom"]
   dir_θ_tags = ["bottom"]
-  dir_u_values = [[1.0, 0.0, 0.0]]
+  dir_u_values = [[0.0, 0.0, 0.0]]
   dir_φ_values = [0.0, 2.0e2]
   dir_θ_values = [θR]
 
-  dir_tags=[dir_u_tags, dir_φ_tags, dir_θ_tags]
-  dir_values=[dir_u_values, dir_φ_values, dir_θ_values]
+  dir_tags = [dir_u_tags, dir_φ_tags, dir_θ_tags]
+  dir_values = [dir_u_values, dir_φ_values, dir_θ_values]
 
-  dirichletbc = @dict tags=dir_tags values=dir_values
+  dirichletbc = @dict tags = dir_tags values = dir_values
 
   # FE parameters
   order = 1
@@ -51,14 +51,17 @@ function get_parameters()
   nr_iter = 20
   nr_ftol = 1e-5
 
+  # Incremental solver
   nsteps = 5
   nbisec = 10
 
+  # Postprocessing
+  is_vtk = true
+
   solveropt = @dict nr_show_trace nr_iter nr_ftol nsteps nbisec
 
-  return @dict problemName ptype couplingstrategy model μ λ β e θR c0 ε0 εr ε κ f df dirichletbc order solveropt
+  return @dict problemName ptype couplingstrategy model μ λ β e θR c0 ε0 εr ε κ f df dirichletbc order solveropt is_vtk
 end
- 
-  main(; get_parameters()...)
- 
- 
+
+main(; get_parameters()...)
+

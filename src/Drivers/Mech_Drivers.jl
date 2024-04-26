@@ -1,6 +1,5 @@
 
 function execute(problem::MechanicalProblem{:M_Plate}; kwargs...)
-    println("Executing MechanicalProblem{:M_Plate}")
     
 
     # Problem setting
@@ -68,7 +67,7 @@ function execute(problem::MechanicalProblem{:M_Plate}; kwargs...)
 
         solver_params = @dict fe_spaces dirichletbc Ω dΩ DΨ res jac solveropt nlsolver 
 
-        # ph = Solver(problem, ctype, ph, solver_params)
+        # ph = IncrementalSolver(problem, ctype, ph, solver_params)
 
      end
 

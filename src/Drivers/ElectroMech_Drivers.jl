@@ -1,6 +1,5 @@
 
 function execute(problem::ElectroMechProblem{:EMPlate}; kwargs...)
-    println("Executing ElectroMechProblem{:EMPlate}")
 
     # Problem setting
     couplingstrategy = _get_kwarg(:couplingstrategy, kwargs, "monolithic")
@@ -22,6 +21,8 @@ function execute(problem::ElectroMechProblem{:EMPlate}; kwargs...)
 
     order = _get_kwarg(:order, kwargs, 1)
 
+    is_vtk = _get_kwarg(:is_vtk,kwargs,false)
+
     printinfo = @dict pname ptype couplingstrategy mesh_file μ λ ε0 εr ε order
     print_heading(printinfo)
 
@@ -37,7 +38,6 @@ function execute(problem::ElectroMechProblem{:EMPlate}; kwargs...)
 
     # grid model
     model = GmshDiscreteModel(datadir("models", mesh_file))
-    labels = get_face_labeling(model)
     writevtk(model, simdir_ * "/DiscreteModel")
 
     # Setup integration
@@ -69,13 +69,12 @@ function execute(problem::ElectroMechProblem{:EMPlate}; kwargs...)
         ph = FEFunction(fe_spaces.U, x0)
         @show size(get_free_dof_values(ph))
 
-        solver_params = @dict fe_spaces dirichletbc Ω dΩ DΨ res jac solveropt nlsolver 
+        post_params = @dict Ω is_vtk simdir_
+        solver_params = @dict fe_spaces dirichletbc Ω dΩ DΨ res jac solveropt nlsolver post_params
 
-        ph = Solver(problem, ctype, ph, solver_params)
+        ph = IncrementalSolver(problem, ctype, ph, solver_params)
 
      end
-
-
 end
 
 function ΔSolver!(problem::ElectroMechProblem, ctype::CouplingStrategy{:monolithic}, ph, Λ, Λ_inc, params, cache)
@@ -112,4 +111,26 @@ function ΔSolver!(problem::ElectroMechProblem, ctype::CouplingStrategy{:monolit
 end
 
 
- 
+ function computeOutputs!(::ElectroMechProblem{:EMPlate}, pvd, ph, Λ, Λ_, post_params)
+    
+    println("STEP: $Λ_, LAMBDA: $Λ")
+    println("============================")
+
+    Ω        = _get_kwarg(:Ω, post_params)
+    is_vtk   = _get_kwarg(:is_vtk, post_params)
+    filePath = _get_kwarg(:simdir_, post_params)
+
+    uh = ph[1]
+    φh = ph[2]
+
+    if is_vtk
+    Λstring = replace(string(round(Λ, digits=2)), "." => "_")
+    pvd[Λ_] = createvtk(
+        Ω,
+        filePath * "/_Λ_"*Λstring*"_TIME_$Λ_"*".vtu",
+        cellfields = ["u" => uh, "φ" => φh]
+    )
+    end
+
+    return pvd
+ end

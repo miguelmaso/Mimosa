@@ -1,6 +1,5 @@
 
 function execute(problem::ThermoElectroMechProblem{:TEM_StaticSquare}; kwargs...)
-    println("Executing ThermoElectroMechProblem{:StaticSquare}")
 
     # Problem setting
     couplingstrategy = _get_kwarg(:couplingstrategy, kwargs, "monolithic")
@@ -34,6 +33,8 @@ function execute(problem::ThermoElectroMechProblem{:TEM_StaticSquare}; kwargs...
     @assert(typeof(df) <: Function)
 
     order = _get_kwarg(:order, kwargs, 1)
+
+    is_vtk = _get_kwarg(:is_vtk,kwargs,false)
 
     printinfo = @dict pname ptype couplingstrategy mesh_file μ λ β e θR c0 ε0 εr ε κ order
     print_heading(printinfo)
@@ -85,9 +86,11 @@ function execute(problem::ThermoElectroMechProblem{:TEM_StaticSquare}; kwargs...
         x0 = vcat(xu, xφ, xθ)
         ph = FEFunction(fe_spaces.U, x0)
 
-        solver_params = @dict fe_spaces dirichletbc Ω dΩ DΨ κ res jac solveropt nlsolver
+        post_params = @dict Ω is_vtk simdir_
 
-         ph = Solver(problem, ctype, ph, solver_params)
+        solver_params = @dict fe_spaces dirichletbc Ω dΩ DΨ κ res jac solveropt nlsolver post_params
+
+        ph = IncrementalSolver(problem, ctype, ph, solver_params)
     end
 
 
@@ -130,3 +133,27 @@ function ΔSolver!(problem::ThermoElectroMechProblem, ctype::CouplingStrategy{:m
 end
 
  
+function computeOutputs!(::ThermoElectroMechProblem{:TEM_StaticSquare}, pvd, ph, Λ, Λ_, post_params)
+    
+    println("STEP: $Λ_, LAMBDA: $Λ")
+    println("============================")
+
+    Ω        = _get_kwarg(:Ω, post_params)
+    is_vtk   = _get_kwarg(:is_vtk, post_params)
+    filePath = _get_kwarg(:simdir_, post_params)
+
+    uh = ph[1]
+    φh = ph[2]
+    θh = ph[3]
+
+    if is_vtk
+    Λstring = replace(string(round(Λ, digits=2)), "." => "_")
+    pvd[Λ_] = createvtk(
+        Ω,
+        filePath * "/_Λ_"*Λstring*"_TIME_$Λ_"*".vtu",
+        cellfields = ["u" => uh, "φ" => φh, "θ" => θh]
+    )
+    end
+
+    return pvd
+ end
