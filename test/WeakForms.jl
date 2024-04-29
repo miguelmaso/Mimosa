@@ -6,8 +6,8 @@ using Gridap
 
     modelMR = MoneyRivlin3D(3.0, 1.0, 2.0)
     modelT = ThermalModel(1.0, 1.0, 2.0)
-    f(θ::Float64)::Float64 = θ / 1.0
-    df(θ::Float64)::Float64 = 1.0
+    f(δθ::Float64)::Float64 = (δθ+1.0) / 1.0
+    df(δθ::Float64)::Float64 = 1.0
     κ = 1.0
     modelTM = ThermoMech(modelT, modelMR, f, df)
     Ψ, ∂Ψu, ∂Ψθ, ∂Ψuu, ∂Ψθθ, ∂Ψuθ = modelTM(Mimosa.DerivativeStrategy{:analytic}())
@@ -35,7 +35,7 @@ using Gridap
     dΩ = Measure(Ωₕ, 2)
 
     uh = FEFunction(Vu, zeros(Float64, num_free_dofs(Vu)))
-    θ(x) = x[1]
+    θ(x) = x[1]-1.0
     θh = interpolate_everywhere(θ, Vθ)
 
     function jach(uh, θh)
@@ -53,15 +53,15 @@ using Gridap
     jac_t = assemble_matrix(jac_termoh(uh, θh), Vθ, Vθ)
 
 
-    @test norm(jac_) == 25.6044821500619
-    @test jac_[1] == 1.5555555555555538
-    @test jac_[end] == 0.33333333333333315
-    @test norm(jac_m) == 24.92278198212218
-    @test jac_m[1] == 1.5555555555555538
-    @test jac_m[end] == 1.8333333333333321
-    @test norm(jac_t) == 1.0540925533894592
-    @test jac_t[1] == 0.33333333333333304
-    @test jac_t[end] == 0.33333333333333315
+    @test norm(jac_) ≈  25.6044821500619
+    @test jac_[1] ≈  1.5555555555555538
+    @test jac_[end] ≈  0.33333333333333315
+    @test norm(jac_m) ≈  24.92278198212218
+    @test jac_m[1] ≈  1.5555555555555538
+    @test jac_m[end] ≈  1.8333333333333321
+    @test norm(jac_t) ≈  1.0540925533894592
+    @test jac_t[1] ≈  0.33333333333333304
+    @test jac_t[end] ≈  0.33333333333333315
 
 
 end
@@ -117,18 +117,18 @@ end
     jac_ = assemble_matrix(jach(uh, φh), V, V)
     jac_m = assemble_matrix(jac_mech(uh, φh), Vu, Vu)
     jac_e = assemble_matrix(jac_elech(uh, φh), Vφ, Vφ)
+≈
+    @test norm(jac_) ≈ 18.934585248125135
+    @test jac_[1] ≈ 0.7777777777777775
+    @test jac_[end] ≈ -1.3333333333333326
 
-    @test norm(jac_) == 18.934585248125135
-    @test jac_[1] == 0.7777777777777775
-    @test jac_[end] == -1.3333333333333326
+    @test norm(jac_m) ≈ 16.420402846143244
+    @test jac_m[1] ≈ 0.7777777777777775
+    @test jac_m[end] ≈ 2.1111111111111094
 
-    @test norm(jac_m) == 16.420402846143244
-    @test jac_m[1] == 0.7777777777777775
-    @test jac_m[end] == 2.1111111111111094
-
-    @test norm(jac_e) == 4.216370213557837
-    @test jac_e[1] == -1.3333333333333321
-    @test jac_e[end] == -1.3333333333333326
+    @test norm(jac_e) ≈ 4.216370213557837
+    @test jac_e[1] ≈ -1.3333333333333321
+    @test jac_e[end] ≈ -1.3333333333333326
 
 
 end

@@ -38,7 +38,7 @@ Contributions with the definition of new drivers and additional Multiphysical fo
     ```
   - `WeakForms.jl`: module with the definition of the weak forms for all required residuals and Jacobians.
   - `ConstitutiveModels.jl`: module with the definition of the constitutive models providing energy and derivatives used in the weakforms.
-  - `TensorAlgebra.jl`: module with the advanced Tensor Algebra operations used to define multiphysical constitutive models.
+  - `TensorAlgebra.jl`: module with the Highorder Tensor Algebra operations used to define multiphysical constitutive models.
 
 
 # Project funded by:

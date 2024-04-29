@@ -160,7 +160,6 @@ end
 # -------------------
 
 function residual_EM(::CouplingStrategy{:monolithic}, (u, φ), (v, vφ), (∂Ψu, ∂Ψφ), dΩ)
-    # ∫((∇(v)' ⊙ (∂Ψu ∘ (∇(u)', ∇(φ)))) + (∇(vφ) ⋅ (∂Ψφ ∘ (∇(u)', ∇(φ)))))dΩ
     residual_EM(CouplingStrategy{:staggered_M}(), (u, φ), v, ∂Ψu, dΩ) +
     residual_EM(CouplingStrategy{:staggered_E}(), (u, φ), vφ, ∂Ψφ, dΩ)
 end

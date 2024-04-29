@@ -87,7 +87,7 @@ function get_FE_spaces!(::ThermoElectroMechProblem,
     # Trial FE Spaces
     Uu = TrialFESpace(Vu, map(f -> f(Λ), bconds.bc_func[1]))
     Uφ = TrialFESpace(Vφ, map(f -> f(Λ), bconds.bc_func[2]))
-    Uθ = TrialFESpace(Vθ, map(f -> f(1.0), bconds.bc_func[3]))
+    Uθ = TrialFESpace(Vθ, map(f -> f(Λ), bconds.bc_func[3]))
 
     # Multifield FE Spaces
     V = MultiFieldFESpace([Vu, Vφ, Vθ])

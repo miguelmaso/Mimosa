@@ -57,12 +57,12 @@ end
 @testset "TermoElectroMech" begin
   ∇u = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3
   ∇φ = VectorValue(1.0, 2.0, 3.0)
-  θt = 3.4
+  θt = 3.4-1.0
   modelMR = MoneyRivlin3D(3.0, 1.0, 2.0)
   modelID = IdealDielectric(4.0)
   modelT = ThermalModel(1.0, 1.0, 2.0)
-  f(θ::Float64)::Float64 = θ / 1.0
-  df(θ::Float64)::Float64 = 1.0
+  f(δθ::Float64)::Float64 = (δθ+1.0) / 1.0
+  df(δθ::Float64)::Float64 = 1.0
   modelTEM = ThermoElectroMech(modelT, modelID, modelMR, f, df)
   Ψ, ∂Ψu, ∂Ψφ, ∂Ψθ, ∂Ψuu, ∂Ψφφ, ∂Ψθθ, ∂Ψφu, ∂Ψuθ, ∂Ψφθ = modelTEM(DerivativeStrategy{:analytic}())
   @test (Ψ(∇u, ∇φ, θt)) == -95.74389746463744
@@ -83,11 +83,11 @@ end
 @testset "TermoMech" begin
   ∇u = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3
   ∇φ = VectorValue(1.0, 2.0, 3.0)
-  θt = 3.4
+  θt = 3.4-1.0
   modelMR = MoneyRivlin3D(3.0, 1.0, 2.0)
   modelT = ThermalModel(1.0, 1.0, 2.0)
-  f(θ::Float64)::Float64 = θ / 1.0
-  df(θ::Float64)::Float64 = 1.0
+  f(δθ::Float64)::Float64 = (δθ+1.0) / 1.0
+  df(δθ::Float64)::Float64 = 1.0
   modelTM = ThermoMech(modelT, modelMR, f, df)
   Ψ, ∂Ψu, ∂Ψθ, ∂Ψuu, ∂Ψθθ, ∂Ψuθ = modelTM(Mimosa.DerivativeStrategy{:analytic}())
 

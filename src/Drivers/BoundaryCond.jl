@@ -1,3 +1,22 @@
+abstract type BoundaryCondition end
+
+struct DirichletBC <: BoundaryCondition
+    tags::Vector{String}
+    values
+    incremental::Bool
+end
+
+struct NeumannBC <: BoundaryCondition
+    tags::Vector{String}
+    values
+    incremental::Bool
+end
+
+
+
+
+
+
 
 function ϝ(v::Float64)
     (x) -> v
@@ -27,9 +46,6 @@ function get_bc_func(tags_::Vector{Vector{String}}, values_)
         bc_func_[i] = bc_func__
 
     end
-
     return (bc_tags=tags_, bc_func=bc_func_,)
 end
 
-# function incremental_dirichletbc()
-# end

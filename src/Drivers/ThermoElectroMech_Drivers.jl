@@ -82,7 +82,7 @@ function execute(problem::ThermoElectroMechProblem{:TEM_StaticSquare}; kwargs...
         # Initialization
         xu = zeros(Float64, num_free_dofs(fe_spaces.Vu))
         xφ = zeros(Float64, num_free_dofs(fe_spaces.Vφ))
-        xθ = θR * ones(Float64, num_free_dofs(fe_spaces.Vθ))
+        xθ = zeros(Float64, num_free_dofs(fe_spaces.Vθ))
         x0 = vcat(xu, xφ, xθ)
         ph = FEFunction(fe_spaces.U, x0)
 
@@ -97,7 +97,6 @@ function execute(problem::ThermoElectroMechProblem{:TEM_StaticSquare}; kwargs...
 end
 
 
-
 function ΔSolver!(problem::ThermoElectroMechProblem, ctype::CouplingStrategy{:monolithic}, ph, Λ, Λ_inc, params, cache)
 
     fe_spaces = _get_kwarg(:fe_spaces, params)
@@ -107,6 +106,7 @@ function ΔSolver!(problem::ThermoElectroMechProblem, ctype::CouplingStrategy{:m
     nlsolver = _get_kwarg(:nlsolver, params)
     DΨ = _get_kwarg(:DΨ, params)
     dΩ = _get_kwarg(:dΩ, params)
+    κ = _get_kwarg(:κ, params)
 
     # update x0 with dirichlet incrementos   
     uh = ph[1] # not hard copy
@@ -114,16 +114,28 @@ function ΔSolver!(problem::ThermoElectroMechProblem, ctype::CouplingStrategy{:m
     θh = ph[3] # not hard copy
     # Test and trial spaces for Λ_inc
     fe_spaces = get_FE_spaces!(problem, ctype, fe_spaces, dirichletbc, Λ_inc)
+   
     # Update Dirichlet for electro problem
     lφ(vφ) = -1.0 * residual_TEM(CouplingStrategy{:staggered_E}(), (uh, φh, θh), vφ, DΨ.∂Ψφ, dΩ)
     aφ(dφ, vφ) = jacobian_TEM(CouplingStrategy{:staggered_E}(), (uh, φh, θh), dφ, vφ, DΨ.∂Ψφφ, dΩ)
     opφ = AffineFEOperator(aφ, lφ, fe_spaces.Uφ, fe_spaces.Vφ)
     dφh = solve(opφ)
 
+    # Update Dirichlet for thermal problem
+    lθ(vθ) = -1.0 * residual_TEM(CouplingStrategy{:staggered_T}(), (uh, φh, θh), vθ, κ, dΩ)
+    aθ(dθ, vθ) = jacobian_TEM(CouplingStrategy{:staggered_T}(), dθ, vθ, κ, dΩ)
+    opθ = AffineFEOperator(aθ, lθ, fe_spaces.Uθ, fe_spaces.Vθ)
+    dθh = solve(opθ)
+
     pφh = get_free_dof_values(φh)
     pdφh = get_free_dof_values(dφh)
     pφh .+= pdφh
 
+    pθh = get_free_dof_values(θh)
+    pdθh = get_free_dof_values(dθh)
+    pθh .+= pdθh
+
+    # Newton
     fe_spaces = get_FE_spaces!(problem, ctype, fe_spaces, dirichletbc, Λ)
 
     op = FEOperator(res, jac, fe_spaces.U, fe_spaces.V)

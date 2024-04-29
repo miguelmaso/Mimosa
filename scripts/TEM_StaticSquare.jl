@@ -35,9 +35,11 @@ function get_parameters()
   dir_φ_tags = ["top", "bottom"]
   dir_θ_tags = ["bottom"]
   dir_u_values = [[0.0, 0.0, 0.0]]
-  dir_φ_values = [0.0, 2.0e2]
-  dir_θ_values = [θR]
+  dir_φ_values = [0.0, 0.0e2]
+  dir_θ_values = [25.0]
 
+
+  
   dir_tags = [dir_u_tags, dir_φ_tags, dir_θ_tags]
   dir_values = [dir_u_values, dir_φ_values, dir_θ_values]
 

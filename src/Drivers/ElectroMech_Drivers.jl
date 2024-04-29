@@ -17,7 +17,7 @@ function execute(problem::ElectroMechProblem{:EMPlate}; kwargs...)
     # electrical properties
     ε0 = _get_kwarg(:ε0, kwargs, 1.0)
     εr = _get_kwarg(:εr, kwargs, 4.0)
-    ε = _get_kwarg(:ε, kwargs, 4.0)
+    ε  = _get_kwarg(:ε, kwargs, 4.0)
 
     order = _get_kwarg(:order, kwargs, 1)
 
