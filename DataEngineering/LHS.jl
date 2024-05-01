@@ -40,6 +40,6 @@ s8 = QuasiMonteCarlo.sample(points, [electrode(1,"min"),electrode(2,"min"),elect
 
 total = round.(hcat(s1,s2,s3,s4,s5,s6,s7,s8);sigdigits=4)
 
-open("LHS.csv","w") do io
+open("LHS.txt","w") do io
     writedlm(io,total)
 end

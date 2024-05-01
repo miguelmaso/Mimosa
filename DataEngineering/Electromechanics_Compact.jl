@@ -168,9 +168,9 @@ function CompactCall(input_potential::Vector, folder_name)
         if (flag == true)
             #writevtk(Ωₕ, "results/ex10/results_$(loadinc)", cellfields=["uh" => ph[1], "phi" => ph[2]])
             if (target_gen == 1)
-            pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Target_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
+            #pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Target_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
             else
-            pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Opti_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
+            #pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Opti_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
             end
             return get_free_dof_values(ph), cache, flag
         else
@@ -190,15 +190,18 @@ function CompactCall(input_potential::Vector, folder_name)
             Λ += Λ_inc
             Λ = min(1.0, Λ)
             x0, cache, flag  = StateEquationIter(target_gen, x0,Λ*ϕ_app, loadinc, fem_params.ndofm, cache)
-            u_Fe_Function = FEFunction(fem_params.Uuv, x0[1:fem_params.ndofm]) # Convierte a una FE
-            u_Projected = interpolate_everywhere(u_Fe_Function, fem_params.Uuˢt1) #Interpola en una superficie la FE
-            u_Vector_on_Surface = get_free_dof_values(u_Projected) # Saca un vector
-            cd("Potential $folder_name")
-            filename = string.(round.(Λ*ϕ_app,digits=4))
-            open("$filename.txt","w") do io
-                writedlm(io,u_Vector_on_Surface)
+            if (flag == true)
+                u_Fe_Function = FEFunction(fem_params.Uuv, x0[1:fem_params.ndofm]) # Convierte a una FE
+                u_Projected = interpolate_everywhere(u_Fe_Function, fem_params.Uuˢt1) #Interpola en una superficie la FE
+                u_Vector_on_Surface = get_free_dof_values(u_Projected) # Saca un vector
+                cd("Potential $folder_name")
+                filename = string.(round.(Λ*ϕ_app,digits=4))
+                open("$filename.txt","w") do io
+                    writedlm(io,u_Vector_on_Surface)
+                end
+                cd(dirname(@__FILE__))
             end
-            cd(dirname(@__FILE__))
+            
             if (flag == false)
                 Λ    -= Λ_inc
                 Λ_inc = Λ_inc / 2
@@ -214,92 +217,30 @@ function CompactCall(input_potential::Vector, folder_name)
     end
 
 
-    # #---------------------------------------------
-    # # Objective Function
-    # #---------------------------------------------
-
-    # function 𝒥(xstate, ϕ_app; fem_params)
-    #     u = xstate[1:fem_params.ndofm]
-    #     φ = xstate[fem_params.ndofm+1:end]
-    #     uh = FEFunction(Uu, u)
-    #     Uφ = TrialFESpace(Vφ, [ϕ_app[1],ϕ_app[2],0.0,0.0,ϕ_app[3],ϕ_app[4]])
-    #     φh = FEFunction(Uφ, φ)
-    #     iter = numfiles("results/ex10") + 1
-    #     @show norm(get_free_dof_values(u_tt))
-    #     obj = ∑(∫(0.5 * ((uh - u_tt) ⋅ N) * ((uh - u_tt) ⋅ N))Qₕ)
-    #     println("Iter: $iter, 𝒥 = $obj")
-    #     pvd_results[iter] = createvtk(fem_params.Ωₕ,result_folder * "_$iter.vtu", cellfields=["uh" => uh, "φh" => φh],order=2)
-
-    #     # writevtk(fem_params.Ωₕ, "results/ex6/results_$(iter)", cellfields=["uh" => uh, "φh" => φh])
-    #     return obj
-    # end
-
-
-    # #---------------------------------------------
-    # # Derivatives
-    # #---------------------------------------------
-
-    # function Vec_descent(uh, φh, puh, pφh)
-    #     return (vφ) -> ∫(-∇(vφ) ⋅ (inner32 ∘ ((∂Ψφu ∘ (∇(uh)', ∇(φh))), ∇(puh)')) -
-    #                      ∇(vφ)' ⋅ ((∂Ψφφ ∘ (∇(uh)', ∇(φh))) ⋅ ∇(pφh))) * dΩ
-    # end
-
-    # function D𝒥Dφmax(x::Vector,xstate, xadjoint; fem_params, opt_params)
-
-    #     ϕ_app = x * opt_params.ϕ_max
-    #     u = xstate[1:fem_params.ndofm]
-    #     φ = xstate[fem_params.ndofm+1:end]
-    #     pu = xadjoint[1:fem_params.ndofm]
-    #     pφ = xadjoint[fem_params.ndofm+1:end]
-
-    #     Uφ = TrialFESpace(Vφ, [ϕ_app[1],ϕ_app[2],0.0,0.0,ϕ_app[3],ϕ_app[4]])
-    #     uh = FEFunction(Uu, u)
-    #     puh = FEFunction(Vu, pu)
-    #     φh = FEFunction(Uφ, φ)
-    #     pφh = FEFunction(Vφ, pφ)
-
-    #     D𝒥Dφmaxᵛ = assemble_vector(Vec_descent(uh, φh, puh, pφh), fem_params.Uφᵛ) #Volumen
-    #     D𝒥Dφmaxᵛₕ = FEFunction(fem_params.Uφᵛ, D𝒥Dφmaxᵛ) # Convierte a una FE
-    #     D𝒥Dφmaxˢt1 = interpolate_everywhere(D𝒥Dφmaxᵛₕ, fem_params.Uφˢt1) #Interpola en una superficie la FE
-    #     D𝒥Dφmaxˢt2 = interpolate_everywhere(D𝒥Dφmaxᵛₕ, fem_params.Uφˢt2) #Interpola en una superficie la FE
-    #     D𝒥Dφmaxˢb1 = interpolate_everywhere(D𝒥Dφmaxᵛₕ, fem_params.Uφˢb1) #Interpola en una superficie la FE
-    #     D𝒥Dφmaxˢb2 = interpolate_everywhere(D𝒥Dφmaxᵛₕ, fem_params.Uφˢb2) #Interpola en una superficie la FE
-    #     D𝒥Dφmaxˢst1 = get_free_dof_values(D𝒥Dφmaxˢt1) # Saca un vector
-    #     D𝒥Dφmaxˢst2 = get_free_dof_values(D𝒥Dφmaxˢt2) # Saca un vector
-    #     D𝒥Dφmaxˢsb1 = get_free_dof_values(D𝒥Dφmaxˢb1) # Saca un vector
-    #     D𝒥Dφmaxˢsb2 = get_free_dof_values(D𝒥Dφmaxˢb2) # Saca un vector
-
-    #     return [sum(D𝒥Dφmaxˢst1),sum(D𝒥Dφmaxˢst2),sum(D𝒥Dφmaxˢsb1),sum(D𝒥Dφmaxˢsb2)]
-    # end
 
     # ----------------------------
     # We generate the target
     # ----------------------------
     printstyled("--------------------------------\n"; color=:yellow)
-    printstyled("Starting the target generation\n"; color = :yellow)
+    printstyled("Computing Solution \n"; color = :yellow)
     printstyled("--------------------------------\n";color = :yellow)
     xstate = StateEquation(1,input_potential; fem_params)
 
-    # #---------------------------------------------------------------
-    # # We get the displacements and project them in a given surface
-    # #--------------------------------------------------------------
-    # u_Fe_Function = FEFunction(fem_params.Uφᵛ, xstate[1:fem_params.ndofm]) # Convierte a una FE
-    # u_Projected = interpolate_everywhere(u_Fe_Function, fem_params.Uφˢt1) #Interpola en una superficie la FE
-    # u_Vector_on_Surface = get_free_dof_values(u_Projected) # Saca un vector
 
-   return u_Vector_on_Surface
 end
 
 
-input = [0.01, 0.0, 0.0, 0.01]
 
-folder_name = string.(input)
-mkdir("Potential $folder_name")
-#cd("Potential $folder_name")
+input = readdlm("LHS.txt")
 
-output = CompactCall(input, folder_name);
+for column in range(1,size(input)[2])
+    vector = input[:,column]
+    print(vector)
+    folder_name = string.(vector)
+    mkdir("Potential $folder_name")
+    CompactCall(vector, folder_name);
+
+end
 
 
-#TODO We now need to ORGANIZE THE DATA GENERATION. We will create n points in the N faces of the cube, thus we will have a=nxN sampling points
-# The file outputted will be a 4xa matrix, with each column being the potential prescribed in each electrode. We will take a 4 zone electrode
 
