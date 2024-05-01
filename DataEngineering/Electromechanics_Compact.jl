@@ -178,7 +178,7 @@ function CompactCall(input_potential::Vector, folder_name)
         end
     end
     function StateEquation(target_gen,ϕ_app::Vector; fem_params)
-        nsteps = 5 
+        nsteps =  20
         Λ_inc = 1.0 / nsteps
         x0 = zeros(Float64, num_free_dofs(V))
         cache = nothing
@@ -238,7 +238,7 @@ for column in range(1,size(input)[2])
     print(vector)
     folder_name = string.(vector)
     mkdir("Potential $folder_name")
-    CompactCall(vector, folder_name);
+    CompactCall(vector, folder_name); # Running in 20 steps. If there are no cutbacks, we should end up with 4000 results
 
 end
 
