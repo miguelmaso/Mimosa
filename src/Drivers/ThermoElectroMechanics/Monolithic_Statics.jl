@@ -1,73 +1,45 @@
 
-function execute(problem::ThermoElectroMechProblem{:TEM_StaticSquare}; kwargs...)
+function execute(problem::ThermoElectroMechProblem{:monolithic,:statics}; kwargs...)
 
     # Problem setting
-    couplingstrategy = _get_kwarg(:couplingstrategy, kwargs, "monolithic")
-    ctype = CouplingStrategy{Symbol(couplingstrategy)}()
-    mesh_file = _get_kwarg(:model, kwargs, "TEMStaticSquare.msh")
-    pname = "TEM_StaticSquare"
+    pname = _get_kwarg(:problemName, kwargs)
     ptype = "ThermoElectroMechanics"
-    simdir_ = datadir("sims", pname)
-    setupfolder(simdir_)
-
-    # mechanical properties
-    μ = _get_kwarg(:μ, kwargs, 1e6)
-    λ = _get_kwarg(:λ, kwargs, 1e7)
-
-    # thermal properties
-    c0 = _get_kwarg(:c0, kwargs, 100.0)
-    θR = _get_kwarg(:θR, kwargs, 293.15)
-    β = _get_kwarg(:β, kwargs, 2.233e-4)
-    e = _get_kwarg(:e, kwargs, 5209)
-
-    # electrical properties
-    ε0 = _get_kwarg(:ε0, kwargs, 1.0)
-    εr = _get_kwarg(:εr, kwargs, 4.0)
-    ε = _get_kwarg(:ε, kwargs, 4.0)
-
-    # coupling parameters
-    κ = _get_kwarg(:κ, kwargs, 10)
-    f = _get_kwarg(:f, kwargs)
-    df = _get_kwarg(:df, kwargs)
-    @assert(typeof(f) <: Function)
-    @assert(typeof(df) <: Function)
-
-    order = _get_kwarg(:order, kwargs, 1)
-
-    is_vtk = _get_kwarg(:is_vtk,kwargs,false)
-
-    printinfo = @dict pname ptype couplingstrategy mesh_file μ λ β e θR c0 ε0 εr ε κ order
+    soltype = "monolithic"
+    regtype = "statics"
+    ctype = CouplingStrategy{Symbol(soltype)}()
+    printinfo = @dict ptype soltype regtype pname
     print_heading(printinfo)
 
+    simdir_ = datadir("sims", pname)
+    setupfolder(simdir_)
+    
+    is_vtk = _get_kwarg(:is_vtk, kwargs, false)
+
     # Constitutive models
-    modmec = NeoHookean3D(λ, μ)
-    modelec = IdealDielectric(ε)
-    modterm = ThermalModel(c0, θR, β * e)
-    modTEM = ThermoElectroMech(modterm, modelec, modmec, f, df)
+    consmodel = _get_kwarg(:consmodel, kwargs)
+    κ = consmodel.Model1.κ
 
     # Derivatives
-    Ψ, ∂Ψu, ∂Ψφ, ∂Ψθ, ∂Ψuu, ∂Ψφφ, ∂Ψθθ, ∂Ψφu, ∂Ψuθ, ∂Ψφθ = modTEM(DerivativeStrategy{:analytic}())
+    Ψ, ∂Ψu, ∂Ψφ, ∂Ψθ, ∂Ψuu, ∂Ψφφ, ∂Ψθθ, ∂Ψφu, ∂Ψuθ, ∂Ψφθ = consmodel(DerivativeStrategy{:analytic}())
     DΨ = @ntuple ∂Ψu ∂Ψφ ∂Ψθ ∂Ψuu ∂Ψφφ ∂Ψθθ ∂Ψφu ∂Ψuθ ∂Ψφθ
 
     # grid model
-    model = GmshDiscreteModel(datadir("models", mesh_file))
-    labels = get_face_labeling(model)
-    add_tag_from_tags!(labels, "fix", [4])
-    add_tag_from_tags!(labels, "bottom", [1])
-    add_tag_from_tags!(labels, "top", [3])
+    mesh_file = _get_kwarg(:meshfile, kwargs)
+    model = GmshDiscreteModel(datadir("models", mesh_file))  
+    if is_vtk 
     writevtk(model, simdir_ * "/DiscreteModel")
-
+    end
     # Setup integration
+    order = _get_kwarg(:order, kwargs, 1)
     degree = 2 * order
     Ω = Triangulation(model)
     dΩ = Measure(Ω, degree)
 
     # Dirichlet boundary conditions
-    dirichletbc_ = _get_kwarg(:dirichletbc, kwargs)
-    dirichletbc = get_bc_func(dirichletbc_[:tags], dirichletbc_[:values])
+    dirichletbc = _get_kwarg(:dirichletbc, kwargs)
 
     # FE spaces
-    fe_spaces = get_FE_spaces(problem, ctype, model, order, dirichletbc)
+    fe_spaces = get_FE_spaces(problem, model, order, dirichletbc)
 
     # WeakForms
     res((u, φ, θ), (v, vφ, vθ)) = residual_TEM(ctype, (u, φ, θ), (v, vφ, vθ), (∂Ψu, ∂Ψφ), κ, dΩ)
@@ -90,7 +62,7 @@ function execute(problem::ThermoElectroMechProblem{:TEM_StaticSquare}; kwargs...
 
         solver_params = @dict fe_spaces dirichletbc Ω dΩ DΨ κ res jac solveropt nlsolver post_params
 
-        ph = IncrementalSolver(problem, ctype, ph, solver_params)
+        ph,cache = IncrementalSolver(problem, ctype, ph, solver_params)
     end
 
 
@@ -113,8 +85,8 @@ function ΔSolver!(problem::ThermoElectroMechProblem, ctype::CouplingStrategy{:m
     φh = ph[2] # not hard copy
     θh = ph[3] # not hard copy
     # Test and trial spaces for Λ_inc
-    fe_spaces = get_FE_spaces!(problem, ctype, fe_spaces, dirichletbc, Λ_inc)
-   
+    fe_spaces = get_FE_spaces!(problem, fe_spaces, dirichletbc, Λ_inc)
+
     # Update Dirichlet for electro problem
     lφ(vφ) = -1.0 * residual_TEM(CouplingStrategy{:staggered_E}(), (uh, φh, θh), vφ, DΨ.∂Ψφ, dΩ)
     aφ(dφ, vφ) = jacobian_TEM(CouplingStrategy{:staggered_E}(), (uh, φh, θh), dφ, vφ, DΨ.∂Ψφφ, dΩ)
@@ -136,7 +108,7 @@ function ΔSolver!(problem::ThermoElectroMechProblem, ctype::CouplingStrategy{:m
     pθh .+= pdθh
 
     # Newton
-    fe_spaces = get_FE_spaces!(problem, ctype, fe_spaces, dirichletbc, Λ)
+    fe_spaces = get_FE_spaces!(problem, fe_spaces, dirichletbc, Λ)
 
     op = FEOperator(res, jac, fe_spaces.U, fe_spaces.V)
     ph, cache = solve!(ph, nlsolver, op, cache)
@@ -144,14 +116,14 @@ function ΔSolver!(problem::ThermoElectroMechProblem, ctype::CouplingStrategy{:m
     return ph, cache
 end
 
- 
-function computeOutputs!(::ThermoElectroMechProblem{:TEM_StaticSquare}, pvd, ph, Λ, Λ_, post_params)
-    
+
+function computeOutputs!(::ThermoElectroMechProblem{:monolithic, :statics}, pvd, ph, Λ, Λ_, post_params)
+
     println("STEP: $Λ_, LAMBDA: $Λ")
     println("============================")
 
-    Ω        = _get_kwarg(:Ω, post_params)
-    is_vtk   = _get_kwarg(:is_vtk, post_params)
+    Ω = _get_kwarg(:Ω, post_params)
+    is_vtk = _get_kwarg(:is_vtk, post_params)
     filePath = _get_kwarg(:simdir_, post_params)
 
     uh = ph[1]
@@ -159,13 +131,13 @@ function computeOutputs!(::ThermoElectroMechProblem{:TEM_StaticSquare}, pvd, ph,
     θh = ph[3]
 
     if is_vtk
-    Λstring = replace(string(round(Λ, digits=2)), "." => "_")
-    pvd[Λ_] = createvtk(
-        Ω,
-        filePath * "/_Λ_"*Λstring*"_TIME_$Λ_"*".vtu",
-        cellfields = ["u" => uh, "φ" => φh, "θ" => θh]
-    )
+        Λstring = replace(string(round(Λ, digits=2)), "." => "_")
+        pvd[Λ_] = createvtk(
+            Ω,
+            filePath * "/_Λ_" * Λstring * "_TIME_$Λ_" * ".vtu",
+            cellfields=["u" => uh, "φ" => φh, "θ" => θh]
+        )
     end
 
     return pvd
- end
+end

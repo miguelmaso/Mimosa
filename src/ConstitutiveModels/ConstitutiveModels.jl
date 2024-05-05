@@ -19,6 +19,7 @@ export ThermalModel
 export ElectroMech
 export ThermoElectroMech
 export ThermoMech
+export Mechano
 
 export DerivativeStrategy
 
@@ -36,7 +37,7 @@ abstract type Multiphysic <: ConstitutiveModel end
 # Electro models
 # ===================
 
-struct IdealDielectric <: Electro
+@kwdef struct IdealDielectric <: Electro
   ε::Float64
 end
 
@@ -44,30 +45,34 @@ end
 # Thermal models
 # ===================
 
-struct ThermalModel <: Thermo
+@kwdef struct ThermalModel <: Thermo
   Cv::Float64
   θr::Float64
   α::Float64
+  κ::Float64=10.0
 end
 
 # ===================
 # Mechanical models
 # ===================
 
-struct LinearElasticity3D <: Mechano
+@kwdef struct LinearElasticity3D <: Mechano
   λ::Float64
   μ::Float64
+  ρ::Float64=0.0
 end
 
-struct NeoHookean3D <: Mechano
+@kwdef struct NeoHookean3D <: Mechano
   λ::Float64
   μ::Float64
+  ρ::Float64=0.0
 end
 
-struct MoneyRivlin3D <: Mechano
+@kwdef struct MoneyRivlin3D <: Mechano
   λ::Float64
   μ1::Float64
   μ2::Float64
+  ρ::Float64=0.0
 end
 
 # ===================

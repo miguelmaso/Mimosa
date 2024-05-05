@@ -38,6 +38,8 @@ end
 @publish WeakForms  residual_TM
 @publish WeakForms  jacobian_TM
 
+@publish BoundaryConditions  DirichletBC
+@publish BoundaryConditions  MultiFieldBoundaryCondition
 
 @publish Drivers Problem
 @publish Drivers execute
@@ -46,6 +48,8 @@ end
 @publish Drivers ThermoElectroMechProblem
 @publish Drivers get_problem
 
-@publish LinearSolvers IterativeSolver
+@publish Solvers IterativeSolver
 # @publish LinearSolvers solve
 # @publish LinearSolvers solve!
+
+

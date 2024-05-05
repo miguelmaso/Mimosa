@@ -3,9 +3,8 @@ using Gridap
 
 
 @testset "Assembly Jacobian ThermoMechanics" begin
-
-    modelMR = MoneyRivlin3D(3.0, 1.0, 2.0)
-    modelT = ThermalModel(1.0, 1.0, 2.0)
+    modelMR = MoneyRivlin3D(λ=3.0, μ1=1.0, μ2=2.0)
+    modelT = ThermalModel(Cv=1.0, θr= 1.0,α= 2.0)
     f(δθ::Float64)::Float64 = (δθ+1.0) / 1.0
     df(δθ::Float64)::Float64 = 1.0
     κ = 1.0
@@ -70,8 +69,9 @@ end
 
 
 @testset "Assembly Jacobian ElectroMechanics" begin
-    modelMR = Mimosa.MoneyRivlin3D(3.0, 1.0, 2.0)
-    modelID = Mimosa.IdealDielectric(4.0)
+
+    modelMR = MoneyRivlin3D(λ=3.0, μ1=1.0, μ2=2.0)
+    modelID = IdealDielectric(ε=4.0)
     modelelectro = Mimosa.ElectroMech(modelMR, modelID)
 
     Ψm, ∂Ψmu, ∂Ψmuu = modelMR(Mimosa.DerivativeStrategy{:analytic}())

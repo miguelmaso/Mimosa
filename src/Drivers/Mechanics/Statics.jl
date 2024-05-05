@@ -1,12 +1,12 @@
 
-function execute(problem::MechanicalProblem{:M_Plate}; kwargs...)
+function execute(problem::MechanicalProblem{:statics}; kwargs...)
     
 
     # Problem setting
     mesh_file = _get_kwarg(:model, kwargs)
-    pname = "M_Plate"
+    pname = _get_kwarg(:problemName, kwargs)
     ptype = "Mechanics"
-    ctype = CouplingStrategy{Symbol("monolithic")}()
+    regtype = "statics"
     simdir_ = datadir("sims", pname)
     setupfolder(simdir_)
 
@@ -16,7 +16,7 @@ function execute(problem::MechanicalProblem{:M_Plate}; kwargs...)
  
     order = _get_kwarg(:order, kwargs, 1)
 
-    printinfo = @dict pname ptype ctype mesh_file μ λ order
+    printinfo = @dict pname ptype regtype mesh_file μ λ order
     print_heading(printinfo)
 
     # Constitutive models

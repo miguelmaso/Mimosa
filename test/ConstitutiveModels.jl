@@ -11,7 +11,7 @@ end
 
 @testset "LinearElasticity3D" begin
   ∇u = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3
-  modelLE = LinearElasticity3D(3.0, 1.0)
+  modelLE = LinearElasticity3D(λ=3.0, μ=1.0)
   Ψ, ∂Ψu, ∂Ψuu = modelLE(DerivativeStrategy{:analytic}())
   @test (Ψ(∇u)) == 0.0006464999999999874
   @test norm(∂Ψu(∇u)) == 0.10157263410978287
@@ -21,7 +21,7 @@ end
 
 @testset "NeoHookean3D" begin
   ∇u = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3
-  model = NeoHookean3D(3.0, 1.0)
+  model = NeoHookean3D(λ=3.0, μ=1.0)
   Ψ, ∂Ψu, ∂Ψuu = model(DerivativeStrategy{:analytic}())
   @test Ψ(∇u) == 0.0006083121396460722
   @test norm(∂Ψu(∇u)) == 0.099612127449168118
@@ -30,7 +30,7 @@ end
 
 @testset "MoneyRivlin3D" begin
   ∇u = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3
-  model = MoneyRivlin3D(3.0, 1.0, 2.0)
+  model = MoneyRivlin3D(λ=3.0, μ1=1.0, μ2=2.0)
   Ψ, ∂Ψu, ∂Ψuu = model(DerivativeStrategy{:analytic}())
   @test Ψ(∇u) == 0.001598259078230413
   @test norm(∂Ψu(∇u)) == 0.24833325775972206
@@ -41,8 +41,8 @@ end
 @testset "ElectroMech" begin
   ∇u = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3
   ∇φ = VectorValue(1.0, 2.0, 3.0)
-  modelMR = MoneyRivlin3D(3.0, 1.0, 2.0)
-  modelID = IdealDielectric(4.0)
+  modelMR = MoneyRivlin3D(λ=3.0, μ1=1.0, μ2=2.0)
+  modelID = IdealDielectric(ε=4.0)
   modelelectro = ElectroMech(modelMR, modelID)
   Ψ, ∂Ψu, ∂Ψφ, ∂Ψuu, ∂Ψφu, ∂Ψφφ = modelelectro(DerivativeStrategy{:analytic}())
   @test Ψ(∇u, ∇φ) == -27.514219755428428
@@ -58,9 +58,9 @@ end
   ∇u = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3
   ∇φ = VectorValue(1.0, 2.0, 3.0)
   θt = 3.4-1.0
-  modelMR = MoneyRivlin3D(3.0, 1.0, 2.0)
-  modelID = IdealDielectric(4.0)
-  modelT = ThermalModel(1.0, 1.0, 2.0)
+  modelMR = MoneyRivlin3D(λ=3.0, μ1=1.0, μ2=2.0)
+  modelID = IdealDielectric(ε=4.0)
+  modelT = ThermalModel(Cv=1.0, θr= 1.0,α= 2.0)
   f(δθ::Float64)::Float64 = (δθ+1.0) / 1.0
   df(δθ::Float64)::Float64 = 1.0
   modelTEM = ThermoElectroMech(modelT, modelID, modelMR, f, df)
@@ -84,8 +84,8 @@ end
   ∇u = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3
   ∇φ = VectorValue(1.0, 2.0, 3.0)
   θt = 3.4-1.0
-  modelMR = MoneyRivlin3D(3.0, 1.0, 2.0)
-  modelT = ThermalModel(1.0, 1.0, 2.0)
+  modelMR = MoneyRivlin3D(λ=3.0, μ1=1.0, μ2=2.0)
+  modelT = ThermalModel(Cv=1.0, θr= 1.0,α= 2.0)
   f(δθ::Float64)::Float64 = (δθ+1.0) / 1.0
   df(δθ::Float64)::Float64 = 1.0
   modelTM = ThermoMech(modelT, modelMR, f, df)

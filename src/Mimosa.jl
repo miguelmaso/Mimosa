@@ -4,20 +4,21 @@ using TimerOutputs
 
 export main
 
-include("Solvers/LinearSolvers.jl")
+include("Solvers/Solvers.jl")
 include("TensorAlgebra/TensorAlgebra.jl")
 include("ConstitutiveModels/ConstitutiveModels.jl")
 include("WeakForms/WeakForms.jl")
+include("BoundaryConditions/BoundaryConditions.jl")
 include("Drivers/Drivers.jl")
 include("Exports.jl")
 
 
-function main(; problemName::String="EM_Plate", kwargs...)
+function main(; kwargs...)
 
     reset_timer!()
 
     # Setup problem
-    problem = get_problem(problemName, kwargs)
+    problem = get_problem(kwargs)
 
     # Execute driver
     outputs = execute(problem; kwargs...)

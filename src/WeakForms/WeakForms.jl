@@ -12,6 +12,7 @@ export residual_TEM
 export jacobian_TEM
 export residual_TM
 export jacobian_TM
+export mass_term
 
 # Coupling management
 # ===================
@@ -29,6 +30,11 @@ end
 
 function jacobian_M(u, du, v, ∂Ψuu, dΩ)
     ∫(∇(v)' ⊙ ((∂Ψuu ∘ (∇(u)')) ⊙ (∇(du)')))dΩ
+end
+
+
+function mass_term(u, v, Coeff, dΩ)
+    ∫(Coeff* (u⋅v))dΩ
 end
 
 

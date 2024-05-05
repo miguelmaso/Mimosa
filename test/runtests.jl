@@ -11,3 +11,13 @@ end
 @time begin
     include("WeakForms.jl")
 end
+@time begin
+    include("Mechanical.jl")
+end
+@time begin
+    include("ElectroMechanical.jl")
+end
+@time begin
+    include("ThermoElectroMechanical.jl")
+end
+# 

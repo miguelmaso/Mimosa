@@ -1,8 +1,3 @@
-module LinearSolvers
-
-using IterativeSolvers
-using Gridap
-using Gridap.Algebra
 
 """
     struct IterativeSolver <: LinearSolver end
@@ -60,5 +55,4 @@ function Gridap.Algebra.solve!(
   copy_entries!(x, fexp(ns.A, b; ns.kwargs...))
 end
 
-
-end
+ 

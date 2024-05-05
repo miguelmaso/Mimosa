@@ -8,6 +8,7 @@ using TimerOutputs
 using WriteVTK
 using ..ConstitutiveModels
 using ..WeakForms
+using ..BoundaryConditions
 
 export Problem
 export ElectroMechProblem
@@ -21,19 +22,21 @@ abstract type Problem end
 abstract type SinglePhysicalProblem <: Problem end
 abstract type MultiPhysicalProblem <: Problem end
 
-struct MechanicalProblem{Kind} <: SinglePhysicalProblem end
-struct ElectroMechProblem{Kind} <: MultiPhysicalProblem end
-struct ThermoElectroMechProblem{Kind} <: MultiPhysicalProblem end
+struct MechanicalProblem{KindReg} <: SinglePhysicalProblem end
+struct ElectroMechProblem{KindSol, KindReg} <: MultiPhysicalProblem end
+struct ThermoElectroMechProblem{KindSol, KindReg} <: MultiPhysicalProblem end
 
-function get_problem(problemName::String, kwargs)
-
+function get_problem(kwargs)
   ptype = _get_kwarg(:ptype,kwargs,"ElectroMechanics")
+  soltype = _get_kwarg(:soltype,kwargs,"monolithic")
+  regtype = _get_kwarg(:regtype,kwargs,"statics")
+
   if ptype == "ElectroMechanics"
-    return ElectroMechProblem{Symbol(problemName)}()
+    return ElectroMechProblem{Symbol(soltype), Symbol(regtype)}()
   elseif ptype == "ThermoElectroMechanics"
-    return ThermoElectroMechProblem{Symbol(problemName)}()
+    return ThermoElectroMechProblem{Symbol(soltype), Symbol(regtype)}()
   elseif ptype == "Mechanics"
-    return MechanicalProblem{Symbol(problemName)}()
+    return MechanicalProblem{Symbol(regtype)}()
   else
     @notimplemented("The problem type: $ptype is not implemented")
   end
@@ -83,79 +86,27 @@ function print_heading(input::Dict)
   println("\e[31m|                                                                                         \e[0m")
   println("\e[31m|                                                                                         \e[0m")
   maxlenghtkey = maximum(key -> length(string(key)), keys(input))
-  println("\e[31m|            Parameter$(repeat(" ", maxlenghtkey - 7)) | Value\e[0m")
-  println("\e[31m__________________________________________________________________________________________\e[0m")
+  # println("\e[31m|            Parameter$(repeat(" ", maxlenghtkey - 7)) | Value\e[0m")
+  # println("\e[31m__________________________________________________________________________________________\e[0m")
   for (key, value) in input
     println("\e[31m|            $(string(key))$(repeat(" ", maxlenghtkey - length(string(key)) + 1)) | $value\e[0m")
   end
   println("\e[31m__________________________________________________________________________________________\e[0m")
 end
 
-
-function get_FE_solver(solveropt::Dict{Symbol,Real})
-  nls_ = NLSolver(show_trace=solveropt[:nr_show_trace],
-      method=:newton,
-      iterations=solveropt[:nr_iter],
-      ftol=solveropt[:nr_ftol])
-  FESolver(nls_)
-end
+ 
 
 
-function IncrementalSolver(problem::Problem, ctype::CouplingStrategy{:monolithic}, ph::FEFunction, params::Dict{Symbol,Any})
-
-  nsteps     = _get_kwarg(:nsteps, params[:solveropt])
-  maxbisec   = _get_kwarg(:nbisec, params[:solveropt])
-  filePath   = _get_kwarg(:simdir_, params[:post_params])
-  is_vtk     = _get_kwarg(:is_vtk, params[:post_params])
-  post_params     = _get_kwarg(:post_params, params)
-
-  pvd        = paraview_collection(filePath*"/Results", append=false)
-
-  Λ = 0.0
-  Λ_inc = 1.0 / nsteps
-
-  cache = nothing
-  nbisect = 0
-  ph_view = get_free_dof_values(ph)
-  Λ_ = 0
-  while Λ < 1.0 - 1e-6
-      Λ += Λ_inc
-      Λ = min(1.0, Λ)
-      ph_ = copy(get_free_dof_values(ph))
-      ph, cache = ΔSolver!(problem, ctype, ph, Λ, Λ_inc, params, cache)
-      flag = (cache.result.f_converged || cache.result.x_converged)
-
-      #Check convergence
-      if (flag == true)
-          Λ_ +=1
-          # Write to PVD
-          pvd = computeOutputs!(problem, pvd, ph, Λ, Λ_, post_params)
-      else
-          ph_view[:] = ph_
-          # go back to previous ph
-          Λ -= Λ_inc
-          Λ_inc = Λ_inc / 2
-          nbisect += 1
-      end
-
-      @assert(nbisect <= maxbisec, "Maximum number of bisections reached")
-
-  end
-  if is_vtk
-  vtk_save(pvd)
-  end
-  return ph
-end
-
-
-
-
+# General Tools
 include("FESpaces.jl")
-include("BoundaryCond.jl")
+include("Solvers.jl")
 
-include("ElectroMech_Drivers.jl")
-include("ThermoElectroMech_Drivers.jl")
-include("Mech_Drivers.jl")
+# Physical drivers
+include("ElectroMechanics/Monolithic_Statics.jl")
+include("ElectroMechanics/Monolithic_Dynamics.jl")
+include("ThermoElectroMechanics/Monolithic_Statics.jl")
+include("Mechanics/Statics.jl")
+include("Mechanics/Dynamics.jl")
 
 
 
