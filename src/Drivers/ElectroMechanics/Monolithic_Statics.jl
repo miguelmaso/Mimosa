@@ -60,12 +60,12 @@ function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
         post_params = @dict Ω is_vtk simdir_
         solver_params = @dict fe_spaces dirichletbc Ω dΩ DΨ res jac solveropt nlsolver post_params
 
-        ph,cache = IncrementalSolver(problem, ctype, ph, solver_params)
+        ph,cache = IncrementalSolver(problem, ph, solver_params)
 
     end
 end
 
-function ΔSolver!(problem::ElectroMechProblem{:monolithic,:statics}, ctype::CouplingStrategy{:monolithic}, ph, Λ, Λ_inc, params, cache)
+function ΔSolver!(problem::ElectroMechProblem{:monolithic,:statics},  ph, Λ, Λ_inc, params, cache)
 
     fe_spaces = _get_kwarg(:fe_spaces, params)
     dirichletbc = _get_kwarg(:dirichletbc, params)

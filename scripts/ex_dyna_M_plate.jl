@@ -34,7 +34,8 @@ function get_parameters()
   # Midpoint solver
   Δt = 5.0
   nsteps = 500
-  solveropt = @dict nr_show_trace nr_iter nr_ftol Δt nsteps
+  αray = 0.4
+  solveropt = @dict nr_show_trace nr_iter nr_ftol Δt nsteps αray
 
   # Postprocessing
   is_vtk = true

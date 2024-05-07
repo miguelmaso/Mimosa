@@ -35,17 +35,18 @@ end
 @publish WeakForms jacobian_M
 @publish WeakForms residual_TEM
 @publish WeakForms jacobian_TEM
-@publish WeakForms  residual_TM
-@publish WeakForms  jacobian_TM
+@publish WeakForms residual_TM
+@publish WeakForms jacobian_TM
 
 @publish BoundaryConditions  DirichletBC
+@publish BoundaryConditions  NeumannBC
 @publish BoundaryConditions  MultiFieldBoundaryCondition
 
 @publish Drivers Problem
-@publish Drivers execute
 @publish Drivers ElectroMechProblem
 @publish Drivers MechanicalProblem
 @publish Drivers ThermoElectroMechProblem
+@publish Drivers execute
 @publish Drivers get_problem
 
 @publish Solvers IterativeSolver

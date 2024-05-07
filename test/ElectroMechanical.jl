@@ -100,7 +100,8 @@ end
     # Midpoint solver
     Δt = 0.5
     nsteps = 5
-    solveropt = @dict nr_show_trace nr_iter nr_ftol Δt nsteps
+    αray = 0.4
+    solveropt = @dict nr_show_trace nr_iter nr_ftol Δt nsteps αray
   
     # Postprocessing
     is_vtk = false
@@ -109,9 +110,9 @@ end
    
    ph, KE, EE, cache = main(; params...)
 
-   @test norm(get_free_dof_values(ph))==0.9831056309907463 
-   @test norm(KE)==0.0020194079090447422
-   @test norm(EE)==5.05365782228524
-   @test cache.result.residual_norm==2.267717263970681e-15 
+   @test norm(get_free_dof_values(ph))==0.8679927787133978
+   @test norm(KE)==0.0013972345491911448
+   @test norm(EE)==5.052669570829151
+   @test cache.result.residual_norm==2.6498985297718214e-15 
 
 end

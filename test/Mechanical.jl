@@ -32,7 +32,8 @@ using Gridap
     # Midpoint solver
     Δt = 5.0
     nsteps = 5
-    solveropt = @dict nr_show_trace nr_iter nr_ftol Δt nsteps
+    αray = 0.4
+    solveropt = @dict nr_show_trace nr_iter nr_ftol Δt nsteps αray
   
     # Postprocessing
     is_vtk = false
@@ -41,10 +42,11 @@ using Gridap
    
   ph, KE, EE,cache = main(; params...)
 
-  @test norm(get_free_dof_values(ph))==31.981666176806325 
-  @test norm(KE)==0.9501834649502897
-  @test norm(EE)==0.004681828202450063
-  @test cache.result.residual_norm==2.402538888321426e-13 
+  @test norm(get_free_dof_values(ph)) ==3.20097810086495
+  @test norm(KE) ==7.789152098340261e-5
+  @test norm(EE) ==0.00013605028266911283
+  @test cache.result.residual_norm ==5.683692991080569e-13
+
 end
 
 

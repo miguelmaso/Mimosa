@@ -6,17 +6,18 @@ using Gridap.Helpers
 using GridapGmsh
 using TimerOutputs
 using WriteVTK
-using ..ConstitutiveModels
-using ..WeakForms
-using ..BoundaryConditions
+using Mimosa.ConstitutiveModels
+using Mimosa.WeakForms
+using Mimosa.BoundaryConditions
+
+export execute
+export get_problem
+
 
 export Problem
 export ElectroMechProblem
 export MechanicalProblem
 export ThermoElectroMechProblem
-
-export execute
-export get_problem
 
 abstract type Problem end
 abstract type SinglePhysicalProblem <: Problem end
@@ -25,6 +26,7 @@ abstract type MultiPhysicalProblem <: Problem end
 struct MechanicalProblem{KindReg} <: SinglePhysicalProblem end
 struct ElectroMechProblem{KindSol, KindReg} <: MultiPhysicalProblem end
 struct ThermoElectroMechProblem{KindSol, KindReg} <: MultiPhysicalProblem end
+
 
 function get_problem(kwargs)
   ptype = _get_kwarg(:ptype,kwargs,"ElectroMechanics")
@@ -48,7 +50,7 @@ function _get_kwarg(kwarg,kwargs)
   try
       return kwargs[kwarg]
   catch
-      s = "The key-word argument $(kwarg) is mandatory in the $problem driver"
+      s = "The key-word argument $(kwarg) is mandatory in the problem driver"
       error(s)
   end
 end

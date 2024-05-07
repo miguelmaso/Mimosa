@@ -38,25 +38,29 @@ function execute(problem::MechanicalProblem{:dynamics}; kwargs...)
 
     # # Get Neumann boundary conditions incremental functions
     # neumannbc_ = _get_kwarg(:neumannbc, kwargs)
-    # neumannbc = get_bc_func(neumannbc_[:tags], neumannbc_[:values])
-
+ 
     # # FE spaces
     fe_spaces = get_FE_spaces(problem, model, order, dirichletbc)
-
-    # # WeakForms
-    function res(uold, υ, ρ, Δt, dΩ)
+    
+    # WeakForms
+    solveropt = _get_kwarg(:solveropt, kwargs)
+    αray = _get_kwarg(:αray, solveropt)
+     function res(uold, υ, ρ, Δt, dΩ)
         res1(u, v) = mass_term(u, v, 2.0 * ρ / Δt^2, dΩ)
         res2(v) = mass_term(uold, v, 2.0 * ρ / Δt^2, dΩ)
         res3(v) = mass_term(υ, v, 2.0 * ρ / Δt, dΩ)
         res4(u, v) = residual_M(u, v, ∂Ψu, dΩ)
         res5(v) = residual_M(uold, v, ∂Ψu, dΩ)
-        return (u, v) -> res1(u, v) - res2(v) - res3(v) + 0.5 * res4(u, v) + 0.5 * res5(v)
+        res6(u, v) = mass_term(u, v, αray * ρ / Δt, dΩ)
+        res7(v) = mass_term(uold, v, αray * ρ / Δt, dΩ)
+        return (u, v) -> res1(u, v) - res2(v) - res3(v) + 0.5 * res4(u, v) + 0.5 * res5(v) + res6(u, v) - res7(v)
     end
 
     function jac(ρ, Δt, dΩ)
         jac1(du, v) = mass_term(du, v, 2 * ρ / Δt^2, dΩ)
         jac2(u, du, v) = jacobian_M(u, du, v, ∂Ψuu, dΩ)
-        return (u, du, v) -> jac1(du, v) + 0.5 * jac2(u, du, v)
+        jac3(du, v) = mass_term(du, v, αray * ρ / Δt, dΩ)
+        return (u, du, v) -> jac1(du, v) + 0.5 * jac2(u, du, v)+jac3(du, v)
     end
 
     @timeit pname begin

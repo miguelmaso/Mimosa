@@ -11,7 +11,7 @@ function get_parameters()
   regtype = "dynamics"
   meshfile = "ex2_mesh.msh"
 
-  modmec = NeoHookean3D(λ=10.0, μ=1.0, ρ=0.001)
+  modmec = NeoHookean3D(λ=10.0, μ=1.0, ρ=1e-6)
   # modmec = MoneyRivlin3D(λ=10.0, μ1=1.0, μ2=0.0, ρ=0.01)
   modelec = IdealDielectric(ε=1.0)
   consmodel = ElectroMech(modmec, modelec)
@@ -24,7 +24,7 @@ function get_parameters()
   dir_u_timesteps = [evolu]
   Du = DirichletBC(dir_u_tags, dir_u_values, dir_u_timesteps)
 
-  evolφ(t) = min(t / 5.0, 1.0)
+  evolφ(t) = min(t / 0.3, 1.0)
   dir_φ_tags = ["midsuf", "topsuf"]
   dir_φ_values = [0.0, 0.2]
   dir_φ_timesteps = [evolφ, evolφ]
@@ -44,9 +44,10 @@ function get_parameters()
   nr_ftol = 1e-12
 
   # Midpoint solver
-  Δt = 0.01
-  nsteps = 5000
-  solveropt = @dict nr_show_trace nr_iter nr_ftol Δt nsteps
+  Δt = 0.0025
+  nsteps = 1000
+  αray = 0.4
+  solveropt = @dict nr_show_trace nr_iter nr_ftol Δt nsteps αray
 
   # Postprocessing
   is_vtk = true

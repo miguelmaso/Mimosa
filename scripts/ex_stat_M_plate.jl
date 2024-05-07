@@ -3,26 +3,29 @@ using Mimosa
 
 
 function get_parameters()
-
-  problemName = "M_Plate"
+ 
+  problemName = "static_plate"
   ptype = "Mechanics"
-  model = "ex2_mesh.msh"
+  regtype = "statics"
+  meshfile = "ex2_mesh.msh"
 
   # mechanical properties
-  μ = 1.0
-  λ = 10.0
-
+  consmodel = MoneyRivlin3D(λ=10.0, μ1=1.0, μ2=0.0, ρ=1.0)
 
   # boundary conditions 
-  dir_tags = ["fixedup"]
-  dir_values = [[0.0, 0.0, 0.0]]
-  neu_tags = ["topsuf"]
-  neu_values = [[0.0, 0.0, -1.0]]
+  evolu(Λ) = 1.0
+  dir_u_tags = ["fixedup"]
+  dir_u_values = [[0.0, 0.0, 0.0]]
+  dir_u_timesteps = [evolu]
+  dirichletbc = DirichletBC(dir_u_tags, dir_u_values, dir_u_timesteps)
 
+  evolF(Λ) = Λ
+  dir_F_tags = ["topsuf"]
+  dir_F_values = [[0.0, -1.0, 0.0]]
+  dir_F_timesteps = [evolF]
+  neumannbc = NeumannBC(dir_F_tags, dir_F_values, dir_F_timesteps)
 
-  dirichletbc = @dict tags = dir_tags values = dir_values
-  neumannbc = @dict tags = neu_tags values = neu_values
-
+   
   # FE parameters
   order = 1
 
@@ -40,7 +43,7 @@ function get_parameters()
   # Postprocessing
   is_vtk = true
 
-  return @dict problemName ptype model μ λ dirichletbc neumannbc order solveropt is_vtk
+  return @dict problemName ptype regtype meshfile consmodel dirichletbc neumannbc order solveropt is_vtk
 end
 
 main(; get_parameters()...)

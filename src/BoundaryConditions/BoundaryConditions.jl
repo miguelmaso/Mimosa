@@ -6,6 +6,13 @@ using Gridap.TensorValues
 export DirichletBC
 export NeumannBC
 export MultiFieldBoundaryCondition
+export residual_Neumann
+
+abstract type BoundaryCondition end
+
+struct MultiFieldBoundaryCondition <: BoundaryCondition
+    BoundaryCondition::Vector{BoundaryCondition}
+end
 
 
 function ϝ(v::Float64)
@@ -15,38 +22,6 @@ end
 function ϝ(v::Vector{Float64})
     (x) -> VectorValue(v)
 end
-
-abstract type BoundaryCondition end
-
-struct MultiFieldBoundaryCondition <: BoundaryCondition
-    BoundaryCondition::Vector{BoundaryCondition}
-end
-
-struct DirichletBC <: BoundaryCondition
-    tags::Vector{String}         # tags for boundary conditions
-    values::Vector{Function}     # f(x)
-    timesteps::Vector{Function}  # f(Λ)
-
-    function DirichletBC(bc_tags::Vector{String}, bc_values, bc_timesteps)  
-        @assert(length(bc_tags) == length(bc_values) == length(bc_timesteps))
-        tags_,funcs_=_get_bc_func(bc_tags, bc_values, bc_timesteps)
-        new(tags_, funcs_, bc_timesteps)
-    end
-end
-
-
-struct NeumannBC <: BoundaryCondition
-    tags::Vector{String}         # tags for boundary conditions
-    values::Vector{Function}     # f(x)
-    timesteps::Vector{Function}  # f(Λ)
-
-    function NeumannBC(bc_tags::Vector{String}, bc_values, bc_timesteps)  
-        @assert(length(bc_tags) == length(bc_values) == length(bc_timesteps))
-        tags_,funcs_=_get_bc_func(bc_tags, bc_values, bc_timesteps)
-        new(tags_, funcs_, bc_timesteps)
-    end
-end
-
 
 
 
@@ -62,10 +37,44 @@ function _get_bc_func(tags_::Vector{String}, values_,  bc_timesteps)
 end
 
 
+ 
+
+struct DirichletBC <: BoundaryCondition
+    tags::Vector{String}         # tags for boundary conditions
+    values::Vector{Function}     # f(x)
+    timesteps::Vector{Function}  # f(Λ)
+
+    function DirichletBC(bc_tags::Vector{String}, bc_values, bc_timesteps)  
+        @assert(length(bc_tags) == length(bc_values) == length(bc_timesteps))
+        tags_,funcs_=_get_bc_func(bc_tags, bc_values, bc_timesteps)
+        new(tags_, funcs_, bc_timesteps)
+    end
+end
+ 
+ 
+
+struct NeumannBC <: BoundaryCondition
+    tags::Vector{String}         # tags for boundary conditions
+    values::Vector{Function}     # f(x)
+    timesteps::Vector{Function}  # f(Λ)
+
+    function NeumannBC(bc_tags::Vector{String}, bc_values, bc_timesteps)  
+        @assert(length(bc_tags) == length(bc_values) == length(bc_timesteps))
+        tags_,funcs_=_get_bc_func(bc_tags, bc_values, bc_timesteps)
+        new(tags_, funcs_, bc_timesteps)
+    end
+end
 
 
+function residual_Neumann(v, bc::NeumannBC, dΓ;  Λ=1.0)
+ 
+    bc_func_ = Vector{Gridap.CellData.DomainContribution}(undef, length(bc.tags))
+     for (i,f) in enumerate(bc.values)
+        bc_func_[i]=∫(v⋅f(Λ))dΓ[i]
+     end
+      mapreduce(f -> f(v), +, bc_func_)
+end
 
-
-
+ 
 
 end

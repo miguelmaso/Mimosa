@@ -8,7 +8,7 @@ function get_FE_solver(solveropt::Dict{Symbol,Real})
 end
 
 
-function IncrementalSolver(problem::Problem, ctype::CouplingStrategy{:monolithic}, ph::FEFunction, params::Dict{Symbol,Any})
+function IncrementalSolver(problem::Problem, ph::FEFunction, params::Dict{Symbol,Any})
 
     nsteps = _get_kwarg(:nsteps, params[:solveropt])
     maxbisec = _get_kwarg(:nbisec, params[:solveropt])
@@ -29,7 +29,7 @@ function IncrementalSolver(problem::Problem, ctype::CouplingStrategy{:monolithic
         Λ += Λ_inc
         Λ = min(1.0, Λ)
         ph_ = copy(get_free_dof_values(ph))
-        ph, cache = ΔSolver!(problem, ctype, ph, Λ, Λ_inc, params, cache)
+        ph, cache = ΔSolver!(problem, ph, Λ, Λ_inc, params, cache)
         flag = (cache.result.f_converged || cache.result.x_converged)
 
         #Check convergence

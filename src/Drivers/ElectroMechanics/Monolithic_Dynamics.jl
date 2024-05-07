@@ -43,26 +43,31 @@ function execute(problem::ElectroMechProblem{:monolithic,:dynamics}; kwargs...)
     fe_spaces = get_FE_spaces(problem, model, order, dirichletbc)
 
     # # WeakForms
+    solveropt = _get_kwarg(:solveropt, kwargs)
+    αray = _get_kwarg(:αray, solveropt)
+    
     function res(phold, υ, ρ, Δt,  dΩ)
         res1(u, v) = mass_term(u, v, 2.0 * ρ / Δt^2, dΩ)
         res2(v) = mass_term(phold[1], v, 2.0 * ρ / Δt^2, dΩ)
         res3(v) = mass_term(υ, v, 2.0 * ρ / Δt, dΩ)
         res4((u, φ), (v, vφ)) = residual_EM(ctype, (u, φ), (v, vφ), (∂Ψu, ∂Ψφ), dΩ)
         res5((v, vφ)) = residual_EM(ctype, (phold[1], phold[2]), (v, vφ), (∂Ψu, ∂Ψφ), dΩ)
-        return ((u, φ), (v, vφ)) -> res1(u, v) - res2(v) - res3(v) + 0.5 * res4((u, φ), (v, vφ)) + 0.5 * res5((v, vφ))
+        res6(u, v) = mass_term(u, v, αray * ρ / Δt, dΩ)
+        res7(v) = mass_term(phold[1], v, αray * ρ / Δt, dΩ)
+        return ((u, φ), (v, vφ)) -> res1(u, v) - res2(v) - res3(v) + 0.5 * res4((u, φ), (v, vφ)) + 0.5 * res5((v, vφ))+res6(u, v)-res7(v)
     end
 
     function jac(ρ, Δt, dΩ)
         jac1(du, v) = mass_term(du, v, 2 * ρ / Δt^2, dΩ)
         jac2((u, φ), (du, dφ), (v, vφ)) = jacobian_EM(ctype, (u, φ), (du, dφ), (v, vφ), (∂Ψuu, ∂Ψφu, ∂Ψφφ), dΩ)
-        return ((u, φ), (du, dφ), (v, vφ)) -> jac1(du, v) + 0.5 * jac2((u, φ), (du, dφ), (v, vφ))
+        jac3(du, v) = mass_term(du, v, αray * ρ / Δt, dΩ)
+        return ((u, φ), (du, dφ), (v, vφ)) -> jac1(du, v) + 0.5 * jac2((u, φ), (du, dφ), (v, vφ))+jac3(du, v) 
     end
 
 
       @timeit pname begin
         println("Begining mid-point solver")
         # NewtonRaphson solver
-        solveropt = _get_kwarg(:solveropt, kwargs)
         nlsolver = get_FE_solver(solveropt)
         vel = _get_kwarg(:velocity, kwargs)
 

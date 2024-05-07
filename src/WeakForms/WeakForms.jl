@@ -1,8 +1,8 @@
 module WeakForms
 
 using Gridap
-using ..TensorAlgebra
-
+using Mimosa.TensorAlgebra
+ 
 export CouplingStrategy
 export residual_EM
 export jacobian_EM
@@ -19,7 +19,6 @@ export mass_term
 struct CouplingStrategy{Kind} end
 
 
-
 # ===================
 # Mechanics
 # ===================
@@ -31,8 +30,6 @@ end
 function jacobian_M(u, du, v, ∂Ψuu, dΩ)
     ∫(∇(v)' ⊙ ((∂Ψuu ∘ (∇(u)')) ⊙ (∇(du)')))dΩ
 end
-
-
 function mass_term(u, v, Coeff, dΩ)
     ∫(Coeff* (u⋅v))dΩ
 end

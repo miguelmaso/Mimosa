@@ -26,7 +26,7 @@ function get_parameters()
 
   evolφ(Λ) = Λ
   dir_φ_tags = ["midsuf", "topsuf"]
-  dir_φ_values = [0.0, 0.2]
+  dir_φ_values = [0.0, 0.3]
   dir_φ_timesteps = [evolφ, evolφ]
   Dφ = DirichletBC(dir_φ_tags, dir_φ_values, dir_φ_timesteps)
 

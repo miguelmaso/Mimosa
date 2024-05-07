@@ -707,11 +707,11 @@ end
 
 
 
-@inline function (*)(Ten1::TensorValue, Ten2::VectorValue)
+function (*)(Ten1::TensorValue, Ten2::VectorValue)
   return (⋅)(Ten1, Ten2)
 end
 
-@inline function (*)(Ten1::TensorValue, Ten2::TensorValue)
+function (*)(Ten1::TensorValue, Ten2::TensorValue)
   return (⋅)(Ten1, Ten2)
 end
 
