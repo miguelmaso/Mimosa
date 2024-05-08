@@ -11,6 +11,7 @@ function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
     print_heading(printinfo)
 
     is_vtk = _get_kwarg(:is_vtk, kwargs, false)
+    is_P_F = _get_kwarg(:is_P_F, kwargs, false)
     simdir_ = datadir("sims", pname)
     setupfolder(simdir_)
  
@@ -57,7 +58,7 @@ function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
         ph = FEFunction(fe_spaces.U, x0)
         @show size(get_free_dof_values(ph))
 
-        post_params = @dict Ω is_vtk simdir_
+        post_params = @dict Ω is_vtk simdir_ is_P_F
         solver_params = @dict fe_spaces dirichletbc Ω dΩ DΨ res jac solveropt nlsolver post_params
 
         ph,cache = IncrementalSolver(problem, ctype, ph, solver_params)
@@ -74,6 +75,7 @@ function ΔSolver!(problem::ElectroMechProblem{:monolithic,:statics}, ctype::Cou
     nlsolver = _get_kwarg(:nlsolver, params)
     DΨ = _get_kwarg(:DΨ, params)
     dΩ = _get_kwarg(:dΩ, params)
+    is_P_F = _get_kwarg(:is_P_F, params[:post_params])
 
     # update x0 with dirichlet incrementos   
     uh = ph[1] # not hard copy
@@ -95,9 +97,42 @@ function ΔSolver!(problem::ElectroMechProblem{:monolithic,:statics}, ctype::Cou
     op = FEOperator(res, jac, fe_spaces.U, fe_spaces.V)
     ph, cache = solve!(ph, nlsolver, op, cache)
 
-    return ph, cache
+    if is_P_F
+        uh = ph[1]
+        ϕh = ph[2]
+        P = DΨ.∂Ψu∘(∇(uh)',∇(ϕh))
+    
+        return ph, cache, P
+    else
+        return ph, cache
+    end
 end
 
+
+function computeOutputs!(::ElectroMechProblem{:monolithic,:statics}, pvd, ph, P, Λ, Λ_, post_params)
+
+    println("STEP: $Λ_, LAMBDA: $Λ")
+    println("============================")
+
+    Ω = _get_kwarg(:Ω, post_params)
+    is_vtk = _get_kwarg(:is_vtk, post_params)
+    filePath = _get_kwarg(:simdir_, post_params)
+
+    uh = ph[1]
+    φh = ph[2]
+    F(∇u) = one(∇u) + ∇u
+    F_ = F∘(∇(uh)')
+    if is_vtk
+        Λstring = replace(string(round(Λ, digits=2)), "." => "_")
+        pvd[Λ_] = createvtk(
+            Ω,
+            filePath * "/_Λ_" * Λstring * "_TIME_$Λ_" * ".vtu",
+            cellfields=["u" => uh, "φ" => φh, "F" => F_, "P" => P]
+        )
+    end
+
+    return pvd
+end
 
 function computeOutputs!(::ElectroMechProblem{:monolithic,:statics}, pvd, ph, Λ, Λ_, post_params)
 

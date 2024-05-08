@@ -14,6 +14,7 @@ function IncrementalSolver(problem::Problem, ctype::CouplingStrategy{:monolithic
     maxbisec = _get_kwarg(:nbisec, params[:solveropt])
     filePath = _get_kwarg(:simdir_, params[:post_params])
     is_vtk = _get_kwarg(:is_vtk, params[:post_params])
+    is_P_F = _get_kwarg(:is_P_F, params[:post_params])
     post_params = _get_kwarg(:post_params, params)
 
     pvd = paraview_collection(filePath * "/Results", append=false)
@@ -29,14 +30,22 @@ function IncrementalSolver(problem::Problem, ctype::CouplingStrategy{:monolithic
         Λ += Λ_inc
         Λ = min(1.0, Λ)
         ph_ = copy(get_free_dof_values(ph))
-        ph, cache = ΔSolver!(problem, ctype, ph, Λ, Λ_inc, params, cache)
+        if is_P_F
+            ph, cache, P = ΔSolver!(problem, ctype, ph, Λ, Λ_inc, params, cache)
+        else
+            ph, cache= ΔSolver!(problem, ctype, ph, Λ, Λ_inc, params, cache)
+        end
         flag = (cache.result.f_converged || cache.result.x_converged)
 
         #Check convergence
         if (flag == true)
             Λ_ += 1
             # Write to PVD
-            pvd = computeOutputs!(problem, pvd, ph, Λ, Λ_, post_params)
+            if is_P_F
+                pvd = computeOutputs!(problem, pvd, ph, P, Λ, Λ_, post_params)
+            else
+                pvd = computeOutputs!(problem, pvd, ph, Λ, Λ_, post_params)
+            end
         else
             ph_view[:] = ph_
             # go back to previous ph
