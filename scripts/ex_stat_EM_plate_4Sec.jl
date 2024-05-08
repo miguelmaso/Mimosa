@@ -4,7 +4,7 @@ using Mimosa
 
 function get_parameters()
 
-  problemName = "EMPLATE"
+  problemName = "EMPLATE_ELM-P-F-O2"
   ptype = "ElectroMechanics"
   soltype = "monolithic"
   regtype = "statics"
@@ -33,7 +33,7 @@ function get_parameters()
   dirichletbc = MultiFieldBoundaryCondition([Du, Dφ])
 
   # FE parameters
-  order = 1
+  order = 2
 
   # NewtonRaphson parameters
   nr_show_trace = true
@@ -48,8 +48,9 @@ function get_parameters()
 
   # Postprocessing
   is_vtk = true
+  is_P_F = false
 
-  return @dict problemName ptype soltype regtype meshfile consmodel dirichletbc order solveropt is_vtk
+  return @dict problemName ptype soltype regtype meshfile consmodel dirichletbc order solveropt is_vtk is_P_F
 end
 
 main(; get_parameters()...)
