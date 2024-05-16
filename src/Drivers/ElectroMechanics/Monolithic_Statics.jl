@@ -120,14 +120,22 @@ function computeOutputs!(::ElectroMechProblem{:monolithic,:statics}, pvd, ph, P,
 
     uh = ph[1]
     φh = ph[2]
-    F(∇u) = one(∇u) + ∇u
+
+    F, H, J, b, n, e, εₐ = _getKinematic()
     F_ = F∘(∇(uh)')
+    J_ = J∘(F_)
+    σ = (1/J_) * P * F_'
+    e_ = e∘(b∘(F_))
+    εₐ_ = εₐ∘(n∘(F_),e_)
+
+
+
     if is_vtk
         Λstring = replace(string(round(Λ, digits=2)), "." => "_")
         pvd[Λ_] = createvtk(
             Ω,
             filePath * "/_Λ_" * Λstring * "_TIME_$Λ_" * ".vtu",
-            cellfields=["u" => uh, "φ" => φh, "F" => F_, "P" => P]
+            cellfields=["u" => uh, "φ" => φh, "F" => F_, "P" => P, "σ" => σ, "e" => e_, "εₐ" => εₐ_]
         )
     end
 

@@ -20,6 +20,7 @@ export ElectroMech
 export ThermoElectroMech
 export ThermoMech
 export Mechano
+export _getKinematic
 
 export DerivativeStrategy
 
@@ -99,6 +100,17 @@ struct ThermoElectroMech <: Multiphysic
   dfdθ::Function
 end
 
+function _getKinematic()
+  F(∇u) = one(∇u) + ∇u
+  J(F) = det(F)
+  H(F) = J(F) * inv(F)'
+  b(F) = F*F'
+  e(b) = (1/2)*(one(b)-inv(b))
+  N = VectorValue(1,0,0)
+  n(F) = (1/norm(F*N))*F*N
+  εₐ(n,e) = n'⋅(e*n)
+  return (F, H, J, b, n, e, εₐ)
+end
 
 function _getKinematic(::Mechano)
   F(∇u) = one(∇u) + ∇u
