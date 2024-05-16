@@ -1,13 +1,9 @@
 using Gmsh: Gmsh, gmsh
 gmsh.initialize()
 
-gmsh.model.add("Plate3_mesh")
-
-
- 
-geo = gmsh.model.geo
 function generateBeamSec(L,W,T,st_pt,nl,nw,nt,lc,n_sec)
-    print([nl,nw,nt])
+    geo = gmsh.model.geo
+    #print([nl,nw,nt])
     p = []
     append!(p,geo.addPoint(st_pt[1], st_pt[2], st_pt[3], lc, -1))
     append!(p,geo.addPoint(st_pt[1]+L, st_pt[2], st_pt[3], lc, -1))
@@ -111,9 +107,9 @@ function generateBeamSec(L,W,T,st_pt,nl,nw,nt,lc,n_sec)
 end
 
 # parameters
-L=100;      # beam length
-W=8;       # beam width
-T=0.4;     # beam thickness
+L=100e-3;      # beam length
+W=8e-3;       # beam width
+T=0.4e-3;     # beam thickness
 
 
 # const nl=40; # X element size
@@ -125,25 +121,26 @@ nl=18; # X element size
 nw=8; # Y element size
 nt=2; # Z element size
 
-fract = [0.35,0.15,0.15]
+fract = [0.25,0.25,0.25]
 
-model_name = "PlateBeam2.msh"
+model_name = "PlateBeam4SecSI"
 
 lc = 1.0; # characteristic length for meshing
 function generateBeam(L,W,T,nl,nw,nt,lc,fract,model_name)
     append!(fract,1 - sum(fract))
+    gmsh.model.add(model_name)
     n_sec = length(fract)
     st_pt = [0 0 0]
     for i in 1:n_sec
         nsec = i
         L_sec = L*fract[i]
-        nl = ceil(L_sec/2)
+        #nl = ceil(L_sec/2)
         # nw = ceil(W/nw)
         generateBeamSec(L_sec,W,T,st_pt,nl,nw,nt,lc,nsec)
         st_pt = [st_pt[1]+L_sec 0 0]
     end
     gmsh.model.mesh.generate(3)
-    output_file = joinpath(dirname(@__FILE__), model_name)
+    output_file = joinpath(dirname(@__FILE__), model_name*".msh")
     gmsh.write(output_file)
     if !("-nopopup" in ARGS)
         gmsh.fltk.run()
