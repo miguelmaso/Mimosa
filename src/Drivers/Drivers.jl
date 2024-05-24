@@ -6,7 +6,7 @@ using Gridap.Helpers
 using GridapGmsh
 using TimerOutputs
 using WriteVTK
-using Mimosa.ConstitutiveModels
+using Mimosa.PhysicalModels
 using Mimosa.WeakForms
 using Mimosa.BoundaryConditions
 
@@ -14,18 +14,20 @@ export execute
 export get_problem
 
 
-export Problem
+export PhysicalProblem
 export ElectroMechProblem
 export MechanicalProblem
 export ThermoElectroMechProblem
+export ThermoMechProblem
 
-abstract type Problem end
-abstract type SinglePhysicalProblem <: Problem end
-abstract type MultiPhysicalProblem <: Problem end
+abstract type PhysicalProblem end
+abstract type SinglePhysicalProblem <: PhysicalProblem end
+abstract type MultiPhysicalProblem <: PhysicalProblem end
 
 struct MechanicalProblem{KindReg} <: SinglePhysicalProblem end
 struct ElectroMechProblem{KindSol, KindReg} <: MultiPhysicalProblem end
 struct ThermoElectroMechProblem{KindSol, KindReg} <: MultiPhysicalProblem end
+struct ThermoMechProblem{KindSol, KindReg} <: MultiPhysicalProblem end
 
 
 function get_problem(kwargs)
@@ -37,6 +39,8 @@ function get_problem(kwargs)
     return ElectroMechProblem{Symbol(soltype), Symbol(regtype)}()
   elseif ptype == "ThermoElectroMechanics"
     return ThermoElectroMechProblem{Symbol(soltype), Symbol(regtype)}()
+  elseif ptype == "ThermoMechanics"
+    return ThermoMechProblem{Symbol(soltype), Symbol(regtype)}()
   elseif ptype == "Mechanics"
     return MechanicalProblem{Symbol(regtype)}()
   else
@@ -44,7 +48,7 @@ function get_problem(kwargs)
   end
 end
 
-execute(problem::Problem; kwargs...) = @notimplemented("The driver for problem: $problem is not implemented")
+execute(problem::PhysicalProblem; kwargs...) = @notimplemented("The driver for problem: $problem is not implemented")
 
 function _get_kwarg(kwarg,kwargs)
   try
@@ -82,9 +86,7 @@ function print_heading(input::Dict)
   println("\e[31m|                                                                                         \e[0m")
   println("\e[31m|                                 MULTISIMO LAB                                           \e[0m")
   println("\e[31m|                                                                                          \e[0m")
-  println("\e[31m|            Executing MIMOSA Driver for $ptype Problem                                    \e[0m")
-  println("\e[31m|                                                                                         \e[0m")
-  println("\e[31m|            Problem name $pname                                                          \e[0m")
+  println("\e[31m|            Executing MIMOSA Driver for $ptype PhysicalProblem                                    \e[0m")
   println("\e[31m|                                                                                         \e[0m")
   println("\e[31m|                                                                                         \e[0m")
   maxlenghtkey = maximum(key -> length(string(key)), keys(input))
@@ -100,6 +102,7 @@ end
 
 
 # General Tools
+include("UpdateBCs.jl")
 include("FESpaces.jl")
 include("Solvers.jl")
 
@@ -107,8 +110,11 @@ include("Solvers.jl")
 include("ElectroMechanics/Monolithic_Statics.jl")
 include("ElectroMechanics/Monolithic_Dynamics.jl")
 include("ThermoElectroMechanics/Monolithic_Statics.jl")
+include("ThermoElectroMechanics/Monolithic_Dynamics.jl")
 include("Mechanics/Statics.jl")
 include("Mechanics/Dynamics.jl")
+include("ThermoMechanics/Monolithic_Statics.jl")
+include("ThermoMechanics/Monolithic_Dynamics.jl")
 
 
 

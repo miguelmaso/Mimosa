@@ -1,21 +1,21 @@
 using Gmsh: Gmsh, gmsh
 Gmsh.initialize()
 
-gmsh.model.add("ex2_mesh")
+gmsh.model.add("square")
 
 # parameters
-const L=40;      # beam length
-const W=8;       # beam width
+const L=100;      # beam length
+const W=100;       # beam width
 # const T=0.4;     # beam thickness
-const T=2.0;     # beam thickness
+const T=0.5;     # beam thickness
 
 # const nl=40; # X element size
 # const nw=10; # Y element size
 # const nt=4; # Z element size
 
 
-const nl=20; # X element size
-const nw=8; # Y element size
+const nl=100; # X element size
+const nw=100; # Y element size
 const nt=2; # Z element size
 
 
@@ -119,16 +119,25 @@ gmsh.model.addPhysicalGroup(0, [2, 7, 9, 6, 8, 18], 4,"topcant")
 gmsh.model.addPhysicalGroup(1, [17, 5, 7, 8, 19, 6, 28], 4, "topcant")  
 gmsh.model.addPhysicalGroup(2, [2, 33], 4, "topcant")  
 
+
+gmsh.model.addPhysicalGroup(0, [1,2,4,6], 5, "bottom")  
+gmsh.model.addPhysicalGroup(1, [4,7,10,12], 5, "bottom")  
+gmsh.model.addPhysicalGroup(2, [6], 5, "bottom")  
+
+
+  gmsh.model.addPhysicalGroup(0, [6,8,18,2,7,9,1,3,10,4,5,14], 6, "fixed")  
+  gmsh.model.addPhysicalGroup(1, [5,7,17,9,10,14,2,4,15,11,12,16], 6, "fixed")  
+  gmsh.model.addPhysicalGroup(2, [1,2,3,4,21,25,33,29], 6, "fixed")  
+
 gmsh.model.addPhysicalGroup(3, [1,2], 1, "Volume")  
  
-#  output_file = joinpath(dirname(@__FILE__), "ex2_mesh.msh")
- output_file = joinpath(dirname(@__FILE__), "cantilever.msh")
+output_file = joinpath(dirname(@__FILE__), "square.msh")
 
 gmsh.write(output_file)
 
  # Launch the GUI to see the results:
-if !("-nopopup" in ARGS)
-      gmsh.fltk.run()
-end
+# if !("-nopopup" in ARGS)
+#       gmsh.fltk.run()
+# end
 
 Gmsh.finalize()

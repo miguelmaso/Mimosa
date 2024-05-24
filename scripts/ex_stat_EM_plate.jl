@@ -2,6 +2,7 @@ using DrWatson
 using Mimosa
 
 
+
 function get_parameters()
 
   problemName = "EMPLATE"
@@ -26,7 +27,7 @@ function get_parameters()
 
   evolφ(Λ) = Λ
   dir_φ_tags = ["midsuf", "topsuf"]
-  dir_φ_values = [0.0, 0.3]
+  dir_φ_values = [0.0, 0.25]
   dir_φ_timesteps = [evolφ, evolφ]
   Dφ = DirichletBC(dir_φ_tags, dir_φ_values, dir_φ_timesteps)
 
@@ -53,6 +54,9 @@ function get_parameters()
 end
 
 main(; get_parameters()...)
+
+
+
 
 #  using PProf
 

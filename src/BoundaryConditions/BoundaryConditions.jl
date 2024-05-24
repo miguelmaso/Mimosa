@@ -5,10 +5,14 @@ using Gridap.TensorValues
 
 export DirichletBC
 export NeumannBC
+export get_Neumann_dΓ
+export NothingBC
 export MultiFieldBoundaryCondition
 export residual_Neumann
 
 abstract type BoundaryCondition end
+struct NothingBC<: BoundaryCondition end
+
 
 struct MultiFieldBoundaryCondition <: BoundaryCondition
     BoundaryCondition::Vector{BoundaryCondition}
@@ -23,12 +27,15 @@ function ϝ(v::Vector{Float64})
     (x) -> VectorValue(v)
 end
 
-
+function ϝ(v::Function)
+    (x) -> v(x)
+end
 
 function _get_bc_func(tags_::Vector{String}, values_,  bc_timesteps)
     bc_func_ = Vector{Function}(undef, length(tags_))
+    @assert(length(tags_) == length(values_))
+
     @inbounds for i in eachindex(tags_)
-        @assert(length(tags_) == length(values_))
         # get funcion generators for boundary conditions
         u_bc(Λ::Float64) = (x) -> ϝ(values_[i])(x) * bc_timesteps[i](Λ)
         bc_func_[i] = u_bc
@@ -66,15 +73,52 @@ struct NeumannBC <: BoundaryCondition
 end
 
 
-function residual_Neumann(v, bc::NeumannBC, dΓ;  Λ=1.0)
- 
-    bc_func_ = Vector{Gridap.CellData.DomainContribution}(undef, length(bc.tags))
+#------------------------------------------------------------
+#                   Neumann Boundary conditions residuals
+#------------------------------------------------------------
+
+function residual_Neumann(::NothingBC, kwargs ...) end
+
+function residual_Neumann(bc::NeumannBC, v, dΓ,  Λ)
+    bc_func_ = Vector{Function}(undef, length(bc.tags))
      for (i,f) in enumerate(bc.values)
-        bc_func_[i]=∫(v⋅f(Λ))dΓ[i]
+        bc_func_[i]=(v)->∫(-1.0*(v⋅f(Λ)))dΓ[i]
      end
-      mapreduce(f -> f(v), +, bc_func_)
+     return mapreduce(f -> f(v), +, bc_func_)
 end
 
+function residual_Neumann(bc::NeumannBC, v, dΓ,  Λ⁺, Λ⁻)
+    bc_func_ = Vector{Function}(undef, length(bc.tags))
+     for (i,f) in enumerate(bc.values)
+        bc_func_[i]=(v)->(∫(-0.5*(v⋅f(Λ⁺)))dΓ[i]+∫(-0.5*(v⋅f(Λ⁻)))dΓ[i])
+     end
+     return mapreduce(f -> f(v), +, bc_func_)
+end
+
+#------------------------------------------------------------
+#                   Neumann Boundary conditions measures
+#------------------------------------------------------------
+function get_Neumann_dΓ(model,::NothingBC,degree)
+    Vector{Gridap.CellData.GenericMeasure}(undef, 1)
+end
  
+function get_Neumann_dΓ(model,bc::NeumannBC,degree)
+    dΓ=Vector{Gridap.CellData.GenericMeasure}(undef, length(bc.tags))
+    for i in 1:length(bc.tags)
+        Γ= BoundaryTriangulation(model, tags=bc.tags[i])
+        dΓ[i]= Measure(Γ, degree)
+    end
+    return dΓ
+end
+
+function get_Neumann_dΓ(model,bc::MultiFieldBoundaryCondition,degree::Int64)
+    dΓ=Vector{Vector{Gridap.CellData.GenericMeasure}}(undef, length(bc.BoundaryCondition))
+    for (i,bc_i) in enumerate(bc.BoundaryCondition)
+        dΓ[i]= get_Neumann_dΓ(model,bc_i,degree)
+    end
+    return dΓ
+end
+
+
 
 end

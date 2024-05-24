@@ -1,12 +1,11 @@
 
 function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
 
-    # Problem setting
+    # PhysicalProblem setting
     pname = _get_kwarg(:problemName, kwargs)
     ptype = "ElectroMechanics"
     soltype = "monolithic"
     regtype = "statics"
-    ctype = CouplingStrategy{Symbol(soltype)}()
     printinfo = @dict ptype soltype regtype pname
     print_heading(printinfo)
 
@@ -16,7 +15,7 @@ function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
  
     # Constitutive models
     consmodel = _get_kwarg(:consmodel, kwargs)
-    @assert consmodel isa ElectroMech
+    @assert consmodel isa ElectroMechano
 
     # Derivatives
     Ψ, ∂Ψu, ∂Ψφ, ∂Ψuu, ∂Ψφu, ∂Ψφφ = consmodel(DerivativeStrategy{:analytic}())
@@ -36,13 +35,21 @@ function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
 
     # Dirichlet boundary conditions
     dirichletbc = _get_kwarg(:dirichletbc, kwargs)
+    @assert dirichletbc isa MultiFieldBoundaryCondition
+    @assert length(dirichletbc.BoundaryCondition)==2
 
+    # Neumann boundary conditions
+    neumannbc = _get_kwarg(:neumannbc, kwargs, MultiFieldBoundaryCondition([NothingBC(), NothingBC()]) )
+    @assert neumannbc isa MultiFieldBoundaryCondition || neumannbc isa NothingBC
+    dΓ=get_Neumann_dΓ(model,neumannbc,degree)
+
+        
     # FE spaces
     fe_spaces = get_FE_spaces(problem, model, order, dirichletbc)
 
     # WeakForms
-    res((u, φ), (v, vφ)) = residual_EM(ctype, (u, φ), (v, vφ), (∂Ψu, ∂Ψφ), dΩ) # Add Neumann BC 
-    jac((u, φ), (du, dφ), (v, vφ)) = jacobian_EM(ctype, (u, φ), (du, dφ), (v, vφ), (∂Ψuu, ∂Ψφu, ∂Ψφφ), dΩ)
+    res((u, φ), (v, vφ)) = residual(ElectroMechano, (u, φ), (v, vφ), (∂Ψu, ∂Ψφ), dΩ) # Add Neumann BC 
+    jac((u, φ), (du, dφ), (v, vφ)) = jacobian(ElectroMechano, (u, φ), (du, dφ), (v, vφ), (∂Ψuu, ∂Ψφu, ∂Ψφφ), dΩ)
 
     @timeit pname begin
         println("Defining Nonlinear solver")
@@ -58,48 +65,16 @@ function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
         @show size(get_free_dof_values(ph))
 
         post_params = @dict Ω is_vtk simdir_
-        solver_params = @dict fe_spaces dirichletbc Ω dΩ DΨ res jac solveropt nlsolver post_params
+        solver_params = @dict fe_spaces dirichletbc neumannbc Ω dΩ dΓ DΨ res jac solveropt nlsolver post_params
 
         ph,cache = IncrementalSolver(problem, ph, solver_params)
 
     end
 end
 
-function ΔSolver!(problem::ElectroMechProblem{:monolithic,:statics},  ph, Λ, Λ_inc, params, cache)
-
-    fe_spaces = _get_kwarg(:fe_spaces, params)
-    dirichletbc = _get_kwarg(:dirichletbc, params)
-    res = _get_kwarg(:res, params)
-    jac = _get_kwarg(:jac, params)
-    nlsolver = _get_kwarg(:nlsolver, params)
-    DΨ = _get_kwarg(:DΨ, params)
-    dΩ = _get_kwarg(:dΩ, params)
-
-    # update x0 with dirichlet incrementos   
-    uh = ph[1] # not hard copy
-    φh = ph[2] # not hard copy
-    # Test and trial spaces for Λ_inc
-    fe_spaces = get_FE_spaces!(problem, fe_spaces, dirichletbc, Λ_inc)
-    # Update Dirichlet for electro problem
-    lφ(vφ) = -1.0 * residual_EM(CouplingStrategy{:staggered_E}(), (uh, φh), vφ, DΨ.∂Ψφ, dΩ)
-    aφ(dφ, vφ) = jacobian_EM(CouplingStrategy{:staggered_E}(), (uh, φh), dφ, vφ, DΨ.∂Ψφφ, dΩ)
-    opφ = AffineFEOperator(aφ, lφ, fe_spaces.Uφ, fe_spaces.Vφ)
-    dφh = solve(opφ)
-
-    pφh = get_free_dof_values(φh)
-    pdφh = get_free_dof_values(dφh)
-    pφh .+= pdφh
-
-    fe_spaces = get_FE_spaces!(problem, fe_spaces, dirichletbc, Λ)
-
-    op = FEOperator(res, jac, fe_spaces.U, fe_spaces.V)
-    ph, cache = solve!(ph, nlsolver, op, cache)
-
-    return ph, cache
-end
 
 
-function computeOutputs!(::ElectroMechProblem{:monolithic,:statics}, pvd, ph, Λ, Λ_, post_params)
+function postprocess!(::ElectroMechProblem{:monolithic,:statics}, pvd, ph, Λ, Λ_, post_params)
 
     println("STEP: $Λ_, LAMBDA: $Λ")
     println("============================")

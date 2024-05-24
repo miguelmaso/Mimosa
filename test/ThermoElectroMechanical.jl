@@ -1,7 +1,7 @@
 using DrWatson
 using Gridap
 
-@testset "Static ThermoElectroMechanics" begin
+@testset "Monolithic Static ThermoElectroMechanics" begin
  
 
   problemName = "test"
@@ -22,7 +22,7 @@ using Gridap
   modmec = NeoHookean3D(λ=1e7, μ=1e6)
   modelec = IdealDielectric(ε=4.0)
   modterm = ThermalModel(Cv=100.0, θr=293.15, α=β * e, κ=10.0)
-  consmodel = ThermoElectroMech(modterm, modelec, modmec, f, df)
+  consmodel = ThermoElectroMechModel(Thermo=modterm, Electro=modelec, Mechano=modmec, fθ=f, dfdθ=df)
 
   # boundary conditions 
   evolu(Λ)= 1.0

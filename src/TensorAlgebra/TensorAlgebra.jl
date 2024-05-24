@@ -16,6 +16,8 @@ export (⊗₁₂³⁴)
 export (⊗₁²)
 export I3
 export I9
+export logreg
+
 
 # outer ⊗ \otimes
 # inner ⊙ \odot
@@ -359,7 +361,6 @@ function (⊗₁₃²)(A::TensorValue{3,3,Float64}, V::VectorValue{3,Float64})
   A[8]*V[3],
   A[9]*V[3])
 end
-
 
   
 function (⊗₁₃²⁴)(A::TensorValue{3,3,Float64}, B::TensorValue{3,3,Float64})
@@ -739,6 +740,16 @@ TensorValue(1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0)
+end
+
+
+# Jacobian regularization
+function logreg(J; Threshold=0.01)
+  if J >= Threshold
+    return log(J)
+  else
+    return log(Threshold) - (3.0 / 2.0) + (2 / Threshold) * J - (1 / (2 * Threshold^2)) * J^2
+  end
 end
 
 

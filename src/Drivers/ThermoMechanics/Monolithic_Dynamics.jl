@@ -1,9 +1,9 @@
 
-function execute(problem::ElectroMechProblem{:monolithic,:dynamics}; kwargs...)
+function execute(problem::ThermoMechProblem{:monolithic,:dynamics}; kwargs...)
 
     # PhysicalProblem setting
     pname = _get_kwarg(:problemName, kwargs)
-    ptype = "ElectroMechanics"
+    ptype = "ThermoMechanics"
     soltype = "monolithic"
     regtype = "dynamics"
 
@@ -12,22 +12,23 @@ function execute(problem::ElectroMechProblem{:monolithic,:dynamics}; kwargs...)
 
     simdir_ = datadir("sims", pname)
     setupfolder(simdir_)
- 
+    
+    is_vtk = _get_kwarg(:is_vtk, kwargs, false)
+
     # Constitutive models
     consmodel = _get_kwarg(:consmodel, kwargs)
-    @assert consmodel isa ElectroMechano
+    κ = consmodel.Thermo.κ
+    θr = consmodel.Thermo.θr
 
     # Derivatives
-    Ψ, ∂Ψu, ∂Ψφ, ∂Ψuu, ∂Ψφu, ∂Ψφφ = consmodel(DerivativeStrategy{:analytic}())
-    DΨ = @ntuple Ψ ∂Ψu ∂Ψφ ∂Ψuu ∂Ψφu ∂Ψφφ
+    Ψ, ∂Ψu, ∂Ψθ, ∂Ψuu, ∂Ψθθ, ∂Ψuθ ,η= consmodel(DerivativeStrategy{:analytic}())
+    DΨ = @ntuple Ψ ∂Ψu ∂Ψθ ∂Ψuu ∂Ψθθ ∂Ψuθ 
 
     # grid model
     mesh_file = _get_kwarg(:meshfile, kwargs)
-    model = GmshDiscreteModel(datadir("models", mesh_file))
-    is_vtk = _get_kwarg(:is_vtk, kwargs, false)
-
+    model = GmshDiscreteModel(datadir("models", mesh_file))  
     if is_vtk 
-        writevtk(model, simdir_ * "/DiscreteModel")
+    writevtk(model, simdir_ * "/DiscreteModel")
     end
     # Setup integration
     order = _get_kwarg(:order, kwargs, 1)
@@ -41,38 +42,44 @@ function execute(problem::ElectroMechProblem{:monolithic,:dynamics}; kwargs...)
     @assert length(dirichletbc.BoundaryCondition)==2
 
     # Neumann boundary conditions
-    neumannbc = _get_kwarg(:neumannbc, kwargs, MultiFieldBoundaryCondition([NothingBC(), NothingBC()]) )
+    neumannbc = _get_kwarg(:neumannbc, kwargs, MultiFieldBoundaryCondition([NothingBC(), NothingBC(),NothingBC()]) )
     @assert neumannbc isa MultiFieldBoundaryCondition || neumannbc isa NothingBC
     dΓ=get_Neumann_dΓ(model,neumannbc,degree)
 
-        
     # FE spaces
     fe_spaces = get_FE_spaces(problem, model, order, dirichletbc)
 
     # # WeakForms
     solveropt = _get_kwarg(:solveropt, kwargs)
     αray = _get_kwarg(:αray, solveropt)
-    
+
+
     function res(phold, υ, ρ, Δt,  dΩ)
         res1(u, v) = mass_term(u, v, 2.0 * ρ / Δt^2, dΩ)
         res2(v) = mass_term(phold[1], v, 2.0 * ρ / Δt^2, dΩ)
         res3(v) = mass_term(υ, v, 2.0 * ρ / Δt, dΩ)
-        res4((u, φ), (v, vφ)) = residual(ElectroMechano, (u, φ), (v, vφ), (∂Ψu, ∂Ψφ), dΩ)
-        res5((v, vφ)) = residual(ElectroMechano, (phold[1], phold[2]), (v, vφ), (∂Ψu, ∂Ψφ), dΩ)
+        res4((u, θ), (v, vθ)) = residual(ThermoMechano, (u, θ), (v, vθ), ∂Ψu, κ, dΩ)
+        res5((v, vθ)) = residual(ThermoMechano, (phold[1], phold[2]), (v, vθ), ∂Ψu, κ, dΩ)
         res6(u, v) = mass_term(u, v, αray * ρ / Δt, dΩ)
         res7(v) = mass_term(phold[1], v, αray * ρ / Δt, dΩ)
-        return ((u, φ), (v, vφ)) -> res1(u, v) - res2(v) - res3(v) + 0.5 * res4((u, φ), (v, vφ)) + 0.5 * res5((v, vφ))+res6(u, v)-res7(v)
+        res8((u, θ), vθ)= ∫((((η∘(∇(u)',  θ))-(η∘(∇(phold[1])', phold[2])))/Δt)* ((0.5*(θ+phold[2])+θr)⋅vθ))dΩ
+        
+        return ((u, θ), (v, vθ)) -> res1(u, v) - res2(v) - res3(v) + 0.5 * res4((u, θ), (v, vθ))+ 0.5 * res5((v, vθ))+res6(u, v)-res7(v)+res8((u, θ), vθ)
     end
 
-    function jac(::FEFunction, ρ, Δt, dΩ)
+    function jac(phold::FEFunction, ρ, Δt, dΩ)
         jac1(du, v) = mass_term(du, v, 2 * ρ / Δt^2, dΩ)
-        jac2((u, φ), (du, dφ), (v, vφ)) = jacobian(ElectroMechano, (u, φ), (du, dφ), (v, vφ), (∂Ψuu, ∂Ψφu, ∂Ψφφ), dΩ)
+        jac2((u, θ), (du, dθ), (v, vθ)) = jacobian(ThermoMechano, (u,θ), (du, dθ), (v, vθ), (∂Ψuu, ∂Ψuθ), κ, dΩ)
         jac3(du, v) = mass_term(du, v, αray * ρ / Δt, dΩ)
-        return ((u, φ), (du, dφ), (v, vφ)) -> jac1(du, v) + 0.5 * jac2((u, φ), (du, dφ), (v, vφ))+jac3(du, v) 
+
+        jac4((u,θ),(du, dθ) ,vθ)= ∫((-1.0/Δt)*((0.5*(θ+phold[2])+θr)⋅vθ)*((∂Ψuθ ∘ (∇(u)', θ)) ⊙ (∇(du)')))dΩ+
+            ∫((-1.0/Δt)*((0.5*(θ+phold[2])+θr)⋅vθ)*((∂Ψθθ ∘  (∇(u)', θ)) *  dθ))dΩ+
+            ∫((+1.0/(2*Δt))*((η∘(∇(u)', θ))-(η∘(∇(phold[1])', phold[2])))*dθ*vθ)dΩ
+
+        return ((u, θ), (du, dθ), (v, vθ))  -> jac1(du, v) + 0.5 * jac2((u,θ), (du, dθ), (v, vθ)) +jac3(du, v) +jac4((u, θ),(du, dθ) ,vθ)
     end
 
-
-      @timeit pname begin
+    #   @timeit pname begin
         println("Begining mid-point solver")
         # NewtonRaphson solver
         nlsolver = get_FE_solver(solveropt)
@@ -92,12 +99,12 @@ function execute(problem::ElectroMechProblem{:monolithic,:dynamics}; kwargs...)
 
         ph, KE, EE, cache = Midpoint_Timeintegrator(problem, ph, phold, υh, solver_params)
 
-     end
+    #  end
 end
 
   
 
-function postprocess!(::ElectroMechProblem{:monolithic,:dynamics}, pvd, ph, Λ, Λ_, post_params)
+function postprocess!(::ThermoMechProblem{:monolithic,:dynamics}, pvd, ph, Λ, Λ_, post_params)
 
     println("STEP: $Λ_, LAMBDA: $Λ")
     println("============================")
@@ -109,20 +116,20 @@ function postprocess!(::ElectroMechProblem{:monolithic,:dynamics}, pvd, ph, Λ, 
     filePath = _get_kwarg(:simdir_, post_params)
 
     uh = ph[1]
-    φh = ph[2]
+    θh = ph[2]
 
     if is_vtk && (Λ_%10==0)
         Λstring = replace(string(round(Λ, digits=2)), "." => "_")
         pvd[Λ_] = createvtk(
             Ω,
             filePath * "/_Λ_" * Λstring * "_TIME_$Λ_" * ".vtu",
-            cellfields=["u" => uh, "φ" => φh]
+            cellfields=["u" => uh,  "θ" => θh]
         )
     end
 
 
     # Internal Energy
-    EE = ∫(Ψ ∘ (∇(ph[1])',∇(ph[2])'))dΩ
+    EE = ∫(Ψ ∘ (∇(ph[1])', ph[2]))dΩ
 
     return pvd, EE
 end

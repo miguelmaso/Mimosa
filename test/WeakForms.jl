@@ -1,5 +1,5 @@
 using Gridap
-
+using Mimosa: jacobian
 
 
 @testset "Assembly Jacobian ThermoMechanics" begin
@@ -8,7 +8,7 @@ using Gridap
     f(δθ::Float64)::Float64 = (δθ+1.0) / 1.0
     df(δθ::Float64)::Float64 = 1.0
     κ = 1.0
-    modelTM = ThermoMech(modelT, modelMR, f, df)
+    modelTM = ThermoMechModel(Thermo=modelT, Mechano=modelMR, fθ=f, dfdθ=df)
     Ψ, ∂Ψu, ∂Ψθ, ∂Ψuu, ∂Ψθθ, ∂Ψuθ = modelTM(Mimosa.DerivativeStrategy{:analytic}())
 
     partition = (1, 1, 1)
@@ -38,13 +38,13 @@ using Gridap
     θh = interpolate_everywhere(θ, Vθ)
 
     function jach(uh, θh)
-        jac((du, dθ), (v, vθ)) = jacobian_TM(CouplingStrategy{:monolithic}(), (uh, θh), (du, dθ), (v, vθ), (∂Ψuu, ∂Ψuθ), κ, dΩ)
+        jac((du, dθ), (v, vθ)) = jacobian(ThermoMechano, (uh, θh), (du, dθ), (v, vθ), (∂Ψuu, ∂Ψuθ), κ, dΩ)
     end
     function jac_mech(uh, θh)
-        jac(du, v) = jacobian_TM(CouplingStrategy{:staggered_M}(), (uh, θh), du, v, ∂Ψuu, dΩ)
+        jac(du, v) = jacobian(ThermoMechano, Mechano, (uh, θh), du, v, ∂Ψuu, dΩ)
     end
     function jac_termoh(uh, θh)
-        jac(dθ, vθ) = jacobian_TM(CouplingStrategy{:staggered_T}(), dθ, vθ, κ, dΩ)
+        jac(dθ, vθ) = jacobian(ThermoMechano, Thermo, dθ, vθ, κ, dΩ)
     end
 
     jac_ = assemble_matrix(jach(uh, θh), V, V)
@@ -72,7 +72,7 @@ end
 
     modelMR = MoneyRivlin3D(λ=3.0, μ1=1.0, μ2=2.0)
     modelID = IdealDielectric(ε=4.0)
-    modelelectro = Mimosa.ElectroMech(modelMR, modelID)
+    modelelectro = ElectroMechModel( Mechano=modelMR, Electro=modelID)
 
     Ψm, ∂Ψmu, ∂Ψmuu = modelMR(Mimosa.DerivativeStrategy{:analytic}())
     Ψ, ∂Ψu, ∂Ψφ, ∂Ψuu, ∂Ψφu, ∂Ψφφ = modelelectro(Mimosa.DerivativeStrategy{:analytic}())
@@ -105,13 +105,13 @@ end
     φh = interpolate_everywhere(φ, Vφ)
 
     function jach(uh, φh)
-        jac((du, dφ), (v, vφ)) = jacobian_EM(CouplingStrategy{:monolithic}(), (uh, φh), (du, dφ), (v, vφ), (∂Ψuu, ∂Ψφu, ∂Ψφφ), dΩ)
+        jac((du, dφ), (v, vφ)) = jacobian(ElectroMechano, (uh, φh), (du, dφ), (v, vφ), (∂Ψuu, ∂Ψφu, ∂Ψφφ), dΩ)
     end
     function jac_mech(uh, φh)
-        jac(du, v) = jacobian_EM(CouplingStrategy{:staggered_M}(), (uh, φh), du, v, ∂Ψuu, dΩ)
+        jac(du, v) = jacobian(ElectroMechano, Mechano, (uh, φh), du, v, ∂Ψuu, dΩ)
     end
     function jac_elech(uh, φh)
-        jac(dφ, vφ) = jacobian_EM(CouplingStrategy{:staggered_E}(), (uh, φh), dφ, vφ, ∂Ψφφ, dΩ)
+        jac(dφ, vφ) = jacobian(ElectroMechano, Electro, (uh, φh), dφ, vφ, ∂Ψφφ, dΩ)
     end
 
     jac_ = assemble_matrix(jach(uh, φh), V, V)

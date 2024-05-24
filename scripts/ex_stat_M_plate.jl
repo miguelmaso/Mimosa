@@ -7,11 +7,11 @@ function get_parameters()
   problemName = "static_plate"
   ptype = "Mechanics"
   regtype = "statics"
-  meshfile = "ex2_mesh.msh"
+  meshfile = "cantilever.msh"
 
   # mechanical properties
   consmodel = MoneyRivlin3D(λ=10.0, μ1=1.0, μ2=0.0, ρ=1.0)
-
+ 
   # boundary conditions 
   evolu(Λ) = 1.0
   dir_u_tags = ["fixedup"]
@@ -20,12 +20,11 @@ function get_parameters()
   dirichletbc = DirichletBC(dir_u_tags, dir_u_values, dir_u_timesteps)
 
   evolF(Λ) = Λ
-  dir_F_tags = ["topsuf"]
-  dir_F_values = [[0.0, -1.0, 0.0]]
-  dir_F_timesteps = [evolF]
-  neumannbc = NeumannBC(dir_F_tags, dir_F_values, dir_F_timesteps)
+  neu_F_tags = ["topcant"]
+  neu_F_values = [[0.0, -0.1, 0.0]]
+  neu_F_timesteps = [evolF]
+  neumannbc = NeumannBC(neu_F_tags, neu_F_values, neu_F_timesteps)
 
-   
   # FE parameters
   order = 1
 
@@ -35,7 +34,7 @@ function get_parameters()
   nr_ftol = 1e-12
 
   # Incremental solver
-  nsteps = 5
+  nsteps = 20
   nbisec = 10
 
   solveropt = @dict nr_show_trace nr_iter nr_ftol nsteps nbisec

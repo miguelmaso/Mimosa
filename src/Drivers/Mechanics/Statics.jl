@@ -2,7 +2,7 @@
 function execute(problem::MechanicalProblem{:statics}; kwargs...)
     
 
-    # Problem setting
+    # PhysicalProblem setting
     pname = _get_kwarg(:problemName, kwargs)
     ptype = "Mechanics"
     regtype = "statics"
@@ -14,11 +14,11 @@ function execute(problem::MechanicalProblem{:statics}; kwargs...)
     setupfolder(simdir_)
 
     # Constitutive models
-    consmodel = _get_kwarg(:consmodel, kwargs)
-    @assert consmodel isa Mechano
+    PhysModel = _get_kwarg(:consmodel, kwargs)
+    @assert PhysModel isa Mechano
 
     # Derivatives
-    Ψ, ∂Ψu, ∂Ψuu = consmodel(DerivativeStrategy{:analytic}())
+    Ψ, ∂Ψu, ∂Ψuu = PhysModel(DerivativeStrategy{:analytic}())
     DΨ = @ntuple Ψ ∂Ψu ∂Ψuu
 
     # grid model
@@ -36,30 +36,20 @@ function execute(problem::MechanicalProblem{:statics}; kwargs...)
          
     # Dirichlet boundary conditions
     dirichletbc = _get_kwarg(:dirichletbc, kwargs)
+    @assert dirichletbc isa DirichletBC
 
     # Neumann boundary conditions
-    neumannbc = _get_kwarg(:neumannbc, kwargs, nothing)
+    neumannbc = _get_kwarg(:neumannbc, kwargs, NothingBC())
+    @assert neumannbc isa NeumannBC || neumannbc isa NothingBC
+    dΓ=get_Neumann_dΓ(model,neumannbc,degree)
 
-    if !isnothing(neumannbc)
-        dΓ=Vector{Gridap.CellData.GenericMeasure}(undef, length(neumannbc.tags))
-        for i in 1:length(neumannbc.tags)
-            Γ= BoundaryTriangulation(model, tags=neumannbc.tags[i])
-            dΓ[i]= Measure(Γ, degree)
-        end
-    end
 
     #  FE spaces
     fe_spaces = get_FE_spaces(problem, model, order, dirichletbc)
 
     # WeakForms
-
-    function res(Λ, dΓ, neumannbc)
-        res1(u, v) = residual_M(u,v,∂Ψu,dΩ)
-        res2(v) = residual_Neumann(v,neumannbc, dΓ;  Λ=Λ)
-        (u, v) -> res1(u, v)+res2(v)
-    end
-       
-    jac(u, du, v) = jacobian_M(u, du, v, ∂Ψuu, dΩ)
+    res(u, v) = residual(Mechano, u,v,∂Ψu,dΩ)
+    jac(u, du, v) = jacobian(Mechano, u, du, v, ∂Ψuu, dΩ)
 
 
     @timeit pname begin
@@ -78,46 +68,32 @@ function execute(problem::MechanicalProblem{:statics}; kwargs...)
 
         solver_params = @dict fe_spaces dirichletbc neumannbc Ω dΩ dΓ DΨ res jac solveropt nlsolver post_params
  
-        ph = IncrementalSolver(problem, ph, solver_params)
+        ph,cache  = IncrementalSolver(problem, ph, solver_params)
 
      end
 
 
 end
-
-function ΔSolver!(problem::MechanicalProblem, ph, Λ, Λ_inc, params, cache)
-
-    fe_spaces = _get_kwarg(:fe_spaces, params)
-    dirichletbc = _get_kwarg(:dirichletbc, params)
-    neumannbc = _get_kwarg(:neumannbc, params)
-    res = _get_kwarg(:res, params)
-    jac = _get_kwarg(:jac, params)
-    nlsolver = _get_kwarg(:nlsolver, params)
-    DΨ = _get_kwarg(:DΨ, params)
-    dΩ = _get_kwarg(:dΩ, params)
-    dΓ = _get_kwarg(:dΓ, params)
+ 
 
  
-    # # Test and trial spaces for Λ_inc
-    # fe_spaces = get_FE_spaces!(problem, fe_spaces, dirichletbc, Λ_inc)
-    
-    # # Update Dirichlet for electro problem
-    # lφ(vφ) = -1.0 * residual_EM(CouplingStrategy{:staggered_E}(), (uh, φh), vφ, DΨ.∂Ψφ, dΩ)
-    # aφ(dφ, vφ) = jacobian_EM(CouplingStrategy{:staggered_E}(), (uh, φh), dφ, vφ, DΨ.∂Ψφφ, dΩ)
-    # opφ = AffineFEOperator(aφ, lφ, fe_spaces.Uφ, fe_spaces.Vφ)
-    # dφh = solve(opφ)
+function postprocess!(::MechanicalProblem{:statics}, pvd, ph, Λ, Λ_, post_params)
 
-    # pφh = get_free_dof_values(φh)
-    # pdφh = get_free_dof_values(dφh)
-    # pφh .+= pdφh
+    println("STEP: $Λ_, LAMBDA: $Λ")
+    println("============================")
 
-    fe_spaces = get_FE_spaces!(problem, fe_spaces, dirichletbc, Λ)
+    Ω = _get_kwarg(:Ω, post_params)
+    is_vtk = _get_kwarg(:is_vtk, post_params)
+    filePath = _get_kwarg(:simdir_, post_params)
 
-    op = FEOperator(res(Λ, dΓ, neumannbc), jac, fe_spaces.U, fe_spaces.V)
-    ph, cache = solve!(ph, nlsolver, op, cache)
+    if is_vtk
+        Λstring = replace(string(round(Λ, digits=2)), "." => "_")
+        pvd[Λ_] = createvtk(
+            Ω,
+            filePath * "/_Λ_" * Λstring * "_TIME_$Λ_" * ".vtu",
+            cellfields=["u" => ph]
+        )
+    end
 
-    return ph, cache
+    return pvd
 end
-
-
- 

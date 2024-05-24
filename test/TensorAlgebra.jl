@@ -1,6 +1,14 @@
 using Gridap.TensorValues
 
 
+@testset "Jacobian regularization" begin
+  ∇u = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3
+  F = one(∇u) + ∇u
+  J = det(F)
+  @test J == 1.0149819999999996
+  @test logreg(J; Threshold=0.01) == 0.014870878346353422
+end
+
 @testset "outer" begin
   A = TensorValue(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0) * 1e-3
   B = TensorValue(4.6, 2.1, 1.7, 3.2, 6.5, 1.4, 9.2, 8.0, 9.0) * 1e-3

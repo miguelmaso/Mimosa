@@ -6,7 +6,6 @@ macro publish(mod, name)
   end
 end
 
-
 @publish TensorAlgebra (*)
 @publish TensorAlgebra (×ᵢ⁴)
 @publish TensorAlgebra (⊗₁₂³)
@@ -15,34 +14,36 @@ end
 @publish TensorAlgebra (⊗₁₃²⁴)
 @publish TensorAlgebra (⊗₁₂³⁴)
 @publish TensorAlgebra (⊗₁²)
+@publish TensorAlgebra logreg
 
+@publish PhysicalModels DerivativeStrategy
+@publish PhysicalModels LinearElasticity3D
+@publish PhysicalModels NeoHookean3D
+@publish PhysicalModels MoneyRivlin3D
+@publish PhysicalModels ThermalModel
+@publish PhysicalModels IdealDielectric
+@publish PhysicalModels ElectroMechModel
+@publish PhysicalModels ThermoElectroMechModel
+@publish PhysicalModels ThermoMechModel
+@publish PhysicalModels ThermoMech_EntropicPolyconvex
 
-@publish ConstitutiveModels logreg
-@publish ConstitutiveModels DerivativeStrategy
-@publish ConstitutiveModels LinearElasticity3D
-@publish ConstitutiveModels NeoHookean3D
-@publish ConstitutiveModels MoneyRivlin3D
-@publish ConstitutiveModels ThermalModel
-@publish ConstitutiveModels IdealDielectric
-@publish ConstitutiveModels ElectroMech
-@publish ConstitutiveModels ThermoElectroMech
-@publish ConstitutiveModels ThermoMech
+@publish PhysicalModels Mechano
+@publish PhysicalModels Thermo
+@publish PhysicalModels Electro
+@publish PhysicalModels ThermoMechano
+@publish PhysicalModels ElectroMechano
+@publish PhysicalModels ThermoElectro
+@publish PhysicalModels ThermoElectroMechano
 
-@publish WeakForms CouplingStrategy
-@publish WeakForms residual_EM
-@publish WeakForms jacobian_EM
-@publish WeakForms residual_M
-@publish WeakForms jacobian_M
-@publish WeakForms residual_TEM
-@publish WeakForms jacobian_TEM
-@publish WeakForms residual_TM
-@publish WeakForms jacobian_TM
+@publish WeakForms residual
+@publish WeakForms jacobian
 
 @publish BoundaryConditions  DirichletBC
 @publish BoundaryConditions  NeumannBC
+@publish BoundaryConditions  NothingBC
 @publish BoundaryConditions  MultiFieldBoundaryCondition
 
-@publish Drivers Problem
+@publish Drivers PhysicalProblem
 @publish Drivers ElectroMechProblem
 @publish Drivers MechanicalProblem
 @publish Drivers ThermoElectroMechProblem
@@ -52,5 +53,3 @@ end
 @publish Solvers IterativeSolver
 # @publish LinearSolvers solve
 # @publish LinearSolvers solve!
-
-

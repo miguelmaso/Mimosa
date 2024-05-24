@@ -5,9 +5,9 @@ using Mimosa
 function get_parameters()
 
   problemName = "example_TEM"
-  ptype         = "ThermoElectroMechanics"
-  soltype       = "monolithic"
-  regtype       = "statics"
+  ptype = "ThermoElectroMechanics"
+  soltype = "monolithic"
+  regtype = "statics"
   meshfile = "TEMStaticSquare.msh"
 
   # thermal properties
@@ -16,7 +16,7 @@ function get_parameters()
 
   # coupling parameters
   f(θ::Float64)::Float64 = 1.0
-  df(θ::Float64)::Float64 = 1.0
+  df(θ::Float64)::Float64 = 0.0
 
   # Constitutive models
   modmec = NeoHookean3D(λ=1e7, μ=1e6)
@@ -25,26 +25,27 @@ function get_parameters()
   consmodel = ThermoElectroMech(modterm, modelec, modmec, f, df)
 
   # boundary conditions 
-  evolu(Λ)= 1.0
-dir_u_tags = ["fixed"]
-dir_u_values = [[0.0, 0.0, 0.0]]
-dir_u_timesteps=[evolu]
-Du=DirichletBC(dir_u_tags, dir_u_values, dir_u_timesteps)
+  evolu(Λ) = 1.0
+  dir_u_tags = ["fixed"]
+  dir_u_values = [[0.0, 0.0, 0.0]]
+  dir_u_timesteps = [evolu]
+  Du = DirichletBC(dir_u_tags, dir_u_values, dir_u_timesteps)
 
-evolφ(Λ)= Λ
-dir_φ_tags = ["topsuf_3", "botsuf_1"]
-dir_φ_values = [0.0, 0.1e2]
-dir_φ_timesteps=[evolφ, evolφ]
-Dφ=DirichletBC(dir_φ_tags, dir_φ_values, dir_φ_timesteps)
+  evolφ(Λ) = Λ
+  dir_φ_tags = ["topsuf_3", "botsuf_1"]
+  dir_φ_values = [0.0, 0.1e2]
+  dir_φ_timesteps = [evolφ, evolφ]
+  Dφ = DirichletBC(dir_φ_tags, dir_φ_values, dir_φ_timesteps)
 
-evolθ(Λ)= Λ
-dir_θ_tags = ["botsuf_1"]
-dir_θ_values = [25.0]
-dir_θ_timesteps=[evolθ]
-Dθ=DirichletBC(dir_θ_tags, dir_θ_values, dir_θ_timesteps)
+  evolθ(Λ) = Λ
+  dir_θ_tags = ["botsuf_1"]
+  dir_θ_values = [25.0]
+  dir_θ_timesteps = [evolθ]
+  Dθ = DirichletBC(dir_θ_tags, dir_θ_values, dir_θ_timesteps)
 
-dirichletbc=MultiFieldBoundaryCondition([Du, Dφ, Dθ])
- 
+
+  dirichletbc = MultiFieldBoundaryCondition([Du, Dφ, Dθ])
+
   # FE parameters
   order = 1
 

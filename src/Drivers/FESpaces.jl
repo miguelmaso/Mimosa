@@ -1,3 +1,66 @@
+function  _TestFESpace(model, reffe, bc::DirichletBC, conf)
+     TestFESpace(model, reffe, dirichlet_tags=bc.tags, conformity=conf)
+end
+
+function _TestFESpace(model, reffe, ::NothingBC, conf)
+     TestFESpace(model, reffe, conformity=conf)
+end
+ 
+function _TrialFESpace(V, bc::DirichletBC, Λ)
+    TrialFESpace(V, map(f -> f(Λ), bc.values))
+end
+
+function _TrialFESpace(V, ::NothingBC, Λ)
+    V
+end
+
+
+# ========================
+# ThermoMechProblem
+# ========================
+
+function get_FE_spaces(::ThermoMechProblem{:monolithic},
+    model,
+    order::Int64,
+    bconds::MultiFieldBoundaryCondition; constraint=nothing)
+
+    # Reference FE
+    reffeu = ReferenceFE(lagrangian, VectorValue{3,Float64}, order)
+    reffeθ = ReferenceFE(lagrangian, Float64, 1)
+
+    # Test FE Spaces
+    Vu = _TestFESpace(model, reffeu, bconds.BoundaryCondition[1], :H1)
+    Vθ = _TestFESpace(model, reffeθ, bconds.BoundaryCondition[2], :H1)
+
+    # Trial FE Spaces
+    Uu =  _TrialFESpace(Vu,bconds.BoundaryCondition[1],1.0)
+    Uθ =  _TrialFESpace(Vθ,bconds.BoundaryCondition[2],1.0)
+
+    # Multifield FE Spaces
+    V = MultiFieldFESpace([Vu, Vθ])
+    U = MultiFieldFESpace([Uu, Uθ])
+
+    return @ntuple Vu Vθ Uu Uθ V U
+end
+
+function get_FE_spaces!(::ThermoMechProblem{:monolithic},
+    fe_spaces,
+    bconds::MultiFieldBoundaryCondition, Λ)
+
+    @unpack Vu, Vθ = fe_spaces
+
+    # Trial FE Spaces
+    Uu =  _TrialFESpace(Vu,bconds.BoundaryCondition[1],Λ)
+    Uθ =  _TrialFESpace(Vθ,bconds.BoundaryCondition[2],Λ)
+    
+    # Multifield FE Spaces
+    V = MultiFieldFESpace([Vu, Vθ])
+    U = MultiFieldFESpace([Uu, Uθ])
+
+    fe_spaces = @ntuple Vu Vθ Uu Uθ V U
+end
+
+
 # ===================
 # ElectroMechProblem
 # ===================
@@ -7,17 +70,18 @@ function get_FE_spaces(::ElectroMechProblem{:monolithic},
     order::Int64,
     bconds::MultiFieldBoundaryCondition; constraint=nothing)
 
+
     # Reference FE
     reffeu = ReferenceFE(lagrangian, VectorValue{3,Float64}, order)
     reffeφ = ReferenceFE(lagrangian, Float64, order)
-
+ 
     # Test FE Spaces
-    Vu = TestFESpace(model, reffeu, dirichlet_tags=bconds.BoundaryCondition[1].tags, conformity=:H1)
-    Vφ = TestFESpace(model, reffeφ, dirichlet_tags=bconds.BoundaryCondition[2].tags, conformity=:H1)
+    Vu = _TestFESpace(model, reffeu, bconds.BoundaryCondition[1], :H1)
+    Vφ = _TestFESpace(model, reffeφ, bconds.BoundaryCondition[2], :H1)
 
     # Trial FE Spaces
-    Uu = TrialFESpace(Vu, map(f -> f(1.0), bconds.BoundaryCondition[1].values))
-    Uφ = TrialFESpace(Vφ, map(f -> f(1.0), bconds.BoundaryCondition[2].values))
+    Uu =  _TrialFESpace(Vu,bconds.BoundaryCondition[1],1.0)
+    Uφ =  _TrialFESpace(Vφ,bconds.BoundaryCondition[2],1.0)
 
     # Multifield FE Spaces
     V = MultiFieldFESpace([Vu, Vφ])
@@ -33,8 +97,8 @@ function get_FE_spaces!(::ElectroMechProblem{:monolithic},
     @unpack Vu, Vφ = fe_spaces
 
     # Trial FE Spaces
-    Uu = TrialFESpace(Vu, map(f -> f(Λ), bconds.BoundaryCondition[1].values))
-    Uφ = TrialFESpace(Vφ, map(f -> f(Λ), bconds.BoundaryCondition[2].values))
+    Uu =  _TrialFESpace(Vu,bconds.BoundaryCondition[1],Λ)
+    Uφ =  _TrialFESpace(Vφ,bconds.BoundaryCondition[2],Λ)
 
     # Multifield FE Spaces
     V = MultiFieldFESpace([Vu, Vφ])
@@ -58,14 +122,14 @@ function get_FE_spaces(::ThermoElectroMechProblem{:monolithic},
     reffeθ = ReferenceFE(lagrangian, Float64, 1)
 
     # Test FE Spaces
-    Vu = TestFESpace(model, reffeu, dirichlet_tags=bconds.BoundaryCondition[1].tags, conformity=:H1)
-    Vφ = TestFESpace(model, reffeφ, dirichlet_tags=bconds.BoundaryCondition[2].tags, conformity=:H1)
-    Vθ = TestFESpace(model, reffeθ, dirichlet_tags=bconds.BoundaryCondition[3].tags, conformity=:H1)
+    Vu = _TestFESpace(model, reffeu, bconds.BoundaryCondition[1], :H1)
+    Vφ = _TestFESpace(model, reffeφ, bconds.BoundaryCondition[2], :H1)
+    Vθ = _TestFESpace(model, reffeθ, bconds.BoundaryCondition[3], :H1)
 
     # Trial FE Spaces
-    Uu = TrialFESpace(Vu, map(f -> f(1.0), bconds.BoundaryCondition[1].values))
-    Uφ = TrialFESpace(Vφ, map(f -> f(1.0), bconds.BoundaryCondition[2].values))
-    Uθ = TrialFESpace(Vθ, map(f -> f(1.0), bconds.BoundaryCondition[3].values))
+    Uu =  _TrialFESpace(Vu,bconds.BoundaryCondition[1],1.0)
+    Uφ =  _TrialFESpace(Vφ,bconds.BoundaryCondition[2],1.0)
+    Uθ =  _TrialFESpace(Vθ,bconds.BoundaryCondition[3],1.0)
 
     # Multifield FE Spaces
     V = MultiFieldFESpace([Vu, Vφ, Vθ])
@@ -81,10 +145,10 @@ function get_FE_spaces!(::ThermoElectroMechProblem{:monolithic},
     @unpack Vu, Vφ, Vθ = fe_spaces
 
     # Trial FE Spaces
-    Uu = TrialFESpace(Vu, map(f -> f(Λ), bconds.BoundaryCondition[1].values))
-    Uφ = TrialFESpace(Vφ, map(f -> f(Λ), bconds.BoundaryCondition[2].values))
-    Uθ = TrialFESpace(Vθ, map(f -> f(Λ), bconds.BoundaryCondition[3].values))
-
+    Uu =  _TrialFESpace(Vu,bconds.BoundaryCondition[1],Λ)
+    Uφ =  _TrialFESpace(Vφ,bconds.BoundaryCondition[2],Λ)
+    Uθ =  _TrialFESpace(Vθ,bconds.BoundaryCondition[3],Λ)
+    
     # Multifield FE Spaces
     V = MultiFieldFESpace([Vu, Vφ, Vθ])
     U = MultiFieldFESpace([Uu, Uφ, Uθ])
@@ -106,10 +170,10 @@ function get_FE_spaces(::MechanicalProblem,
     reffeu = ReferenceFE(lagrangian, VectorValue{3,Float64}, order)
 
     # Test FE Spaces
-    V = TestFESpace(model, reffeu, dirichlet_tags=bconds.tags, conformity=:H1)
+    V = _TestFESpace(model, reffeu, bconds, :H1)
 
     # Trial FE Spaces
-    U = TrialFESpace(V, map(f -> f(1.0), bconds.values))
+    U =  _TrialFESpace(V,bconds,1.0)
 
     return @ntuple V U
 end
@@ -121,7 +185,7 @@ function get_FE_spaces!(::MechanicalProblem,
     @unpack V = fe_spaces
 
     # Trial FE Spaces
-    U = TrialFESpace(V, map(f -> f(Λ), bconds.values))
+    U =  _TrialFESpace(V,bconds,Λ)
 
     fe_spaces = @ntuple V U
 end

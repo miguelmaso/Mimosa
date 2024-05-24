@@ -10,7 +10,7 @@ export main
 
 include("Solvers/Solvers.jl")
 include("TensorAlgebra/TensorAlgebra.jl")
-include("ConstitutiveModels/ConstitutiveModels.jl")
+include("PhysicalModels/PhysicalModels.jl")
 include("WeakForms/WeakForms.jl")
 include("BoundaryConditions/BoundaryConditions.jl")
 include("Drivers/Drivers.jl")
