@@ -190,8 +190,8 @@ output_file = joinpath(dirname(@__FILE__), "parametrize_plate_elec.msh")
 gmsh.write(output_file)
 
 # Launch the GUI to see the results:
-if !("-nopopup" in ARGS)
-    gmsh.fltk.run()
-end
+#if !("-nopopup" in ARGS)
+#    gmsh.fltk.run()
+#end
 
 Gmsh.finalize()

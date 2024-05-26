@@ -9,6 +9,7 @@ using Mimosa
 using NLopt
 using WriteVTK
 using DelimitedFiles
+using Base.Threads
 
 
 # Initialisation result folder
@@ -28,7 +29,6 @@ const ε = 1.0
 
 
 function CompactCall(input_potential::Vector, folder_name)
-
 
 
     # Kinematics
@@ -57,7 +57,7 @@ function CompactCall(input_potential::Vector, folder_name)
     # Grid model
     model = GmshDiscreteModel(mesh_file)
 
-
+println("IM HERE")
 
     labels = get_face_labeling(model)
     add_tag_from_tags!(labels, "fix", [7])
@@ -67,8 +67,8 @@ function CompactCall(input_potential::Vector, folder_name)
     add_tag_from_tags!(labels, "m2", [4])
     add_tag_from_tags!(labels, "t1", [5])
     add_tag_from_tags!(labels, "t2", [6])
-    model_file = joinpath(result_folder, "model")
-    writevtk(model, model_file)
+#    model_file = joinpath(result_folder, "model")
+#    writevtk(model, model_file)
 
 
     #Define Finite Element Collections
@@ -233,6 +233,21 @@ end
 
 input = readdlm("LHS.txt")
 
+
+#-------------------------------------------
+# Multithreading using Threads and Channels
+#-------------------------------------------
+
+# Create a channel to hold the calls for each column of the input vector
+
+taskref = Ref{Task}() # This is usefull to later call the channel's status
+Ch = Channel(200;taskref=taskref, spawn=true) do c
+    vec = take!(c)
+    CompactCall(vec[1],vec[2])
+end
+
+
+
 for column in range(1,size(input)[2])
     vector = input[:,column]
     print(vector)
@@ -243,4 +258,12 @@ for column in range(1,size(input)[2])
 end
 
 
+# for column in range(1,size(input)[2])
+#     vector = input[:,column]
+#     folder_name = string.(vector)
+#     local input_argument = [vector, folder_name]
+#     mkdir("Potential $folder_name")
+#     put!(Ch,input_argument);
+
+# end
 
