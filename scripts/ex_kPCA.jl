@@ -85,6 +85,7 @@ function plotPCA(n_parts,Phi, U_,k)
     l = length(Phi)
     X = ReadData(n_parts,Phi)
     m, n = size(X)
+    l = n/l
     Z_ = U_'*X
     Z_pl = PlotSetup(Z_,k)
     s = scatter(Z_pl...,xlabel="x1",ylabel="x2",zlabel="x3", markercolor= [Int(ceil(i/l)) for i in 1:n])
@@ -95,6 +96,7 @@ function plotPOD(n_parts,Phi,U_,k)
     l = length(Phi)
     X = ReadData(n_parts,Phi)
     m, n = size(X)
+    l = n/l
     Z_ = U_'*(X'*X)
     Z_pl = PlotSetup(Z_,k)
     s = scatter(Z_pl...,xlabel="x1",ylabel="x2",zlabel="x3", markercolor= [Int(ceil(i/l)) for i in 1:n])
