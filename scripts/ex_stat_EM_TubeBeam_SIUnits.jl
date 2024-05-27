@@ -4,12 +4,12 @@ using Mimosa
 
 function get_parameters(pot)
 
-  problemName = "TubeBeam" 
+  problemName = "TubeBeam3" 
   problemName = problemName*"_ϕ$pot"
   ptype = "ElectroMechanics"
   soltype = "monolithic"
   regtype = "statics"
-  meshfile = "TubeBeam.msh"
+  meshfile = "TubeBeam_test3.msh"
 
 
   # modmec = MoneyRivlin3D(λ=10.0, μ1=1.0, μ2=0.0)
@@ -66,7 +66,7 @@ function get_parameters(pot)
   return @dict problemName ptype soltype regtype meshfile consmodel dirichletbc order solveropt is_vtk is_P_F
 end
 
-pots = [2000.0, 2500.0, 3000.0, 3500.0, 4000.0]
+pots = [4000.0]
 for pot in pots
   ph, chache = main(; get_parameters(pot)...)
 end
