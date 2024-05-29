@@ -12,6 +12,12 @@ function ReadData(n_parts,Phi)
         push!(X,CSV.File("data/csv/EM_PB_4S_Phi$j/EM_PB_4S_$i.csv") |> Tables.matrix)
     end
     X = hcat(X...)
+    #= m, n = size(X)
+    z = zeros(1,n)
+    X1 = vcat(X,z)
+    X2 = vcat(z,X)
+    X3 = X1-X2
+    X = X3[[2:m...],:] =#
     return X
 end
 
@@ -69,7 +75,7 @@ function PlotSetupN(X_,k)
         push!(X_pl,X_[i,:])
     end
     N_pl = [i for i in 1:length(X_pl[1])]
-    push!(X_pl,N_pl)
+    pushfirst!(X_pl,N_pl)
     return X_pl
 end
 
@@ -86,7 +92,7 @@ function plotPCA(n_parts,Phi, U_,k)
     X = ReadData(n_parts,Phi)
     m, n = size(X)
     l = n/l
-    Z_ = U_'*X
+    Z_ = abs.(U_'*X)
     Z_pl = PlotSetup(Z_,k)
     s = scatter(Z_pl...,xlabel="x1",ylabel="x2",zlabel="x3", markercolor= [Int(ceil(i/l)) for i in 1:n])
     display(s)
@@ -98,8 +104,9 @@ function plotPOD(n_parts,Phi,U_,k)
     m, n = size(X)
     l = n/l
     Z_ = U_'*(X'*X)
+    # Z_ = abs.(Z_)
     Z_pl = PlotSetup(Z_,k)
-    s = scatter(Z_pl...,xlabel="x1",ylabel="x2",zlabel="x3", markercolor= [Int(ceil(i/l)) for i in 1:n])
+    s = scatter(Z_pl...,xlabel="x1",ylabel="x2",zlabel="x3", hover= [i for i in 1:n])#, markercolor= [Int(ceil(i/l)) for i in 1:n])
     display(s)
 end
 
@@ -112,6 +119,7 @@ function execute_kPOD(Κ,P,n_parts,k)
     p = plot(real.(Λ_s),type="bar",xlabel="λ",ylabel="%", legend=false, hover=real.(Λ_s))
     display(p)
     plotPOD(n_parts,P,real.(U_),k)
+    return X, U_
 end
 
 function execute_POD(P,n_parts,k)
@@ -136,10 +144,12 @@ function execute_PCA(P,n_parts,k)
     plotPCA(n_parts,P,U_,k)
 end
 
-Κ(X1,X2) = exp(-5*(dot(X1-X2,X1-X2)))
-P = [2000,3000,4000]
+Κ(X1,X2) = exp(-1.5e-1*(dot(X1-X2,X1-X2)))
+Κ(X1,X2) = (X1'*X2 + 1)^3
+P = [3000] #,4000]
 n_parts = 3
-k = 3
+k = 2
 # execute_PCA(P,n_parts,k)
 # execute_POD(P,n_parts,k)
-# execute_kPOD(Κ,P,n_parts,k)
+X, U_ = execute_kPOD(Κ,P,n_parts,k);
+
