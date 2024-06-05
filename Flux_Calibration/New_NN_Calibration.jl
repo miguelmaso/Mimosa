@@ -152,8 +152,8 @@ function sort_and_apply_indices(original_arr, apply_arr)
     return sorted_arr, indices_changed, result_arr
 end
 
-y_predicted = model(x_train_norm)
-sorted_y_train, indices_y_train, sorted_y_predicted = sort_and_apply_indices(y_train_norm, y_predicted)
+#y_predicted = model(x_train_norm)
+#sorted_y_train, indices_y_train, sorted_y_predicted = sort_and_apply_indices(y_train_norm, y_predicted)
 
 
 
