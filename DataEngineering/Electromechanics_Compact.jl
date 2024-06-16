@@ -57,7 +57,7 @@ function CompactCall(input_potential::Vector, folder_name)
     # Grid model
     model = GmshDiscreteModel(mesh_file)
 
-println("IM HERE")
+    println("IM HERE")
 
     labels = get_face_labeling(model)
     add_tag_from_tags!(labels, "fix", [7])
@@ -194,10 +194,16 @@ println("IM HERE")
                 u_Fe_Function = FEFunction(fem_params.Uuv, x0[1:fem_params.ndofm]) # Convierte a una FE
                 u_Projected = interpolate_everywhere(u_Fe_Function, fem_params.Uuˢt1) #Interpola en una superficie la FE
                 u_Vector_on_Surface = get_free_dof_values(u_Projected) # Saca un vector
+                f_mat(x) = x
+                X_projected = interpolate_everywhere(f_mat, fem_params.Uuˢt1)
+                X_Vector_on_Surface = get_free_dof_values(X_projected)
                 cd("Potential $folder_name")
                 filename = string.(round.(Λ*ϕ_app,digits=4))
                 open("$filename.txt","w") do io
                     writedlm(io,u_Vector_on_Surface)
+                end
+                open("mat_coords.txt","w") do io
+                    writedlm(io,X_Vector_on_Surface)
                 end
                 cd(dirname(@__FILE__))
             end
@@ -231,7 +237,7 @@ end
 
 
 
-input = readdlm("LHS.txt")
+#input = readdlm("LHS.txt")
 
 
 #-------------------------------------------
@@ -240,22 +246,22 @@ input = readdlm("LHS.txt")
 
 # Create a channel to hold the calls for each column of the input vector
 
-taskref = Ref{Task}() # This is usefull to later call the channel's status
-Ch = Channel(200;taskref=taskref, spawn=true) do c
-    vec = take!(c)
-    CompactCall(vec[1],vec[2])
-end
+# taskref = Ref{Task}() # This is usefull to later call the channel's status
+# Ch = Channel(200;taskref=taskref, spawn=true) do c
+#     vec = take!(c)
+#     CompactCall(vec[1],vec[2])
+# end
 
+mkdir("Potential MatCoord")
+CompactCall([0.0,0.0,0.0,0.0],"MatCoord")
+# for column in range(1,size(input)[2])
+#     vector = input[:,column]
+#     print(vector)
+#     folder_name = string.(vector)
+#     mkdir("Potential $folder_name")
+#     CompactCall(vector, folder_name); # Running in 20 steps. If there are no cutbacks, we should end up with 4000 results
 
-
-for column in range(1,size(input)[2])
-    vector = input[:,column]
-    print(vector)
-    folder_name = string.(vector)
-    mkdir("Potential $folder_name")
-    CompactCall(vector, folder_name); # Running in 20 steps. If there are no cutbacks, we should end up with 4000 results
-
-end
+# end
 
 
 # for column in range(1,size(input)[2])
