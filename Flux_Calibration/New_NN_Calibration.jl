@@ -69,9 +69,9 @@ end
 #    Dense(200=>399,softplus; bias=zeros(399), init=Flux.zeros32),
 # )
 model = Chain(
-    Dense(4=>5, softplus),
-    Dense(5=>5, softplus),
-    Dense(5=>30, softplus),
+    Dense(4=>3, softplus),
+    Dense(3=>3, softplus),
+    Dense(3=>30, softplus),
 )
 
 
@@ -80,22 +80,22 @@ model = Chain(
 # Train the model
 #-------------------------------------------------------------------------------
 
-# function loss(flux_model,x,y)
-#     ŷ = flux_model(x)
-#     num = sum((dot(ŷ-y,ŷ-y)).^2)
-#     den = sum((dot(y,y)).^2)
-#     out = num/den
-# end;
+function loss(flux_model,x,y)
+    ŷ = flux_model(x)
+    num = sum((dot(ŷ-y,ŷ-y)))
+    den = sum((dot(y,y)))
+    out = sqrt(num/den)
+end;
 # function loss(flux_model,x,y)
 #     ŷ = flux_model(x)
 #     num = sum(dot(ŷ[:,i]-y[:,i],ŷ[:,i]-y[:,i])^2 for i in 1:size(y,2))
 #     den = sum(dot(y[:,i],y[:,i])^2 for i in 1:size(y,2))
 #     out = num/den
 # end;
-function loss(flux_model,x,y)
-    ŷ = flux_model(x)
-    Flux.mse(ŷ,y)
-end;
+# function loss(flux_model,x,y)
+#     ŷ = flux_model(x)
+#     Flux.mse(ŷ,y)
+# end;
 
 #--------------------------------------------------------------------------------------------------------------
 # We need to define what index in the results (predicted) values, are at the ends of the beam. They will be the
@@ -183,10 +183,10 @@ function iterative_training(model, x_train, y_train)
 #      plot([vec(y_train_norm),vec(model(x_train_norm))], seriestype = :scatter, label=["Original Test" "Fitting Results"])
       append!(Losses,L)
     end
-    return Losses
+    return model,Losses
 end
 
-Losses=iterative_training(model, x_train_norm, y_train_norm)
+model, Losses=iterative_training(model, x_train_norm, y_train_norm)
 
 
 #-------------------------------------------------------------------------------
