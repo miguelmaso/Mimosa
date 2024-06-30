@@ -36,18 +36,42 @@ y_train_whole= y_train
 
 
 # Create batches of data to work with. 
-train_loader = Flux.Data.DataLoader((x_train_whole, y_train_whole), batchsize=20, shuffle=true)
-for (x_batch, y_batch) in train_loader
-    println(size(x_batch))  # Should print (4, batch_size)
-    println(size(y_batch))  # Should print (399, batch_size)
-    break
+# train_loader = Flux.Data.DataLoader((x_train_whole, y_train_whole), batchsize=20, shuffle=true)
+# for (x_batch, y_batch) in train_loader
+#     println(size(x_batch))  # Should print (4, batch_size)
+#     println(size(y_batch))  # Should print (399, batch_s399ize)
+#     break
+# end
+x_train_batch = x_train_whole[:,1:2000]
+y_train_batch = y_train_whole[1:399,1:2000] #.+ abs(minimum(y_train))
+
+function normalize(row::Vector)
+    min = minimum(row)
+    max = maximum(row)
+    scaled = []
+    for i in range(1,size(row,1))
+        scaled  = append!(scaled,(row[i]-min)/(max-min))
+    end
+  return scaled
 end
-x_train_norm = x_train_whole[:,1:20]
-y_train_norm = y_train_whole[1:30,1:20] .+ abs(minimum(y_train))
-#y_train_norm = y_train_norm .+ minimum(y_train)
-if all(>(0),y_train_norm) == false
-    error()
+
+function normalize_columns(matrix::Matrix{Float64})::Matrix{Float64}
+    rows, cols = size(matrix)
+    normalized_matrix = Matrix{Float64}(undef, rows, cols)
+    for j in 1:cols
+        normalized_matrix[:, j] = normalize(matrix[:, j])
+    end
+    return normalized_matrix
 end
+
+
+
+x_train_norm = x_train_batch
+y_train_norm = normalize_columns(y_train_batch)
+
+# if all(>(0),y_train_norm) == false
+#     error()
+# end
 
 #-------------------------------------------------------------------------------
 # Build a model. Now it's just a simple layer with one input and one output
@@ -68,11 +92,33 @@ end
 #    BatchNorm(200),
 #    Dense(200=>399,softplus; bias=zeros(399), init=Flux.zeros32),
 # )
-model = Chain(
-    Dense(4=>3, softplus),
-    Dense(3=>3, softplus),
-    Dense(3=>30, softplus),
-)
+
+
+function create_neural_network(input_size::Int, output_size::Int, hidden_layers::Int, neurons_per_layer::Int, activation::Function)
+    # Create the layers
+    layers = []
+
+    # Input layer
+    push!(layers, Dense(input_size, neurons_per_layer, activation))
+
+    # Hidden layers
+    for i in 2:hidden_layers
+        push!(layers, Dense(neurons_per_layer, neurons_per_layer, activation))
+    end
+
+    # Output layer
+    push!(layers, Dense(neurons_per_layer, output_size))
+
+    # Create the model
+    model = Chain(layers...)
+
+    return model
+end
+
+
+model = create_neural_network(4,399,2,2,softplus)
+
+
 
 
 
@@ -133,7 +179,7 @@ function r2d2(actual_values::Matrix, predicted_values::Matrix) # This function w
         append!(Norms_predicted,Norm_predicted)
 
     end
-@show size(Norms_actual)
+    @show size(Norms_actual)
     # Compute the mean of actual values
     mean_actual = mean(Norms_actual)
 
