@@ -249,7 +249,7 @@ end
 Dist(Z_,i1,i2) = sqrt(dot(real.(Z_[:,i1]-Z_[:,i2]),real.(Z_[:,i1]-Z_[:,i2])))
 Dif(i,j,k,l) = abs((Dist(Z_,k,l)-Dist(Z_,i,j))/Dist(Z_,i,j))
 
-##=
+#=
 n_p, P, d = 3, [2000], false
 # Training Set in the full-order space
 X = ReadData(n_p, P, d)
