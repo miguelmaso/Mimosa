@@ -500,8 +500,8 @@ end
 
 function Objective5(β)
     println("Kernel parameter: $β")
-    P = [4000] #,4000]
-    n_parts = 8
+    P = [2000] #,4000]
+    n_parts = 6
     k = 3
     d = false
     # Κ(X1,X2) = exp(-β*(dot(X1-X2,X1-X2)))
@@ -521,8 +521,8 @@ end
 
 function Objective7(β)
     println("Kernel parameter: $β")
-    P = [4000] #,4000]
-    n_parts = 8
+    P = [2000] #,4000]
+    n_parts = 6
     k = 3
     d = false
     # Κ(X1,X2) = exp(-β*(dot(X1-X2,X1-X2)))
@@ -532,14 +532,18 @@ function Objective7(β)
     Λ, U, U_, Ḡ = kPOD(Κ,X,k)
     Z_ = real.(U_'*Ḡ)
     neighbors = 25
+    to = time()
     Y_, D_G_sym = isomap1(neighbors,Z_)
+    println(time()-to)
     Y_gen = []
     for i in 1:n
         y_ = VectorSearch(Y_,conf[:,i])
         push!(Y_gen,y_)
     end
     Y_gen = reduce(hcat,Y_gen)
-    return norm(Y_gen-Y_)/norm(Y_)
+    D = norm(Y_gen-Y_)/norm(Y_)
+    println(D)
+    return D
     # return 1-(abs(maximum(Z_[2,:]))/abs(maximum(Z_[1,:])))
 end
 
