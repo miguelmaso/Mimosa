@@ -4,7 +4,7 @@ using Gridap
 using Plots
 using CSV
 using DataFrames
-
+t0 = time()
 function get_parameters(n_sec, sw, pot)
 
   problemName = "PB-S$n_sec-O2-PL" #PB = PlateBeam; S = # of sections; O2 = Order of elements; PL = Potential Location; ϕ = potential magnitude
@@ -101,15 +101,15 @@ function plt_cl(ph,sw)
   return pl_, z1
 end
 
-conf = CSV.File("data/csv/Config_N600_EM_PB_10S.csv") |> Tables.Columns
+conf = CSV.File("data/csv/Config_N60_EM_PB_10S.csv") |> Tables.Columns
 
 n_sec = 10
-pot = 4000.0
+pot = 2000.0
 #sw = [0, 1, 1, 0] #0 = bottomsurf_   ;  1 = topsurf_; else = no potential in that section
 uh_ = []
 pl = []
 z = []
-for i in 1:100
+for i in 1:1
   println(" ")
   println("!!!!!!!!    Configuration number $i    !!!!!!!")
   sw = conf[i]
@@ -127,6 +127,8 @@ plot(pl...,layout=(10,10), size=(4000,4000),ylims=(-0.1,0.1),legend=nothing,link
 
 df = DataFrame(z, :auto)
 CSV.write("data/csv/EM_PB_10S_1.csv", df)
-
+t1 = time()
+Δt = t1-t0
+println("------- Total Elapsed time: $Δt s")
 #= using JLD2
 jldsave("data/uh_EM_PB_10S_1.jld2";uh_) =#
