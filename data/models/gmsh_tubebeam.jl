@@ -1,5 +1,4 @@
 using Gmsh: Gmsh, gmsh
-gmsh.initialize()
 
 function generateBeamSec(D,d,L,n_sec_t,ct_pt,nl,nw,nt,ntan,lc,n_sec,model_name)
     R = D/2
@@ -51,18 +50,18 @@ function generateBeamSec(D,d,L,n_sec_t,ct_pt,nl,nw,nt,ntan,lc,n_sec,model_name)
     end
     
     geo.synchronize()
+    # gmsh.model.mesh.generate(3)
 
+    # output_file = joinpath(dirname(@__FILE__), model_name*".msh")
+    # gmsh.write(output_file)
+    # if !("-nopopup" in ARGS)
+    #     gmsh.fltk.run()
+    # end
+    # Gmsh.finalize()
+end
+
+function physicalG(D,d)
     surfaces = gmsh.model.getEntities(2)
-
-    if n_sec>1
-        t_surf = length(surfaces)
-        S = []
-        for i in t_surf-31:t_surf
-            push!(S,surfaces[i])
-        end
-        surfaces = S
-    end
-
     i = 1
     j = 1
     k = 1
@@ -88,104 +87,85 @@ function generateBeamSec(D,d,L,n_sec_t,ct_pt,nl,nw,nt,ntan,lc,n_sec,model_name)
             end
         end
         if R_list==[d/2,d/2,d/2,d/2,d/2,d/2,d/2,d/2]*1000
-            gmsh.model.addPhysicalGroup(0, point_list, -1,"int_surf_$i-$n_sec")  
-            gmsh.model.addPhysicalGroup(1, lines_list, -1, "int_surf_$i-$n_sec")  
-            gmsh.model.addPhysicalGroup(2, [surface[2]], -1, "int_surf_$i-$n_sec")
-            push!(int_surf,"int_surf_$i-$n_sec")
+            gmsh.model.addPhysicalGroup(0, point_list, -1,"int_surf_$i")  
+            gmsh.model.addPhysicalGroup(1, lines_list, -1, "int_surf_$i")  
+            gmsh.model.addPhysicalGroup(2, [surface[2]], -1, "int_surf_$i")
+            push!(int_surf,"int_surf_$i")
             i = i + 1
         elseif R_list==[D/2,D/2,D/2,D/2,D/2,D/2,D/2,D/2]*1000
-            gmsh.model.addPhysicalGroup(0, point_list, -1,"ext_surf_$j-$n_sec")  
-            gmsh.model.addPhysicalGroup(1, lines_list, -1, "ext_surf_$j-$n_sec")  
-            gmsh.model.addPhysicalGroup(2, [surface[2]], -1, "ext_surf_$j-$n_sec")
-            push!(ext_surf,"ext_surf_$j-$n_sec")
+            gmsh.model.addPhysicalGroup(0, point_list, -1,"ext_surf_$j")
+            gmsh.model.addPhysicalGroup(1, lines_list, -1, "ext_surf_$j")  
+            gmsh.model.addPhysicalGroup(2, [surface[2]], -1, "ext_surf_$j")
+            push!(ext_surf,"ext_surf_$j")
             j = j + 1
         elseif X_list==[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]
-            gmsh.model.addPhysicalGroup(0, point_list, -1,"fixed_surf_$k-$n_sec")  
-            gmsh.model.addPhysicalGroup(1, lines_list, -1, "fixed_surf_$k-$n_sec")  
-            gmsh.model.addPhysicalGroup(2, [surface[2]], -1, "fixed_surf_$k-$n_sec")
-            push!(fixed_surf,"fixed_surf_$k-$n_sec")
+            gmsh.model.addPhysicalGroup(0, point_list, -1,"fixed_surf_$k")  
+            gmsh.model.addPhysicalGroup(1, lines_list, -1, "fixed_surf_$k")  
+            gmsh.model.addPhysicalGroup(2, [surface[2]], -1, "fixed_surf_$k")
+            push!(fixed_surf,"fixed_surf_$k")
             k = k + 1
         else
-            gmsh.model.addPhysicalGroup(0, point_list, -1,"surf_$l-$n_sec")  
-            gmsh.model.addPhysicalGroup(1, lines_list, -1, "surf_$l-$n_sec")  
-            gmsh.model.addPhysicalGroup(2, [surface[2]], -1, "surf_$l-$n_sec")
+            gmsh.model.addPhysicalGroup(0, point_list, -1,"surf_$l")  
+            gmsh.model.addPhysicalGroup(1, lines_list, -1, "surf_$l")  
+            gmsh.model.addPhysicalGroup(2, [surface[2]], -1, "surf_$l")
             l = l + 1
         end
     end
     
     vol = gmsh.model.getEntities(3)
 
-    if n_sec>1
-        t_vol = length(vol)
-        V = []
-        for i in t_vol-7:t_vol
-            push!(V,vol[i])
-        end
-        vol = V
-    end
-
     vol_list = []
     for v in vol
         append!(vol_list,v[2])
     end
-    println(n_sec)
-    gmsh.model.addPhysicalGroup(3, vol_list, n_sec, "Volume_$n_sec")
+    gmsh.model.addPhysicalGroup(3, vol_list, -1, "Volume_")
     return int_surf, ext_surf, fixed_surf
-
-    # gmsh.model.mesh.generate(3)
-
-    # output_file = joinpath(dirname(@__FILE__), model_name*".msh")
-    # gmsh.write(output_file)
-    # if !("-nopopup" in ARGS)
-    #     gmsh.fltk.run()
-    # end
-    # Gmsh.finalize()
 end
 
 # parameters
-L=100e-3;      # beam length
-D=2e-3;       # beam width
-d=1e-3;     # beam thickness
-ct_pt = [0.0,0.0,0.0]
-n_sec_t = 8
-# const nl=40; # X element size
-# const nw=10; # Y element size
-# const nt=4; # Z element size
+function main()
+    gmsh.initialize()
 
-
-nl=5; # X element size
-nw=3; # Y element size
-nt=2; # Z element size - not relevant in tube model
-ntan = 3
-
-model_name = "TubeBeam_SecT_$n_sec_t"
-
-lc = 2.0e-3; # characteristic length for meshing
-
-L_conf = [0.25, 0.25, 0.25, 0.25]
-Sec = 1
-int_surf_list = []
-ext_surf_list = []
-fixed_surf_list = []
-for i in L_conf
-    L_ = L*i
-    int_surf, ext_surf, fixed_surf = generateBeamSec(D,d,L_,n_sec_t,ct_pt,nl,nw,nt,ntan,lc,Sec,model_name)
-    append!(int_surf_list,int_surf)
-    append!(ext_surf_list,ext_surf)
-    append!(fixed_surf_list,fixed_surf)
-    ct_pt[1] = ct_pt[1] + L_
-    global Sec += 1
-    # if !("-nopopup" in ARGS)
-    #     gmsh.fltk.run()
-    # end
+    L=100e-3;      # beam length
+    D=2e-3;       # beam width
+    d=1e-3;     # beam thickness
+    ct_pt = [0.0,0.0,0.0]
+    n_sec_t = 4
+    # const nl=40; # X element size
+    # const nw=10; # Y element size
+    # const nt=4; # Z element size
+    
+    
+    nl=8; # X element size
+    nw=3; # Y element size
+    nt=2; # Z element size - not relevant in tube model
+    ntan = 3
+    
+    lc = 2.0e-3; # characteristic length for meshing
+    
+    L_conf = [0.5,0.5]
+    L_ = length(L_conf)
+    model_name = "TubeBeam_SecT_$n_sec_t-SecL_$L_"
+    
+    global Sec = 1
+    for i in L_conf
+        L_ = L*i
+        generateBeamSec(D,d,L_,n_sec_t,ct_pt,nl,nw,nt,ntan,lc,Sec,model_name)
+        ct_pt[1] = ct_pt[1] + L_
+        global Sec += 1
+        # if !("-nopopup" in ARGS)
+        #     gmsh.fltk.run()
+        # end
+    end
+    int_surf_list, ext_surf_list, fixed_surf_list = physicalG(D,d)
+    gmsh.model.mesh.generate(3)
+    println(int_surf_list)
+    println(ext_surf_list)
+    println(fixed_surf_list)  
+    if !("-nopopup" in ARGS)
+        gmsh.fltk.run()
+    end
+    output_file = joinpath(dirname(@__FILE__), model_name*".msh")
+    gmsh.write(output_file)
+    Gmsh.finalize() 
 end
-gmsh.model.mesh.generate(3)
-println(int_surf_list)
-println(ext_surf_list)
-println(fixed_surf_list)
-if !("-nopopup" in ARGS)
-    gmsh.fltk.run()
-end
-output_file = joinpath(dirname(@__FILE__), model_name*".msh")
-gmsh.write(output_file)
-Gmsh.finalize()
