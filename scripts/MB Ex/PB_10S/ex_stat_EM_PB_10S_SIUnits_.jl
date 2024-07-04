@@ -52,15 +52,15 @@ function get_parameters(n_sec, sw, pot)
       push!(dir_φ_timesteps,evolφ)
     end
   end
-  display(dir_φ_timesteps)
+  # display(dir_φ_timesteps)
   dir_φ_tags = Vector{String}()
   append!(dir_φ_tags,earth_loc)
   append!(dir_φ_tags,power_loc)
-  display(dir_φ_tags)
+  # display(dir_φ_tags)
   dir_φ_values = []
   append!(dir_φ_values,earth_val)
   append!(dir_φ_values,power_val)
-  display(dir_φ_values)
+  # display(dir_φ_values)
 
   Dφ = DirichletBC(dir_φ_tags, dir_φ_values, dir_φ_timesteps)
 
@@ -109,8 +109,12 @@ pot = 4000.0
 uh_ = []
 pl = []
 z = []
-for i in 1:10
+for i in 1:100
+  println(" ")
+  println("!!!!!!!!    Configuration number $i    !!!!!!!")
   sw = conf[i]
+  println("!!!!!!!!       Configuration $sw       !!!!!!!")
+  println(" ")
   ph, chache = main(; get_parameters(n_sec, sw, pot)...)
   pl_, z_ = plt_cl(ph,sw)
   push!(uh_,ph[1])
@@ -118,5 +122,11 @@ for i in 1:10
   push!(z,z_)
 end
 # plot(pl...,layout=(3,9)) # requires to setup plot parameter to get it right
+#= plotly()
+plot(pl...,layout=(10,10), size=(4000,4000),ylims=(-0.1,0.1),legend=nothing,link=:both) =#
+
 df = DataFrame(z, :auto)
-CSV.write("data/csv/EM_PB_10S_.csv", df)
+CSV.write("data/csv/EM_PB_10S_1.csv", df)
+
+#= using JLD2
+jldsave("data/uh_EM_PB_10S_1.jld2";uh_) =#
