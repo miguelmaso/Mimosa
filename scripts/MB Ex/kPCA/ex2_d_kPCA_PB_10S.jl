@@ -139,25 +139,50 @@ scatter(err1)
 scatter!(err2)
 mean(err1)
 
+err = []
+for j in 1:10
+    param1 = []
+    for i in 1:n
+        push!(param1,conf[j,i])
+    end
+    sort_param1 = sortperm(param1)
+    group_param = 0
+    group = [[],[],[]]
+    count = 1
+    for i in 1:n
+        if param1[sort_param1[i]]==group_param
+            push!(group[count],sort_param1[i])
+        else
+            count += 1
+            group_param += 1
+            push!(group[count],sort_param1[i])
+        end
+    end
+    err1 = [Inf64 for i in 1:30]
+    for i in 1:30
+        param1_test = conf_test[1,i]
+        param1_test += 1
+        y_gen = VectorSearch(Y_,conf_test[:,i])
+        y_gen = rot*y_gen
+        y_gen = scale*y_gen
+        x_gen, w_ns, Z_ns = ReverseMap(X[:,group[param1_test]],Y_[:,group[param1_test]],y_gen,false,8)
+        err1[i] = norm(X_test[:,i]-x_gen)/norm(X_test[:,i])
+    end
+    push!(err,mean(err1))
+end
+plot(err, type=:bar, ylims=(0.0,0.3))
 
 
 err1 = [Inf64 for i in 1:30]
-err2 = err1
 for i in 1:30
     y_gen = VectorSearch(Y_,conf_test[:,i])
     y_gen = rot*y_gen
     y_gen = scale*y_gen
     x_gen, w_ns, Z_ns = ReverseMap(X,Y_,y_gen,false,8)
     err1[i] = norm(X_test[:,i]-x_gen)/norm(X_test[:,i])
-    z_gen, w_ns, Z_ns = ReverseMap(Z_,Y_,y_gen,false,8)
-    x_gen, w_ns, Z_ns = ReverseMap(X,Z_,z_gen,false,8)
-    err2[i] = norm(X_test[:,i]-x_gen)/norm(X_test[:,i])
 end
-scatter(err1)
-scatter!(err2)
-mean(err1)
-
-
+push!(err,mean(err1))
+plot(err, type=:bar, ylims=(0.0,0.3))
 
 conf_complete = []
 for x1 in 0:2, x2 in 0:2, x3 in 0:2, x4 in 0:2, x5 in 0:2, x6 in 0:2, x7 in 0:2, x8 in 0:2, x9 in 0:2, x10 in 0:2
