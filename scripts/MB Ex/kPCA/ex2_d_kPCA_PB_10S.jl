@@ -74,6 +74,35 @@ X_test = hcat(X_test...)
 
 conf_test = CSV.File("data/csv/EM_PB_10S_Phi2000_test/Config_N60_EM_PB_10S.csv") |> Tables.matrix
 
+Y_copy = copy(Y_)
+param1 = []
+for i in 1:n
+    push!(param1,conf[1,i])
+end
+sort_param1 = sortperm(param1)
+group_param = 0
+group = [[],[],[]]
+j=1
+for i in 1:n
+    if param1[sort_param1[i]]==group_param
+        push!(group[j],sort_param1[i])
+    else
+        j += 1
+        group_param += 1
+        push!(group[j],sort_param1[i])
+    end
+end
+scatter(eachrow(Y_copy[:,group[1]])..., hover = group[1])
+scatter!(eachrow(Y_copy[:,group[2]])..., hover = group[2])
+scatter!(eachrow(Y_copy[:,group[3]])..., hover = group[3])
+
+param1_test = conf_test[1,10]
+param1_test += 1
+x_gen, w_ns, Z_ns = ReverseMap(X[:,group[param1_test]],Y_copy[:,group[param1_test]],y_gen,false,3)
+plot(X_test[:,10],label="FOD X_test[10]", legend=:bottomright)
+plot!(x_gen,label="Generated X_test[10]_2")
+scatter(eachrow(Y_copy[:,group[param1_test]])..., hover = group[3])
+scatter!([y_gen[1]],[y_gen[2]])
 
 y_gen = VectorSearch(Y_,conf_test[:,10])
 y_gen = rot*y_gen
@@ -82,7 +111,7 @@ scatter!([y_gen[1]],[y_gen[2]])
 x_gen, w_ns, Z_ns = ReverseMap(X,Y_,y_gen,false,8)
 
 plot!(x_gen,label="Generated X_test[10]_2", legend=:bottomright)
-plot!(X_test[:,10],label="FOD X_test[10]")
+plot(X_test[:,10],label="FOD X_test[10]")
 
 norm(X_test[:,10]-x_gen)/norm(X_test[:,10])
 
@@ -91,6 +120,26 @@ x_gen, w_ns, Z_ns = ReverseMap(X,Z_,z_gen,false,8)
 scatter!([z_gen[1]],[z_gen[2]],[z_gen[3]])
 
 norm(X_test[:,10]-x_gen)/norm(X_test[:,10])
+
+err1 = [Inf64 for i in 1:30]
+err2 = err1
+for i in 1:30
+    param1_test = conf_test[1,i]
+    param1_test += 1
+    y_gen = VectorSearch(Y_,conf_test[:,i])
+    y_gen = rot*y_gen
+    y_gen = scale*y_gen
+    x_gen, w_ns, Z_ns = ReverseMap(X[:,group[param1_test]],Y_[:,group[param1_test]],y_gen,false,8)
+    err1[i] = norm(X_test[:,i]-x_gen)/norm(X_test[:,i])
+    z_gen, w_ns, Z_ns = ReverseMap(Z_[:,group[param1_test]],Y_[:,group[param1_test]],y_gen,false,8)
+    x_gen, w_ns, Z_ns = ReverseMap(X[:,group[param1_test]],Z_[:,group[param1_test]],z_gen,false,8)
+    err2[i] = norm(X_test[:,i]-x_gen)/norm(X_test[:,i])
+end
+scatter(err1)
+scatter!(err2)
+mean(err1)
+
+
 
 err1 = [Inf64 for i in 1:30]
 err2 = err1
@@ -107,7 +156,6 @@ end
 scatter(err1)
 scatter!(err2)
 mean(err1)
-
 
 
 
