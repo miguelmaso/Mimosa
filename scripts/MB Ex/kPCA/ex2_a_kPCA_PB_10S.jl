@@ -510,10 +510,10 @@ function Objective5(β)
     X = ReadData(n_parts,P,d)
     Λ, U, U_, Ḡ = kPOD(Κ,X,k)
     Z_ = real.(U_'*Ḡ)
-    d_G, prev_ = Dijkstra(Z_,601,25)
-    d1 = d_G[610]
-    d_G, prev_ = Dijkstra(Z_,611,25)
-    d2 = d_G[622]
+    d_G, prev_ = Dijkstra(Z_,601,25) # conf 0000000000
+    d1 = d_G[610] # conf 0100000000
+    d_G, prev_ = Dijkstra(Z_,611,25) # conf 1000000000
+    d2 = d_G[622] # conf 1100000000
     D = abs(d2-d1)/d1
     return D
     # return 1-(abs(maximum(Z_[2,:]))/abs(maximum(Z_[1,:])))
@@ -544,7 +544,6 @@ function Objective7(β)
     D = norm(Y_gen-Y_)/norm(Y_)
     println(D)
     return D
-    # return 1-(abs(maximum(Z_[2,:]))/abs(maximum(Z_[1,:])))
 end
 
 function NewData(x_test,Κ,neighbors,G,Z_,D_G_sym)
