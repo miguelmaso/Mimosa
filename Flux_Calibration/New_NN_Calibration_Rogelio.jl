@@ -5,6 +5,7 @@ using Plots
 using Zygote
 using DelimitedFiles
 using LinearAlgebra
+using Random
 #-------------------------------------------------------------------------------
 # Test and training data
 #-------------------------------------------------------------------------------
@@ -14,8 +15,20 @@ mat_coords::Matrix{Float64} = readdlm("mat_coords.txt")
 mat_coords_shaped = reshape(mat_coords,(3,133))'
 
 #x_train_n = x_train[:,1:2]
-@show size(x_train)
-@show size(y_train)
+
+#-------------------------------------------------------------------------------
+# Extract components 1, 2 and 3 of displacements
+#-------------------------------------------------------------------------------
+n_nodes   =  size(y_train,1)
+y_train₁  =  y_train[1:3:n_nodes,:]
+y_train₂  =  y_train[2:3:n_nodes,:]
+y_train₃  =  y_train[3:3:n_nodes,:]
+
+plot(y_train₁[1:2000],label="u₁")
+plot!(y_train₂[1:2000],label="u₂")
+plot!(y_train₃[1:2000],label="u₃")
+
+
 @show size(mat_coords_shaped)
 
 
@@ -32,7 +45,9 @@ end
 
 
 x_train_whole= x_train'
-y_train_whole= y_train
+y_train₁_whole= y_train₁
+y_train₂_whole= y_train₂
+y_train₃_whole= y_train₃
 
 
 # Create batches of data to work with. 
@@ -42,8 +57,19 @@ y_train_whole= y_train
 #     println(size(y_batch))  # Should print (399, batch_s399ize)
 #     break
 # end
-x_train_batch = x_train_whole[:,1:2000]
-y_train_batch = y_train_whole[1:399,1:2000] #.+ abs(minimum(y_train))
+
+n_experiments            =  size(y_train₁_whole,2)
+n_nodes                  =  size(y_train₁_whole,1)
+n_experiments_training   =  min(200,n_experiments)
+n_nodes_training         =  min(10,n_nodes)
+training_indices         =  randperm(n_experiments)[1:n_experiments_training]
+nodes_indices            =  randperm(n_nodes)[1:n_nodes_training]
+
+x_train_batch   =  x_train_whole[:,training_indices]
+y_train₁_batch   =  y_train₁_whole[nodes_indices,training_indices]
+y_train₂_batch   =  y_train₂_whole[nodes_indices,training_indices]
+y_train₃_batch   =  y_train₃_whole[nodes_indices,training_indices]
+
 
 function normalize(row::Vector)
     min = minimum(row)
@@ -55,39 +81,23 @@ function normalize(row::Vector)
   return scaled
 end
 
-# function normalize_columns(matrix::Matrix{Float64})::Matrix{Float64}
-#     rows, cols = size(matrix)
-#     normalized_matrix = Matrix{Float64}(undef, rows, cols)
-#     for j in 1:cols
-#         normalized_matrix[:, j] = normalize(matrix[:, j])
-#     end
-#     return normalized_matrix
-# end
-
-# Define the function to omit the third component and normalize each column
-function process_matrix(matrix::Matrix{Float64})::Matrix{Float64}
+function normalize_columns(matrix::Matrix{Float64})::Matrix{Float64}
     rows, cols = size(matrix)
-    new_rows = div(rows * 2, 3)
-    new_matrix = Matrix{Float64}(undef, new_rows, cols)
-    
-    new_row_index = 1
-    for i in 1:3:rows
-        if i + 1 <= rows
-            new_matrix[new_row_index, :] = matrix[i, :]
-            new_matrix[new_row_index + 1, :] = matrix[i + 2, :]
-            new_row_index += 2
-        end
-    end
-    
+    normalized_matrix = Matrix{Float64}(undef, rows, cols)
     for j in 1:cols
-        new_matrix[:, j] = normalize(new_matrix[:, j])
+        normalized_matrix[:, j] = normalize(matrix[:, j])
     end
-    
-    return new_matrix
+    return normalized_matrix
 end
 
-x_train_norm = x_train_batch
-y_train_norm = process_matrix(y_train_batch)
+x_train_norm        =  zeros(size(x_train_batch,1),size(x_train_batch,2))
+for i in 1:4
+  x_train_norm[i,:] = normalize(x_train_batch[i,:])
+end
+y_train₁_norm = reshape(normalize(y_train₁_batch[:]),size(y_train₁_batch,1),size(y_train₁_batch,2))
+y_train₃_norm = reshape(normalize(y_train₃_batch[:]),size(y_train₁_batch,1),size(y_train₁_batch,2))
+y_train_norm  = vcat(y_train₁_norm,y_train₃_norm)
+n_components  =  2
 
 # if all(>(0),y_train_norm) == false
 #     error()
@@ -136,7 +146,7 @@ function create_neural_network(input_size::Int, output_size::Int, hidden_layers:
 end
 
 
-model = create_neural_network(4,266,4,40,softplus)
+model = create_neural_network(4,n_nodes_training*n_components,4,40,softplus)
 
 
 
@@ -150,8 +160,8 @@ function loss(flux_model,x,y)
     ŷ = flux_model(x)
     num = sum((dot(ŷ-y,ŷ-y)))
     den = sum((dot(y,y)))
-    out = sqrt(num/den)
-end;
+    return sqrt(num/den)
+end
 # function loss(flux_model,x,y)
 #     ŷ = flux_model(x)
 #     num = sum(dot(ŷ[:,i]-y[:,i],ŷ[:,i]-y[:,i])^2 for i in 1:size(y,2))
@@ -217,6 +227,56 @@ end
 
 
 
+function r2d2(actual_values::Vector, predicted_values::Vector) # This function will take 2 matrices as input, as the variable to be trained is displacement
+
+    Norms_actual = zeros(size(actual_values,2))
+    Norms_predicted = zeros(size(actual_values,2))
+
+#Reshape and sanitize the input vectors
+for column in size(actual_values,2)
+    actual_reshaped = reshape(actual_values[:,column],(3,133))'
+    predicted_reshaped = reshape(predicted_values[:,column],(3,133))'
+    Norm_actual = norm(actual_reshaped[min_index,:])
+    Norm_predicted = norm(predicted_reshaped[min_index,:])
+    append!(Norms_actual,Norm_actual)
+    append!(Norms_predicted,Norm_predicted)
+
+end
+@show size(Norms_actual)
+# Compute the mean of actual values
+mean_actual = mean(Norms_actual)
+
+# Compute the sum of squares of residuals
+SS_res = sum((Norms_actual .- Norms_predicted).^2)
+
+# Compute the total sum of squares
+SS_tot = sum((Norms_actual .- mean_actual).^2)
+
+# Compute R-squared (R2) error
+R2 = 1 - SS_res / SS_tot
+
+return R2
+end
+
+
+
+function R2Function(actual_values, predicted_values) 
+    dims           =  ndims(actual_values)
+    if dims==1
+       mean_actual    =  mean(actual_values, dims=dims)
+       SS_res         =  sum((actual_values[:] - predicted_values[:]).^2)
+       SS_tot         = sum(((actual_values[:] .- mean_actual).^2))
+    else
+        mean_actual    =  mean(actual_values, dims=dims)
+        matrix         =  (actual_values .- predicted_values).^2
+        SS_res         =  sum([norm(matrix[:, i]) for i in 1:size(matrix, 2)])
+        matrix         =  (actual_values .- mean_actual).^2
+        SS_tot         = sum([norm(matrix[:, i]) for i in 1:size(matrix, 2)])
+     end
+    R2             = 1   - SS_res / SS_tot
+    return R2
+end
+
 
 initial_loss = loss(model, x_train_norm, y_train_norm)
 printstyled("The initial loss is $initial_loss \n"; color = :red)
@@ -225,17 +285,20 @@ opt = Flux.setup(Adam(0.05), model)
 
 
 # Now we iteratively train the model with the training data, minimizing the loss function by updating the weights and biases following the gradient descent
-function iterative_training(model, x_train, y_train)
+function iterative_training(model, x_train, y_train,maxIter)
     data = [(x_train,y_train)]
     epoch = 1
     iter = 1
     Losses = zeros(0)
-    while  loss(model,x_train,y_train)>0.00005
+    #while  loss(model,x_train,y_train)>0.00005
+    while iter<maxIter
      train!(loss, model, data, opt)
      L = loss(model, x_train, y_train)
      println("Epoch number $epoch with a loss $L ")
-     #R2=r2d2(y_train_norm,model(x_train_norm))
-     #println("R2  is $R2")
+     @show size(y_train)
+     @show size(model(x_train))
+     R2=R2Function(y_train[:],vec(model(x_train)))
+     println("R2  is $R2")
 
      iter += 1
      epoch += 1
@@ -252,9 +315,12 @@ function iterative_training(model, x_train, y_train)
     return model,Losses
 end
 
-model, Losses=iterative_training(model, x_train_norm, y_train_norm)
+maxIter   =  1e4
+
+model, Losses=iterative_training(model, x_train_norm, y_train_norm, maxIter)
 
 
+plot(log.(Losses),label="log(Loss")
 #-------------------------------------------------------------------------------
 # Predict the model
 #-------------------------------------------------------------------------------
