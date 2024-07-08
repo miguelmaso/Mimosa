@@ -65,10 +65,8 @@ n_nodes_training         =  min(10,n_nodes)
 training_indices         =  randperm(n_experiments)[1:n_experiments_training]
 nodes_indices            =  randperm(n_nodes)[1:n_nodes_training]
 
-x_train_batch   =  x_train_whole[:,training_indices]
-y_train₁_batch   =  y_train₁_whole[nodes_indices,training_indices]
-y_train₂_batch   =  y_train₂_whole[nodes_indices,training_indices]
-y_train₃_batch   =  y_train₃_whole[nodes_indices,training_indices]
+
+
 
 
 function normalize(row::Vector)
@@ -90,15 +88,21 @@ function normalize_columns(matrix::Matrix{Float64})::Matrix{Float64}
     return normalized_matrix
 end
 
-x_train_norm        =  zeros(size(x_train_batch,1),size(x_train_batch,2))
+x_train_norm        =  zeros(size(x_train_whole,1),size(x_train_whole,2))
 for i in 1:4
-  x_train_norm[i,:] = normalize(x_train_batch[i,:])
+  x_train_norm[i,:] = normalize(x_train_whole[i,:])
 end
-y_train₁_norm = reshape(normalize(y_train₁_batch[:]),size(y_train₁_batch,1),size(y_train₁_batch,2))
-y_train₃_norm = reshape(normalize(y_train₃_batch[:]),size(y_train₁_batch,1),size(y_train₁_batch,2))
-y_train_norm  = vcat(y_train₁_norm,y_train₃_norm)
+y_train₁_norm = reshape(normalize(y_train₁_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
+y_train₃_norm = reshape(normalize(y_train₃_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
+y_train_norm = vcat(y_train₁_norm,y_train₃_norm)
+
 n_components  =  2
 
+x_train_batch   =  x_train_whole[:,training_indices]
+y_train₁_batch   =  y_train₁_whole[nodes_indices,training_indices]
+y_train₂_batch   =  y_train₂_whole[nodes_indices,training_indices]
+y_train₃_batch   =  y_train₃_whole[nodes_indices,training_indices]
+y_train_batch  = vcat(y_train₁_batch,y_train₃_batch)
 # if all(>(0),y_train_norm) == false
 #     error()
 # end
@@ -158,8 +162,10 @@ model = create_neural_network(4,n_nodes_training*n_components,4,40,softplus)
 
 function loss(flux_model,x,y)
     ŷ = flux_model(x)
+
     num = sum((dot(ŷ-y,ŷ-y)))
     den = sum((dot(y,y)))
+
     return sqrt(num/den)
 end
 # function loss(flux_model,x,y)
@@ -278,10 +284,10 @@ function R2Function(actual_values, predicted_values)
 end
 
 
-initial_loss = loss(model, x_train_norm, y_train_norm)
+initial_loss = loss(model, x_train_batch, y_train_batch)
 printstyled("The initial loss is $initial_loss \n"; color = :red)
 #opt = Descent(0.02) # Define an optimisation strategy. In this case, just the gradient descent. But could de Adams, etc. 
-opt = Flux.setup(Adam(0.05), model)
+opt = Flux.setup(Adam(0.01), model)
 
 
 # Now we iteratively train the model with the training data, minimizing the loss function by updating the weights and biases following the gradient descent
@@ -317,7 +323,14 @@ end
 
 maxIter   =  1e4
 
-model, Losses=iterative_training(model, x_train_norm, y_train_norm, maxIter)
+model, Losses=iterative_training(model, x_train_batch, y_train_batch, maxIter)
+
+
+
+y_train₁_eval = y_train₁_norm[nodes_indices,:]
+y_train₃_eval = y_train₃_norm[nodes_indices,:]
+y_train_eval = vcat(y_train₁_eval,y_train₃_eval)
+R2_new = R2Function(y_train_eval, model(x_train_norm))
 
 
 plot(log.(Losses),label="log(Loss")
