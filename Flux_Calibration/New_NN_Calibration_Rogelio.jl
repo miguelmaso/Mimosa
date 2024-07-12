@@ -1,4 +1,5 @@
 using Flux
+using JSON
 using Flux: train!
 using Statistics
 using Plots
@@ -152,9 +153,41 @@ end
 
 model = create_neural_network(4,n_nodes_training*n_components,4,40,softplus)
 
+#---------------------------------------------------------------------------------
+# We need a way to store the structure and the trained model (weights and biases)
+#---------------------------------------------------------------------------------
+# Function to extract model architecture
+function extract_architecture(model)
+    architecture = []
+    for layer in model
+        if isa(layer, Dense)
+            push!(architecture, ("Dense", size(layer.weight)))
+        elseif isa(layer, typeof(relu))
+            push!(architecture, "ReLU")
+        elseif isa(layer, typeof(softmax))
+            push!(architecture, "Softmax")
+        end
+    end
+    return architecture
+end
 
+# Function to extract model weights
+function extract_weights(params)
+    weights = []
+    for p in params
+        push!(weights, p |> Array)
+    end
+    return weights
+end
+# Combine architecture and weights into a single JSON object
+model_data = Dict("architecture" => architecture, "weights" => weights)
 
+# Convert to JSON and save
+model_json = JSON.json(model_data)
 
+open("model.json", "w") do file
+    write(file, model_json)
+end
 
 #-------------------------------------------------------------------------------
 # Train the model
