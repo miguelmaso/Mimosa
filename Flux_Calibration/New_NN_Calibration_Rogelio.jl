@@ -39,9 +39,7 @@ plot!(y_train₃[1:2000],label="u₃")
  #  return @. (x - μ) / (σ + ϵ)
  return x
 end
-#TODO Trabajar en un batch de datos para reducir el tiempo. 
-# El batch lo puedes seleccionar con un MonteCarlo Sampling
-#TODO Probar con una red más sencilla
+
 
 
 
@@ -108,25 +106,10 @@ y_train_batch  = vcat(y_train₁_batch,y_train₃_batch)
 #     error()
 # end
 
-#-------------------------------------------------------------------------------
-# Build a model. Now it's just a simple layer with one input and one output
-#-------------------------------------------------------------------------------
-#Let's create a multi-layer perceptron
-# ! We should have a function that recursively creates a model with n layers, m neurons and we can provide the activation function and initialization
-#TODO INITIALIZE THE NN SO THAT THE FIRST OUTPUT IS 0 TO MAKE THE LOSS EQUAL TO 1
-# model = Chain(
-#    Dense(4=>200, softplus; bias=zeros(200), init=Flux.zeros32),
-#    BatchNorm(200),
-#    Dense(200=>200,softplus; bias=zeros(200), init=Flux.zeros32),
-#    BatchNorm(200),
-#    Dense(200=>200,softplus; bias=zeros(200), init=Flux.zeros32),
-#    BatchNorm(200),
-#    Dense(200=>200,softplus; bias=zeros(200), init=Flux.zeros32),
-#    BatchNorm(200),
-#    Dense(200=>200,softplus; bias=zeros(200), init=Flux.zeros32),
-#    BatchNorm(200),
-#    Dense(200=>399,softplus; bias=zeros(399), init=Flux.zeros32),
-# )
+#------------------
+# Build a model. 
+#------------------
+
 
 
 function create_neural_network(input_size::Int, output_size::Int, hidden_layers::Int, neurons_per_layer::Int, activation::Function)
@@ -157,11 +140,20 @@ model = create_neural_network(4,n_nodes_training*n_components,4,40,softplus)
 # We need a way to store the structure and the trained model (weights and biases)
 #---------------------------------------------------------------------------------
 # Function to extract model architecture
+
+#TODO The order of input/output is reversed in the first and last layer when saving the model
+
 function extract_architecture(model)
     architecture = []
-    for layer in model
+    for (i, layer) in enumerate(model)
         if isa(layer, Dense)
-            push!(architecture, ("Dense", size(layer.weight)))
+            if i == 1
+                push!(architecture, ("Dense", (size(layer.weight, 2), size(layer.weight, 1))))
+            elseif i == length(model)
+                push!(architecture, ("Dense", (size(layer.weight, 2), size(layer.weight, 1))))
+            else
+                push!(architecture, ("Dense", (size(layer.weight, 1), size(layer.weight, 2))))
+            end
         elseif isa(layer, typeof(relu))
             push!(architecture, "ReLU")
         elseif isa(layer, typeof(softmax))
@@ -172,15 +164,24 @@ function extract_architecture(model)
 end
 
 # Function to extract model weights
-function extract_weights(params)
+function extract_weights(model)
     weights = []
-    for p in params
-        push!(weights, p |> Array)
+    bias = []
+    for layer in model
+        if isa(layer, Dense)
+            push!(weights, layer.weight)
+            push!(bias, layer.bias)
+        end
     end
-    return weights
+    return weights, bias
 end
+
+architecture = extract_architecture(model)
+weights,bias = extract_weights(model)
+
+
 # Combine architecture and weights into a single JSON object
-model_data = Dict("architecture" => architecture, "weights" => weights)
+model_data = Dict("architecture" => architecture, "weights" => weights, "bias" => bias)
 
 # Convert to JSON and save
 model_json = JSON.json(model_data)
