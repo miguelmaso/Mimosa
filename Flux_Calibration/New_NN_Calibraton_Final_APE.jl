@@ -61,8 +61,8 @@ y_train₃_whole= y_train₃
 function parametric_run(n_layers,n_neurons,n_experiments,n_nodes)
 
 name                     =  string("Layers:",n_layers," ", "Neurons:",n_neurons," ","Experiments:",n_experiments," ","Nodes:",n_nodes  )
-n_experiments            =  size(y_train₁_whole,2)
-n_nodes                  =  size(y_train₁_whole,1)
+#n_experiments            =  size(y_train₁_whole,2)
+#n_nodes                  =  size(y_train₁_whole,1)
 #n_experiments_training   =  min(200,n_experiments)
 n_experiments_training   =  n_experiments
 #n_nodes_training         =  min(10,n_nodes)
@@ -93,20 +93,25 @@ function normalize_columns(matrix::Matrix{Float64})::Matrix{Float64}
     return normalized_matrix
 end
 
-x_train_norm        =  zeros(size(x_train_whole,1),size(x_train_whole,2))
-for i in 1:4
-  x_train_norm[i,:] = normalize(x_train_whole[i,:])
-end
+# x_train_norm        =  zeros(size(x_train_whole,1),size(x_train_whole,2))
+# for i in 1:4
+#   x_train_norm[i,:] = normalize(x_train_whole[i,:])
+# end
+x_train_norm = x_train_whole
 y_train₁_norm = reshape(normalize(y_train₁_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
 y_train₃_norm = reshape(normalize(y_train₃_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
+#y_train₁_norm = reshape((y_train₁_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
+#y_train₃_norm = reshape((y_train₃_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
 y_train_norm = vcat(y_train₁_norm,y_train₃_norm)
-
+#TODO Investigar por que va más lento normalizando. Tienes que normalizar las y. Si normalizas el y_train, el y_eval lo tienes que normalizar tambien.
 n_components  =  2
 
 x_train_batch   =  x_train_whole[:,training_indices]
-y_train₁_batch   =  y_train₁_whole[nodes_indices,training_indices]
-y_train₂_batch   =  y_train₂_whole[nodes_indices,training_indices]
-y_train₃_batch   =  y_train₃_whole[nodes_indices,training_indices]
+y_train₁_batch   =  y_train₁_norm[nodes_indices,training_indices]
+y_train₃_batch   =  y_train₃_norm[nodes_indices,training_indices]
+#y_train₁_batch   =  y_train₁_whole[nodes_indices,training_indices]
+#y_train₃_batch   =  y_train₃_whole[nodes_indices,training_indices]
+
 y_train_batch  = vcat(y_train₁_batch,y_train₃_batch)
 # if all(>(0),y_train_norm) == false
 #     error()
@@ -147,7 +152,6 @@ model = create_neural_network(4,n_nodes_training*n_components,n_layers,n_neurons
 #---------------------------------------------------------------------------------
 # Function to extract model architecture
 
-#TODO The order of input/output is reversed in the first and last layer when saving the model
 
 function extract_architecture(model)
     architecture = []
@@ -296,6 +300,8 @@ end
 
 function R2Function(actual_values, predicted_values) 
     dims           =  ndims(actual_values)
+
+        
     if dims==1
        mean_actual    =  mean(actual_values, dims=dims)
        SS_res         =  sum((actual_values[:] - predicted_values[:]).^2)
@@ -303,6 +309,7 @@ function R2Function(actual_values, predicted_values)
     else
         mean_actual    =  mean(actual_values, dims=dims)
         matrix         =  (actual_values .- predicted_values).^2
+
         SS_res         =  sum([norm(matrix[:, i]) for i in 1:size(matrix, 2)])
         matrix         =  (actual_values .- mean_actual).^2
         SS_tot         = sum([norm(matrix[:, i]) for i in 1:size(matrix, 2)])
@@ -348,7 +355,7 @@ function iterative_training(model, x_train, y_train,maxIter)
     return model,Losses
 end
 
-maxIter   =  1e4
+maxIter   =  1e3
 
 model, Losses=iterative_training(model, x_train_batch, y_train_batch, maxIter)
 
@@ -357,11 +364,11 @@ model, Losses=iterative_training(model, x_train_batch, y_train_batch, maxIter)
 y_train₁_eval = y_train₁_norm[nodes_indices,:]
 y_train₃_eval = y_train₃_norm[nodes_indices,:]
 y_train_eval = vcat(y_train₁_eval,y_train₃_eval)
-R2_new = R2Function(y_train_eval, model(x_train_norm))
+R2_new = R2Function(vec(y_train_eval), vec(model(x_train_norm)))
+println("R2 new is:$R2_new")
 
 
-
-plot(log.(Losses),label="log(Loss")
+#plot(log.(Losses),label="log(Loss")
 
 #----------------------------------------------------------------------------------------------------------
 # Store the weights and architecture of the trained model. Store the Loss and the R2 as well in a JSON file
@@ -381,11 +388,9 @@ open(name*".json", "w") do file
     write(file, model_json)
 end
 
-
-
-
+return vec(y_train_eval), vec(model(x_train_norm)), x_train_norm, x_train_batch,y_train_batch, model
 
 end
 
 
-
+y_eval,y_predicted, x_eval, x_batch, y_batch, model = parametric_run(4,40,2000,100)
