@@ -7,6 +7,7 @@ using Zygote
 using DelimitedFiles
 using LinearAlgebra
 using Random
+using IterTools
 #-------------------------------------------------------------------------------
 # Test and training data
 #-------------------------------------------------------------------------------
@@ -52,7 +53,7 @@ y_train₃_whole= y_train₃
 # end
 
 
-function parametric_run(n_layers,n_neurons,n_experiments,n_nodes)
+function parametric_run(n_layers,n_neurons,n_experiments,n_nodes,epochs)
 
 name                     =  string("Layers:",n_layers," ", "Neurons:",n_neurons," ","Experiments:",n_experiments," ","Nodes:",n_nodes  )
 #n_experiments            =  size(y_train₁_whole,2)
@@ -348,7 +349,7 @@ function iterative_training(model, x_train, y_train,maxIter)
     return model,Losses
 end
 
-maxIter   =  1e3
+maxIter   =  epochs
 
 model, Losses=iterative_training(model, x_train_batch, y_train_batch, maxIter)
 
@@ -381,13 +382,30 @@ open(name*".json", "w") do file
     write(file, model_json)
 end
 
-return vec(y_train_eval), vec(model(x_train_norm)), x_train_norm, x_train_batch,y_train_batch, model
+return #vec(y_train_eval), vec(model(x_train_norm)), x_train_norm, x_train_batch,y_train_batch, model
 
 end
 
 # ---------------------------------------------
 # Create a run of all the possible combinations
 # ---------------------------------------------
+# Define the parameter values
+n_layers_values = [2, 3, 4, 6]
+n_neurons_values = [10, 20, 40]
+n_experiments_values = [200, 1000, 2000, 4000]
+n_nodes_values = [10, 30, 40]
+epochs_values = [500,1000,5000,10000]
+
+# Generate all possible combinations of parameter values
+combinations = IterTools.product(n_layers_values, n_neurons_values, n_experiments_values, n_nodes_values, epochs_values)
 
 
-y_eval,y_predicted, x_eval, x_batch, y_batch, model = parametric_run(4,40,2000,100)
+cd("NN_parametric_run")
+
+# Iterate through the combinations and call the parametric_run function
+for combo in combinations
+    n_layers, n_neurons, n_experiments, n_nodes, epochs = combo
+    parametric_run(n_layers, n_neurons, n_experiments, n_nodes, epochs)
+end
+
+#y_eval,y_predicted, x_eval, x_batch, y_batch, model = parametric_run(4,40,2000,100)
