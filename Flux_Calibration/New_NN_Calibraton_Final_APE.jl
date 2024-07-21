@@ -30,15 +30,9 @@ plot!(y_train₂[1:2000],label="u₂")
 plot!(y_train₃[1:2000],label="u₃")
 
 
-@show size(mat_coords_shaped)
 
 
-@inline function normalise(x::AbstractArray; dims=ndims(x), ϵ=1e-8)
-#  μ = mean(x, dims=dims)
-#  σ = std(x, dims=dims, mean=μ, corrected=false)
- #  return @. (x - μ) / (σ + ϵ)
- return x
-end
+
 
 
 
@@ -72,7 +66,14 @@ nodes_indices            =  randperm(n_nodes)[1:n_nodes_training]
 
 
 
-
+function normalize_columns(matrix::Matrix{Float64})::Matrix{Float64}
+    rows, cols = size(matrix)
+    normalized_matrix = Matrix{Float64}(undef, rows, cols)
+    for j in 1:cols
+        normalized_matrix[:, j] = normalize(matrix[:, j])
+    end
+    return normalized_matrix
+end
 
 function normalize(row::Vector)
     min = minimum(row)
@@ -83,26 +84,18 @@ function normalize(row::Vector)
     end
   return scaled
 end
-
-function normalize_columns(matrix::Matrix{Float64})::Matrix{Float64}
-    rows, cols = size(matrix)
-    normalized_matrix = Matrix{Float64}(undef, rows, cols)
-    for j in 1:cols
-        normalized_matrix[:, j] = normalize(matrix[:, j])
-    end
-    return normalized_matrix
-end
-
-# x_train_norm        =  zeros(size(x_train_whole,1),size(x_train_whole,2))
-# for i in 1:4
-#   x_train_norm[i,:] = normalize(x_train_whole[i,:])
-# end
+# ----------------------------------------------
+# Normalizing the input data (evaluation set)
+# ----------------------------------------------
 x_train_norm = x_train_whole
-y_train₁_norm = reshape(normalize(y_train₁_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
-y_train₃_norm = reshape(normalize(y_train₃_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
+y_train₁_norm_old = reshape(normalize(y_train₁_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
+y_train₁_norm = map(x -> Float64(x), y_train₁_norm_old)
+y_train₃_norm_old = reshape(normalize(y_train₃_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
+y_train₃_norm = map(x -> Float64(x), y_train₃_norm_old)
 #y_train₁_norm = reshape((y_train₁_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
 #y_train₃_norm = reshape((y_train₃_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
 y_train_norm = vcat(y_train₁_norm,y_train₃_norm)
+
 #TODO Investigar por que va más lento normalizando. Tienes que normalizar las y. Si normalizas el y_train, el y_eval lo tienes que normalizar tambien.
 n_components  =  2
 
@@ -335,8 +328,8 @@ function iterative_training(model, x_train, y_train,maxIter)
      train!(loss, model, data, opt)
      L = loss(model, x_train, y_train)
      println("Epoch number $epoch with a loss $L ")
-     @show size(y_train)
-     @show size(model(x_train))
+     #@show size(y_train)
+     #@show size(model(x_train))
      R2=R2Function(y_train[:],vec(model(x_train)))
      println("R2  is $R2")
 
@@ -391,6 +384,10 @@ end
 return vec(y_train_eval), vec(model(x_train_norm)), x_train_norm, x_train_batch,y_train_batch, model
 
 end
+
+# ---------------------------------------------
+# Create a run of all the possible combinations
+# ---------------------------------------------
 
 
 y_eval,y_predicted, x_eval, x_batch, y_batch, model = parametric_run(4,40,2000,100)
