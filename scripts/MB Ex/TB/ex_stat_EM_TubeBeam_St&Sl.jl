@@ -152,7 +152,7 @@ ph_list = []
 x_line_list = []
 n = length(conf_list)
 start = (div-1)*(n/4) + 1
-finish = start + 1 # div*(n/4)
+finish =  start# div*(n/4)
 for i in Int(start):Int(finish)
     conf = conf_list[i]
     println(" ")
@@ -168,7 +168,7 @@ end
 x_line_list = [getproperty.(x_line,:data) for x_line in x_line_list]
 x_line_list = [x_line_list[i][j][k] for i in 1:lastindex(x_line_list), j in 1:lastindex(x_line_list[1]), k in 1:lastindex(x_line_list[1][1])]
 df = DataFrame(vcat(x_line_list[:,:,1],x_line_list[:,:,2],x_line_list[:,:,3]), :auto)
-CSV.write("data/csv/EM_TB_St4_Sl2_$div.csv", df)
+# CSV.write("data/csv/EM_TB_St4_Sl2_$div.csv", df)
 t1 = time()
 Δt = t1-t0
 # test_read = CSV.File("data/csv/EM_TB_St4_Sl2_$div.csv") |> Tables.matrix
