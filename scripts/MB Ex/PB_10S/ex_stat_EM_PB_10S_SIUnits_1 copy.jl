@@ -116,7 +116,7 @@ pot = 2000.0
 uh_ = []
 pl = []
 z = []
-for i in 301:400
+for i in 401:500
   println(" ")
   println("!!!!!!!!    Configuration number $i    !!!!!!!")
   sw = conf[i]
@@ -133,9 +133,9 @@ end
 plot(pl...,layout=(10,10), size=(4000,4000),ylims=(-0.1,0.1),legend=nothing,link=:both) =#
 
 df = DataFrame(z, :auto)
-CSV.write("data/csv/EM_PB_10S_10.csv", df)
+CSV.write("data/csv/EM_PB_10S_11.csv", df)
 t1 = time()
 Δt = t1-t0
 println("------- Total Elapsed time: $Δt s")
 
-jldsave("data/uh_EM_PB_10S_10.jld2";uh_)
+jldsave("data/uh_EM_PB_10S_11.jld2";uh_)

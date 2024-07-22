@@ -7,10 +7,10 @@ for x1 in 0:2, x2 in 0:2, x3 in 0:2, x4 in 0:2, x5 in 0:2, x6 in 0:2, x7 in 0:2,
 end
 
 
-r_set = [rand(conf) for i in 1:60]
+r_set = [rand(conf) for i in 1:800]
 sort!(r_set)
 
 df = DataFrame(r_set, :auto)
-CSV.write("data/csv/Config_N60_EM_PB_10S.csv", df)
+CSV.write("data/csv/Config_N800_EM_PB_10S.csv", df)
 
 # CSV.File("data/csv/Config_N600_EM_PB_10S.csv") |> Tables.Columns
