@@ -1,5 +1,6 @@
 using CSV
 using Tables
+using DataFrames
 using Statistics
 using LinearAlgebra
 using Plots
@@ -125,9 +126,17 @@ end
 function isomap1(neighbors,Z_)
     n = length(eachcol(Z_))
     D_G = [[] for i in 1:n]
+    # count = []
+    # count2 = []
     Threads.@threads for i in 1:n
         d_G, prev_ = Dijkstra(Z_,i,neighbors)
         D_G[i] = d_G
+        # push!(count,i)
+        # ma = maximum(count)
+        # push!(count2,ma)
+        # mi = minimum(count2)
+        # per = round(100*((ma-mi)/(n-mi)))
+        # print("\r$ma - $mi - %$per")
     end
     D_G = reduce(hcat,D_G)
     D_G_sym = 0.5*(D_G+D_G')
@@ -175,7 +184,7 @@ end
 
 function ReadData(n_parts,Phi,d)
     X = []
-    for i in 1:n_parts, j in Phi
+    for i in 0:n_parts, j in Phi
         push!(X,CSV.File("data/csv/EM_PB_10S_Phi$j/EM_PB_10S_$i.csv") |> Tables.matrix)
     end
     X = hcat(X...)
@@ -188,6 +197,71 @@ function ReadData(n_parts,Phi,d)
         X = X3[[2:m...],:]
     end
     return X
+end
+
+function ReadData_RTS_STS(RTS_parts,STS_parts,Phi)
+    X = []
+    for i in 0:RTS_parts, j in Phi
+        push!(X,CSV.File("data/csv/EM_PB_10S_Phi$(j)_Random/EM_PB_10S_$i.csv") |> Tables.matrix)
+    end
+    conf_ = []
+    for j in Phi
+        push!(conf_,CSV.File("data/csv/EM_PB_10S_Phi$(j)_Random/Config_N1422_EM_PB_10S.csv") |> Tables.matrix)
+    end
+    conf_ = hcat(conf_...)
+    X_ = hcat(X...)
+    n_ = lastindex(eachcol(X_))
+    conf = conf_[:,[1:n_...]]
+    if STS_parts>0
+        for i in 1:STS_parts, j in Phi
+            push!(X,CSV.File("data/csv/EM_PB_10S_Phi$(j)_SmartTS/EM_PB_10S__$i.csv") |> Tables.matrix)
+        end
+        conf_ = []
+        for j in Phi
+            push!(conf_,CSV.File("data/csv/EM_PB_10S_Phi$(j)_SmartTS/Config_EM_PB_10S_Smart800.csv") |> Tables.matrix)
+        end
+        conf_ = hcat(conf_...)
+        X = hcat(X...)
+        conf = hcat(conf,conf_[:,[1:lastindex(eachcol(X))-n_...]])
+    else
+        X = X_
+    end
+
+    return X, conf
+end
+
+function ReadData_RTS_STS(RTS_parts,STS_parts,RTS_colums,STS_columns,Phi)
+    X = []
+    for i in 0:RTS_parts, j in Phi
+        push!(X,CSV.File("data/csv/EM_PB_10S_Phi$(j)_Random/EM_PB_10S_$i.csv") |> Tables.matrix)
+    end
+    conf_ = []
+    for j in Phi
+        push!(conf_,CSV.File("data/csv/EM_PB_10S_Phi$(j)_Random/Config_N1422_EM_PB_10S.csv") |> Tables.matrix)
+    end
+    conf_ = hcat(conf_...)
+    X_ = hcat(X...)
+    X_ = X_[:,[1:RTS_colums...]]
+    conf = conf_[:,[1:RTS_colums...]]
+    X__ = []
+    if STS_parts>0
+        for i in 1:STS_parts, j in Phi
+            push!(X__,CSV.File("data/csv/EM_PB_10S_Phi$(j)_SmartTS/EM_PB_10S__$i.csv") |> Tables.matrix)
+        end
+        X___ = hcat(X__...)
+        X___ = X___[:,[1:STS_columns...]]
+        conf_ = []
+        for j in Phi
+            push!(conf_,CSV.File("data/csv/EM_PB_10S_Phi$(j)_SmartTS/Config_EM_PB_10S_Smart800.csv") |> Tables.matrix)
+        end
+        conf_ = hcat(conf_...)
+        conf = hcat(conf,conf_[:,[1:STS_columns...]])
+        X = hcat(X_,X___)
+    else
+        X = X_
+    end
+
+    return X, conf
 end
 
 function kPOD(Κ,X,k)
@@ -285,6 +359,85 @@ function ReverseMap(X,Z_,z,d,n)
     return x, w_ns, Z_ns
 end
 
+function ReverseMap2(y_gen,conf_gen,Y_,X,conf,nh,t)
+    x_gen = []
+    for j in 1:10
+        param1 = []
+        for i in 1:n
+            push!(param1,conf[j,i])
+        end
+        sort_param1 = sortperm(param1)
+        group_param = 0
+        group = [[],[],[]]
+        count = 1
+        for i in 1:n
+            if param1[sort_param1[i]]==group_param
+                push!(group[count],sort_param1[i])
+            else
+                count += 1
+                group_param += 1
+                push!(group[count],sort_param1[i])
+            end
+        end
+        param1_test = conf_gen[j]
+        param1_test += 1
+        sec = [((10*(j-1)+1)):((10*j)+1)...]
+        # if j==10
+        #     append!(sec,101)
+        # end
+        x_gen_j, w_ns, Z_ns = ReverseMap(X[:,group[param1_test]][sec,:],
+        Y_[:,group[param1_test]],y_gen,false,nh)
+        push!(x_gen,x_gen_j)
+    end
+    for i in 2:10
+        Δ = x_gen[i][begin]-x_gen[i-1][end]
+        x_gen[i] = x_gen[i].-Δ
+        θ1 = atan((x_gen[i-1][end] - x_gen[i-1][end-1])/0.001)
+        θ2 = atan((x_gen[i][begin+1] - x_gen[i][begin])/0.001)
+        Δθ = θ1 - θ2
+        # Δθ = Δθ*1.5
+        # display((Δθ*(180/pi)))
+        rot = [cos(Δθ) -sin(Δθ); sin(Δθ) cos(Δθ)]
+        # display(rot)
+        x_gen_i = x_gen[i]
+        b = x_gen_i[1]
+        x_gen_i = x_gen_i.- b
+        x_ = [0:10...]
+        x_ = x_./1000
+        X_ = hcat(x_,x_gen_i)
+        X_ = X_'
+        # # Poly2(z) = [1 z z^2 z^3]
+        # Poly2(z) = [1 z z^2]
+        # A = Poly2.(X_[1,:])
+        # A = reduce(vcat,A)
+        # c = pinv(A)*X_[2,:]
+        # # Poly_d(z) = [0 1 2*z 3*z^2]
+        # Poly_d(z) = [0 1 2*z]
+        # A = Poly_d(-t)
+        # θ2 = A*c
+        # Δθ = θ1 - θ2[1]
+        # rot = [cos(Δθ) -sin(Δθ); sin(Δθ) cos(Δθ)]
+        # plot(eachrow(X_)...)
+        X_ = rot*X_
+        # plot!(eachrow(X_)...)
+        Poly(z) = [1 z z^2 z^3]
+        A = Poly.(X_[1,:])
+        A = reduce(vcat,A)
+        c = pinv(A)*X_[2,:]
+        A = Poly.(x_)
+        A = reduce(vcat,A)
+        x_gen[i] = A*c
+        # display(plot!(x_,x_gen[i],title="$i"))
+        x_gen[i] .+= b
+    end
+    for i in 1:lastindex(x_gen)-1
+        pop!(x_gen[i])
+    end
+    x_gen_0 = reduce(append!,x_gen)
+    x_gen_0 =  1.10145.*x_gen_0
+    return x_gen_0
+end
+
 function RotM(v1,v2)
     v = cross(v1,v2)
     vₓ = [0 -v[3] v[2]; v[3] 0 -v[1]; -v[2] v[1] 0]
@@ -294,7 +447,7 @@ function RotM(v1,v2)
 end
 
 function VectorSearch(Z_,conf)
-    z = Z_[:,[end-21:end...]]
+    z = Z_[:,[1:22...]]
     v = [z[:,i]-z[:,1] for i in 2:21]
     z = z[:,1]
     for i in 1:lastindex(conf)
@@ -337,11 +490,12 @@ end
 
 function Objective1(β)
     println("Kernel parameter: $β")
-    P = [4000] #,4000]
+    P = [2000] #,4000]
     n_parts = 8
     k = 3
     d = false
-    Κ(X1,X2) = exp(-β*(dot(X1-X2,X1-X2)))
+    # Κ(X1,X2) = exp(-β*(dot(X1-X2,X1-X2)))
+    Κ(X1,X2) = (Der2nd(X1,0.001)'*Der2nd(X2,0.001) + β)^2
     # Κ(X1,X2) = (X1'*X2 + β)^2
     # X, U_, Ḡ = execute_kPOD(Κ,P,n_parts,k,d)
     X = ReadData(n_parts,P,d)
@@ -501,19 +655,22 @@ end
 function Objective5(β)
     println("Kernel parameter: $β")
     P = [2000] #,4000]
-    n_parts = 6
+    n_parts = 8
     k = 3
     d = false
     # Κ(X1,X2) = exp(-β*(dot(X1-X2,X1-X2)))
-    Κ(X1,X2) = (X1'*X2 + β)^2
+    # Κ(X1,X2) = (X1'*X2 + β)^2
+    # Κ(X1,X2) = (Der2nd(X1,0.001)'*Der2nd(X2,0.001) + β)^2
+    Κ(X1,X2) = exp(-β*(dot(Der2nd(X1,0.001)-Der2nd(X2,0.001),Der2nd(X1,0.001)-Der2nd(X2,0.001))))
     # X, U_, Ḡ = execute_kPOD(Κ,P,n_parts,k,d)
     X = ReadData(n_parts,P,d)
     Λ, U, U_, Ḡ = kPOD(Κ,X,k)
     Z_ = real.(U_'*Ḡ)
-    d_G, prev_ = Dijkstra(Z_,601,25) # conf 0000000000
-    d1 = d_G[610] # conf 0100000000
-    d_G, prev_ = Dijkstra(Z_,611,25) # conf 1000000000
-    d2 = d_G[622] # conf 1100000000
+    Last = lastindex(eachcol(Z_))
+    d_G, prev_ = Dijkstra(Z_,1,25) # conf 0000000000
+    d1 = d_G[10] # conf 0100000000
+    d_G, prev_ = Dijkstra(Z_,11,25) # conf 1000000000
+    d2 = d_G[22] # conf 1100000000
     D = abs(d2-d1)/d1
     return D
     # return 1-(abs(maximum(Z_[2,:]))/abs(maximum(Z_[1,:])))
@@ -522,7 +679,7 @@ end
 function Objective7(β)
     println("Kernel parameter: $β")
     P = [2000] #,4000]
-    n_parts = 6
+    n_parts = 8
     k = 3
     d = false
     # Κ(X1,X2) = exp(-β*(dot(X1-X2,X1-X2)))
@@ -534,17 +691,41 @@ function Objective7(β)
     neighbors = 25
     to = time()
     Y_, D_G_sym = isomap1(neighbors,Z_)
+    println("elapsed time for isomap")
     println(time()-to)
     Y_gen = []
-    for i in 1:n
+    Last = lastindex(eachcol(Y_))
+    for i in 1:Last
         y_ = VectorSearch(Y_,conf[:,i])
         push!(Y_gen,y_)
     end
     Y_gen = reduce(hcat,Y_gen)
     D = norm(Y_gen-Y_)/norm(Y_)
-    println(D)
+    println("Err = $D")
     return D
 end
+
+function Objective8(β)
+    println("Kernel parameter: $β")
+    P = [2000] #,4000]
+    n_parts = 8
+    k = 3
+    d = false
+    # Κ(X1,X2) = exp(-β*(dot(X1-X2,X1-X2)))
+    Κ(X1,X2) = (Der2nd(X1,0.001)'*Der2nd(X2,0.001) + β)^2
+    # Κ(X1,X2) = (X1'*X2 + β)^2
+    # X, U_, Ḡ = execute_kPOD(Κ,P,n_parts,k,d)
+    X = ReadData(n_parts,P,d)
+    Λ, U, U_, Ḡ = kPOD(Κ,X,k)
+    Λ = real.(Λ)
+    Λ_t = sum(Λ)
+    Λ_3 = sum(Λ[[1,2,3]])
+    Res = Λ_3/Λ_t
+    println("Info in first 3 directcions: $Res")
+    return 1-Res
+    # return 1-(abs(maximum(Z_[2,:]))/abs(maximum(Z_[1,:])))
+end
+
 
 function NewData(x_test,Κ,neighbors,G,Z_,D_G_sym)
     Κ_test(X) = Κ(x_test,X)
@@ -552,9 +733,10 @@ function NewData(x_test,Κ,neighbors,G,Z_,D_G_sym)
     ḡ_i = g_i - (1/n)*G*ones(n,1) - (1/n)*ones(n,n)*g_i +
     ((1/n^2)*ones(1,n)*G*ones(n,1))[1]*ones(n,1)
     z_i = real.(U_'*ḡ_i)
-    scatter!(eachrow(z_i)..., hover = [i for i in 1:lastindex(eachcol(Z_))])
+    # scatter!(eachrow(z_i)..., hover = [i for i in 1:lastindex(eachcol(Z_))])
     Z_i = hcat(Z_,z_i)
-    d_G_i, prev_ = Dijkstra(Z_i,623,neighbors)
+    Last = lastindex(eachcol(Z_i))
+    d_G_i, prev_ = Dijkstra(Z_i,Last,neighbors)
     D_G_i = vcat(hcat(D_G_sym,d_G_i[[1:n...]]),d_G_i')
     D_G_sq_i = D_G_i.^2
     C_i = I - (1/(n+1))*ones(n+1,n+1)
@@ -569,7 +751,7 @@ function NewData(x_test,Κ,neighbors,G,Z_,D_G_sym)
 
     X_iso_i = U_iso_m_i*Λ_iso_m_i
     X_iso_i = X_iso_i'
-    return X_iso_i[:,623]
+    return X_iso_i[:,Last]
 end
 
 Dist(Z_,i1,i2) = sqrt(dot(real.(Z_[:,i1]-Z_[:,i2]),real.(Z_[:,i1]-Z_[:,i2])))
