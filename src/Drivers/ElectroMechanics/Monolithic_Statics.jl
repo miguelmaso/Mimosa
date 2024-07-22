@@ -50,12 +50,21 @@ function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
         # NewtonRaphson solver
         solveropt = _get_kwarg(:solveropt, kwargs)
         nlsolver = get_FE_solver(solveropt)
+        init_sol_bool = _get_kwarg(:init_sol_bool, kwargs)
 
         # Initialization
-        xu = zeros(Float64, num_free_dofs(fe_spaces.Vu))
-        xφ = zeros(Float64, num_free_dofs(fe_spaces.Vφ))
-        x0 = vcat(xu, xφ)
-        ph = FEFunction(fe_spaces.U, x0)
+        if init_sol_bool
+            U_ap = _get_kwarg(:U_ap, kwargs)
+            X_ap = _get_kwarg(:X_ap, kwargs)
+            ph = interpolate([U_ap,X_ap],fe_spaces.U)
+            writevtk(Ω, simdir_ * "/results_MB",cellfields=["uh"=>ph[1], "phi"=>ph[2]])
+        else
+            xu = zeros(Float64, num_free_dofs(fe_spaces.Vu))
+            xφ = zeros(Float64, num_free_dofs(fe_spaces.Vφ))
+            x0 = vcat(xu, xφ)
+            ph = FEFunction(fe_spaces.U, x0)
+            writevtk(Ω, simdir_ * "/results_MB_NOinit",cellfields=["uh"=>ph[1], "phi"=>ph[2]])
+        end
         @show size(get_free_dof_values(ph))
 
         post_params = @dict Ω is_vtk simdir_ is_P_F
@@ -76,6 +85,8 @@ function ΔSolver!(problem::ElectroMechProblem{:monolithic,:statics}, ctype::Cou
     DΨ = _get_kwarg(:DΨ, params)
     dΩ = _get_kwarg(:dΩ, params)
     is_P_F = _get_kwarg(:is_P_F, params[:post_params])
+    # simdir_ = _get_kwarg(:simdir_, params[:post_params])
+    # Ω = _get_kwarg(:Ω, params[:post_params])
 
     # update x0 with dirichlet incrementos   
     uh = ph[1] # not hard copy
@@ -94,8 +105,12 @@ function ΔSolver!(problem::ElectroMechProblem{:monolithic,:statics}, ctype::Cou
 
     fe_spaces = get_FE_spaces!(problem, fe_spaces, dirichletbc, Λ)
 
+    # writevtk(Ω, simdir_ * "/results_MB_2$Λ",cellfields=["uh"=>ph[1], "phi"=>ph[2]])
+    
     op = FEOperator(res, jac, fe_spaces.U, fe_spaces.V)
+    println((ph, nlsolver, op, cache))
     ph, cache = solve!(ph, nlsolver, op, cache)
+
 
     if is_P_F
         uh = ph[1]
