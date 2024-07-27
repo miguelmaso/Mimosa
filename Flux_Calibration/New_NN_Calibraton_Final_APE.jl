@@ -55,7 +55,7 @@ y_train₃_whole= y_train₃
 
 function parametric_run(n_layers,n_neurons,n_experiments,n_nodes,epochs)
 
-name                     =  string("Layers:",n_layers," ", "Neurons:",n_neurons," ","Experiments:",n_experiments," ","Nodes:",n_nodes  )
+name                     =  string("Layers:",n_layers," ", "Neurons:",n_neurons," ","Experiments:",n_experiments," ","Nodes:",n_nodes,"","Iter:",epochs  )
 #n_experiments            =  size(y_train₁_whole,2)
 #n_nodes                  =  size(y_train₁_whole,1)
 #n_experiments_training   =  min(200,n_experiments)
