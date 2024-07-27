@@ -117,3 +117,5 @@ println("DONE")
 #----------------------------------------------------------
 # With the model trained, let's import the data and compare
 #----------------------------------------------------------
+
+#TODO Double check with Rogelio; we are computing the R2 of the evaluation only on the nodes that we chose; it's difficult to reconstruct from that because the nodes are chosen randomly and we don't have those saved
