@@ -3,6 +3,10 @@ using Tables
 using LinearAlgebra
 using Plots
 using NearestNeighbors
+using Optim
+
+# Pkg.add.(["Tables", "LinearAlgebra", "Plots", "NearestNeighbors", "Optim"])
+
 
 function ReadData2(pot,parts)
     j = pot
@@ -93,6 +97,7 @@ function isomap1(neighbors,Z_)
         per = round(100*((ma-mi)/(n-mi)))
         print("\r$ma - $mi - %$per")
     end
+    print("\n")
     D_G = reduce(hcat,D_G)
     D_G_sym = 0.5*(D_G+D_G')
     D_G_sq = D_G_sym.^2
@@ -135,4 +140,85 @@ function Dijkstra(data,i,nieghbors)
         dist_[visited].=Inf64
     end
     return dist, prev
+end
+
+function VectorSearch(Z_,conf,list)
+    n = length(list)
+    z = Z_[:,list]
+    v = [z[:,i]-Z_[:,1] for i in 1:n]
+    z = Z_[:,1]
+    for i in 1:Int(lastindex(conf)/4)
+        for j in 1:16
+            if conf[[(((i-1)*4)+1):(((i-1)*4)+4)...]] == digits(j-1,base=2,pad=4)
+                z = z + v[((i-1)*16)+j]
+            else
+                z = z
+            end
+        end
+    end
+    return z
+end
+
+function VectorSearch(Z_,conf,list,∇zᵤ)
+    n = length(list)
+    z = Z_[:,list]
+    v = [z[:,i]-Z_[:,1] for i in 1:n]
+    z = Z_[:,1]
+    R = I
+    u_0 = ∇zᵤ(z[1],z[2])
+    for i in 1:lastindex(conf)
+        # v_ = v[i]
+        # v_[1] = conf[i]*v_[1]
+        if conf[i] == 0
+            z = z
+        elseif conf[i]==1
+            z = z + R*v[i]
+        end
+        # println(R)
+        u_1 = ∇zᵤ(z[1],z[2])
+        R = RotM(u_1,u_0)
+        # u_0 = u_1
+    end
+    return z
+end
+
+function VectorSearch_wrong(Z_,conf,list)
+    n = length(list)
+    z = Z_[:,list]
+    v = [z[:,i]-Z_[:,1] for i in 1:n]
+    z = Z_[:,1]
+    for i in 1:lastindex(conf)
+        if conf[i] == 0
+            z = z
+        elseif conf[i]==1
+            z = z + v[i]
+        end
+    end
+    return z
+end
+
+function RotM(v1,v2)
+    v = cross(v1,v2)
+    vₓ = [0 -v[3] v[2]; v[3] 0 -v[1]; -v[2] v[1] 0]
+    c = dot(v1,v2)
+    R = I + vₓ + (1/(1+c))*vₓ*vₓ
+    return R
+end
+
+function objective(β)
+    println("β value =  $β")
+    Κ(X1,X2) = exp(-β*(dot(X1-X2,X1-X2)))
+    Λ, U, U_, Ḡ, G = kPOD(Κ, X, k)
+    Z_ = real.(U_'*Ḡ)
+    neighbors = 25
+    Y_, _ = isomap1(neighbors,Z_)
+    Y_gen = []
+    for i in 1:lastindex(eachcol(conf_list))
+        conf = conf_list[:,i]
+        push!(Y_gen,VectorSearch(Y_,conf,VS_Conf_list))
+    end
+    Y_gen = reduce(hcat,Y_gen)
+    e = norm(Y_gen-Y_)/norm(Y_)
+    println("Err = $e")
+    return e
 end

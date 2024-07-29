@@ -385,7 +385,7 @@ function ReverseMap2(y_gen,conf_gen,Y_,X,conf,nh,t)
         pop!(x_gen[i])
     end
     x_gen_0 = reduce(append!,x_gen)
-    x_gen_0 =  1.10145.*x_gen_0
+    # x_gen_0 =  1.10145.*x_gen_0
     return x_gen_0
 end
 n_test = 30
@@ -433,8 +433,10 @@ ME = round(MeanError, digits=4)
 plot!(MeanErr, linestyle=:dash, linewidth=4, label="Mean Err = $ME")
 plot(E_avr,type=:bar)
 C__ = reduce(hcat,C_)
-plot(C__[1,:])
+plot((C__[2,:].-mean(C__[2,:])).^2,label="Required linear correction factor - Variation over the mean", xlabel="Test configuration ID")
 mean(C__[1,:])
+SDev = sqrt(sum((C__[2,:].-mean(C__[2,:])).^2)/length(C__[2,:]))
+
 
 function Objective9(t)
     E_ = 0
