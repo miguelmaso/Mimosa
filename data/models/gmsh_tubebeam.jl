@@ -143,7 +143,7 @@ function main()
     
     lc = 2.0e-3; # characteristic length for meshing
     
-    L_conf = [0.5,0.5]
+    L_conf = [0.25,0.25,0.25,0.25]
     L_ = length(L_conf)
     model_name = "TubeBeam_SecT_$n_sec_t-SecL_$L_"
     
