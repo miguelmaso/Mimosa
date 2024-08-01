@@ -13,3 +13,6 @@ data/ph_EM_TB_St4_Sl2_4.jld2
 data/uh_EM_PB_10S_1x.jld2
 results_MB.vtu
 *.jld2
+data/csv/TubeBeam_ϕ2000.0_St4_St4_0_0_0_0_1_1_1_0_0_0_0_0_0_0_0_0/_Λ_0_2_TIME_1.csv
+/data/csv/TubeBeam_ϕ2000.0_St4_St4_0_0_0_0_1_1_1_0_0_0_0_0_0_0_0_0
+/data/csv/TubeBeam_ϕ5000.0_St4_St4_0_0_0_0_1_1_1_0_0_0_0_0_0_0_0_0
