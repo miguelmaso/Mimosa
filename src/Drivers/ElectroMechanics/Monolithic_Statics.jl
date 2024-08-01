@@ -12,8 +12,12 @@ function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
 
     is_vtk = _get_kwarg(:is_vtk, kwargs, false)
     is_P_F = _get_kwarg(:is_P_F, kwargs, false)
+    csv_bool = _get_kwarg(:csv_bool, kwargs, false)
+    csv_funct_ = _get_kwarg(:csv_funct_, kwargs, nothing)
     simdir_ = datadir("sims", pname)
+    csvdir_ = datadir("csv", pname)
     setupfolder(simdir_)
+    setupfolder(csvdir_)
  
     # Constitutive models
     consmodel = _get_kwarg(:consmodel, kwargs)
@@ -67,7 +71,7 @@ function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
         end
         @show size(get_free_dof_values(ph))
 
-        post_params = @dict Ω is_vtk simdir_ is_P_F
+        post_params = @dict Ω is_vtk simdir_ csvdir_ is_P_F csv_bool csv_funct_
         solver_params = @dict fe_spaces dirichletbc Ω dΩ DΨ res jac solveropt nlsolver post_params
 
         ph,cache = IncrementalSolver(problem, ctype, ph, solver_params)
@@ -108,7 +112,7 @@ function ΔSolver!(problem::ElectroMechProblem{:monolithic,:statics}, ctype::Cou
     # writevtk(Ω, simdir_ * "/results_MB_2$Λ",cellfields=["uh"=>ph[1], "phi"=>ph[2]])
     
     op = FEOperator(res, jac, fe_spaces.U, fe_spaces.V)
-    println((ph, nlsolver, op, cache))
+    # println((ph, nlsolver, op, cache))
     ph, cache = solve!(ph, nlsolver, op, cache)
 
 
@@ -132,6 +136,15 @@ function computeOutputs!(::ElectroMechProblem{:monolithic,:statics}, pvd, ph, P,
     Ω = _get_kwarg(:Ω, post_params)
     is_vtk = _get_kwarg(:is_vtk, post_params)
     filePath = _get_kwarg(:simdir_, post_params)
+    filecsvPath = _get_kwarg(:csvdir_, post_params)
+    csv_bool = _get_kwarg(:csv_bool, post_params)
+    csv_funct_ = _get_kwarg(:csv_funct_, post_params)
+    if csv_bool
+        Λstring_ = replace(string(round(Λ, digits=2)), "." => "_")
+        xline_df = csv_funct_(ph)
+        CSV.write(filecsvPath * "/_Λ_" * Λstring_ * ".csv", xline_df)
+        jldsave(filecsvPath * "/_Λ_" * Λstring_ * ".jld2";ph)
+    end
 
     uh = ph[1]
     φh = ph[2]
@@ -165,6 +178,16 @@ function computeOutputs!(::ElectroMechProblem{:monolithic,:statics}, pvd, ph, Λ
     Ω = _get_kwarg(:Ω, post_params)
     is_vtk = _get_kwarg(:is_vtk, post_params)
     filePath = _get_kwarg(:simdir_, post_params)
+    filecsvPath = _get_kwarg(:csvdir_, post_params)
+    csv_bool = _get_kwarg(:csv_bool, post_params)
+    csv_funct_ = _get_kwarg(:csv_funct_, post_params)
+
+    if csv_bool
+        Λstring_ = replace(string(round(Λ, digits=2)), "." => "_")
+        xline_df = csv_funct_(ph)
+        CSV.write(filecsvPath * "/_Λ_" * Λstring_ * ".csv", xline_df)
+        jldsave(filecsvPath * "/_Λ_" * Λstring_ * ".jld2";ph)
+    end
 
     uh = ph[1]
     φh = ph[2]
