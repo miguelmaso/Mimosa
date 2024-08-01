@@ -67,7 +67,7 @@ function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
             xφ = zeros(Float64, num_free_dofs(fe_spaces.Vφ))
             x0 = vcat(xu, xφ)
             ph = FEFunction(fe_spaces.U, x0)
-            writevtk(Ω, simdir_ * "/results_MB_NOinit",cellfields=["uh"=>ph[1], "phi"=>ph[2]])
+            # writevtk(Ω, simdir_ * "/results_MB_NOinit",cellfields=["uh"=>ph[1], "phi"=>ph[2]])
         end
         @show size(get_free_dof_values(ph))
 
