@@ -13,8 +13,8 @@ const divmeshx = 10; # X element size in each electrode
 const divmeshy = 4; # Y element size in each  electrode
 const divmeshz = 2; # Z element size in each  electrode
 
-const elecdivx = 2; # number of electrodes in X
-const elecdivy = 1; # number of electrodes in Y
+const elecdivx = 5; # number of electrodes in X
+const elecdivy = 2; # number of electrodes in Y
 
 const lc = 1.0; # characteristic length for meshing
 
@@ -186,7 +186,7 @@ gmsh.model.addPhysicalGroup(3, topvol, 2, "Volup")
  
  
 
-output_file = joinpath(dirname(@__FILE__), "parametrize_plate_elec.msh")
+output_file = joinpath(dirname(@__FILE__), "parametrize_plate_elec_complex.msh")
 gmsh.write(output_file)
 
 # Launch the GUI to see the results:
