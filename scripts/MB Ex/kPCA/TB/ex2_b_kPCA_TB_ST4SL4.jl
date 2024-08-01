@@ -9,7 +9,7 @@ conf_list = conf_list[:,[1:n...]]
 
 # ----------------- kPCA ----------------------
 k = 3
-β = 80
+β = 47.09735445305706
 β_min = optimize(Objective, 0.0, 1500.0, GoldenSection(),abs_tol=1.0e-8)
 β = β_min.minimizer
 Κ(X1,X2) = exp(-β*(dot(X1-X2,X1-X2)))
@@ -170,11 +170,14 @@ x_gen = ReverseMap2(Y_complete[:,id_idx],
 p = plot_x!(x_gen)
 
 NH = []
+E_ = []
+p = [plot_x(X_test[:,n_test],"FOS ID test = $n_test") for n_test in 1:10]
 for n_test in 1:10
     println(n_test)
-    x_test = X_test[:,n_test] 
+    x_test = X_test[:,n_test]
+    p[n_test] = plot_x(x_test,"FOS ID test = $n_test")
     y_new = NewData(x_test,Κ,neighbors,G,Z_,D_G_sym)
-    s = scatter!([y_new[1]],[y_new[2]],label="ID test = $n_test in RS")
+    # s = scatter!([y_new[1]],[y_new[2]],label="ID test = $n_test in RS")
     kdtree = KDTree(Y_complete; leafsize = 10)
     o = 500
     idxs, dists = knn(kdtree, y_new, o, true)
@@ -189,22 +192,26 @@ for n_test in 1:10
     end
     # plts[n_test] = p
     Indices = sortperm(Err_)
+    x_gen = ReverseMap2(Y_complete[:,idxs[Indices[1]]], conf_complete[:,idxs[Indices[1]]],Y_,X,conf_list,3)
+    p[n_test] = plot_x!(x_gen,"FOSgen of ID test = $n_test")
     # -----------------  FOS via simulation   --------------------------------------------------------------------
-    ph, chache = main(; get_parameters(2000, conf_complete[:,idxs[Indices[1]]], 4, 4)...)
+    ph, chache = main(; get_parameters(2000.0, conf_complete[:,idxs[Indices[1]]], 4, 4)...)
     x_line = CenterLine(ph)
+    x_line_list = [x_line]
     x_line_list = [getproperty.(x_line,:data) for x_line in x_line_list]
     x_line_list = [x_line_list[i][j][k] for i in 1:lastindex(x_line_list), j in 1:lastindex(x_line_list[1]), k in 1:lastindex(x_line_list[1][1])]
     df = DataFrame(vcat(x_line_list[:,:,1],x_line_list[:,:,2],x_line_list[:,:,3]), :auto)
     CSV.write("data/csv/EM_TB_St4_Sl4_test_$n_test.csv", df)
     _X_test = CSV.File("data/csv/EM_TB_St4_Sl4_test_$n_test.csv") |> Tables.matrix
     _X_test = _X_test'
-    n = 10
-    X_test = []
-    push!(X_test,_X_test[:,[1:n...]])
-    push!(X_test,_X_test[:,[n+1:2*n...]])
-    push!(X_test,_X_test[:,[2*n+1:3*n...]])
-    X_test = reduce(vcat,X_test)
-    push!(E_,(norm(x_test-X_test))/norm(x_test))
+    n = 1
+    X_test_gen = []
+    push!(X_test_gen,_X_test[:,[1:n...]])
+    push!(X_test_gen,_X_test[:,[n+1:2*n...]])
+    push!(X_test_gen,_X_test[:,[2*n+1:3*n...]])
+    X_test_gen = reduce(vcat,X_test_gen)
+    p[n_test] = plot_x!(X_test_gen,"FOS of found PP for ID test = $n_test")
+    push!(E_,(norm(x_test-X_test_gen))/norm(x_test))
     # -----------------------------------------------------------------------------------------
     id_conf = 0
     id_idx = 0
@@ -218,6 +225,7 @@ for n_test in 1:10
     push!(NH,id_conf)
 end
 plot(NH,type=:bar)
+plot(E_,type=:bar,xlabel="Test ID",ylabel="Error norm/norm",label=false)
 display(s)
 
 kdtree = KDTree(x_gen_complete; leafsize = 10)
