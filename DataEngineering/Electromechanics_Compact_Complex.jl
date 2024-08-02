@@ -170,7 +170,7 @@ function CompactCall(input_potential::Vector, folder_name)
     nls = NLSolver(
         show_trace=true,
         method=:newton,
-        iterations=20)
+        iterations=10)
 
     solver = FESolver(nls)
     pvd_results = paraview_collection(result_folder*"results", append=false)
