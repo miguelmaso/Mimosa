@@ -21,6 +21,8 @@ end
 @publish ConstitutiveModels DerivativeStrategy
 @publish ConstitutiveModels LinearElasticity3D
 @publish ConstitutiveModels NeoHookean3D
+@publish ConstitutiveModels NeoHookean3DNearlyIncomp
+@publish ConstitutiveModels Yeoh
 @publish ConstitutiveModels MoneyRivlin3D
 @publish ConstitutiveModels ThermalModel
 @publish ConstitutiveModels IdealDielectric
