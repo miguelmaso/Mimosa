@@ -168,7 +168,7 @@ function run()
   end
   count = 1
   t0 = time()
-  for i in 1:lastindex(conf_list)
+  for i in 13:lastindex(conf_list)
     sw = conf_list[i]
     println("------------------ $count / $(length(conf_list)) ---------------")
     println("------------------ $i / $(length(conf_list)) ---------------")
