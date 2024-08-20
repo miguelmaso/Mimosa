@@ -12,6 +12,7 @@ using ..TensorAlgebra: I3
 using ..TensorAlgebra: I9
 
 export NeoHookean3D
+export NeoHookean3DNearlyIncomp
 export MoneyRivlin3D
 export LinearElasticity3D
 export Yeoh
@@ -70,6 +71,12 @@ end
   ρ::Float64=0.0
 end
 
+@kwdef struct NeoHookean3DNearlyIncomp <: Mechano
+  λ::Float64
+  μ::Float64
+  ρ::Float64=0.0
+end
+
 @kwdef struct MoneyRivlin3D <: Mechano
   λ::Float64
   μ1::Float64
@@ -81,6 +88,7 @@ end
   C₁::Float64
   C₂::Float64
   C₃::Float64
+  κ::Float64
   ρ::Float64=0.0
 end
 
@@ -213,6 +221,17 @@ function (obj::NeoHookean3D)(::DerivativeStrategy{:autodiff})
   return (Ψ, ∂Ψu, ∂Ψuu)
 end
 
+function (obj::NeoHookean3DNearlyIncomp)(::DerivativeStrategy{:autodiff})
+  F, _, J = _getKinematic(obj)
+  𝛪(∇u) = ((J(F(∇u)^2))^(-1/3)) * tr((F(∇u))' * F(∇u))
+  Ψ(∇u) = obj.μ / 2 *   𝛪(∇u) + (obj.λ / 2) * (J(F(∇u)) - 1)^2 - 3.0 * (obj.μ / 2.0)
+  ∂Ψ_∂∇u(∇u) = ForwardDiff.gradient(∇u -> Ψ(∇u), get_array(∇u))
+  ∂2Ψ_∂2∇u(∇u) = ForwardDiff.jacobian(∇u -> ∂Ψ_∂∇u(∇u), get_array(∇u))
+  ∂Ψu(∇u) = TensorValue(∂Ψ_∂∇u(∇u))
+  ∂Ψuu(∇u) = TensorValue(∂2Ψ_∂2∇u(∇u))
+  return (Ψ, ∂Ψu, ∂Ψuu)
+end
+
 function (obj::NeoHookean3D)(::DerivativeStrategy{:analytic})
   F, H, J = _getKinematic(obj)
   Ψ(∇u) = obj.μ / 2 * tr((F(∇u))' * F(∇u)) - obj.μ * log(J(F(∇u))) + (obj.λ / 2) * (J(F(∇u)) - 1)^2 - 3.0 * (obj.μ / 2.0)
@@ -227,7 +246,8 @@ end
 
 function (obj::Yeoh)(::DerivativeStrategy{:autodiff})
   F, _, J = _getKinematic(obj)
-  Ψ(∇u) = obj.μ / 2 * tr((F(∇u))' * F(∇u)) - obj.μ * logreg(J(F(∇u))) + (obj.λ / 2) * (J(F(∇u)) - 1)^2 - 3.0 * (obj.μ / 2.0)
+  𝛪(∇u) = ((J(F(∇u)^2))^(-1/3)) * tr((F(∇u))' * F(∇u))
+  Ψ(∇u) = obj.C₁ * (𝛪(∇u) - 3.0) + obj.C₂ * (𝛪(∇u) - 3.0)^2 + obj.C₃ * (𝛪(∇u) - 3.0)^3 + (obj.κ / 2) * (J(F(∇u)) - 1)^2
   ∂Ψ_∂∇u(∇u) = ForwardDiff.gradient(∇u -> Ψ(∇u), get_array(∇u))
   ∂2Ψ_∂2∇u(∇u) = ForwardDiff.jacobian(∇u -> ∂Ψ_∂∇u(∇u), get_array(∇u))
   ∂Ψu(∇u) = TensorValue(∂Ψ_∂∇u(∇u))
@@ -275,6 +295,20 @@ function (obj::MoneyRivlin3D)(::DerivativeStrategy{:analytic})
 end
 
 function (obj::ElectroMech)(strategy::DerivativeStrategy{:analytic})
+  Ψm, ∂Ψm_u, ∂Ψm_uu = obj.Model1(strategy)
+  Ψem, ∂Ψem_u, ∂Ψem_φ, ∂Ψem_uu, ∂Ψem_φu, ∂Ψem_φφ = _getCoupling(obj.Model1, obj.Model2)
+
+  Ψ(∇u, ∇φ) = Ψm(∇u) + Ψem(∇u, ∇φ)
+  ∂Ψu(∇u, ∇φ) = ∂Ψm_u(∇u) + ∂Ψem_u(∇u, ∇φ)
+  ∂Ψφ(∇u, ∇φ) = ∂Ψem_φ(∇u, ∇φ)
+  ∂Ψuu(∇u, ∇φ) = ∂Ψm_uu(∇u) + ∂Ψem_uu(∇u, ∇φ)
+  ∂Ψφu(∇u, ∇φ) = ∂Ψem_φu(∇u, ∇φ)
+  ∂Ψφφ(∇u, ∇φ) = ∂Ψem_φφ(∇u, ∇φ)
+
+  return (Ψ, ∂Ψu, ∂Ψφ, ∂Ψuu, ∂Ψφu, ∂Ψφφ)
+end
+
+function (obj::ElectroMech)(strategy::DerivativeStrategy{:autodiff})
   Ψm, ∂Ψm_u, ∂Ψm_uu = obj.Model1(strategy)
   Ψem, ∂Ψem_u, ∂Ψem_φ, ∂Ψem_uu, ∂Ψem_φu, ∂Ψem_φφ = _getCoupling(obj.Model1, obj.Model2)
 
