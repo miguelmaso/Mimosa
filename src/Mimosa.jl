@@ -4,7 +4,7 @@ using TimerOutputs
 using DrWatson
 using Mimosa
 using Gridap
-using Plots
+# using Plots
 using CSV
 using DataFrames
 
@@ -144,7 +144,7 @@ function julia_main()::Cint
       X1 = [X[i][1] for i in 1:lastindex(x)]
       z1 = [x[i][3] for i in 1:lastindex(x)]
       x1 = [x[i][1] for i in 1:lastindex(x)]
-      pl_ = plot([x1,X1], [z1,Z1], title=sw, xticks=[0.0,0.05,0.1])
+    #   pl_ = plot([x1,X1], [z1,Z1], title=sw, xticks=[0.0,0.05,0.1])
       return pl_, z1
     end
     
