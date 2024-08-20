@@ -151,7 +151,7 @@ function CenterLine_(ph)
     return df
 end
 
-div = 100
+div = 10
 pots = [5000.0]
 conf_list = CSV.File("data/csv/EM_TB_ST4_SL4_ConfRand.csv") |> Tables.matrix
 St = 4
@@ -159,24 +159,29 @@ Sl = 4
 ph_list = []
 x_line_list = []
 n = lastindex(eachcol(conf_list))
-start = (div-1)*(n/100) + 1
-finish =  div*(n/100)
-for i in 1:1 # Int(start):Int(finish)
-    conf = [0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0] #conf_list[:,i]
+start = (div-1)*(n/10) + 1
+finish =  div*(n/10)
+for i in 990:1000 # Int(start):Int(finish)
+    t0_ = time()
+    conf = conf_list[:,i]
     println(" ")
-    println("!!!!!!!!    Configuration number $i / $n   !!!!!!!")
+    println("!!!!!!!!    Configuration number $i / $(Int(finish))  (total = $n)   !!!!!!!")
     println("!!!!!!!!        Configuration $conf        !!!!!!!")
     println(" ")
     ph, chache = main(; get_parameters(pots[1], conf, St, Sl,CenterLine_)...)
     x_line = CenterLine(ph)
     push!(ph_list,ph)
     push!(x_line_list,x_line)
+    t_ = time() - t0_
+    T_ = time() - t0
+    println("Evaluation time = $t_ s = $(t_/60.0) min")
+    println("Total elapsed time = $T_ s = $(T_/60.0) min")
 end
 
-x_line_list = [getproperty.(x_line,:data) for x_line in x_line_list]
-x_line_list = [x_line_list[i][j][k] for i in 1:lastindex(x_line_list), j in 1:lastindex(x_line_list[1]), k in 1:lastindex(x_line_list[1][1])]
-df = DataFrame(vcat(x_line_list[:,:,1],x_line_list[:,:,2],x_line_list[:,:,3]), :auto)
-# CSV.write("data/csv/EM_TB_St4_Sl4_$div.csv", df)
-t1 = time()
-Δt = t1-t0
+# x_line_list = [getproperty.(x_line,:data) for x_line in x_line_list]
+# x_line_list = [x_line_list[i][j][k] for i in 1:lastindex(x_line_list), j in 1:lastindex(x_line_list[1]), k in 1:lastindex(x_line_list[1][1])]
+# df = DataFrame(vcat(x_line_list[:,:,1],x_line_list[:,:,2],x_line_list[:,:,3]), :auto)
+# CSV.write("data/csv/EM_TB_St4_Sl4_phi_$(pot[1])_$div.csv", df)
+# t1 = time()
+# Δt = t1-t0
 # test_read = CSV.File("data/csv/EM_TB_St4_Sl2_$div.csv") |> Tables.matrix
