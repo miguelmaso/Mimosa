@@ -1,6 +1,7 @@
 module Mimosa
 
 using TimerOutputs
+using DrWatson
 
 export main
 
