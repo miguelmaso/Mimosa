@@ -26,11 +26,17 @@ struct DirichletBC <: BoundaryCondition
     tags::Vector{String}         # tags for boundary conditions
     values::Vector{Function}     # f(x)
     timesteps::Vector{Function}  # f(Λ)
+    masks::Vector{Tuple{Bool, Bool, Bool}}
 
     function DirichletBC(bc_tags::Vector{String}, bc_values, bc_timesteps)  
         @assert(length(bc_tags) == length(bc_values) == length(bc_timesteps))
         tags_,funcs_=_get_bc_func(bc_tags, bc_values, bc_timesteps)
         new(tags_, funcs_, bc_timesteps)
+    end
+    function DirichletBC(bc_tags::Vector{String}, bc_values, bc_timesteps,bc_masks)  
+        @assert(length(bc_tags) == length(bc_values) == length(bc_timesteps))
+        tags_,funcs_=_get_bc_func(bc_tags, bc_values, bc_timesteps)
+        new(tags_, funcs_, bc_timesteps,bc_masks)
     end
 end
 
