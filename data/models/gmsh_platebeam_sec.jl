@@ -51,14 +51,30 @@ function generateBeamSec(L,W,T,st_pt,nl,nw,nt,lc,n_sec)
     point_list = []
     for line in lines
         append!(lines_list,abs(line[2]))
+        println(line)
         points = gmsh.model.getBoundary(line)
+        println(points)
+        pt1 = gmsh.model.getValue(points[1][1],points[1][2],[])
+        pt2 = gmsh.model.getValue(points[2][1],points[2][2],[])
         for point in points
             append!(point_list,point[2])
+            if pt1[1]-pt2[1] == 0.0 && pt1[3]-pt2[3] == 0.0 && pt1[1] == 0.0
+                pt3 = gmsh.model.getValue(point[1],point[2],[])
+                if pt3[2] == 0.0
+                    gmsh.model.addPhysicalGroup(point[1], [point[2]], -1,"point_zy")
+                    gmsh.model.addPhysicalGroup(point[1]+1, [], -1,"point_zy")
+                    gmsh.model.addPhysicalGroup(point[1]+2, [], -1,"point_zy")
+                else
+                    gmsh.model.addPhysicalGroup(point[1], [point[2]], -1,"point_z")
+                    gmsh.model.addPhysicalGroup(point[1]+1, [], -1,"point_z")
+                    gmsh.model.addPhysicalGroup(point[1]+1, [], -1,"point_z")
+                end 
+            end
         end
     end
-    gmsh.model.addPhysicalGroup(0, point_list, 1 + (n_sec-1)*4,"midsurf_$n_sec")  
-    gmsh.model.addPhysicalGroup(1, lines_list, 1 + (n_sec-1)*4, "midsurf_$n_sec")  
-    gmsh.model.addPhysicalGroup(2, [prism1[1][2]], 1 + (n_sec-1)*4, "midsurf_$n_sec")  
+    gmsh.model.addPhysicalGroup(0, point_list, -1,"midsurf_$n_sec")  
+    gmsh.model.addPhysicalGroup(1, lines_list, -1, "midsurf_$n_sec")  
+    gmsh.model.addPhysicalGroup(2, [prism1[1][2]], -1, "midsurf_$n_sec")  
 
     lines = gmsh.model.getBoundary(prism2[1])
     lines_list = []
@@ -70,9 +86,9 @@ function generateBeamSec(L,W,T,st_pt,nl,nw,nt,lc,n_sec)
             append!(point_list,point[2])
         end
     end
-    gmsh.model.addPhysicalGroup(0, point_list, 2 + (n_sec-1)*4,"topsurf_$n_sec")  
-    gmsh.model.addPhysicalGroup(1, lines_list, 2 + (n_sec-1)*4,"topsurf_$n_sec")
-    gmsh.model.addPhysicalGroup(2, [prism2[1][2]], 2 + (n_sec-1)*4,"topsurf_$n_sec")
+    gmsh.model.addPhysicalGroup(0, point_list, -1,"topsurf_$n_sec")  
+    gmsh.model.addPhysicalGroup(1, lines_list, -1,"topsurf_$n_sec")
+    gmsh.model.addPhysicalGroup(2, [prism2[1][2]], -1,"topsurf_$n_sec")
 
     lines = gmsh.model.getBoundary([2,rec])
     lines_list = []
@@ -84,9 +100,9 @@ function generateBeamSec(L,W,T,st_pt,nl,nw,nt,lc,n_sec)
             append!(point_list,point[2])
         end
     end
-    gmsh.model.addPhysicalGroup(0, point_list, 3 + (n_sec-1)*4,"bottomsurf_$n_sec")  
-    gmsh.model.addPhysicalGroup(1, lines_list, 3 + (n_sec-1)*4,"bottomsurf_$n_sec")  
-    gmsh.model.addPhysicalGroup(2, [2,rec], 3 + (n_sec-1)*4,"bottomsurf_$n_sec")
+    gmsh.model.addPhysicalGroup(0, point_list,  -1,"bottomsurf_$n_sec")  
+    gmsh.model.addPhysicalGroup(1, lines_list, -1,"bottomsurf_$n_sec")  
+    gmsh.model.addPhysicalGroup(2, [2,rec], -1,"bottomsurf_$n_sec")
 
     lines = gmsh.model.getBoundary(prism1[6])
     append!(lines,gmsh.model.getBoundary(prism2[6]))
@@ -99,9 +115,9 @@ function generateBeamSec(L,W,T,st_pt,nl,nw,nt,lc,n_sec)
             append!(point_list,point[2])
         end
     end
-    gmsh.model.addPhysicalGroup(0, point_list, 4 + (n_sec-1)*4,"fixedup_$n_sec")  
-    gmsh.model.addPhysicalGroup(1, lines_list, 4 + (n_sec-1)*4, "fixedup_$n_sec")  
-    gmsh.model.addPhysicalGroup(2, [prism1[6][2], prism2[6][2]], 4 + (n_sec-1)*4, "fixedup_$n_sec") 
+    gmsh.model.addPhysicalGroup(0, point_list,  -1, "fixedup_$n_sec")  
+    gmsh.model.addPhysicalGroup(1, lines_list, -1, "fixedup_$n_sec")  
+    gmsh.model.addPhysicalGroup(2, [prism1[6][2], prism2[6][2]], -1, "fixedup_$n_sec") 
 
     gmsh.model.addPhysicalGroup(3, [prism1[2][2],prism2[2][2]], n_sec, "Volume_$n_sec") 
 end
@@ -117,13 +133,14 @@ T=0.4e-3;     # beam thickness
 # const nt=4; # Z element size
 
 
-nl=8; # X element size
+nl=20; # X element size: 20 for 4s and 8 for 10S
 nw=8; # Y element size
 nt=2; # Z element size
 
-fract = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]
+# fract = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]
+fract = [0.25,0.25,0.25]
 
-model_name = "PlateBeam10SecSI"
+model_name = "PlateBeame4S_BC"
 
 lc = 1.0; # characteristic length for meshing
 function generateBeam(L,W,T,nl,nw,nt,lc,fract,model_name)
@@ -136,6 +153,7 @@ function generateBeam(L,W,T,nl,nw,nt,lc,fract,model_name)
         L_sec = L*fract[i]
         #nl = ceil(L_sec/2)
         # nw = ceil(W/nw)
+        println("Block $i")
         generateBeamSec(L_sec,W,T,st_pt,nl,nw,nt,lc,nsec)
         st_pt = [st_pt[1]+L_sec 0 0]
     end
