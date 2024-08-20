@@ -6,6 +6,7 @@ function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
     ptype = "ElectroMechanics"
     soltype = "monolithic"
     regtype = "statics"
+    diffstrat = _get_kwarg(:diffstrat, kwargs, "analytic")
     ctype = CouplingStrategy{Symbol(soltype)}()
     printinfo = @dict ptype soltype regtype pname
     print_heading(printinfo)
@@ -24,7 +25,8 @@ function execute(problem::ElectroMechProblem{:monolithic,:statics}; kwargs...)
     @assert consmodel isa ElectroMech
 
     # Derivatives
-    Ψ, ∂Ψu, ∂Ψφ, ∂Ψuu, ∂Ψφu, ∂Ψφφ = consmodel(DerivativeStrategy{:analytic}())
+    # Ψ, ∂Ψu, ∂Ψφ, ∂Ψuu, ∂Ψφu, ∂Ψφφ = consmodel(DerivativeStrategy{:analytic}())
+    Ψ, ∂Ψu, ∂Ψφ, ∂Ψuu, ∂Ψφu, ∂Ψφφ = consmodel(DerivativeStrategy{Symbol(diffstrat)}())
     DΨ = @ntuple Ψ ∂Ψu ∂Ψφ ∂Ψuu ∂Ψφu ∂Ψφφ
 
     # grid model
@@ -163,7 +165,7 @@ function computeOutputs!(::ElectroMechProblem{:monolithic,:statics}, pvd, ph, P,
         pvd[Λ_] = createvtk(
             Ω,
             filePath * "/_Λ_" * Λstring * "_TIME_$Λ_" * ".vtu",
-            cellfields=["u" => uh, "φ" => φh, "F" => F_, "P" => P, "σ" => σ, "e" => e_, "εₐ" => εₐ_]
+            cellfields=["u" => uh, "φ" => φh, "F" => F_, "P" => P, "σ" => σ, "e" => e_, "εₐ" => εₐ_, "J"  => J_]
         )
     end
 
