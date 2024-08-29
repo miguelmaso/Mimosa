@@ -21,6 +21,8 @@ function Arc_Sec(R,r,θ_st,θ,ct_pt,nr,ntan,lc)
     geo.mesh.setTransfiniteCurve(l[3], nr )
     geo.mesh.setTransfiniteCurve(l[4], ntan )
     geo.synchronize()
+    geo.mesh.setTransfiniteSurface(rec)
+    geo.mesh.setRecombine(2,rec)
     return rec
 end
 
@@ -44,12 +46,32 @@ function Center_Sec(R,θ_st,θ,ct_pt,nr,ntan,lc)
     return rec
 end
 
+function trans_constraint()
+    geo = gmsh.model.geo
+    geo.synchronize()
+    surfaces = gmsh.model.getEntities(2)
+    for surface in surfaces
+        println(surface)
+        geo.mesh.setTransfiniteSurface(surface[2])
+        geo.mesh.setRecombine(2,surface[2])
+    end
+end
+
+function extrude_bi(i,T,nt)
+    geo = gmsh.model.geo
+    geo.synchronize()
+    geo.extrude([(2,i)],0.0,0.0,T,[nt],[1],true)
+    geo.extrude([(2,i)],0.0,0.0,-T,[nt],[1],true)
+    geo.synchronize()
+end
+
 function run()
     gmsh.initialize()
-    ct_pt,nr,ntan,lc = [0.0,0.0,0.0],2,4,2.0e-4
+    ct_pt,nt,nr,ntan,lc = [0.0,0.0,0.0],1,10,10,2.0e-4
+    T = 0.4e-3
     surf_list = []
     n_sec_t = 4
-    n:sec_r = 4
+    n_sec_r = 4
     Δθ = (2*pi)/n_sec_t
     R_ = 25.0e-3
     ΔR = R_/n_sec_r
@@ -68,6 +90,10 @@ function run()
         r = R
         R += ΔR
     end
+    trans_constraint()
+    for i in surf_list
+        extrude_bi(i,T,nt)
+    end 
     if !("-nopopup" in ARGS)
         gmsh.fltk.run()
     end
