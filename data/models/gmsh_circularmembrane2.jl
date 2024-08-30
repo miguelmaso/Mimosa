@@ -149,7 +149,7 @@ function run()
     n_sec_t = 4
     n_sec_r = 4
     Δθ = (2*pi)/n_sec_t
-    R_ = 25.0e-3
+    R_ = 50.0e-3
     ΔR = R_/n_sec_r
     r = 0.0
     R = ΔR
