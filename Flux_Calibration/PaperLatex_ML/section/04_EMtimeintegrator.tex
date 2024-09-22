@@ -1,0 +1,424 @@
+Following the work of Simo  \cite{Simo_EM_1992}, Gonzalez \cite{Gonzalez_EM_2000}, Romero \cite{Romero2012} and Betsch \cite{Betsch_EM_mixed_2017,betsch2016} in the context of nonlinear elasticity and Franke et al. \cite{Betsch2018Thermo} in the context of thermoelasticity, the objective of this section is to propose an EM preserving time discretisation scheme for the weak forms in \eqref{eqn:weak forms for the dynamic formulation}.
+
+\subsection{Design of the EM scheme}\label{sec:design of the time integrator}
+
+
+
+Let us consider a sequence of time steps $\{t_1,t_2,...,t_n,t_{n+1}\}$, where $t_{n+1}$ denotes the current time step. 
+From the weak forms in \eqref{eqn:weak forms for the dynamic formulation}, the following implicit one-step time integrator is proposed 
+%
+\begin{equation}\label{eqn:weak forms for proposed time integrator}
+\begin{aligned}
+\left(\mathcal{W}_{\vect{v}}\right)_{\text{algo}}&=\int_{\mathcal{B}_0}\left(\vect{v}_{n+1/2} - \frac{\Delta\vect{\phi}}{\Delta t}\right)\cdot\rho_0\vect{w}_{\vect{v}}\,dV = 0;\\
+%
+\left(\mathcal{W}_{\vect{\phi}}\right)_{\text{algo}}&=\int_{\mathcal{B}_0}\rho_0\frac{\Delta\vect{v}}{\Delta t}\cdot\vect{w}_{\vect{\phi}}\,dV + \int_{\mathcal{B}_0}(\vect{S}:\frac{1}{2}D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}\,dV-  \int_{\mathcal{B}_0}\vect{f}_{0_{n+1/2}}\cdot\vect{w}_{\vect{\phi}}\,dV\\&-
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_{0_{n+1/2}}\cdot\vect{w}_{\vect{\phi}}\,dA = 0;\\
+%
+\left(\mathcal{W}_{\theta}\right)_{\text{algo}}&=  \int_{\mathcal{B}_0}\frac{\Delta\left(\theta\eta\right)}{\Delta t}w_{\theta}\,dV - \int_{\mathcal{B}_0}\frac{\Delta \theta}{\Delta t}\eta_{\text{algo}}w_{\theta}\,dV - \int_{\mathcal{B}_0}\vect{Q}_{n+1/2}\cdot\vect{\nabla}_0w_{\theta}\,dV\\& - \int_{\mathcal{B}_0}{R_{\theta}}_{n+1/2}w_{\theta}\,dV - \int_{\partial_{Q}\mathcal{B}_{0}}{Q_{\theta}}_{n+1/2}w_{\theta}\,dA = 0.
+%
+\end{aligned}
+\end{equation}
+
+Note that {$\left(\mathcal{W}_{\vect{v}}\right)_{\text{algo}}$, $\left(\mathcal{W}_{\vect{\phi}}\right)_{\text{algo}}$and $\left(\mathcal{W}_{\theta}\right)_{\text{algo}}$} in \eqref{eqn:weak forms for proposed time integrator} represent the algorithmic or time discrete versions of the stationary conditions in \eqref{eqn:weak forms for the dynamic formulation} and
+%In above equation, $\left(\bullet\right)_{n+1/2}$ denotes 
+$\left(\bullet\right)_{n+1/2} = \frac{1}{2}\left(\left(\bullet\right)_{n+1} + \left(\bullet\right)_{n}\right)$ and $\Delta\left(\bullet\right) = \left(\bullet\right)_{n+1} - \left(\bullet\right)_{n}$. Following the work of Betsch. et. al \cite{Betsch_EM_mixed_2017,Betsch2018Thermo,EM_Electro_1}, we draw a parallelism between the terms 
+ $\{(\vect{S}:\frac{1}{2}D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}},\eta_{\text{algo}}\}$ and the expressions for $\{D\widetilde{W}[\delta\vect{\phi}],\eta\}$ in \eqref{eqn:thermodynamics CMV in terms of C}$_a$ and \eqref{eqn:Piola and electric field in extended formulation}$_b$ and hence, we advocate for an analogous expression of the algorithmic terms as 
+%
+\begin{equation}\label{eqn:approximated expression for DWdeltavarphi}
+\begin{aligned}
+(\vect{S}:\frac{1}{2}D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}&= D_{\vect{C}}\widetilde{W} : \left(D\vect{C}[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}} + 
+D_{\vect{G}}\widetilde{W}:\left(D\vect{G}[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}} + 
+D_{C}\widetilde{W}\left(DC[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}};\\
+%
+\eta_{\text{algo}}&=-D_{\theta}\widetilde{W},
+%
+\end{aligned}
+\end{equation}
+%
+with the algorithmic directional derivatives $\{\left(D\vect{C}[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}},\left(D\vect{G}[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}},\left(D{C}[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}}\}$ defined as in Reference \cite{EM_Electro_1}, i.e.
+%
+\begin{equation}\label{eqn:DDC}
+\begin{aligned}
+\left(D\vect{C}[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}} & = \left(\left(\vect{\nabla}_0\vect{w}_{\vect{\phi}}\right)^T\vect{F}_{n+1/2} + \vect{F}^T_{n+1/2}\vect{\nabla}_0\vect{w}_{\vect{\phi}}\right);&\\
+%
+\left(D\vect{G}[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}} & = \vect{C}_{\text{algo}}\Cross \left(D\vect{C}[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}};&\quad
+\vect{C}_{\text{algo}} & = \vect{C}_{n+1/2};
+\\
+%
+\left(D C[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}} & = \vect{G}_{\text{algo}}:\left(D\vect{C}[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}};&\quad  \vect{G}_{\text{algo}} &= \frac{1}{3}\left(\vect{C}_{n+1/2}\Cross\vect{C}_{n+1/2} + \vect{G}_{n+1/2}\right).
+%
+\end{aligned}
+\end{equation}
+
+
+In  \eqref{eqn:approximated expression for DWdeltavarphi}, $\{D_{\vect{C}}\widetilde{W},D_{\vect{G}}\widetilde{W},D_{{C}}\widetilde{W},D_{\theta}\widetilde{W}\}$ represent the discrete derivatives (cf. \cite{Gonzalez_EM_2000,Betsch2018Thermo}) of the Helmholtz energy $\widetilde{W}$ with respect to $\{\vect{C},\vect{G},C,\theta\}$, respectively, which are the algorithmic or time discrete counterparts of  $\{\partial_{\vect{C}}\widetilde{W},\partial_{\vect{G}}\widetilde{W},\partial_{{C}}\widetilde{W},\partial_{\theta}\widetilde{W}\}$, respectively. Finally, introduction of \eqref{eqn:DDC} into \eqref{eqn:approximated expression for DWdeltavarphi} permits to conveniently re-write \eqref{eqn:approximated expression for DWdeltavarphi} as
+%
+\begin{equation}\label{eqn:S algo}
+(\vect{S}:\frac{1}{2}D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}=\vect{S}_{\text{algo}}:\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}};\quad
+\vect{S}_{\text{algo}} = 2D_{\vect{C}}\widetilde{W} + 2D_{\vect{G}}\widetilde{W}\Cross\vect{C}_{\text{algo}} + 2D_{C}\widetilde{W}\vect{G}_{\text{algo}}.
+\end{equation}
+%The objective of the following two sections is to present the definition of both the discrete derivatives of the energy and the algorithmic directional derivatives of the kinematics. 
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+%
+{\noindent \textit{Remark 1.} It is important to emphasise that the derivation of the EM time integrator in \eqref{eqn:weak forms for proposed time integrator}, associated with the set of weak forms in \eqref{eqn:weak forms for the dynamic formulation}, is based on the following four steps, which are common for the design of any EM time integrator, namely: 
+	
+	\begin{enumerate}
+		\item Substitution of time rates $(\dot{\bullet})$ with $\frac{\Delta(\bullet)}{\Delta t}$, where $\Delta(\bullet) = (\bullet)_{n+1} - (\bullet)_n$.
+		
+		\item Midpoint evaluation of terms, namely  $({\bullet})_{n+1/2}=\frac{1}{2}\left((\bullet)_{n+1} + (\bullet)_{n}\right)$.
+		
+		\item Substitution of the derivatives of the Helmholtz energy functional $\{\partial_{\vect{C}}\widetilde{W},\partial_{\vect{G}}\widetilde{W},\partial_{C}\widetilde{W},\partial_{\theta}\widetilde{W}\}$ with their discrete counterparts $\{D_{\vect{C}}\widetilde{W},D_{\vect{G}}\widetilde{W},D_{C}\widetilde{W},D_{\theta}\widetilde{W}\}$. 
+		
+		\item Replacement of the directional derivatives of the symmetric strain measures $\{\vect{C},\vect{G},C\}$, namely $\{D\vect{C}[\vect{w}_{\vect{\phi}}],D\vect{G}[\vect{w}_{\vect{\phi}}],D{C}[\vect{w}_{\vect{\phi}}]\}$, with their carefully selected algorithmic counterparts, namely $\{\left(D\vect{C}[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}},\left(D\vect{G}[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}},\left(D{C}[\vect{w}_{\vect{\phi}}]\right)_{\text{algo}}\}$.
+	\end{enumerate} 
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+{\noindent \textit{Remark 2.} Notice that both the exact and algorithmic entropy variables, namely $\eta$ and $\eta_{\text{algo}}$, respectively, feature in equation \eqref{eqn:weak forms for proposed time integrator}. The first (i.e. $\eta$, on the first term on the right hand side of \eqref{eqn:weak forms for proposed time integrator}) is obtained according to equation \eqref{eqn:Piola and electric field in extended formulation} whereas the second, (i.e. $\eta_{\text{algo}}$, on the second term on the right hand side of \eqref{eqn:weak forms for proposed time integrator}) is obtained according to equation \eqref{eqn:approximated expression for DWdeltavarphi}$_b$.
+	
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\noindent \textit{Remark 3.} Comparison of the EM scheme proposed in equation \eqref{eqn:weak forms for proposed time integrator} against the EM scheme in Reference \cite{Betsch2018Thermo} (and succinctly summarised in \ref{sec:Betsch formulation}) illustrates the simplicity of the new formulation with respect to the latter.
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+
+\noindent \textit{Remark 4.} {Notice that, as for any EM time integrator, discretisation and linearisation of the time integrator in \eqref{eqn:weak forms for proposed time integrator} leads to an unsymmetric system of equations, in contrast to the midpoint rule.}
+	
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+
+
+
+\subsubsection{Discretive derivatives of the internal energy}\label{eqn:definition of the discrete derivatives}
+
+We follow in this work a definition of the discrete derivatives $\{D_{\vect{C}}\widetilde{W},D_{\vect{G}}\widetilde{W},D_{C}\widetilde{W},D_{\theta}\widetilde{W}\}$ of the Helmholtz free energy functional based on the derivation presented in \cite{Betsch2018Thermo} for energies depending upon several arguments. 
+These generic expressions, presented in \ref{sec:properties directionality},  satisfy two crucial properties for the design of EM time integrators, namely:
+
+\begin{itemize}
+	\item [-] They fulfil the so called \textit{directionality property} \cite{Betsch2018Thermo,Gonzalez_EM_2000}, 
+%
+\begin{equation}\label{eqn:directionality property}
+D_{\vect{C}}\widetilde{W}:\Delta\vect{C} + 
+D_{\vect{G}}\widetilde{W}:\Delta\vect{G} + 
+D_{C}\widetilde{W}\Delta C  + D_{\theta}\widetilde{W}\Delta\theta =\Delta \widetilde{W}.
+%
+\end{equation}
+	%
+	\item [-] They are well defined in the limit as $\vert\vert\Delta\vect{C}\vert\vert\rightarrow {0}$, 
+	$\vert\vert\Delta\vect{G}\vert\vert\rightarrow {0}$, 
+	$\vert\vert\Delta{C}\vert\vert\rightarrow {0}$ and $\Delta\theta\rightarrow 0$.
+		
+\end{itemize}
+
+
+The first property is critical for the algorithm in \eqref{eqn:weak forms for proposed time integrator} to preserve the balance of power in \eqref{eqn:balance of energy final} in the discrete setting. 
+The second condition ensures that for sufficiently regular solutions 
+%
+\begin{equation}\label{eqn:Taylor}
+\begin{aligned}
+D_{\vect{C}}\widetilde{W}& = \partial_{\vect{C}}\widetilde{W}\left(\widetilde{\mathcal{V}}_{n+1/2}\right) + O\left(\Delta t^2\right);&\qquad
+%
+D_{\vect{G}}\widetilde{W}& = \partial_{\vect{G}}\widetilde{W}\left(\widetilde{\mathcal{V}}_{n+1/2}\right) + O\left(\Delta t^2\right);\\
+%
+D_{{C}}\widetilde{W}& = \partial_{{C}}\widetilde{W}\left(\widetilde{\mathcal{V}}_{n+1/2}\right) + O\left(\Delta t^2\right);&\qquad
+%
+D_{\theta}\widetilde{W}& = \partial_{\theta}\widetilde{W}\left(\widetilde{\mathcal{V}}_{n+1/2}\right) + O\left(\Delta t^2\right),
+\end{aligned}
+\end{equation}
+%
+with $\widetilde{\mathcal{V}} = \{\vect{C},\vect{G},C,\theta\}$, guaranteeing that the proposed EM time integrator is second order accurate.  
+For the specific constitutive model in equations  \eqref{eqn:thermal contribution}, \eqref{eqn:coupled contribution} and \eqref{eqn:MRv2}, each of the discrete derivatives adopt the following extremely simple expressions
+%
+\begin{equation}\label{eqn:MR discrete derivatives}
+\begin{aligned}
+D_{\vect{C}}\widetilde{W}&= \frac{\mu_1}{2}\vect{I};\\ 
+D_{\vect{G}}\widetilde{W}&= \frac{\mu_2}{2}\vect{I};\\
+D_{C}\widetilde{W}& = \frac{\widetilde{W}_{m_C}(C_{n+1})-\widetilde{W}_{m_C}(C_{n})}{\Delta C}\\&+ \frac{1}{2}\frac{\widetilde{W}_c(C_{n+1},\theta_n)-\widetilde{W}_c(C_{n},\theta_n)}{\Delta C} + \frac{1}{2}\frac{\widetilde{W}_c(C_{n+1},\theta_{n+1})-\widetilde{W}_c(C_{n},\theta_{n+1})}{\Delta C};\\
+%
+D_{\theta}\widetilde{W}& = \frac{\widetilde{W}_{\theta}(\theta_{n+1})-\widetilde{W}_{\theta}(\theta_{n})}{\Delta \theta}\\&+ \frac{1}{2}\frac{\widetilde{W}_c(C_{n},\theta_{n+1})-\widetilde{W}_c(C_{n},\theta_n)}{\Delta \theta} + \frac{1}{2}\frac{\widetilde{W}_c(C_{n+1},\theta_{n+1})-\widetilde{W}_c(C_{n+1},\theta_{n})}{\Delta \theta}.
+%
+\end{aligned}
+\end{equation}
+
+Notice the simplicity of the expressions of the multiple discretive derivatives with respect to those that would be obtained in the classical approach, whereby two very complex directional derivatives are needed, namely $\{D_{\vect{C}}\widetilde{\Psi},D_{\theta}\widetilde{\Psi}\}$ (cf. \cite{Betsch2018Thermo,Conde2017}).
+
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\noindent \textit{Remark 5.} Most authors (see Reference \cite{Hesch_Betsch_EM_thermo_2011}) make use of  $\eta_{\text{algo}}=\eta_{n+1/2}$ in \eqref{eqn:weak forms for proposed time integrator} instead of our definition in \eqref{eqn:approximated expression for DWdeltavarphi}$_b$ involving the discrete derivative $D_{\theta}W$. In addition, they use $D_{\theta}W=-\eta(\vect{C}_{n+1/2},\theta_{n+1/2})$ in the directionality property \eqref{eqn:directionality property}, which yields the alternative directionality property
+%
+\begin{equation}\label{eqn:directionality alternative}
+D_{\vect{C}}\widetilde{W}:\Delta\vect{C} + 
+D_{\vect{G}}\widetilde{W}:\Delta\vect{G} + 
+D_{C}\widetilde{W}\Delta C  =\Delta \widetilde{W} + \eta(\vect{C}_{n+1/2},\theta_{n+1/2})\Delta \theta,
+\end{equation}
+%
+where $\eta(\vect{C}_{n+1/2},\theta_{n+1/2})$ is evaluated according to \eqref{eqn:Piola and electric field in extended formulation}$_b$, i.e.
+%
+\begin{equation}
+\eta(\vect{C}_{n+1/2},\theta_{n+1/2})=\left.-\partial_{\theta}\widetilde{W}(\vect{C},\theta)\right\vert_{\vect{C}=\vect{C}_{n+1/2},\theta=\theta_{n+1/2}}.
+\end{equation}
+%
+
+Notice that the directionality property \eqref{eqn:directionality alternative} differs from that in \eqref{eqn:directionality property} in two aspects: \textbf{(a)} the additional term $\eta_{n+1/2}\Delta \theta$, necessary to guarantee consistency (energy conservation); \textbf{(b)} the absence of the discrete derivative with respect to temperature $(D_{\theta}\widetilde{W})$, in contrast to expression \eqref{eqn:directionality property}.
+The two contrasting aspects mentioned must have necessarily an impact on the definition of the discrete derivatives $\{D_{\boldsymbol{C}}\widetilde{W},D_{\boldsymbol{G}}\widetilde{W},D_{{C}}\widetilde{W}\}$.
+In particular, for the model described in equations \eqref{eqn:thermal contribution}, \eqref{eqn:coupled contribution} and \eqref{eqn:MRv2} (where the entropy depends upon the volumetric term $C$), making use of \ref{sec:properties directionality} and considering the extra term on the right hand side of \eqref{eqn:directionality alternative} yields expressions for the discrete derivatives $D_{\vect{C}}\widetilde{W}$, $D_{\vect{G}}\widetilde{W}$ and $D_{{C}}\widetilde{W}$, differing with respect to those in \eqref{eqn:MR discrete derivatives} in the addition of three consistency restoring terms, namely
+%
+\begin{equation}\label{eqn.MR}
+\begin{aligned}
+D_{\boldsymbol{C}}\widetilde{W}&=\mu_1\boldsymbol{I} + \underbrace{\alpha_{\boldsymbol{C}}\frac{\eta({C}_{n+1/2},\theta_{n+1/2})\Delta \theta}{\vert\vert\Delta\boldsymbol{C}\vert\vert^2}\Delta\boldsymbol{C}}_{\text{Consistency restoring term}};\\
+%
+D_{C}\widetilde{W}&=\mu_2\boldsymbol{I} + \underbrace{\alpha_{\boldsymbol{G}}\frac{\eta({C}_{n+1/2},\theta_{n+1/2})\Delta \theta}{\vert\vert\Delta\boldsymbol{G}\vert\vert^2}\Delta\boldsymbol{G}}_{\text{Consistency restoring term}};\\
+%
+D_{C}\widetilde{W}&=\frac{\widetilde{W}_{m_C}(C_{n+1})-\widetilde{W}_{m_C}(C_{n})}{\Delta C}\\&+ \frac{1}{2}\frac{\widetilde{W}_c(C_{n+1},\theta_n)-\widetilde{W}_c(C_{n},\theta_n)}{\Delta C} + \frac{1}{2}\frac{\widetilde{W}_c(C_{n+1},\theta_{n+1})-\widetilde{W}_c(C_{n},\theta_{n+1})}{\Delta C} \\&+ 
+\underbrace{\alpha_{{C}}\frac{\eta({C}_{n+1/2},\theta_{n+1/2})\Delta \theta}{\Delta{C}}}_{\text{Consistency restoring term}},
+\end{aligned}
+\end{equation}
+%
+where $\alpha_{\vect{C}},\alpha_{\vect{G}},\alpha_{{C}}\in\mathbb{R}$ must satisfy the relationship $\alpha_{\vect{C}}+\alpha_{\vect{G}} + \alpha_{{C}} = 1$ in order to guarantee \eqref{eqn:directionality alternative}. Obviously, for the model considered in the paper, where the coupling between the thermal and mechanical part is dictated exclusively by the volumetric term $C$, a judicious choice of $\{\alpha_{\boldsymbol{C}},\alpha_{\boldsymbol{G}},\alpha_C\}$ yielding a simple expression for the discrete derivatives \eqref{eqn.MR} would be 
+%
+\begin{equation}
+\alpha_{\boldsymbol{C}}=0;\qquad
+\alpha_{\boldsymbol{G}}=0;\qquad
+\alpha_{{C}}=1. 
+\end{equation}
+
+
+
+However, for thermomechanical models where the coupling depends upon the tensor $\boldsymbol{C}$ (and not its determinant), such as in the case of modified entropic elasticity, a better choice of parameters could be
+%
+\begin{equation}
+\alpha_{\boldsymbol{C}}=1;\qquad
+\alpha_{\boldsymbol{G}}=0;\qquad
+\alpha_{{C}}=0. 
+\end{equation}
+
+
+Since the EM scheme presented in Section \ref{sec:design of the time integrator} does not need to incorporate consistency restoring terms in none of its four discrete derivatives, it is easy to be systematised and generalised regardless of the constitutive model used, and even extended to more complex multi-physics scenarios, such as that of thermo-electro-elasticity, without taking extra considerations regarding the suitability of the values for $\{\alpha_{\boldsymbol{C}},\alpha_{\boldsymbol{G}},\alpha_{C}\}$. Notice that the paper in Reference \cite{Betsch2018Thermo} succeded in the derivation of a EM scheme devoid from consistency restoring terms in the context of thermomechanics. However, we believe that the rearrangement of the conservation of energy equation in \eqref{eqn:local form energy our format}, in conjunction with the introduction of the algorithmic entropy $\eta_{\text{algo}}$ on the second term on the right hand side of \eqref{eqn:weak forms for proposed time integrator} has resulted in a  considerably simpler scheme than that in \cite{Betsch2018Thermo} (see \ref{sec:Betsch formulation} for a comparison between the EM scheme proposed and that in Reference \cite{Betsch2018Thermo}).
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+
+%\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+%
+%\noindent \textit{Remark 5}. From the stationary conditions in \eqref{eqn:weak forms for the dynamic formulation Helmholtz},  the following implicit one-step time integrator is proposed for the two-field formulation $\{\vect{\phi},\varphi\}$,
+%%
+%\begin{equation}\label{eqn:weak forms for proposed time integrator for Helmholtz energy}
+%\begin{aligned}
+%\mathcal{W}_{\vect{v}}&=\int_{\mathcal{B}_0}\left(\vect{v}_{n+1/2} - \frac{\Delta\vect{\phi}}{\Delta t}\right)\cdot\rho_0\delta\vect{v}\,dV;\\
+%%
+%\mathcal{W}_{\vect{\phi}}&=\int_{\mathcal{B}_0}\rho_0\frac{\Delta\vect{v}}{\Delta t}\cdot\delta\vect{\phi}\,dV + \int_{\mathcal{B}_0}\vect{S}^{\text{algo}}:\frac{1}{2}\left(D\vect{C}[\delta\vect{\phi}]\right)^{\text{algo}}\,dV-  \int_{\mathcal{B}_0}\vect{f}_{0_{n+1/2}}\cdot\delta\vect{\phi}\,dV-
+%\int_{\partial\mathcal{B}_0}\vect{t}_{0_{n+1/2}}\cdot\delta\vect{\phi}\,dA;\\
+%%
+%\mathcal{W}_{\varphi}&=  -\int_{\mathcal{B}_0}D_{\vect{E}_0}\widetilde{W}_{\varPhi}\left(\vect{C},\vect{E}_0\right)\vect{\nabla}_0\delta\varphi\,dV+  \int_{\mathcal{B}_0}\rho_{0_{n+1/2}}^e\delta\varphi\,dV+
+%\int_{\partial\mathcal{B}_0}\omega^e_{0_{n+1+2}}\delta\varphi\,dA,
+%%
+%\end{aligned}
+%\end{equation}
+%%
+%where $\vect{S}^{\text{algo}}$ is defined in a similar fashion as in \eqref{eqn:algorithmic S} as
+%%
+%\begin{equation}\label{eqn:algorithmic S Helmholtz}
+%\vect{S}^{\text{algo}} = 2D_{\vect{C}}\widetilde{W}_{\varPhi} + 2D_{\vect{G}}\widetilde{W}_{\varPhi}\Cross\vect{C}^{\text{algo}} + 2D_{C}\widetilde{W}_{\varPhi}\vect{G}^{\text{algo}}, 
+%\end{equation}
+%%
+%where $\{D_{\vect{C}}\widetilde{W}_{\varPhi},D_{\vect{G}}\widetilde{W}_{\varPhi},D_{{C}}\widetilde{W}_{\varPhi},D_{\vect{E}_0}\widetilde{W}_{\varPhi}\}$ represent the discrete derivatives of the Helmholtz functional $\widetilde{W}_{\varPhi}\left(\vect{C},\vect{G},C,\vect{E}_0\right)$ with respect to $\{\vect{C},\vect{G},C,\vect{E}_0\}$. 
+%Similarly to the time integrator in  \eqref{eqn:weak forms for proposed time integrator}, we use a definition of the (multiple) discrete derivatives of $\widetilde{W}_{\varPhi}\left(\vect{C},\vect{G},C,\vect{E}_0\right)$ based  on the generic definition proposed by \cite{XXX} for energies depending upon multiple arguments. 
+%In this case, the discrete derivatives must sastisfy the same properties as in Section \ref{eqn:definition of the discrete derivatives}, where now the directionality property reads as
+%%
+%\begin{equation}\label{eqn:directionality property Helmholtz}
+%D_{\vect{C}}\widetilde{W}_{\varPhi}:\Delta\vect{C} + 
+%D_{\vect{G}}\widetilde{W}_{\varPhi}:\Delta\vect{G} + 
+%D_{C}\widetilde{W}_{\varPhi}\Delta C  + D_{\vect{E}_0}\widetilde{W}_{\varPhi}\cdot\Delta\vect{E}_0 =\Delta \widetilde{W}_{\varPhi}.
+%%
+%\end{equation}
+%
+%\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+%
+%\subsection{Definition of the discrete derivatives}
+
+\subsection{Discrete form of the balance laws and integrals in thermo-elastodynamics}\label{sec:discrete conservation properties}
+
+A similar procedure to that in Section \ref{sec:conservation linear momentum global} will be followed in order to verify that the proposed time integration scheme presented \eqref{eqn:weak forms for proposed time integrator} possesses the conservation properties as presented in Sections \ref{sec:conservation linear momentum global} to \ref{eqn:conservation of energy}.
+%preserves, like the continuum formalism (refer to Sections \ref{sec:conservation linear momentum global}, \ref{sec:conservation angular momentum global}, \ref{sec:Gauss law}, \ref{eqn:conservation of energy})  the total linear momentum $\vect{L}$ \eqref{eqn:global conservation linear momentum}$_b$ and  angular momentum  $\vect{J}$  \eqref{eqn:global conservation angular momentum}$_b$ under vanishing external forces and torques, the total electric charge of the system under time independent electric charges and also the Hamiltonian $\mathcal{H}_{\widetilde{W}}$ \eqref{eqn:conservation 1}-\eqref{eqn:legendre transform for the Hamiltonian} under time independent forces and electric charges. 
+
+
+\subsubsection{Discrete form of the global form for conservation of linear momentum}\label{sec:discrete form linear momentum}
+
+Following a similar procedure to that in Section \ref{sec:conservation linear momentum global}, taking $\vect{w}_{\vect{\phi}} = \vect{\xi}$, with $\mathbb{R}^3\ni\vect{\xi}=const.$ in $\mathcal{W}_{\vect{\phi}}$ in \eqref{eqn:weak forms for proposed time integrator}$_b$ yields
+%
+\begin{equation}\label{eqn:global conservation linear momentum discrete}
+%
+\frac{\Delta\vect{L}}{\Delta t} - \vect{F}_{n+1/2}^{\text{ext}} = \vect{0};\qquad
+%
+\vect{F}^{\text{ext}}_{n+1/2} =    
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_{0_{n+1/2}}\,dA
++\int_{\mathcal{B}_0}\vect{f}_{0_{n+1/2}}\,dV,
+\end{equation}
+%
+%
+
+From equation \eqref{eqn:global conservation linear momentum discrete} and for vanishing external forces $\vect{F}^{\text{ext}}_{n+1/2}$, it can be seen that the total linear momentum $\vect{L}$ remains constant.
+
+\subsubsection{Discrete form of the global form for conservation of angular momentum}\label{eqn:discrete form angular momentum}
+
+Taking $\vect{w}_{\vect{\phi}} = \vect{\xi}\times\vect{\phi}_{n+1/2}$, with $\mathbb{R}^3\ni\vect{\xi}=const.$ in $\mathcal{W}_{\vect{\phi}}$ in \eqref{eqn:weak forms for proposed time integrator}$_b$ yields
+%
+\begin{equation}\label{eqn:global conservation angular momentum discrete}
+%
+\frac{\Delta\vect{J}}{\Delta t} - \vect{M}_{n+1/2}^{\text{ext}} = \vect{0};\qquad
+%
+\vect{M}^{\text{ext}}_{n+1/2} =    
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{\phi}_{n+1/2}\times\vect{t}_{0_{n+1/2}}\,dA
++\int_{\mathcal{B}_0}\vect{\phi}_{n+1/2}\times\vect{f}_{0_{n+1/2}}\,dV.
+\end{equation}
+%
+%
+
+From equation \eqref{eqn:global conservation angular momentum discrete} and for vanishing external torques $\vect{M}^{\text{ext}}_{n+1/2}$, it can be seen that the total angular momentum $\vect{J}$ remains constant.
+
+\subsubsection{Discrete form of the global form for the balance of power}\label{eqn:conservation of energy discrete}
+
+
+In this section, a similar analysis to that in Section \eqref{eqn:conservation of energy} will be presented for the semi-discrete weak forms in \eqref{eqn:weak forms for proposed time integrator}. 
+For this purpose, we replace in \eqref{eqn:weak forms for proposed time integrator} the test functions $\{\vect{w}_{\vect{v}},\vect{w}_{\vect{\phi}}\}$  with $\{\Delta{\vect{v}}/\Delta t,{\Delta{\vect{\phi}}}/\Delta t\}\in\mathbb{V}_0^{\vect{\phi}}\times\mathbb{V}_0^{\vect{\phi}}$ and $w_{\theta}=1$. 
+This yields
+%
+\begin{equation}\label{conservation of energy discrete}
+\begin{aligned}
+&\int_{\mathcal{B}_0}\left(\vect{v}_{n+1/2} - \frac{\Delta\vect{\phi}}{\Delta t}\right)\cdot\rho_0\frac{\Delta{\vect{v}}}{\Delta t}\,dV=0;\\
+%
+&\int_{\mathcal{B}_0}\rho_0\frac{\Delta\vect{v}}{\Delta t}\cdot\frac{\Delta\vect{\phi}}{\Delta t}\,dV + \int_{\mathcal{B}_0}\frac{1}{\Delta t}\vect{S}_{\text{algo}}:\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}\,dV-  \int_{\mathcal{B}_0}\vect{f}_0\cdot\frac{\Delta{\vect{\phi}}}{\Delta t}\,dV-
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\frac{\Delta{\vect{\phi}}}{\Delta t}\,dA=0 ;\\
+%
+&\int_{\mathcal{B}_0}\frac{\Delta\left(\theta\eta\right)}{{\Delta t}}\,dV - \int_{\mathcal{B}_0}\frac{\Delta \theta}{\Delta t}\eta_{\text{algo}}\,dV - \int_{\mathcal{B}_0}{R_{\theta}}_{n+1/2}\,dV - \int_{\partial_{Q}\mathcal{B}_{0}}{Q_{\theta}}_{n+1/2}\,dA=0,
+%
+\end{aligned}
+\end{equation}
+%
+where use of \eqref{eqn:S algo} has been made of on the second term of the left hand side of \eqref{conservation of energy discrete}$_b$.
+Consideration of time independent forces $\vect{f}_0$ and $\vect{t}_0$ and after addition of the three equations in \eqref{conservation of energy discrete}, we obtain
+%
+\begin{equation}\label{conservation of energy discrete II}
+\begin{aligned} 
+%
+\frac{\Delta K}{\Delta t} + \int_{\mathcal{B}_0}\frac{1}{{\Delta t}}\left(\vect{S}_{\text{algo}}:\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}} - 
+%
+{\Delta \theta}\eta_{\text{algo}}\right)\,dV + \int_{\mathcal{B}_0}\frac{\Delta(\theta\eta)}{{\Delta t}}\,dV
+%
+- \frac{\Delta\Pi_{\text{ext}}\left(\vect{\phi}\right)}{{\Delta t}} - \dot{\mathcal{Q}}_{\text{ext}}=0,
+%- \int_{\mathcal{B}_0}\delta\vect{D}_0\cdot\frac{\partial \vect{\nabla}_0\varphi\right)\,dV
+%
+\end{aligned}
+\end{equation}
+%
+%where use of the following identity has been made of (for time independent forces $\vect{f}_0$ and $\vect{t}_0$ and charges $\rho^e_0$ and $\omega_0^e$)
+%%
+%\begin{equation}\label{eqn:DPiextr discrete}
+%\begin{aligned}
+%\int_{\mathcal{B}_0}\vect{f}_0\cdot\Delta{\vect{\phi}}\,dV + 
+%\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\Delta{\vect{\phi}}\,dA  = \Delta{\Pi}^m_{\text{ext}}\left({\vect{\phi}}\right);\qquad
+%%
+%\int_{\mathcal{B}_0}{\rho}^e_0\Delta{{\varphi}}\,dV + 
+%\int_{\partial_{\omega}\mathcal{B}_0}\omega^e_0\Delta{\varphi}\,dA  = -\Delta{\Pi}^e_{\text{ext}}\left({{\varphi}}\right).
+%%
+%\end{aligned}
+%\end{equation}
+
+From equation \eqref{eqn:DDC} and \eqref{eqn:S algo} it is possible to re-express the term within the bracket in the second term on the left hand side of \eqref{conservation of energy discrete II} as
+%
+\begin{equation}\label{eqn:approximated expression for DWdeltavarphi II}
+\begin{aligned}
+\vect{S}_{\text{algo}}:\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}} - {\Delta \theta}\eta_{\text{algo}}&=
+%
+D_{\vect{C}}\widetilde{W}:\Delta\vect{C} + 
+D_{\vect{G}}\widetilde{W}:\Delta\vect{G} + 
+D_{C}\widetilde{W}\Delta C  + D_{\theta}\widetilde{W}\Delta\theta
+%
+.
+%
+\end{aligned}
+\end{equation}
+%
+
+Introduction of \eqref{eqn:approximated expression for DWdeltavarphi II} into \eqref{conservation of energy discrete II} enables to obtain the following result
+%
+\begin{equation}\label{conservation of energy discrete III}
+\begin{aligned}
+&\frac{\Delta K}{\Delta t} + \int_{\mathcal{B}_0}\frac{1}{{\Delta t}}\left(D_{\vect{C}}\widetilde{W}:\Delta\vect{C} + D_{\vect{G}}\widetilde{W}:\Delta\vect{G} + D_C\widetilde{W}\Delta C + D_{\theta}\widetilde{W}\Delta\theta\right)\,dV
+%
+\\
+%
+&+\int_{\mathcal{B}_0}\frac{\Delta\left(\theta\eta\right)}{\Delta t}\,dV- \frac{\Delta\Pi_{\text{ext}}\left(\vect{\phi}\right)}{\Delta t} - \dot{\mathcal{Q}}_{\text{ext}}= 0,
+%- \int_{\mathcal{B}_0}\delta\vect{D}_0\cdot\frac{\partial \vect{\nabla}_0\varphi\right)\,dV
+%
+\end{aligned}
+\end{equation}
+with
+%
+\begin{equation}\label{eqn:Qext}
+\dot{\mathcal{Q}}_{\text{ext}}=\int_{\mathcal{B}_0}{R_{\theta}}_{n+1/2}\,dV - \int_{\partial_{Q}\mathcal{B}_{0}}{Q_{\theta}}_{n+1/2}\,dA.
+\end{equation}
+
+When the discrete derivatives $\{D_{\vect{C}}\widetilde{W},D_{\vect{G}}\widetilde{W},D_{{C}}\widetilde{W},D_{\theta}\widetilde{W}\}$ comply with the directionality property in \eqref{eqn:directionality property}, above equation \eqref{conservation of energy discrete III} can be written as
+%
+\begin{equation}\label{conservation of energy discrete IV}
+\begin{aligned}
+&\frac{\Delta K}{\Delta t} + \int_{\mathcal{B}_0}\frac{\Delta (\widetilde{W}+\theta\eta)}{\Delta t}\,dV- \frac{\Delta\Pi_{\text{ext}}\left(\vect{\phi}\right)}{\Delta t} - \dot{\mathcal{Q}}_{\text{ext}}= 0.
+%- \int_{\mathcal{B}_0}\delta\vect{D}_0\cdot\frac{\partial \vect{\nabla}_0\varphi\right)\,dV
+%
+\end{aligned}
+\end{equation}
+ 
+Finally, making use of the Legendre transformation in \eqref{eqn:Legendre transform} in \eqref{conservation of energy discrete IV} enables to obtain the discrete counterpart of the balance of power in \eqref{eqn:Wvarphi conservation of energy I} as
+%
+\begin{equation}\label{conservation of energy discrete V}
+\begin{aligned}
+&\frac{\Delta K}{\Delta t} + \int_{\mathcal{B}_0}\frac{\Delta \widetilde{U}}{\Delta t}\,dV- \frac{\Delta\Pi_{\text{ext}}\left(\vect{\phi}\right)}{\Delta t} - \mathcal{Q}_{\text{ext}}=\frac{\Delta\mathcal{H}}{\Delta t}  - \frac{\Delta\Pi_{\text{ext}}\left(\vect{\phi}\right)}{\Delta t} - \dot{\mathcal{Q}}_{\text{ext}} = 0.
+%- \int_{\mathcal{B}_0}\delta\vect{D}_0\cdot\frac{\partial \vect{\nabla}_0\varphi\right)\,dV
+%
+\end{aligned}
+\end{equation}
+
+
+Therefore, for vanishing external mechanical and thermal power, the Hamiltonian $\mathcal{H}$ \eqref{eqn:Hamiltonian} is preserved throughout the motion of the continuum in the discrete setting. 
+Three points have been crucial in order to endow the EM time integrator in \eqref{eqn:weak forms for proposed time integrator} with the conservation properties shown throughout Section \ref{sec:discrete conservation properties}, namely: 
+(i) the equivalent re-expression (in the continuum level) of the local form of the balance of energy as in equation \eqref{eqn:local form energy our format};
+(ii) the consideration of the algorithmic directional derivatives in equation \eqref{eqn:DDC}, already introduced in References \cite{Betsch2018Thermo,EM_Electro_1}; 
+(iii) the consideration of the generic definition of the discrete derivatives expressions for $\{D_{\vect{C}}\widetilde{W},D_{\vect{G}}\widetilde{W},D_{{C}}\widetilde{W},D_{\theta}\widetilde{W}\}$ proposed in Reference \cite{Betsch2018Thermo} and shown in \ref{sec:properties directionality} for completeness, necessary to guarantee that the discrete derivatives comply with the directionality property in equation \eqref{eqn:directionality property}.
+
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\noindent \textit{Remark 6.} Although not pursued in the example section of this paper, it is possible to define an entropy-based EM time integrator, being a counterpart of that presented in \eqref{eqn:weak forms for proposed time integrator}. This is presented in \ref{sec:entropy-based formulation}. 
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+
+%These two points have led to the important implication that conservation of energy is guaranteed if the discrete derivatives $D_{\vect{C}}\widetilde{W}$, $D_{\vect{G}}\widetilde{W}$, $D_{{C}}\widetilde{W}$ and $D_{\vect{D}_0}\widetilde{W}$ comply with the directionality property in \eqref{eqn:directionality property}.
+
+%\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+%
+%\noindent \textit{Remark 6}. Identical results to those in sections \ref{sec:discrete form linear momentum}, \ref{eqn:discrete form angular momentum} and \ref{sec:discrete form Gauss law} can be obtained for the weak forms in \eqref{eqn:weak forms for proposed time integrator for Helmholtz energy} regarding conservation of linear momentum, angular momentum, and the Gauss law, respectively. For the energy conservation, a similar result to that in equation \eqref{conservation of energy discrete III} is obtained, namely
+%%
+%\begin{equation}\label{conservation of energy discrete Helmholtz}
+%\begin{aligned}
+%\Delta\Pi_{\text{ext}}^m\left(\vect{\phi}\right) + \Delta\Pi_{\text{ext}}^e\left({\varphi}\right) & = 
+%%
+%\Delta K + \int_{\mathcal{B}_0}\left(D_{\vect{C}}\widetilde{W}_{\varPhi}:\Delta\vect{C} + D_{\vect{G}}\widetilde{W}_{\varPhi}:\Delta\vect{G} + D_C\widetilde{W}_{\varPhi}\Delta C + D_{\vect{E}_0}\widetilde{W}_{\varPhi}\cdot\Delta\vect{E}_0\right)\,dV.
+%%- \int_{\mathcal{B}_0}\delta\vect{D}_0\cdot\frac{\partial \vect{\nabla}_0\varphi\right)\,dV
+%%
+%\end{aligned}
+%\end{equation}
+%
+%Comparison of equation \eqref{conservation of energy discrete Helmholtz} and the definition of the total Hamiltonian $\mathcal{H}_{\widetilde{W}_{\varPhi}}$ in \eqref{eqn:conservation 1 Helmholtz} enables to conclude that conservation of energy for the implicit one-step time integrator in equation \eqref{eqn:weak forms for proposed time integrator for Helmholtz energy} requires the {directionality property} in equation \eqref{eqn:directionality property Helmholtz} to be satisfied.
+%
+%\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+

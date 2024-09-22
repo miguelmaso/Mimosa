@@ -1,0 +1,116 @@
+\documentclass[preprint,12pt,draft]{elsarticle}
+\input{header} % All packages included
+
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Learning nonlinear constitutive models in finite strain thermo-electro-mechanics with physics-augmented neural networks}
+
+\author{R. Ortigosa$^\dagger$\fnref{cor1}} \author{J. Mart\'inez-Frutos$^\dagger$\fnref{cor2}} \author{A. P\'erez-Escolar$^\dagger$}  
+\author{I. Casta\~{n}ar$^\ddagger$}  
+\author{A. J. Gil$^\ddagger$\fnref{cor3}}  
+\fntext[cor1]{Corresponding author: r.ortigosa@swansea.ac.uk}
+\fntext[cor2]{Corresponding author: jesus.martinez@upct.es}
+\fntext[cor3]{Corresponding author: a.j.gil@swansea.ac.uk}
+\address{$\dagger$ Technical University of Cartagena, Campus Muralla del Mar, 30202, Cartagena (Murcia), Spain\\
+	$\ddagger$Zienkiewicz Centre for Computational Engineering \\ Faculty of Science and Engineering, Swansea University\\ Bay Campus, SA1 8EN, United Kingdom}
+
+%\fntext[cor2]{Corresponding author: a.j.gil@swansea.ac.uk}
+%\address{Zienkiewicz Centre for Computational Engineering, College of Engineering \\ Swansea University, Bay Campus, SA1 8EN, United Kingdom}
+
+\begin{abstract}
+	
+
+The aim of this paper is the design a new one-step implicit and thermodynamically consistent Energy-Momentum (EM) preserving time integration scheme for the simulation of thermo-elastic processes undergoing large deformations and temperature fields. Following \cite{Bonet_hyperbolicity_partIII_2019}, we consider well-posed constitutive models for the entire range of deformations and temperature. In that regard, the consideration of polyconvexity inspired constitutive models and a new tensor cross product algebra are shown to be crucial in order to derive the so-called discrete derivatives, fundamental for the construction of the algorithmic derived variables, namely the second Piola-Kirchoff stress tensor and the entropy (or the absolute temperature). The proposed scheme inherits the advantages of the EM scheme recently published by Franke et al. \cite{Betsch2018Thermo}, %\Blue{which eliminates typical artificial contributions for the algorithmic stress formula \cite{Hesch_Betsch_EM_thermo_2011}, needed to restore energy consistency in the discrete setting,} 
+whilst resulting in a simpler scheme from the implementation standpoint.
+%
+%(i.e. consistency, stability, conservation) whilst resulting in dramatically far simpler algorithmic expressions, thus circumventing a bottleneck and paving the way for the incorporation of further physics into the model
+%
+A series of numerical examples will be presented in order to demonstrate the robustness and applicability of the new EM scheme. Although the examples presented will make use of a temperature-based version of the EM scheme (using the Helmholtz free energy as the thermodynamical potential and the temperature as the thermodynamical state variable), we also include in an Appendix an entropy-based analogue EM scheme (using the internal energy as the thermodynamical potential and the entropy as the thermodynamical state variable).   
+
+
+
+
+
+
+%The proposed EM scheme is inspired by the previous EM scheme published by Betsch et. al. \cite{Betsch_EM_thermo_2017}, whereby taking advantage of the concept of polyconvexity \cite{Ball_1976,Ball_1976_2,Ball_2002,Ball_Murat_1976,Schroderbook}, and extended system of (four) greatly simplified discrete derivatives is proposed. Although the formulation in \cite{Betsch_EM_thermo_2017} is based on temperature, it relies on the definition of the internal energy functional re-expressed in terms of temperature. %This introduces a certain complexity in the formulation (more specifically, in its consistent linearisation) that the present paper aims to minimise. 
+%We present two possible EM schemes, based on  temperature or entropy as the thermodynamic state variable. With that in mind, we use for each scheme the consistent energy functional, namely the Helmholtz free energy functional (for the temperature-based scheme) or the consistent Legendre transformed internal energy  functional (for the entropy-based scheme), respectively. Only the finite element implementation of the temperature-based scheme is pursued in this paper. The design of the entropy-based scheme can be found in \ref{sec:entropy-based formulation}. Finally, the paper presents a series of numerical examples to demonstrate the stability and conservation properties of the proposed temperature-based EM scheme.
+
+
+\end{abstract}
+
+\begin{keyword} finite element method, nonlinear thermo-elastodynamics, energy-momentum scheme, structure-perserving discretisation.
+\end{keyword}
+
+\end{frontmatter}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+\input{section/00_intro}
+
+\section{Nonlinear continuum thermo-electro-mechanics}\label{sec:nonlinear continuum electromechanics}
+\input{section/01_kinematics}
+
+\section{Constitutive equations in nonlinear thermo-electro-elasticity}\label{sec:constitutive equations}
+\input{section/02_constitutive_equations}
+
+
+
+
+\section{Finite Element implementation of nonlinear thermo-electro-mechanics}\label{sec:FEM residuals}
+\input{section/05_FEM_implementation}
+
+
+\input{section/06_numericalexamples}
+\clearpage
+
+\section{Conclusions}\label{sec:conclusions}
+\input{section/07_conclusion}
+
+\section{Neural Network postprocessing}\input{NeuralNetwork.tex}\label{sec:NN_cal}
+\section{Acknowledgements}\input{acknowledgement}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\appendix
+\section{Entropy-based EM scheme}\label{sec:entropy-based formulation}
+\input{section/12_Appendix_entropy_based_formulation}
+\newpage
+\section{Discrete derivatives of the internal energy}\label{sec:properties directionality}
+\input{section/10_Appendix_truncation}
+\newpage
+\section{EM scheme in Reference \cite{Betsch2018Thermo}}\label{sec:Betsch formulation}
+\input{section/11_Appendix_Betsch_formulation}
+\newpage
+\section{Thermo-elastic constitutive model}\label{sec:constitutive model appendix}
+\input{section/13_Appendix_constitutive_model}
+\newpage
+%\section{Conservation properties in the presence of Dirichlet Boundary conditions}\label{sec:DirichletBCs}
+%\input{section/15_Appendix_DirichletBCs}
+%\newpage
+%\section{Implementation details}\label{sec:implementation}
+%\input{section/14_Appendix_implementation}
+%\newpage
+
+%\section{Energy conservation}
+%\input{section/11_Appendix_old_energy_conservation}
+%\newpage
+%\section{Energy conservation}
+%\input{section/12_Energy_Conservation_Generic}
+
+
+
+
+% \bibliographystyle{model1-num-names}
+\bibliographystyle{plain}
+\bibliography{biblio}
+
+
+\end{document}
+

@@ -1,0 +1,520 @@
+The objective of this section is to present the variational formulation that will be used in order to develop an EM time integration scheme in Section \ref{sec:time integrator}. 
+
+\subsection{Point of departure: three-field mixed formulation for electro-mechanics}\label{sec:mixed formulation}
+
+
+\Blue{A three-field mixed variational principle in the context of static electro-mechanics (where inertial effects are not considered) can be defined as}
+%
+\begin{equation}\label{eqn:mixed variational principle}
+\begin{aligned}
+\Pi_{\widetilde{W}}\left(\vect{\phi},\varphi,\vect{D}_0\right) = \inf_{\vect{\phi}, \vect{D}_0}\sup_{\varphi}\left\{
+\int_{\mathcal{B}_0}\widetilde{W}\left(\vect{C},\vect{G},C,\vect{D}_0\right)\,dV + \int_{\mathcal{B}_0}\vect{D}_0\cdot\vect{\nabla}_0\varphi\,dV - \Pi_{\text{ext}}^m\left(\vect{\phi}\right) - \Pi_{\text{ext}}^e\left(\varphi\right)
+%
+\right\}.
+\end{aligned}
+\end{equation}
+%
+%In the total potential $\Pi_{\widetilde{W}}$ in \eqref{eqn:mixed variational principle}, the external mechanical and electrical external contributions $\Pi_{\text{ext}}^m\left(\vect{\phi}\right)$ and $\Pi_{\text{ext}}^e\left(\varphi\right)$, respectively, are defined as
+%
+
+\Blue{The reader is referred to Reference \cite{Gil_electro_partI_2016} for the derivation of above variational principle. In \eqref{eqn:mixed variational principle}, the external contributions $\Pi_{\text{ext}}^m$ and $\Pi_{\text{ext}}^e$ are defined as}
+%
+\begin{equation}\label{eqn:external terms in the potential}
+\Pi_{\text{ext}}^m\left(\vect{\phi}\right) = \int_{\mathcal{B}_0}\vect{f}_0\cdot\vect{\phi}\,dV + 
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\vect{\phi}\,dA;\qquad  
+%
+\Pi_{\text{ext}}^e\left({\varphi}\right) = -\int_{\mathcal{B}_0}\rho^e_0{\varphi}\,dV -
+\int_{\partial_\omega\mathcal{B}_0}\omega_0^e{\varphi}\,dA.
+\end{equation}
+
+In equation \eqref{eqn:mixed variational principle},  $\{\vect{\phi},\varphi,\vect{D}_0\}\in \mathbb{V}^{\vect{\phi}}\times\mathbb{V}^{\varphi}\times\mathbb{V}^{\vect{D}_0}$, as
+%
+%In equation \eqref{eqn:mixed variational principle},  $\{\vect{\phi},\varphi,\vect{D}_0\}$ represent the unknown fields of the three-field variational principle, which belong to  suitable functional spaces $\mathbb{V}^{\vect{\phi}}\times\mathbb{V}^{\varphi}\times\mathbb{V}^{\vect{D}_0}$, respectively, defined as
+%
+\begin{equation}\label{eqn:functional spaces}
+\begin{aligned}
+\mathbb{V}^{\vect{\phi}} & = \left\{\vect{\phi}:\mathcal{B}_0\rightarrow \mathbb{R}^3;\,\,\,\,\,\,\left(\vect{\phi}\right)_{i}\in H^1\left(\mathcal{B}_0\right)\,\,\vert\,\, J>0 \right\};\\
+%
+\mathbb{V}^{{\varphi}} & = \left\{\varphi:\mathcal{B}_0\rightarrow\mathbb{R}^1;\,\,\,\,\,\,\,{\varphi}\in H^1\left(\mathcal{B}_0\right)\right\};\\
+%
+\mathbb{V}^{\vect{D}_0} & = \left\{\vect{D}_0:\mathcal{B}_0\rightarrow\mathbb{R}^3;\,\,\,\left(\vect{D}_0\right)_{I}\in \mathbb{L}_2\left(\mathcal{B}_0\right)\right\},
+%
+\end{aligned}
+\end{equation}
+%
+
+%In  addition, $H^1$ denotes the Sobolev functional space of square integrable functions and derivatives and $\mathbb{L}_2$, the space of square integrable functions. 
+Similarly, let us consider admissible variations $\{\delta\vect{\phi},\delta\varphi,\delta\vect{D}_0\}\in \mathbb{V}_0^{\vect{\phi}}\times\mathbb{V}_0^{\varphi}\times\mathbb{V}^{\vect{D}_0}$, with 
+%
+%\begin{equation}
+%\begin{aligned}
+%\mathbb{V}_0^{{\varphi}} & = \left\{\vect{\phi}:\mathcal{B}_0\rightarrow \mathbb{R}^3;\,\,\,\,\,\,\vect{\phi}\in H^1\left(\mathcal{B}_0\right)\,\,\vert\,\, \vect{\phi} = \vect{0} \,\,\text{on}\,\,\partial_{\vect{\phi}}\mathcal{B}_0\right\};\\
+%%
+%\mathbb{V}_0^{{\varphi}} & = \left\{\varphi:\mathcal{B}_0\rightarrow\mathbb{R}^3;\,\,\,\,\,\,\,{\varphi}\in H^1\left(\mathcal{B}_0\right)\,\,\vert\,\, {\varphi} = {0} \,\,\text{on}\,\,\partial_{{\varphi}}\mathcal{B}_0\right\}.
+%%
+%\end{aligned}
+%\end{equation}
+%
+\Blue{\begin{equation}
+\begin{aligned}
+\mathbb{V}_0^{{\vect{\phi}}} & = \left\{\forall\vect{\phi}\in\mathbb{V}^{\vect{\phi}};\,\,\,\,\, \vect{\phi} = \vect{0} \,\,\text{on}\,\,\partial_{\vect{\phi}}\mathcal{B}_0\right\};\\
+%
+\mathbb{V}_0^{{\varphi}} & = \left\{\forall\varphi\in\mathbb{V}^{\varphi};\,\,\,\,\,\,\,{\varphi} = {0} \,\,\text{on}\,\,\partial_{{\varphi}}\mathcal{B}_0\right\}.
+%
+\end{aligned}
+\end{equation}}
+
+
+
+The stationary conditions of the mixed variational principle $\Pi_{\widetilde{W}}$ in \eqref{eqn:mixed variational principle} yield
+%
+\begin{equation}\label{eqn:three-field formulation for statics}
+\begin{aligned}
+D\Pi_{\widetilde{W}}[\delta\vect{\phi}]& =  \int_{\mathcal{B}_0}\vect{S}:\frac{1}{2}D\vect{C}[\delta\vect{\phi}]\,dV  - \int_{\mathcal{B}_0}\vect{f}_0\cdot\delta\vect{\phi}\,dV-
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\delta\vect{\phi}\,dA=0;\\
+%
+D\Pi_{\widetilde{W}}[\delta\varphi]& =  \int_{\mathcal{B}_0}\vect{D}_0\cdot\vect{\nabla}_0\delta\varphi\,dV + \int_{\mathcal{B}_0}\rho_0^e\delta\varphi\,dV+
+\int_{\partial_\omega\mathcal{B}_0}\omega^e_0\delta\varphi\,dA=0;\\
+%
+D\Pi_{\widetilde{W}}[\delta\vect{D}_0]& =  \int_{\mathcal{B}_0}\delta\vect{D}_0\cdot\left(\partial_{\vect{D}_0}\widetilde{W} + \vect{\nabla}_0\varphi\right)\,dV=0,
+%
+\end{aligned}
+\end{equation}
+%
+with $\vect{S}$ defined in \eqref{eqn:Piola and electric field in extended formulation}$_a$.
+%
+%\begin{equation}
+%\vect{S}=2\partial_{\vect{C}}\widetilde{W} + 2\partial_{\vect{G}}\widetilde{W}\Cross\vect{C} + 2\partial_C\widetilde{W}\vect{G},
+%%
+%\end{equation}
+%
+%the first term on the right-hand side of equation \eqref{eqn:three-field formulation for statics}$_a$, which is equivalent to $D\widetilde{e}[\delta\vect{\phi}]$ (refer to \eqref{eqn:first lay thermodynamics for C}$_a$), can also be written as in equation .
+%
+Above equation \eqref{eqn:three-field formulation for statics}$_a$ represents the weak form of the local balance of linear momentum  in \eqref{eqn:local form conservation of linear momentum} for the case where no inertia effects are considered. 
+In addition, equation \eqref{eqn:three-field formulation for statics}$_b$ corresponds to the weak form of the Gauss law in \eqref{eqn:Gauss law local}. 
+Finally, equation \eqref{eqn:three-field formulation for statics}$_c$ represents the weak form of the Faraday law in  \eqref{eqn:local form Faraday law}.
+
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\noindent \textit{Remark 2}. Starting from the total potential $\Pi_{\widetilde{W}}$ in \eqref{eqn:mixed variational principle}, use of the Legendre transformation in \eqref{eqn:Legendre transform} leads to a two-field formulation with unknowns $\{\vect{\phi},\varphi\}$ in terms of the Helmholtz functional  %$\widetilde{W}_{\varPhi}\left(\vect{C},\vect{G},C,\vect{E}_0\right)$ \eqref{eqn:Legendre transform} 
+(refer to Remark 1) as
+%
+\begin{equation}\label{eqn:mixed variational principle Helmholtz}
+\begin{aligned}
+\Pi_{\widetilde{W}_{\varPhi}}\left(\vect{\phi},\varphi\right) = \inf_{\vect{\phi}}\sup_{\varphi}\left\{
+\int_{\mathcal{B}_0}\widetilde{W}_{\varPhi}\left(\vect{C},\vect{G},C,\vect{E}_0\right)\,dV  - \Pi_{\text{ext}}^m\left(\vect{\phi}\right) - \Pi_{\text{ext}}^e\left(\varphi\right)
+%
+\right\}.
+\end{aligned}
+\end{equation}
+
+The stationary conditions of the above variational principle are %\eqref{eqn:mixed variational principle Helmholtz}
+%
+\begin{equation}\label{eqn:two-field formulation for statics Helmholtz}
+\begin{aligned}
+D\Pi_{\widetilde{W}_{\varPhi}}[\delta\vect{\phi}]& =  \int_{\mathcal{B}_0}\vect{S}:\frac{1}{2}D\vect{C}[\delta\vect{\phi}]\,dV  - \int_{\mathcal{B}_0}\vect{f}_0\cdot\delta\vect{\phi}\,dV-
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\delta\vect{\phi}\,dA=0;\\
+%
+D\Pi_{\widetilde{W}_{\varPhi}}[\delta\varphi]& =  -\int_{\mathcal{B}_0}\partial_{\vect{E}_0}\widetilde{W}_{\varPhi}\cdot\vect{\nabla}_0\delta\varphi\,dV + \int_{\mathcal{B}_0}\rho_0^e\delta\varphi\,dV+
+\int_{\partial_\omega\mathcal{B}_0}\omega^e_0\delta\varphi\,dA=0,
+%
+\end{aligned}
+\end{equation}
+%
+with
+%
+\begin{equation}\label{eqn:Second Piola Helmholtz}
+\vect{S} = 2\partial_{\vect{C}}\widetilde{W}_{\varPhi} + 2\partial_{\vect{G}}\widetilde{W}_{\varPhi}\Cross\vect{C} + 
+2\partial_{C}\widetilde{W}_{\varPhi}\vect{G}.
+\end{equation}
+
+The variational principle in \eqref{eqn:mixed variational principle Helmholtz} is typically preferred in finite element implementations. 
+However, the a priori definition of a materially stable Helmholtz functional is not in general possible due to its saddle point nature. 
+Therefore, we advocate in this paper for the definition of materially stable convex multi-variable internal energy functionals $\widetilde{W}\left({\vect{C},\vect{G},C,\vect{D}_0}\right)$ (featuring in the three-field principle $\Pi_{\widetilde{W}}$) which through \eqref{eqn:Legendre transform}, yield materially stable Helmholtz energy functionals \cite{Gil_electro_partI_2016}. 
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+%\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+%
+%\noindent \textit{Remark 2.} Let us consider the potential $\Pi_{\widetilde{W}}$ in \eqref{eqn:mixed variational principle}. 
+%The equivalence between $\widetilde{e}\left(\vect{C},\vect{D}_0\right)$ and $\widetilde{W}\left(\vect{C},\vect{G},C,\vect{D}_0\right)$ \eqref{eqn:objective energies} enables  $\Pi_{\widetilde{W}}$ to be alternatively written as
+%%
+%\begin{equation}\label{eqn:mixed variational principle I}
+%\begin{aligned}
+%\Pi_{\widetilde{W}}\left(\vect{\phi},\varphi,\vect{D}_0\right)
+%%= \inf_{\vect{\phi},\vect{D}_0}\sup_{\varphi}\left\{
+%%\int_{\mathcal{B}_0}\left(\widetilde{e}\left(\vect{C},\vect{D}_0\right)\ + \vect{D}_0\cdot\vect{\nabla}_0\varphi\right)\,dV  - \Pi_{\text{ext}}^m\left(\vect{\phi}\right) - \Pi_{\text{ext}}^e\left(\varphi\right)
+%%\right\}\\
+%%
+%& = -\inf_{\vect{\phi}}\sup_{\varphi,\vect{D}_0}\left\{
+%\int_{\mathcal{B}_0}\left(-\vect{D}_0\cdot\vect{\nabla}_0\varphi - \widetilde{e}\left(\vect{C},\vect{D}_0\right)\right)\,dV  - \Pi_{\text{ext}}^m\left(\vect{\phi}\right) - \Pi_{\text{ext}}^e\left(\varphi\right)
+%\right\}.
+%%
+%\end{aligned}
+%\end{equation}
+%
+%Since both $\vect{D}_0$ and $\delta\vect{D}_0$ belong to the same functional space $\mathbb{V}^{\vect{D}_0}$, by virtue of the stationary condition in \eqref{eqn:three-field formulation for statics}$_c$, it is possible to re-write above equation \eqref{eqn:mixed variational principle I} as
+%%
+%\begin{equation}\label{eqn:mixed variational principle II}
+%\begin{aligned}
+%\Pi_{\widetilde{W}}\left(\vect{\phi},\varphi,\vect{D}_0\right)& = -\inf_{\vect{\phi}}\sup_{\varphi,\vect{D}_0}\left\{
+%\int_{\mathcal{B}_0}\left(\vect{D}_0\cdot\vect{\Sigma}^{\text{sym}}_{\vect{D}_0} - \widetilde{e}\left(\vect{C},\vect{D}_0\right)\right)\,dV  - \Pi_{\text{ext}}^m\left(\vect{\phi}\right) - \Pi_{\text{ext}}^e\left(\varphi\right)
+%\right\}.
+%%
+%\end{aligned}
+%\end{equation}
+%
+%Making use of the Legendre transformation in \eqref{eqn:Legendre transform} and the relationship between $\vect{E}_0$ and $\vect{\Sigma}^{\text{sym}}_{\vect{D}_0}$ in \eqref{eqn:Piola and electric field in extended formulation}$_b$, the three-field formulation presented reduces to the classical two-field formulation in terms of the Helmholtz energy $\varPhi\left(\vect{C},\vect{E}_0\right)$ \eqref{eqn:Legendre transform} as
+%%
+%\begin{equation}\label{eqn:two-field formulation}
+%\Pi_{\varPhi}\left(\vect{\phi},\varphi\right) = \inf_{\vect{\phi}}\sup_{\varphi}\left\{\int_{\mathcal{B}_0}\varPhi\left(\vect{C},\vect{E}_0\right) - \Pi^m_{\text{ext}}\left(\vect{\phi}\right) - \Pi^e_{\text{ext}}\left(\varphi\right)\right\}.
+%\end{equation}
+%
+%In this paper we advocate for the three-field potential $\Pi_{\widetilde{W}}$ in \eqref{eqn:three-field formulation for statics} as the design of energy momentum preserving time integrators based on saddle point functionals such as the Helmholtz energy $\varPhi\left(\vect{C},\vect{E}_0\right)$ is not possible. 
+%As shown in the use of constitutive models based on $\widetilde{W}$ in the two-field $\Pi_{\varPhi_{\text{sym}}}$
+%
+%%A priori, the two-field formulation in \eqref{eqn:two-field formulation} might seem more convenient than the three-field formulation in \eqref{eqn:mixed variational principle} from the computational cost standpoint. 
+% However, the design of Energy Momentum preserving time integrators based on the latter will prove more convenient, as it will be shown in section xxx. 
+% In addition, discontinuous interpolation of the $\vect{D}_0$ and static condensation of the residuals and stiffness matrices associated to the stationary condition $D\Pi_{\widetilde{W}}[\delta\vect{D}_0]$ allow the advocated three-field formulation in \eqref{eqn:mixed variational principle} to have a computational cost comparable to that of the more classical two-field formulation in \eqref{eqn:two-field formulation}. 
+% These two reasons justify our preference of the three-field formulation $\Pi_{\widetilde{W}}$ \eqref{eqn:mixed variational principle} over $\Pi_{\varPhi_{\text{sym}}}$ \eqref{eqn:two-field formulation}.
+%
+% 
+%\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+%
+
+\subsection{Extension to electro-elastodynamics}
+
+The objective of this section is to generalise the mixed variational principle $\Pi_{\widetilde{W}}$ in \eqref{eqn:mixed variational principle} to the context of electro-elastodynamics. 
+This can be done by considering the following action integral 
+%
+\begin{equation}\label{eqn:action integral}
+\begin{aligned}
+L_{\widetilde{W}}\left(\vect{v},\vect{\phi},\varphi,\vect{D}_0\right) = \int_{t_0}^{t}&\left(\int_{\mathcal{B}_0}\left(\dot{\vect{\phi}} - \frac{1}{2}{\vect{v}}\right)\cdot\rho_0{\vect{v}}\,dV - 
+%
+\int_{\mathcal{B}_0}\widetilde{W}\left(\vect{C},\vect{G},C,\vect{D}_0\right)\,dV\right.\\&\left. - \int_{\mathcal{B}_0}\vect{D}_0\cdot\vect{\nabla}_0\varphi\,dV + \Pi_{\text{ext}}^m\left(\vect{\phi}\right) + \Pi_{\text{ext}}^e\left(\varphi\right)
+\right)\,dt,
+\end{aligned}
+\end{equation}
+%
+%
+where $t_0$ and $t$ represent any two instances of time with $t>t_0$. 
+By means of Hamilton's principle, the stationary conditions of the action integral $L_{\widetilde{W}}$ in \eqref{eqn:action integral} are
+%
+\begin{equation}\label{eqn:weak forms for the dynamic formulation}
+\begin{aligned}
+\mathcal{W}_{\vect{v}}&= \int_{\mathcal{B}_0}\left(\vect{v} - \dot{\vect{\phi}}\right)\cdot\rho_0\delta\vect{v}\,dV=0;\\
+%
+\mathcal{W}_{\vect{\phi}} &  = \int_{\mathcal{B}_0}\rho_0\dot{\vect{v}}\cdot\delta\vect{\phi}\,dV + \int_{\mathcal{B}_0}\vect{S}:\frac{1}{2}D\vect{C}[\delta\vect{\phi}]\,dV\-  -\int_{\mathcal{B}_0}\vect{f}_0\cdot\delta\vect{\phi}\,dV-
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\delta\vect{\phi}\,dA=0;\\
+%
+\mathcal{W}_{{\varphi}}& =  \int_{\mathcal{B}_0}\vect{D}_0\cdot\vect{\nabla}_0\delta\varphi\,dV+  \int_{\mathcal{B}_0}\rho_0^e\delta\varphi\,dV+
+\int_{\partial_\omega\mathcal{B}_0}\omega^e_0\delta\varphi\,dA=0;\\
+%
+\mathcal{W}_{\vect{D}_0}& =   \int_{\mathcal{B}_0}\delta\vect{D}_0\cdot \left(\partial_{\vect{D}_0}\widetilde{W} + \vect{\nabla}_0\varphi\right)\,dV=0,
+%
+\end{aligned}
+\end{equation}
+%
+and with
+$\{\vect{v},\vect{\phi},\varphi,\vect{D}_0\}\in \mathbb{V}^{\vect{\phi}}\times\mathbb{V}^{\vect{\phi}}\times\mathbb{V}^{\varphi}\times\mathbb{V}^{\vect{D}_0}$ and  $\{\delta\vect{v},\delta\vect{\phi},\delta\varphi,\delta\vect{D}_0\}\in \mathbb{V}_0^{\vect{\phi}}\times\mathbb{V}_0^{\vect{\phi}}\times\mathbb{V}_0^{\varphi}\times\mathbb{V}^{\vect{D}_0}$. 
+%
+Note that an integration by parts with respect to time has been used on the first term on the right hand-side of \eqref{eqn:weak forms for the dynamic formulation}$_b$.
+Equation \eqref{eqn:weak forms for the dynamic formulation}$_a$ represents the weak form for the relationship between the velocity field $\vect{v}$ and the time derivative of the mapping $\vect{\phi}$ and
+equation \eqref{eqn:weak forms for the dynamic formulation}$_b$,  the extension of the weak form of the balance of linear momentum in \eqref{eqn:three-field formulation for statics}$_a$ to electro-elastodynamics (hence the equation is supplemented with the inertia term). 
+Finally, notice that both weak forms for the Gauss and Faraday laws in \eqref{eqn:weak forms for the dynamic formulation}$_c$ and \eqref{eqn:weak forms for the dynamic formulation}$_d$ are identical to those in the static case in \eqref{eqn:three-field formulation for statics}$_b$ and \eqref{eqn:three-field formulation for statics}$_c$, respectively. 
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\noindent \textit{Remark 3}. When pursuing a Helmholtz-based mixed formulation (see Remark 2), the following action integral can be defined in order to extend the variational principle $\Pi_{\widetilde{W}_{\varPhi}}$ to the case of electro-elastodynamics,
+%
+\begin{equation}\label{eqn:action integral Helmholtz}
+\begin{aligned}
+L_{\widetilde{W}_{\varPhi}}\left(\vect{v},\vect{\phi},\varphi\right) = \int_{t_0}^{t}&\left(\int_{\mathcal{B}_0}\left(\dot{\vect{\phi}} - \frac{1}{2}{\vect{v}}\right)\cdot\rho_0{\vect{v}}\,dV - 
+%
+\int_{\mathcal{B}_0}\widetilde{W}_{\varPhi}\left(\vect{C},\vect{G},C,\vect{E}_0\right)\,dV + \Pi_{\text{ext}}^m\left(\vect{\phi}\right) + \Pi_{\text{ext}}^e\left(\varphi\right)
+\right)\,dt.
+\end{aligned}
+\end{equation}
+
+The stationary conditions of the above action integral \eqref{eqn:action integral Helmholtz} are
+%
+\begin{equation}\label{eqn:weak forms for the dynamic formulation Helmholtz}
+\begin{aligned}
+{\mathcal{W}}_{\vect{v}}&= \int_{\mathcal{B}_0}\left(\vect{v} - \dot{\vect{\phi}}\right)\cdot\rho_0\delta\vect{v}\,dV=0;\\
+%
+{\mathcal{W}}_{\vect{\phi}} &  = \int_{\mathcal{B}_0}\rho_0\dot{\vect{v}}\cdot\delta\vect{\phi}\,dV + \int_{\mathcal{B}_0}\vect{S}:\frac{1}{2}D\vect{C}[\delta\vect{\phi}]\,dV\-  -\int_{\mathcal{B}_0}\vect{f}_0\cdot\delta\vect{\phi}\,dV-
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\delta\vect{\phi}\,dA=0;\\
+%
+{\mathcal{W}}_{\varphi}& =  -\int_{\mathcal{B}_0}\partial_{\vect{E}_0}\widetilde{W}_{\varPhi}\cdot\vect{\nabla}_0\delta\varphi\,dV+  \int_{\mathcal{B}_0}\rho_0^e\delta\varphi\,dV+
+\int_{\partial_\omega\mathcal{B}_0}\omega^e_0\delta\varphi\,dA=0,
+%
+\end{aligned}
+\end{equation}
+%
+with $\vect{S}$ defined in \eqref{eqn:Second Piola Helmholtz} and integration by parts with respect to time has been applied on the second term on the right hand side of \eqref{eqn:weak forms for the dynamic formulation Helmholtz}$_b$. 
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+
+\subsection{Balance laws and integrals in electro-elastodynamics}
+
+Starting with the stationary conditions \eqref{eqn:weak forms for the dynamic formulation} %of the action integral $L_{\widetilde{W}}$ \eqref{eqn:action integral}, 
+%the objective of 
+the following sections  derive the global conservation laws that govern the motion of the EAP.% represented by the domain $\mathcal{B}_0$.
+
+\subsubsection{Global form for conservation of linear momentum}\label{sec:conservation linear momentum global}
+
+For a displacement field $\delta\vect{\phi} = \vect{\xi}$, with $\mathbb{R}^3\ni\vect{\xi}=const.$, the stationary condition in \eqref{eqn:weak forms for the dynamic formulation}$_b$ leads to the global form of the conservation of linear momentum, namely
+%
+\begin{equation}\label{eqn:global conservation linear momentum}
+%
+\dot{\vect{L}} - \vect{F}^{\text{ext}} = \vect{0};\qquad
+%
+{\vect{L}} = \int_{\mathcal{B}_0}\rho_0\vect{v}\,dV;\qquad
+%
+\vect{F}^{\text{ext}} =    
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\,dA
++\int_{\mathcal{B}_0}\vect{f}_0\,dV,
+\end{equation}
+%
+
+where %\eqref{eqn:global conservation linear momentum}
+$\vect{L}$ represents the total linear momentum %of the system 
+and $\vect{F}^{\text{ext}}$, the total external force.
+From \eqref{eqn:global conservation linear momentum} it is possible to conclude that $\vect{L}$ is a constant of motion for the case of vanishing external forces $\vect{F}^{\text{ext}}$.
+
+\subsubsection{Global form for conservation of angular momentum}\label{sec:conservation angular momentum global}
+
+For a rotational field $\delta\vect{\phi} = \vect{\xi}\times\vect{\phi}$, with $\mathbb{R}^3\ni\vect{\xi}=const.$, the stationary condition in \eqref{eqn:weak forms for the dynamic formulation}$_b$ leads to the global form of the conservation of angular momentum, namely
+%
+\begin{equation}\label{eqn:global conservation angular momentum}
+%
+\dot{\vect{J}} - \vect{M}^{\text{ext}} = \vect{0};\qquad
+%
+\vect{J}= \int_{\mathcal{B}_0}\vect{\phi}\times\rho_0{\vect{v}}\,dV;\qquad
+%
+\vect{M}^{\text{ext}} =    
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{\phi}\times\vect{t}_0\,dA
++\int_{\mathcal{B}_0}\vect{\phi}\times\vect{f}_0\,dV,
+\end{equation}
+%
+where $\vect{J}$ represents the total angular momentum and $\vect{M}^{\text{ext}}$, the total external torque. 
+From \eqref{eqn:global conservation angular momentum}, it is clear that $\vect{J}$ is a constant of motion for vanishing external torques $\vect{M}^{\text{ext}}$. 
+
+\subsubsection{Global form for Gauss's law}\label{sec:Gauss law}
+
+Taking $\delta\varphi = \xi$, with $\mathbb{R}\ni{\xi}=const.$, the stationary condition $\mathcal{W}_{\varphi}$ in \eqref{eqn:weak forms for the dynamic formulation}$_c$ leads to the global form of the Gauss' law
+%
+\begin{equation}\label{eqn:Gauss law}
+\int_{\mathcal{B}_0}\rho^e_{0}\,dV + \int_{\partial_{\omega}\mathcal{B}_0}\omega^e_0\,dA=0.
+\end{equation}
+%
+
+Then, for time independent volumetric and surface electrical charges $\rho^e_0$ and $\omega^e_0$, equation \eqref{eqn:Gauss law} dictates that the total electric charge of the system is conserved and equal to zero.
+
+\subsubsection{Global form for conservation of energy}\label{eqn:conservation of energy}
+
+Let us replace the test functions
+$\{\delta\vect{v},\delta\vect{\phi},\delta\varphi,\delta\vect{D}_0\}$ in \eqref{eqn:weak forms for the dynamic formulation} with $\{\dot{\vect{v}},\dot{\vect{\phi}},\dot\varphi,\dot{\vect{D}}_0\}\in\mathbb{V}_0^{\vect{\phi}}\times\mathbb{V}_0^{\vect{\phi}}\times\mathbb{V}^{\varphi}_0\times\mathbb{V}^{\vect{D}_0}$. 
+This yields
+%
+\begin{equation}\label{eqn:weak forms for the dynamic formulation Dirichlet bcs}
+\begin{aligned}
+&\int_{\mathcal{B}_0}\left(\vect{v} - \dot{\vect{\phi}}\right)\cdot\rho_0\dot{\vect{v}}\,dV=0;\\
+%
+&\int_{\mathcal{B}_0}\rho_0\dot{\vect{v}}\cdot\dot{\vect{\phi}}\,dV + \int_{\mathcal{B}_0}\vect{S}:\frac{1}{2}\dot{\vect{C}}\,dV-  \int_{\mathcal{B}_0}\vect{f}_0\cdot\dot{\vect{\phi}}\,dV-
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\dot{\vect{\phi}}\,dA=0 ;\\
+%
+&\int_{\mathcal{B}_0}\vect{D}_0\cdot\vect{\nabla}_0\dot{\varphi}\,dV+  \int_{\mathcal{B}_0}\rho_0^e\dot{\varphi}\,dV + 
+\int_{\partial_{\omega}\mathcal{B}_0}\omega^e_0\dot{\varphi}\,dA=0;\\
+%
+&\int_{\mathcal{B}_0}\dot{\vect{D}}_0\cdot \left(\partial_{\vect{D}_0}\widetilde{W} + \vect{\nabla}_0\varphi\right)\,dV=0.
+%- \int_{\mathcal{B}_0}\delta\vect{D}_0\cdot\frac{\partial \vect{\nabla}_0\varphi\right)\,dV
+%
+\end{aligned}
+\end{equation}
+
+%Use of equation \eqref{eqn:weak forms for the dynamic formulation Dirichlet bcs}$_a$ into the first term of \eqref{eqn:weak forms for the dynamic formulation Dirichlet bcs}$_b$ enables to re-express the later as
+%%
+%\begin{equation}\label{eqn:transformation of inertial term}
+%\int_{\mathcal{B}_0}\rho_0\dot{\vect{v}}\cdot\dot{\vect{\phi}}\,dV = \int_{\mathcal{B}_0}\rho_0\vect{v}\cdot\dot{\vect{v}}\,dV = \dot{K};\qquad
+%K = \int_{\mathcal{B}_0}\frac{1}{2}\rho_0\vect{v}\cdot\vect{v}\,dV,
+%\end{equation}
+%
+
+%Inserting the result in equations \eqref{eqn:DPiextr} into \eqref{eqn:weak forms for the dynamic formulation Dirichlet bcs} and 
+Addition of the four equations in \eqref{eqn:weak forms for the dynamic formulation Dirichlet bcs} leads, in the case of time independent forces $\vect{f}_0$ and $\vect{t}_0$ and charges $\rho^e_0$ and $\omega_0^e$ to
+%
+\begin{equation}\label{eqn:Wvarphi conservation of energy}
+\begin{aligned}
+\dot{K} + \int_{\mathcal{B}_0}\left(\vect{S}:\frac{1}{2}\dot{\vect{C}}
+%
++ \partial_{\vect{D}_0}\widetilde{W}\cdot\dot{\vect{D}}_0\right)\,dV + \int_{\mathcal{B}_0}\left(\vect{D}_0\cdot\vect{\nabla}_0\dot{\varphi} + \dot{\vect{D}}_0\cdot\vect{\nabla}_0\varphi\right)\,dV -\dot{\Pi}^m_{\text{ext}}\left(\vect{\phi}\right)  -\dot{\Pi}^e_{\text{ext}}\left(\varphi\right) = 0,
+%
+\end{aligned}
+\end{equation}
+%
+%where use of  time independent forces $\vect{f}_0$ and $\vect{t}_0$ and charges $\rho^e_0$ and $\omega_0^e$)
+%%
+%\begin{equation}\label{eqn:DPiextr}
+%\begin{aligned}
+%\int_{\mathcal{B}_0}\vect{f}_0\cdot\dot{\vect{\phi}}\,dV + 
+%\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\dot{\vect{\phi}}\,dA  = \dot{\Pi}^m_{\text{ext}}\left({\vect{\phi}}\right);\qquad
+%%
+%\int_{\mathcal{B}_0}{\rho}^e_0\dot{{\varphi}}\,dV + 
+%\int_{\partial_{\omega}\mathcal{B}_0}\omega^e_0\dot{\varphi}\,dA  = -\dot{\Pi}^e_{\text{ext}}\left({{\varphi}}\right).
+%%
+%\end{aligned}
+%\end{equation}
+where $K=\int_{\mathcal{B}_0}\frac{1}{2}\rho_0\vect{v}\cdot\vect{v}\,dV$ in \eqref{eqn:Wvarphi conservation of energy} represents the total kinetic energy of the system. 
+%
+Finally, equation \eqref{eqn:Wvarphi conservation of energy} can be re-written as
+%
+\begin{equation}\label{eqn:Wvarphi conservation of energy I}
+\begin{aligned}
+\dot{K} + \int_{\mathcal{B}_0}\dot{\widetilde{W}}\left(\vect{C},\vect{G},C,\vect{D}_0\right)\,dV 
+%
++\int_{\mathcal{B}_0}\frac{d}{dt}\left(\vect{D}_0\cdot\vect{\nabla}_0{\varphi}\right)\,dV -\dot{\Pi}^m_{\text{ext}}\left(\vect{\phi}\right) - \dot{\Pi}^e_{\text{ext}}\left(\varphi\right) = 0.
+%
+\end{aligned}
+\end{equation}
+
+
+%
+%\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+%
+%\noindent \textit{Remark 3.} Let us consider a field $\vect{A}$\footnote{ In general $\vect{A}$ could be a second order tensor, a vector or a scalar} that depends on the deformation gradient tensor, namely $\vect{A} = \vect{A}\left(\vect{F}\right)$. 
+%The directional derivative of $\vect{A}$ with respect to $\dot{\vect{\phi}}$ and its time derivative are
+%%
+%\begin{equation}
+%D\vect{A}[\dot{\vect{\phi}}] = \frac{\partial\vect{A}}{\partial\vect{F}}:D\vect{F}[\delta\dot{\vect{\phi}}];\qquad
+%\dot{\vect{A}} = \frac{\partial\vect{A}}{\partial\vect{F}}:\dot{\vect{F}} = \frac{\partial\vect{A}}{\partial\vect{F}}:\vect{\nabla}_0\vect{v}.
+%\end{equation}
+%
+%Replacing $\delta\vect{\phi}$ with $\dot{\vect{\phi}}$ in \eqref{eqn:directional derivative of F} leads to
+%$D\vect{F}[\dot{\vect{\phi}}] = \vect{\nabla}_0\vect{v}$, 
+%which enables to conclude that $D\vect{A}[\dot{\vect{\phi}}] = \dot{\vect{A}}$. 
+%The same can be concluded for the set of symmetric strain measures $\{\vect{C},\vect{G},C\}$ \eqref{eqn:Cofactor and Jacobian symmetric}, namely
+%%
+%\begin{equation}\label{eqn:Cdot Gdot Cdot}
+%D\vect{C}[\dot{\vect{\phi}}] = \dot{\vect{C}};\qquad
+%D\vect{G}[\dot{\vect{\phi}}] = \dot{\vect{G}} = \vect{C}\Cross\dot{\vect{C}};\qquad
+%DC[\dot{\vect{\phi}}] = \dot{C} = \vect{G}:\dot{\vect{C}}.
+%\end{equation}
+%
+%The result in \eqref{eqn:Cdot Gdot Cdot} proves the equivalence of the second term on the right-hand side of \eqref{eqn:weak forms for the dynamic formulation Dirichlet bcs} and \eqref{eqn:Wvarphi conservation of energy} when written in terms of  $\{D\vect{C}[\dot{\vect{\phi}}],D\vect{G}[\dot{\vect{\phi}}],D{C}[\dot{\vect{\phi}}]\}$ or in terms of  $\{\dot{\vect{C}},\dot{\vect{G}},\dot{C}\}$.
+%
+%\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+
+
+It is therefore clear that in the case of time independent forces and electric charges, the following condition holds
+%
+\begin{equation}\label{eqn:conservation 1}
+\dot{\mathcal{H}}_{\widetilde{W}} = 0;\qquad
+\mathcal{H}_{\widetilde{W}} =K + \int_{\mathcal{B}_0}\widetilde{W}\left(\vect{C},\vect{G},C,\vect{D}_0\right)\,dV + \int_{\mathcal{B}_0}\vect{D}_0\cdot\vect{\nabla}_0\varphi\,dV - \Pi^m_{\text{ext}}\left(\vect{\phi}\right) - \Pi^e_{\text{ext}}\left(\varphi\right),
+\end{equation}
+%
+and therefore the scalar field $\mathcal{H}_{\widetilde{W}}$ is preserved throughout the motion of the EAP. 
+Note that $\mathcal{H}_{\widetilde{W}}$ is the total Hamiltonian, defined through the following Legendre transformation
+%
+\begin{equation}\label{eqn:legendre transform for the Hamiltonian}
+\mathcal{H}_{\widetilde{W}}\left(\vect{p},\vect{\phi},\varphi,\vect{D}_0\right) = \sup_{\vect{v}}\left\{\int_{\mathcal{B}_0}\vect{p}\cdot\vect{v}\,dV - L_{\widetilde{W}}\left(\vect{v},\vect{\phi},\varphi,\vect{D}_0\right)\right\},
+\end{equation}
+%
+where $\vect{p} = \rho_0\vect{v}$ denotes the linear momentum per unit undeformed volume $\mathcal{B}_0$.
+%
+%where $\vect{p} = \rho_0\vect{v}$ in \eqref{eqn:legendre transform for the Hamiltonian} represents the linear momentum per unit undeformed volume.
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\noindent \textit{Remark 4}. Identical results to those in Sections \ref{sec:conservation linear momentum global}, \ref{sec:conservation angular momentum global} and \ref{sec:Gauss law} can be obtained for the stationary conditions in \eqref{eqn:weak forms for the dynamic formulation Helmholtz} of the Helmholtz-based action integral $L_{\widetilde{W}_{\varPhi}}$ \eqref{eqn:action integral Helmholtz} regarding conservation of linear momentum, angular momentum, and the Gauss law, respectively. 
+For the energy conservation, a similar result to that in equation \eqref{eqn:conservation 1} is obtained as
+%
+\begin{equation}\label{eqn:conservation 1 Helmholtz}
+\dot{\mathcal{H}}_{\widetilde{W}_{\varPhi}} = 0;\qquad
+\mathcal{H}_{\widetilde{W}_{\varPhi}} =K + \int_{\mathcal{B}_0}\widetilde{W}_{\varPhi}\left(\vect{C},\vect{G},C,\vect{E}_0\right)\,dV  - \Pi^m_{\text{ext}}\left(\vect{\phi}\right) - \Pi^e_{\text{ext}}\left(\varphi\right),
+\end{equation}
+%
+where $\mathcal{H}_{\widetilde{\varPhi}}$ is the counterpart of $\mathcal{H}_{\widetilde{W}}$ for the case of the Helmholtz-based formulation. 
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+%
+%\noindent \textit{Remark 3}. Identical results to those in sections \ref{sec:conservation linear momentum global}, \ref{sec:conservation angular momentum global} and \ref{sec:Gauss law} can be obtained for the stationary conditions in \eqref{eqn:weak forms for the dynamic formulation Helmholtz} of the action integral $L_{\widetilde{W}_{\varPhi}}$ \eqref{eqn:action integral Helmholtz} regarding conservation of linear momentum, angular momentum, and the Gauss law, respectively. 
+%For the energy conservation, a similar result to that in equation \eqref{eqn:conservation 1} is obtained as
+%%
+%\begin{equation}\label{eqn:conservation 1 Helmholtz}
+%\frac{d}{dt}\mathcal{H}_{\widetilde{W}_{\varPhi}} = 0;\qquad
+%\mathcal{H}_{\widetilde{W}_{\varPhi}} =K + \int_{\mathcal{B}_0}\widetilde{W}_{\varPhi}\left(\vect{C},\vect{G},C,\vect{E}_0\right)\,dV  - \Pi^m_{\text{ext}}\left(\vect{\phi}\right) - \Pi^e_{\text{ext}}\left(\varphi\right),
+%\end{equation}
+%%
+%where $\mathcal{H}_{\widetilde{\varPhi}}$ is the counterpart of $\mathcal{H}_{\widetilde{W}}$ for the case of the two-field $\{\vect{\phi},\varphi\}$ formulation.
+%%
+%
+%\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+
+%\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+%
+%\noindent \textit{Remark 3.} An alternative expression for conservation of energy can be obtained in terms of the Helmholtz energy functional $\varPhi\left(\vect{C},\vect{D}_0\right)$ \eqref{eqn:Legendre transform}. 
+%In order to obtain it, let us add the three expressions in equation \eqref{eqn:Wvarphi conservation of energy} leads to
+%%
+%\begin{equation}\label{eqn:energy I}
+%\begin{aligned}
+%\dot{\Pi}_{\text{ext}}^m & =
+%%
+%%&
+%%=
+%\dot{K} + \int_{\mathcal{B}_0}\dot{W}_{\text{sym}}\,dV  +
+%%
+%\int_{\mathcal{B}_0}\vect{D}_0\cdot\vect{\nabla}_0\dot{\varphi}\,dV+
+%%
+%\int_{\mathcal{B}_0}\dot{\vect{D}}_0\cdot\vect{\nabla}_0\varphi\,dV\\
+%%
+%&=\dot{K} + \int_{\mathcal{B}_0}\dot{W}_{\text{sym}}\,dV  -
+%%
+%\int_{\mathcal{B}_0}\vect{D}_0\cdot\dot{\vect{\Sigma}}^{\text{sym}}_{\vect{D}_0}\,dV-
+%%
+%\int_{\mathcal{B}_0}\dot{\vect{D}}_0\cdot\vect{\Sigma}^{\text{sym}}_{\vect{D}_0}\,dV\\
+%%
+%&=\dot{K} + 
+%%
+%\int_{\mathcal{B}_0}\frac{d}{dt}\left({W}_{\text{sym}} - \vect{D}_0\cdot{\vect{\Sigma}}^{\text{sym}}_{\vect{D}_0}\right)\,dV,
+%%
+%\end{aligned}
+%\end{equation}
+%%
+%where, since $\vect{D}_0$, $\dot{\vect{D}}_0$ belong to the same functional space $\mathbb{V}^{\vect{D}_0}$, by virtue of equation \eqref{eqn:Wvarphi conservation of energy}$_c$ the first term on the right-hand side of \eqref{eqn:energy I} into its equivalent expression on the .... 
+%Making use of equation  \eqref{eqn:Legendre transform} it is possible to re-write \eqref{eqn:energy I} as
+%
+%\begin{equation}\label{eqn:energy II}
+%\begin{aligned}
+%\dot{\Pi}_{\text{ext}}^m + \dot{\Pi}_{\text{ext}}^e & =
+%\dot{K} + 
+%%
+%\int_{\mathcal{B}_0}\dot{\varPhi}_{\text{sym}}\left(\vect{C},\vect{E}_0\right)\,dV.
+%%
+%\end{aligned}
+%\end{equation}
+
+%It is therefore clear that in the case of time independent forces and electric charges, the following condition holds
+%%
+%\begin{equation}\label{eqn:conservation 2}
+%\frac{d}{dt}\mathcal{H} = 0;\qquad
+%\mathcal{H} = K + \int_{\mathcal{B}_0}\varPhi_{\text{sym}}\left(\vect{C},\vect{E}_0\right)\,dV - \Pi^m_{\text{ext}}\left(\vect{\phi}\right)
+%-\Pi^e_{\text{ext}}\left(\varphi\right),
+%\end{equation}
+%%
+%%and therefore the scalar field $\mathcal{H}$ is preserved throughout the motion of the EAP. 
+%%Note that $\mathcal{H}$ is the total Hamiltonian, defined through the following Legendre transformation
+%%
+%\begin{equation}\label{eqn:legendre transform for the Hamiltonian}
+%\mathcal{H}\left(\vect{x},\vect{p},\varphi,\vect{D}_0\right) = \sup_{\vect{p}}\left\{\int_{\mathcal{B}_0}\vect{p}\cdot\vect{v}\,dV - \int_{\mathcal{B}_0}\mathcal{L}\left(\vect{\phi},\dot{\vect{\phi}},\varphi,\vect{D}_0\right)\,dV +  \Pi^m_{\text{ext}}\left(\vect{\phi}\right) + 
+%\Pi^e_{\text{ext}}\left(\varphi\right)\right\},
+%\end{equation}
+%%
+%where $\vect{p} = \rho_0\vect{v}$ in \eqref{eqn:legendre transform for the Hamiltonian} represents the linear momentum per unit undeformed volume.
+%
+%\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+

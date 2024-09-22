@@ -1,0 +1,142 @@
+
+\subsection{EM scheme}\label{sec:EM scheme Betsch}
+It is instructive to highlight the differences of the EM scheme in \eqref{eqn:weak forms for proposed time integrator} and that previously developed in Reference \cite{Betsch2018Thermo}. The latter comprises the following algorithmic weak forms
+%
+\begin{equation}\label{eqn:weak forms for proposed time integrator Hesch approach}
+\begin{aligned}
+\left(\mathcal{W}_{\vect{v}}\right)_{\text{algo}}&=\int_{\mathcal{B}_0}\left(\vect{v}_{n+1/2} - \frac{\Delta\vect{\phi}}{\Delta t}\right)\cdot\rho_0\vect{w}_{\vect{v}}\,dV = 0;\\
+%
+\left(\mathcal{W}_{\vect{\phi}}\right)_{\text{algo}}&=\int_{\mathcal{B}_0}\rho_0\frac{\Delta\vect{v}}{\Delta t}\cdot\vect{w}_{\vect{\phi}}\,dV + \int_{\mathcal{B}_0}\vect{S}_{\text{algo}}:\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}\,dV-  \int_{\mathcal{B}_0}\vect{f}_{0_{n+1/2}}\cdot\vect{w}_{\vect{\phi}}\,dV\\&-
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_{0_{n+1/2}}\cdot\vect{w}_{\vect{\phi}}\,dA = 0;\\
+%
+\left(\mathcal{W}_{\theta}\right)_{\text{algo}}&=  \int_{\mathcal{B}_0}\frac{\Delta\theta}{\Delta t}w_{\theta}\,dV + \int_{\mathcal{B}_0}\left(\frac{\Delta \vect{C}}{\Delta t}:\vect{G}_{n+1/2}\right)(D_{\theta}\eta)^{-1}({\partial_{C}\eta}_{n+1/2}) w_{\theta}\,dV\\&  - \int_{\mathcal{B}_0}\vect{Q}_{n+1/2}\cdot\vect{\nabla}_0((D_{\theta}\hat{U})^{-1}w_{\theta})\,dV - \int_{\mathcal{B}_0}(D_{\theta}\hat{U})^{-1}{R_{\theta}}_{n+1/2}w_{\theta}\,dV\\& - \int_{\partial_{Q}\mathcal{B}_{0}}(D_{\theta}\hat{U})^{-1}{Q_{\theta}}_{n+1/2}w_{\theta}\,dA = 0.
+%
+\end{aligned}
+\end{equation}
+
+In above equation \eqref{eqn:weak forms for proposed time integrator Hesch approach}, $\vect{S}_{\text{algo}}$ is defined as
+%
+\begin{equation}\label{eqn:approximated expression for DWdeltavarphi Betsch}
+\begin{aligned}
+\vect{S}_{\text{algo}} = 2\left(D_{\vect{C}}\hat{U} + D_{\vect{G}}\hat{U}\Cross\vect{C}_{\text{algo}} + D_{C}\hat{U}\vect{G}_{\text{algo}} - \theta_{\text{algo}}\partial_C\eta_{n+1/2}\vect{G}_{n+1/2}\right);\qquad
+%
+\theta_{\text{algo}}=D_{\theta}\hat{U}(D_{\theta}\eta)^{-1},
+%
+\end{aligned}
+\end{equation}
+%
+with $\vect{C}_{\text{algo}}$ and $\vect{G}_{\text{algo}}$ in \eqref{eqn:DDC} and where the internal energy energy functional $\hat{U}$ is defined as in equation \eqref{eqn:Legendre transform}, i.e.
+%
+\begin{equation}\label{eqn:pseudo-internal energy}
+\hat{U}(\vect{C},\vect{G},C,\theta)= \widetilde{U}(\vect{C},\vect{G},C,\eta(C,\theta)) = \theta\eta(C,\theta) + \widetilde{W}(\vect{C},\vect{G},C,\theta),
+\end{equation}
+%
+with the particularity that the entropy is re-expressed as a function $\theta$ (and of $C$). Apart from the fact that this formulation relies on the internal energy functional $\hat{U}(\vect{C},\vect{G},C,\theta)$ (as opposed to the Helmholtz free energy functional $\widetilde{W}(\vect{C},\vect{G},C,\theta)$ for the EM scheme in \eqref{eqn:weak forms for proposed time integrator}), the main differences between both approaches are:
+%
+\begin{enumerate}
+	\item The EM scheme in \eqref{eqn:weak forms for proposed time integrator Hesch approach} relies on the local form \eqref{eqn:local form energy}, or more specifically on
+	\begin{equation}
+	\dot{\eta} + \frac{1}{\theta}\text{DIV}\vect{Q} - \frac{1}{\theta}R_{\theta}  = 0,
+\end{equation}
+%
+wheareas the proposed scheme in \eqref{eqn:weak forms for proposed time integrator} relies on the local form in \eqref{eqn:local form energy our format}.
+
+\item The algorithmic stresses $\vect{S}_{\text{algo}}$ in \eqref{eqn:approximated expression for DWdeltavarphi Betsch} (for the EM scheme in \ref{eqn:weak forms for proposed time integrator Hesch approach}) and in \eqref{eqn:approximated expression for DWdeltavarphi} (for the proposed EM scheme in \eqref{eqn:weak forms for proposed time integrator}) differ considerably. In particular, the expression in equation \eqref{eqn:approximated expression for DWdeltavarphi Betsch} needs to incorporate a fourth term not present in equation \eqref{eqn:approximated expression for DWdeltavarphi}. Notice that in the more generic case where the entropy could possibly depend also on $\vect{C}$ and $\vect{G}$ (and not just on $C$, as it has been assumed in this paper), this would entail the addition of two extra terms in \eqref{eqn:approximated expression for DWdeltavarphi Betsch} related to both $\vect{C}$ and $\vect{G}$, bringing cumbersome difficulties in the formulation.
+
+\item The second term on the right hand side of equation \eqref{eqn:weak forms for proposed time integrator Hesch approach} (which entails more complexity for a consistent linearisation of the set of weak forms) is not present in the proposed EM scheme in \eqref{eqn:weak forms for proposed time integrator}.
+
+\item The term $\vect{\nabla}_0((D_{\theta}\hat{U})^{-1}w_{\theta})$ on equation \eqref{eqn:weak forms for proposed time integrator Hesch approach}$_c$ can potentially entail excessive complexity when carrying out a consistent linearisation of \eqref{eqn:weak forms for proposed time integrator Hesch approach}$_c$. For the specific model considered in equations \eqref{eqn:MRv2}, \eqref{eqn:thermal contribution} and \eqref{eqn:coupled contribution} this is not the case, as this term is constant.% (this can be seen in equation \eqref{eqn:discrete derivatives hatU}). %However, for not necessarily very complex models this introduces a complexity not present in the current proposed approach in \eqref{eqn:weak forms for proposed time integrator}. 
+
+\item The EM scheme in \eqref{eqn:weak forms for proposed time integrator Hesch approach} requires the definition of the discrete derivatives of the internal energy functional $\hat{U}(\vect{C},\vect{G},C,\theta)$ and in addition, the discrete derivative of the entropy $\eta(C,\theta)$, namely $D_{\theta}\eta$ (see \eqref{eqn:weak forms for proposed time integrator Hesch approach}$_c$).
+
+\end{enumerate}
+
+
+%\subsection{Particularisation of descrite derivatives.}
+%
+%Although the EM scheme in \eqref{eqn:weak forms for proposed time integrator Hesch approach} exhibits certain drawbacks with respect to the proposed scheme  in \eqref{eqn:weak forms for proposed time integrator} (see enumeration in Section \ref{sec:EM scheme Betsch}), the associated directional derivatives can be shown to be slightly simpler with respect to those in \eqref{eqn:MR discrete derivatives} for the specific constitutive model presented in equations \eqref{eqn:MR model}, \eqref{eqn:thermal contribution} and \eqref{eqn:coupled contribution}. For this model, the pseudo-internal energy functional $\hat{U}(\vect{C},\vect{G},C,\theta)$ in \eqref{eqn:pseudo-internal energy} can be particularised as 
+%%
+%\begin{equation}\label{eqn:additive decomposition pseudo-entropy}
+%\begin{aligned}
+%\hat{U}\left(\vect{C},\vect{G},C,\theta\right)& = \theta\eta(C,\theta) + \widetilde{W}_{m_{\vect{C}}}(\vect{C}) + \widetilde{W}_{m_{\vect{G}}}(\vect{G}) + \widetilde{W}_{m_{{C}}}(C) + \widetilde{W}_{\theta}\left(\theta\right) + 
+%\widetilde{W}_c\left(C,\theta\right).
+%\end{aligned}
+%\end{equation}
+%
+%Equation \eqref{eqn:pseudo-internal energy} can be conveniently re-expressed as
+%%
+%\begin{equation}\label{eqn:additive decomposition pseudo-entropy II}
+%\begin{aligned}
+%\hat{U}\left(\vect{C},\vect{G},C,\theta\right)& = \widetilde{W}_{m_{\vect{C}}}(\vect{C}) + \widetilde{W}_{m_{\vect{G}}}(\vect{G}) + \widetilde{W}_{m_{{C}}}(C) + \widetilde{W}_{\theta}\left(\theta\right) + 
+%\widetilde{W}_c\left(C,\theta\right) + \theta\eta(C,\theta);\\
+%%
+%&=\hat{U}_{m_{\vect{C}}}(\vect{C}) + \hat{U}_{m_{\vect{G}}}(\vect{G}) + \hat{U}_c(C,\theta),
+%\end{aligned}
+%\end{equation}
+%%
+%where
+%%
+%\begin{equation}\label{eqn:pseudo-internal energy II}
+%\hat{U}_{m_{\vect{C}}}(\vect{C}) = \widetilde{W}_{m_{\vect{C}}}(\vect{C});\qquad
+%%
+%\hat{U}_{m_{\vect{G}}}(\vect{G}) = \widetilde{W}_{m_{\vect{G}}}(\vect{G});\qquad
+%%
+%\hat{U}_c(C,\theta)= \widetilde{W}_{\theta}\left(\theta\right) + 
+%\widetilde{W}_c\left(C,\theta\right) + \theta\eta(C,\theta).
+%\end{equation}
+%
+%In order to re-express the entropy $\eta$ as $\eta=\eta(C,\theta)$, it is necessary to revisit equation \eqref{eqn:Piola and electric field in extended formulation}, from which we obtain
+%%
+%\begin{equation}\label{eqn:entropy for the model}
+%\eta:=-\partial_{\theta}\widetilde{W} = \kappa\left(\theta-\theta_0 - \theta\ln\frac{\theta}{\theta_0}\right) - 3\beta(\theta-\theta_0)\widetilde{f}(C).
+%\end{equation}
+%
+%Introduction of \eqref{eqn:entropy for the model} into \eqref{eqn:pseudo-internal energy II} enables to express the contribution $\hat{U}_c(C,\theta)$ as
+%%
+%\begin{equation}
+%\hat{U}_c(C,\theta) = \kappa(\theta - \theta_0) + 3\beta\theta_0\widetilde{f}(C).
+%\end{equation}
+%
+%Therefore, for the Mooney-Rivlin model, $\hat{U}(\vect{C},\vect{G},C,\theta)$ can be finally expressed as
+%%
+%\begin{equation}\label{eqn:hat U MR}
+%\begin{aligned}
+%\hat{U}(\vect{C},\vect{G},C,\theta)& = \frac{\mu_1}{2}\text{tr}\vect{C} + \frac{\mu_2}{2}\text{tr}\vect{C} + h(C^{1/2}) + \kappa(\theta - \theta_0);\\
+%%
+%h(C^{1/2})&=- (\mu_1+2\mu_2)\ln C^{1/2} + \frac{\lambda}{2}(C^{1/2}-1)^2 + 3\beta\theta_0\widetilde{f}(C). 
+%\end{aligned}
+%\end{equation}
+%
+%The discrete derivatives of $\hat{U}$ in \eqref{eqn:hat U MR} can then be computed from \ref{sec:properties directionality} as
+%%
+%\begin{equation}\label{eqn:discrete derivatives hatU}
+%\begin{aligned}
+%D_{\vect{C}}\hat{U}& = \frac{\mu_1}{2}\vect{I};&\qquad
+%%
+%D_{\vect{G}}\hat{U}& = \frac{\mu_2}{2}\vect{I};\\
+%%
+%D_C{\hat{U}} & = \frac{h(C_{n+1})-h(C_{n})}{\Delta C};&\qquad
+%%
+%D_{\theta}\hat{U} & = \kappa.
+%%
+%\end{aligned}
+%\end{equation}
+%
+%Finally, the discrete derivative  $D_{\theta}\eta$ can be obtained as
+%%
+%\begin{equation}
+%D_{\theta}\eta = \frac{1}{2}\frac{\hat{U}_c(C_{n},\theta_{n+1})-\hat{U}_c(C_{n},\theta_n)}{\Delta \theta} + \frac{1}{2}\frac{\hat{U}_c(C_{n+1},\theta_{n+1})-\hat{U}_c(C_{n+1},\theta_{n})}{\Delta \theta}.
+%\end{equation}
+%
+%%
+%%\begin{equation}\label{eqn:MR}
+%%\begin{aligned}
+%%{W}_m\left(\vect{F},\vect{H},J\right)& = \frac{\mu_1}{2}II_{\vect{F}} + \frac{\mu_2}{2}II_{\vect{H}} - (\mu_1+2\mu_2)\ln J + \frac{\lambda}{2}(J-1)^2;\\
+%%%
+%%\widetilde{W}_m\left(\vect{C},\vect{G},C\right)& = \frac{\mu_1}{2}\text{tr}\vect{C} + \frac{\mu_2}{2}\text{tr}\vect{G} - (\mu_1+2\mu_2)\ln C^{1/2} + \frac{\lambda}{2}(C^{1/2}-1)^2,
+%%\end{aligned}
+%%\end{equation}
+%%
+%
+%
+%

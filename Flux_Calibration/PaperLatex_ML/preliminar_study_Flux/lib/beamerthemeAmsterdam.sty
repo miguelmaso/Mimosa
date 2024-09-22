@@ -1,0 +1,72 @@
+\DeclareOptionBeamer{compress}{\beamer@compresstrue}
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+
+
+\useoutertheme[footline=authortitle]{miniframes}
+\useinnertheme{circles}
+\usecolortheme{whale}
+\usecolortheme{orchid}
+\definecolor{tugred}{RGB}{110,159,195}
+\definecolor{tugred2}{RGB}{48,101,139}
+
+
+
+
+% \definecolor{beamer@blendedblue}{rgb}{0.137,0.466,0.741}
+
+\setbeamercolor{structure}{fg=beamer@blendedblue}
+\setbeamercolor{titlelike}{parent=structure}
+\setbeamercolor{frametitle}{fg=black}
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{item}{fg=tugred2}
+\setbeamercolor{navigation symbols}{fg=tugred}
+\setbeamercolor{sectionsubsection in toc}{fg=tugred2}
+\setbeamercolor{subsection in toc}{fg=tugred2}
+
+\setbeamercolor{alerted text}{fg=tugred2}
+
+\setbeamerfont{subsection in head/foot}{size=\footnotesize}
+
+
+\definecolor{beamer@blendedblue}{RGB}{100,149,190}
+
+
+
+\setbeamertemplate{itemize items}[ball]
+\setbeamertemplate{enumerate items}[ball]
+\setbeamertemplate{sections/subsections in toc}[ball]
+\setbeamerfont{section in toc}{size=\small}
+
+
+% \usepackage{tikz}
+% \usetikzlibrary{shadings}
+% \definecolor{secinhead}{RGB}{249,196,95}
+% \definecolor{shadowbg}{RGB}{51,51,51}
+% 
+% \setbeamercolor{secsubsec}{fg=secinhead,bg=black}
+% \setbeamercolor{shadow}{fg=secinhead,bg=shadowbg}
+% 
+% % \setbeamertemplate{headline}
+% % {
+% %  % \leavevmode%
+% % %   \hbox{%
+% % %   \begin{beamercolorbox}[wd=\paperwidth,ht=8.25ex,dp=3.5ex]{secsubsec}%
+% % %     \raggedright
+% % %     \hspace*{2em}%
+% % %     {\sffamily\Large\color{secinhead}\thesection.~\insertsection\hfill\insertsubsection}%
+% % %     \hspace*{2em}%
+% % %   \end{beamercolorbox}%
+% % %   }\vskip-1pt%
+% %   \hbox{%
+% %   \tikz\draw[draw=none,top color=black,bottom color=shadowbg!60] (0,0) rectangle (\paperwidth,0.5);
+% %   }%
+% % }
+% 
+% 
+
+
+\mode
+<all>

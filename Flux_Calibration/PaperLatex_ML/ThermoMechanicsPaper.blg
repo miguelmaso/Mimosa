@@ -1,0 +1,57 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: ThermoMechanicsPaper.aux
+Reallocating 'name_of_file' (item size: 1) to 6 items.
+The style file: plain.bst
+Reallocating 'name_of_file' (item size: 1) to 7 items.
+Database file #1: biblio.bib
+Warning--I'm ignoring Bonet_hyperbolicity_partI_2015's extra "author" field
+--line 126 of file biblio.bib
+Warning--I didn't find a database entry for "HORAK_electro"
+Warning--empty year in Bonet_hyperbolicity_partIII_2019
+Warning--can't use both author and editor fields in deSouza_book
+Warning--empty publisher in deSouza_book
+Warning--can't use both author and editor fields in Marsden_book
+Warning--empty publisher in Marsden_book
+You've used 29 entries,
+            2118 wiz_defined-function locations,
+            694 strings with 9563 characters,
+and the built_in function-call counts, 9266 in all, are:
+= -- 882
+> -- 416
+< -- 4
++ -- 172
+- -- 134
+* -- 661
+:= -- 1573
+add.period$ -- 91
+call.type$ -- 29
+change.case$ -- 145
+chr.to.int$ -- 0
+cite$ -- 34
+duplicate$ -- 344
+empty$ -- 754
+format.name$ -- 134
+if$ -- 1934
+int.to.chr$ -- 0
+int.to.str$ -- 29
+missing$ -- 37
+newline$ -- 151
+num.names$ -- 60
+pop$ -- 149
+preamble$ -- 1
+purify$ -- 124
+quote$ -- 0
+skip$ -- 218
+stack$ -- 0
+substring$ -- 604
+swap$ -- 45
+text.length$ -- 4
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 100
+warning$ -- 5
+while$ -- 83
+width$ -- 31
+write$ -- 318
+(There were 7 warnings)

@@ -1,0 +1,133 @@
+\usepackage[english]{babel}
+\usepackage{xcolor}
+\usepackage{lipsum}
+\usepackage[latin1]{inputenc}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage{verbatim}
+\usepackage{epsfig}
+%\usepackage{skeycommand}
+\usepackage{amssymb,bm,amsbsy,graphicx,color,amsmath,upgreek}
+%\usepackage{amsmath}
+%\usepackage[customcolors]{hf-tikz}
+\usepackage{fancyvrb}
+%\usepackage{multimedia}
+\usepackage{movie15}
+\usepackage{subfigure}
+\newcommand{\Cross}{\mathbin{\tikz [x=1.4ex,y=1.4ex,line width=.25ex] \draw (0.1,0.1) -- (0.9,0.9) (0.1,0.9) -- (0.9,0.1);}}%
+%\usepackage{animate}
+\usefonttheme[onlymath]{serif}
+
+%
+\setbeamercolor{postit}{fg=black,bg=cyan!20!white}
+\setbeamercolor{postit2}{fg=black,bg=red!20!white}
+
+\usepackage[ps2pdf]{thumbpdf}
+\usepackage{hyperref}
+\usepackage{epstopdf}
+\epstopdfsetup{update}
+
+
+% DEFINE COLORS
+\definecolor{dkgreen}{rgb}{0.1,0.4,0.2}
+\definecolor{lblue}{rgb}{0.3,0.6,1}
+\definecolor{americanrose}{rgb}{1.0, 0.15, 0.25}
+\definecolor{dkcyan}{rgb}{0.0, 0.55, 0.55}
+\definecolor{dklavender}{rgb}{0.45, 0.31, 0.59}
+\definecolor{dkcoral}{rgb}{0.75, 0.36, 0.3}
+\definecolor{dkbrown}{rgb}{0.4, 0.26, 0.13}
+%\definecolor{lyellow}{rgb}{0.98, 0.94, 0.75}\\
+
+% DEFINE LENGTHS
+\newcommand{\cs}{\hspace{3mm}}
+\newlength{\width}
+\newlength{\height}
+\newlength{\sep}
+\newlength{\miniPageW}
+\newlength{\imageH}
+\newlength{\imageW}
+\setlength{\imageH}{1.42cm}
+
+% EQUATION BOX
+\usepackage{empheq}
+\usepackage[most]{tcolorbox}
+\newtcbox{\equationboxblue}[1][]
+{
+	left=2pt, right=2pt, top=2pt, bottom=2pt, nobeforeafter, math upper, tcbox raise base, enhanced, colframe=red, colback=green!10, boxrule=0.5pt, #1
+}
+\newtcbox{\equationboxyellow}[1][]
+{
+	left=2pt, right=2pt, top=2pt, bottom=2pt, nobeforeafter, math upper, tcbox raise base, enhanced, colframe=red, colback=yellow!10, boxrule=0.5pt, #1
+}
+\newtcbox{\equationboxred}[1][]
+{
+	left=2pt, right=2pt, top=2pt, bottom=2pt, nobeforeafter, math upper, tcbox raise base, enhanced, colframe=orange, colback=red!3, boxrule=0.5pt, #1
+}
+\newtcbox{\equationboxgreen}[1][]
+{
+	left=3pt, right=3pt, top=3pt, bottom=3pt, nobeforeafter, math upper, tcbox raise base, enhanced, colframe=blue, colback=green!7, boxrule=0.5pt, #1
+}
+\newtcbox{\equationboxblack}[1][]
+{
+	left=2pt, right=2pt, top=2pt, bottom=2pt, nobeforeafter, math upper, tcbox raise base, enhanced, colframe=black, colback=yellow!10, boxrule=0.5pt, #1
+}
+\newtcolorbox{tcolorboxred}[1]
+{
+	left=3pt, right=3pt, top=3pt, bottom=2pt, colback=yellow!5!white, colframe=red!90!black,fonttitle=\bfseries,boxrule=1pt,title=#1
+}
+\newtcolorbox{tcolorboxgreen}[1]
+{
+	left=3pt, right=3pt, top=3pt, bottom=2pt, colback=yellow!5!white, colframe=green!50!black,fonttitle=\bfseries,boxrule=1pt,title=#1
+}
+\newtcolorbox{tcolorboxorange}[1]
+{
+	left=3pt, right=3pt, top=2pt, bottom=2pt, colback=yellow!5!white, colframe=orange!95!black,fonttitle=\bfseries,boxrule=1pt,title=#1
+}
+
+\NewDocumentCommand{\framecolorbox}{oommm}
+ {% #1 = width (optional)
+  % #2 = inner alignment (optional)
+  % #3 = frame color
+  % #4 = background color
+  % #5 = text
+  \IfValueTF{#1}
+   {%
+    \IfValueTF{#2}
+     {\fcolorbox{#3}{#4}{\makebox[#1][#2]{#5}}}
+     {\fcolorbox{#3}{#4}{\makebox[#1]{#5}}}%
+   }
+   {\fcolorbox{#3}{#4}{#5}}%
+ }
+ 
+\usepackage{listings}
+\lstset { %
+	frame=shadowbox,
+	frame=single,
+	frame=b,
+    language=C++,
+	aboveskip=3mm,
+	belowskip=3mm,    
+    backgroundcolor=\color{black!3},
+	basicstyle={\small\ttfamily},    
+    basicstyle=\footnotesize,
+	breaklines=true,
+	breakatwhitespace=true,
+	showspaces=false,	
+%	showtabs=false,	
+	captionpos=t,    
+}
+
+\lstset{emph={%  
+    solve, ==, dimensionedTensor, ==, FoamFile, ==, Description, --%
+    },emphstyle={\color{dkgreen}\bfseries}%
+}%
+
+\AtBeginSection[]
+{
+   \begin{frame}%[label=recurring_outline]
+       \frametitle{Outline}
+       \tableofcontents[currentsection]
+   \end{frame}
+}

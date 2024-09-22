@@ -1,0 +1,171 @@
+In order to ... $\{\delta\vect{v},\delta\vect{\varphi},\delta\varphi,\delta\vect{D}_0\}$ with $\{\dot{\vect{v}},\dot{\vect{\varphi}},\dot\varphi,\dot{\vect{D}}_0\}\in\left\{\mathbb{V}_0^{\vect{\varphi}},\mathbb{V}_0^{\vect{\varphi}},\mathbb{V}^{\varphi}_0,\mathbb{V}^{\vect{D}_0}\right\}$
+%
+\begin{equation}\label{eqn:weak forms for the dynamic formulation Dirichlet bcs}
+\begin{aligned}
+&\int_{\mathcal{B}_0}\left(\dot{\vect{\varphi}} - \vect{v}\right)\cdot\dot{\vect{v}}\,dV=0;\\
+%
+&\int_{\mathcal{B}_0}\rho_0\dot{\vect{v}}\cdot\dot{\vect{\varphi}}\,dV + \int_{\mathcal{B}_0}\left(\vect{\Sigma_C} + \vect{\Sigma_G}\Cross\vect{C} + \Sigma_C\vect{G}\right):\dot{\vect{C}}\,dV-  \int_{\mathcal{B}_0}\vect{f}_0\cdot\dot{\vect{\varphi}}\,dV-
+\int_{\partial_{t}\mathcal{B}_0}\vect{t}_0\cdot\dot{\vect{\varphi}}\,dA=0 ;\\
+%
+&\int_{\mathcal{B}_0}\vect{D}_0\cdot\vect{\nabla}_0\dot{\varphi}\,dV+  \int_{\mathcal{B}_0}\rho_0^e\dot{\varphi}\,dV + 
+\int_{\partial_{\omega}\mathcal{B}_0}\omega^e_0\dot{\varphi}\,dA=0;\\
+%
+&\int_{\mathcal{B}_0}\dot{\vect{D}}_0\cdot \left(\vect{\Sigma}^{\text{sym}}_{\vect{D}_0} + \vect{\nabla}_0\varphi\right)\,dV=0.
+%- \int_{\mathcal{B}_0}\delta\vect{D}_0\cdot\frac{\partial \vect{\nabla}_0\varphi\right)\,dV
+%
+\end{aligned}
+\end{equation}
+
+
+The consideration of time independent forces and charges enables equation \eqref{eqn:weak forms for the dynamic formulation Dirichlet bcs} to be equivalently written as
+%
+\begin{equation}\label{eqn:DPiextr}
+\begin{aligned}
+\int_{\mathcal{B}_0}\vect{f}_0\cdot\dot{\vect{\varphi}}\,dV + 
+\int_{\partial_t\mathcal{B}_0}\vect{t}_0\cdot\dot{\vect{\varphi}}\,dA  = \dot{\Pi}^m_{\text{ext}}\left(\dot{\vect{\varphi}}\right);\qquad
+%
+\int_{\mathcal{B}_0}{\rho}^e_0\dot{{\varphi}}\,dV + 
+\int_{\partial_{\omega}\mathcal{B}_0}\omega^e_0\dot{\varphi}\,dA  = -\dot{\Pi}^e_{\text{ext}}\left(\dot{{\varphi}}\right).
+%
+\end{aligned}
+\end{equation}
+
+Inserting above equation \eqref{eqn:DPiextr} into \eqref{eqn:weak forms for the dynamic formulation Dirichlet bcs} leads to
+%
+\begin{equation}\label{eqn:Wvarphi conservation of energy}
+\begin{aligned}
+&\dot{K} + \int_{\mathcal{B}_0}\left(\vect{\Sigma_C} + \vect{\Sigma_G}\Cross\vect{C} + \Sigma_C\vect{G}\right):\dot{\vect{C}}\,dV-  \dot{\Pi}^m_{\text{ext}}\left(\vect{\varphi}\right) = 0;\\
+%
+& \int_{\mathcal{B}_0}\vect{D}_0\cdot\vect{\nabla}_0\dot{\varphi}\,dV - \dot{\Pi}^e_{\text{ext}}\left(\varphi\right) = 0;\\
+%
+&  \int_{\mathcal{D}_0}\dot{\vect{D}}_0\cdot\left(\vect{\Sigma}^{\text{sym}}_{\vect{D}_0} + \vect{\nabla}_0\varphi\right)\,dV = 0.
+\end{aligned}
+\end{equation}
+%
+
+
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\noindent \textit{Remark 3.} Let us consider a field $\vect{A}$\footnote{ In general $\vect{A}$ could be a second order tensor, a vector or a scalar} that depends on the deformation gradient tensor, namely $\vect{A} = \vect{A}\left(\vect{F}\right)$. The directional derivative of $\vect{A}$ with respect to $\dot{\vect{\varphi}}$ and its time derivative are
+%
+\begin{equation}
+D\vect{A}[\dot{\vect{\varphi}}] = \frac{\partial\vect{A}}{\partial\vect{F}}:D\vect{F}[\delta\dot{\vect{\varphi}}];\qquad
+\dot{\vect{A}} = \frac{\partial\vect{A}}{\partial\vect{F}}:\dot{\vect{F}} = \frac{\partial\vect{A}}{\partial\vect{F}}:\vect{\nabla}_0\vect{v}.
+\end{equation}
+
+Replacing $\delta\vect{\varphi}$ with $\dot{\vect{\varphi}}$ in \eqref{eqn:directional derivative of F} leads to
+$D\vect{F}[\dot{\vect{\varphi}}] = \vect{\nabla}_0\vect{v}$, 
+which enables to conclude that $D\vect{A}[\dot{\vect{\varphi}}] = \dot{\vect{A}}$. The same can be concluded for the set of symmetric strain measures $\{\vect{C},\vect{G},C\}$ \eqref{eqn:Cofactor and Jacobian symmetric}, namely
+%
+\begin{equation}\label{eqn:Cdot Gdot Cdot}
+D\vect{C}[\dot{\vect{\varphi}}] = \dot{\vect{C}};\qquad
+D\vect{G}[\dot{\vect{\varphi}}] = \dot{\vect{G}} = \vect{C}\Cross\dot{\vect{C}};\qquad
+DC[\dot{\vect{\varphi}}] = \dot{C} = \vect{G}:\dot{\vect{C}}.
+\end{equation}
+
+The result in \eqref{eqn:Cdot Gdot Cdot} proves the equivalence of the second term on the right-hand side of \eqref{eqn:weak forms for the dynamic formulation Dirichlet bcs} and \eqref{eqn:Wvarphi conservation of energy} when written in terms of  $\{D\vect{C}[\dot{\vect{\varphi}}],D\vect{G}[\dot{\vect{\varphi}}],D{C}[\dot{\vect{\varphi}}]\}$ or in terms of  $\{\dot{\vect{C}},\dot{\vect{G}},\dot{C}\}$.
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+Careful manipulation of equation \eqref{eqn:Wvarphi conservation of energy}$_a$ enables to re-write it as
+%
+\begin{equation}\label{eqn:Wvarphi modified}
+\begin{aligned}
+ \dot{\Pi}^m_{\text{ext}}\left(\vect{\varphi}\right) 
+ & = \dot{K} + \int_{\mathcal{B}_0}\left(\vect{\Sigma_C} + \vect{\Sigma_G}\Cross\vect{C} + \Sigma_C\vect{G}\right):\dot{\vect{C}}\,dV   + \int_{\mathcal{B}_0}\vect{\Sigma}^{\text{sym}}_{\vect{D}_0}\cdot\dot{\vect{D}}_0\,dV - \int_{\mathcal{B}_0}\vect{\Sigma}^{\text{sym}}_{\vect{D}_0}\cdot\dot{\vect{D}}_0\,dV \\
+%
+%
+&=\dot{K} + \int_{\mathcal{B}_0}\dot{W}_{\text{sym}}\left(\vect{C},\vect{G},C,\vect{D}_0\right)\,dV  - \int_{\mathcal{B}_0}\vect{\Sigma}^{\text{sym}}_{\vect{D}_0}\cdot\dot{\vect{D}}_0\,dV \\
+%
+&=\dot{K} + \int_{\mathcal{B}_0}\dot{W}_{\text{sym}}\left(\vect{C},\vect{G},C,\vect{D}_0\right)\,dV  + \int_{\mathcal{B}_0}\vect{\nabla}_0\varphi\cdot\dot{\vect{D}}_0\,dV .
+%
+\end{aligned}
+\end{equation}
+
+Integration by parts in the last term of the right-hand side of equation \eqref{eqn:Wvarphi modified} 
+%
+\begin{equation}\label{eqn:integration by parts in Gauss law}
+\int_{\mathcal{B}_0}\vect{\nabla}_0\varphi\cdot\dot{\vect{D}}_0\,dV = 
+%
+-\int_{\partial_{\omega}\mathcal{B}_0}\varphi\dot{\omega}^e_0\,dA - \int_{\mathcal{B}_0}\varphi\dot{\rho}^e_0\,dV = 0,
+%
+\end{equation}
+%
+where use of the local form of the Gauss's law in \eqref{eqn:Gauss law local} has been made of in above equation \eqref{eqn:integration by parts in Gauss law}. 
+%
+In addition, the consideration of time independent electric charges $\rho^e_0$ and $\omega^e_0$ leads above term on the left-hand side of \eqref{eqn:integration by parts in Gauss law}  to vanish and introduction of this result into \eqref{eqn:Wvarphi modified} yields
+%
+\begin{equation}
+\dot{\Pi}_{\text{ext}}^m\left(\vect{\varphi}\right) = \dot{K} + \int_{\mathcal{B}_0}\dot{W}_{\text{sym}}\left(\vect{C},\vect{G},C,\vect{D}_0\right)\,dV.
+\end{equation}
+
+It is therefore clear that in the case of time independent forces and electric charges, the following condition holds
+%
+\begin{equation}\label{eqn:conservation 1}
+\frac{d}{dt}\mathcal{H}^m = 0;\qquad
+\mathcal{H}^m =K + \int_{\mathcal{B}_0}W_{\text{sym}}\left(\vect{C},\vect{G},C,\vect{D}_0\right)\,dV - \Pi^m_{\text{ext}}\left(\vect{\varphi}\right),
+\end{equation}
+%
+and therefore the scalar field $\mathcal{H}^m$ is preserved throughout the motion of the EAP.
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+
+\noindent \textit{Remark 4.} An alternative expression for conservation of energy can be obtained in terms of the Helmholtz's energy functional $\varPhi\left(\vect{C},\vect{D}_0\right)$ \eqref{eqn:Legendre transform}. In order to obtain it, let us add the three expressions in equation \eqref{eqn:Wvarphi conservation of energy} leads to
+%
+\begin{equation}\label{eqn:energy I}
+\begin{aligned}
+\dot{\Pi}_{\text{ext}}^m & =
+%
+%&
+%=
+\dot{K} + \int_{\mathcal{B}_0}\dot{W}_{\text{sym}}\,dV  +
+%
+\int_{\mathcal{B}_0}\vect{D}_0\cdot\vect{\nabla}_0\dot{\varphi}\,dV+
+%
+\int_{\mathcal{B}_0}\dot{\vect{D}}_0\cdot\vect{\nabla}_0\varphi\,dV\\
+%
+&=\dot{K} + \int_{\mathcal{B}_0}\dot{W}_{\text{sym}}\,dV  -
+%
+\int_{\mathcal{B}_0}\vect{D}_0\cdot\dot{\vect{\Sigma}}^{\text{sym}}_{\vect{D}_0}\,dV-
+%
+\int_{\mathcal{B}_0}\dot{\vect{D}}_0\cdot\vect{\Sigma}^{\text{sym}}_{\vect{D}_0}\,dV\\
+%
+&=\dot{K} + 
+%
+\int_{\mathcal{B}_0}\frac{d}{dt}\left({W}_{\text{sym}} - \vect{D}_0\cdot{\vect{\Sigma}}^{\text{sym}}_{\vect{D}_0}\right)\,dV,
+%
+\end{aligned}
+\end{equation}
+%
+where, since $\vect{D}_0$, $\dot{\vect{D}}_0$ belong to the same functional space $\mathbb{V}^{\vect{D}_0}$, by virtue of equation \eqref{eqn:Wvarphi conservation of energy}$_c$ the first term on the right-hand side of \eqref{eqn:energy I} into its equivalent expression on the .... Making use of equation  \eqref{eqn:Legendre transform} it is possible to re-write \eqref{eqn:energy I} as
+%
+\begin{equation}\label{eqn:energy II}
+\begin{aligned}
+\dot{\Pi}_{\text{ext}}^m + \dot{\Pi}_{\text{ext}}^e & =
+\dot{K} + 
+%
+\int_{\mathcal{B}_0}\dot{\varPhi}_{\text{sym}}\left(\vect{C},\vect{E}_0\right)\,dV.
+%
+\end{aligned}
+\end{equation}
+
+It is therefore clear that in the case of time independent forces and electric charges, the following condition holds
+%
+\begin{equation}\label{eqn:conservation 2}
+\frac{d}{dt}\mathcal{H} = 0;\qquad
+\mathcal{H} = K + \int_{\mathcal{B}_0}\varPhi_{\text{sym}}\left(\vect{C},\vect{E}_0\right)\,dV - \Pi^m_{\text{ext}}\left(\vect{\varphi}\right)
+-\Pi^e_{\text{ext}}\left(\varphi\right),
+\end{equation}
+%
+and therefore the scalar field $\mathcal{H}$ is preserved throughout the motion of the EAP. Notice that $\mathcal{H}$ is the total Hamiltonian, defined through the following Legendre transformation
+%
+\begin{equation}\label{eqn:legendre transform for the Hamiltonian}
+\mathcal{H}\left(\vect{x},\vect{p},\varphi,\vect{D}_0\right) = \sup_{\vect{p}}\left\{\int_{\mathcal{B}_0}\vect{p}\cdot\vect{v}\,dV - \int_{\mathcal{B}_0}\mathcal{L}\left(\vect{\varphi},\dot{\vect{\varphi}},\varphi,\vect{D}_0\right)\,dV +  \Pi^m_{\text{ext}}\left(\vect{\varphi}\right) + 
+\Pi^e_{\text{ext}}\left(\varphi\right)\right\},
+\end{equation}
+%
+where $\vect{p} = \rho_0\vect{v}$ in \eqref{eqn:legendre transform for the Hamiltonian} represents the linear momentum per unit undeformed volume.
+
+\noindent\makebox[\linewidth]{\rule{\textwidth}{0.4pt}}
+

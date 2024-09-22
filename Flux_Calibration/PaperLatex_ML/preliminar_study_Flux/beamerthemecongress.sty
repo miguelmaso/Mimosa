@@ -1,0 +1,311 @@
+\DeclareOptionBeamer{compress}{\beamer@compresstrue}
+\ProcessOptionsBeamer
+
+\mode<presentation>
+
+% template theme
+\usetheme{Warsaw}
+
+
+
+\setbeamerfont{normal text}{} % ignored currently
+\setbeamerfont{alerted text}{}
+\setbeamerfont{example text}{}
+
+\setbeamerfont{structure}{}
+\setbeamerfont{tiny structure}{size=\tiny}
+
+\setbeamerfont{title}{size=\Large,parent=structure}
+\setbeamerfont{title in head/foot}{}
+\setbeamerfont{title in sidebar}{size=\tiny}
+
+\setbeamerfont{subtitle}{size=\normalsize,parent=title}
+
+\setbeamerfont{author}{}
+\setbeamerfont{author in head/foot}{}
+\setbeamerfont{author in sidebar}{size=\tiny}
+
+\setbeamerfont{institute}{size=\scriptsize}
+\setbeamerfont{institute in head/foot}{}
+\setbeamerfont{institute in sidebar}{}
+
+\setbeamerfont{date}{}
+\setbeamerfont{date in head/foot}{}
+\setbeamerfont{date in sidebar}{}
+
+\setbeamerfont{part name}{size=\Large}
+\setbeamerfont{part title}{parent=title}
+
+\setbeamerfont{section in toc}{parent=structure,size=\small,series=\bfseries}
+\setbeamerfont{section in head/foot}{size=\tiny, series=\bfseries}
+\setbeamerfont{section in sidebar}{size=\tiny}
+\setbeamerfont{section number projected}{size=\small,parent={section in toc,projected text}}
+
+\setbeamerfont{subsection in toc}{}
+\setbeamerfont{subsection in head/foot}{size=\tiny, series=\bfseries}
+\setbeamerfont{subsection in sidebar}{}
+\setbeamertemplate{section in toc}[circle]
+\setbeamertemplate{subsection in toc}[circle]
+
+
+\setbeamerfont{headline}{parent={tiny structure}}
+\setbeamerfont{footline}{parent={tiny structure}}
+
+\setbeamerfont{sidebar}{size=\Tiny,parent={tiny structure}}
+\setbeamerfont{sidebar left}{parent=sidebar}
+\setbeamerfont{sidebar right}{parent=sidebar}
+
+\setbeamerfont{frametitle}{parent=structure,size=\Large, series=\bfseries}
+\setbeamerfont{framesubtitle}{parent=frametitle,size=\footnotesize}
+
+\setbeamerfont{caption}{size=\small}
+\setbeamerfont{caption name}{parent={structure,caption}}
+
+\setbeamerfont{button}{size=\tiny}
+
+\setbeamerfont{block body}{}
+\setbeamerfont{block body alerted}{}
+\setbeamerfont{block body example}{}
+\setbeamerfont{block title}{size=\large, series=\bfseries,parent={structure,block body}}
+\setbeamerfont{block title alerted}{parent={block title,alerted text},size=\large, series=\bfseries}
+\setbeamerfont{block title example}{parent={block title,example text},size=\large, series=\bfseries}
+
+\setbeamerfont{item}{parent=structure}
+\setbeamerfont{subitem}{parent=item}
+\setbeamerfont{subsubitem}{parent=subitem}
+
+\setbeamerfont{item projected}{size=\tiny,parent={item,projected text}}
+\setbeamerfont{subitem projected}{parent=item projected}
+\setbeamerfont{subsubitem projected}{parent=subitem projected}
+
+\setbeamerfont{itemize item}{parent=item}
+\setbeamerfont{itemize subitem}{parent=subitem}
+\setbeamerfont{itemize subsubitem}{parent=subsubitem}
+
+\setbeamerfont{enumerate item}{parent=item}
+\setbeamerfont{enumerate subitem}{parent=subitem}
+\setbeamerfont{enumerate subsubitem}{parent=subsubitem}
+
+\setbeamerfont{itemize/enumerate body}{}
+\setbeamerfont{itemize/enumerate subbody}{size=\small}
+\setbeamerfont{itemize/enumerate subsubbody}{size=\footnotesize}
+
+
+\setbeamerfont{description item}{parent=item}
+
+\setbeamerfont{projected text}{parent={tiny structure}}
+
+\setbeamerfont{abstract}{size=\small}
+\setbeamerfont{abstract title}{parent={abstract,structure},size=\normalsize}
+
+\setbeamerfont{verse}{family=\rmfamily,shape=\itshape}
+
+\setbeamerfont{quotation}{shape=\itshape}
+\setbeamerfont{quote}{parent=quotation}
+
+\setbeamerfont{note page}{size=\small}
+
+
+
+%% color
+
+%\usecolortheme{seagull}
+\usecolortheme{orchid}
+\definecolor{tugred}{RGB}{110,159,195}
+\definecolor{tugred2}{RGB}{48,101,139}
+\definecolor{tugred3}{RGB}{103,110,157}
+
+
+\setbeamercolor{section in head/foot}{fg=white}
+\setbeamercolor{subsection in head/foot}{fg=white}
+\setbeamercolor{title}{fg=white}
+
+%\definecolor{beetle@other}{RGB}{64,80,127}
+\definecolor{beetle@other}{RGB}{72,108,134}
+
+\setbeamercolor*{palette primary}{fg=white,bg=beetle@other}
+\setbeamercolor*{palette secondary}{parent=palette primary,use=palette primary,bg=palette primary.bg!95!black}
+\setbeamercolor*{palette tertiary}{parent=palette primary,use=palette primary,bg=palette primary.bg!90!black}
+\setbeamercolor*{palette quaternary}{parent=palette primary,use=palette primary,bg=palette primary.bg!85!black}
+
+\setbeamercolor{navigation symbols}{fg=tugred}
+
+%% toc
+
+\setbeamercolor{section in toc}{fg=tugred2, bg=tugred2}
+\setbeamercolor{subsection in toc}{fg=tugred2, bg=tugred2}
+\setbeamercolor{item projected}{bg=tugred2}
+\setbeamercolor{block title}{bg=beetle@other}
+
+
+
+
+
+
+% 
+% 
+% 
+% \definecolor{beamer@blendedblue}{rgb}{0.2,0.2,0.7} % use structure theme to change
+% 
+% \setbeamercolor{normal text}{fg=black,bg=white}
+% \setbeamercolor{alerted text}{fg=red}
+% \setbeamercolor{example text}{fg=green!50!black}
+% 
+% \setbeamercolor{structure}{fg=beamer@blendedblue}
+% 
+% \setbeamercolor{background canvas}{parent=normal text}
+% \setbeamercolor{background}{parent=background canvas}
+% 
+% \setbeamercolor{palette primary}{use=structure,fg=structure.fg}
+% \setbeamercolor{palette secondary}{use=structure,fg=structure.fg!75!black}
+% \setbeamercolor{palette tertiary}{use=structure,fg=structure.fg!50!black}
+% \setbeamercolor{palette quaternary}{fg=black}
+% 
+% \setbeamercolor{palette sidebar primary}{use=normal text,fg=normal text.fg}
+% \setbeamercolor{palette sidebar secondary}{use=structure,fg=structure.fg}
+% \setbeamercolor{palette sidebar tertiary}{use=normal text,fg=normal text.fg}
+% \setbeamercolor{palette sidebar quaternary}{use=structure,fg=structure.fg}
+% 
+% \setbeamercolor{math text}{}
+% \setbeamercolor{math text inlined}{parent=math text}
+% \setbeamercolor{math text displayed}{parent=math text}
+% 
+% \setbeamercolor{normal text in math text}{}
+% 
+% \setbeamercolor{local structure}{parent=structure}
+% 
+% \setbeamercolor{titlelike}{parent=structure}
+% 
+% \setbeamercolor{title}{parent=titlelike}
+% \setbeamercolor{title in head/foot}{parent=palette quaternary}
+% \setbeamercolor{title in sidebar}{parent=palette sidebar quaternary}
+% 
+% \setbeamercolor{subtitle}{parent=title}
+% 
+% \setbeamercolor{author}{}
+% \setbeamercolor{author in head/foot}{parent=palette primary}
+% \setbeamercolor{author in sidebar}{use=palette sidebar tertiary,fg=palette sidebar tertiary.fg}
+% 
+% \setbeamercolor{institute}{}
+% \setbeamercolor{institute in head/foot}{parent=palette tertiary}
+% \setbeamercolor{institute in sidebar}{use=palette sidebar tertiary,fg=palette sidebar tertiary.fg}
+% 
+% \setbeamercolor{date}{}
+% \setbeamercolor{date in head/foot}{parent=palette secondary}
+% \setbeamercolor{date in sidebar}{use=palette sidebar tertiary,fg=palette sidebar tertiary.fg}
+% 
+% \setbeamercolor{titlegraphic}{}
+% 
+% \setbeamercolor{part name}{}
+% \setbeamercolor{part title}{parent=titlelike}
+% 
+% \setbeamercolor{section name}{}
+% \setbeamercolor{section title}{parent=titlelike}
+% 
+% \setbeamercolor{section in toc}{parent=structure}
+% \setbeamercolor{section in toc shaded}{parent=section in toc}
+% \setbeamercolor{section in head/foot}{parent=palette tertiary}
+% \setbeamercolor{section in sidebar}{parent=palette sidebar secondary}
+% \setbeamercolor{section in sidebar shaded}{use=section in sidebar,fg=section in sidebar.fg!40!bg}
+% \setbeamercolor{section number projected}{parent=item projected}
+% 
+% \setbeamercolor{subsection name}{}
+% \setbeamercolor{subsection title}{parent=titlelike}
+% 
+% \setbeamercolor{subsection in toc}{}
+% \setbeamercolor{subsection in toc shaded}{parent=subsection in toc}
+% \setbeamercolor{subsection in head/foot}{parent=palette secondary}
+% \setbeamercolor{subsection in sidebar}{parent=palette sidebar primary}
+% \setbeamercolor{subsection in sidebar shaded}{use=subsection in sidebar,fg=subsection in sidebar.fg!40!bg}
+% \setbeamercolor{subsection number projected}{parent={subitem projected}}
+% 
+% \setbeamercolor{subsubsection in toc}{parent=subsection in toc}
+% \setbeamercolor{subsubsection in toc shaded}{parent=subsubsection in toc}
+% \setbeamercolor{subsubsection in head/foot}{parent=subsection in head/foot}
+% \setbeamercolor{subsubsection in sidebar}{parent=subsection in sidebar}
+% \setbeamercolor{subsubsection in sidebar shaded}{parent=subsection in sidebar shaded}
+% \setbeamercolor{subsubsection number projected}{parent=subsubitem projected}
+% 
+% \setbeamercolor{headline}{}
+% \setbeamercolor{footline}{}
+% 
+% \setbeamercolor{sidebar}{}
+% \setbeamercolor{sidebar left}{parent=sidebar}
+% \setbeamercolor{sidebar right}{parent=sidebar}
+% 
+% \setbeamercolor{logo}{parent=palette secondary}
+% 
+% \setbeamercolor{frametitle}{parent=titlelike}
+% \setbeamercolor{framesubtitle}{parent=frametitle}
+% 
+% \setbeamercolor{frametitle right}{parent=frametitle}
+% 
+% \setbeamercolor{caption}{}
+% \setbeamercolor{caption name}{parent=structure}
+% 
+% \setbeamercolor{button}{use=local structure,bg=local structure.fg!50!bg,fg=white}
+% \setbeamercolor{button border}{use=button,fg=button.bg}
+% \setbeamercolor{navigation symbols}{use=structure,fg=structure.fg!40!bg}
+% \setbeamercolor{navigation symbols dimmed}{use=structure,fg=structure.fg!20!bg}
+% \setbeamercolor{mini frame}{parent=section in head/foot}
+% 
+% \setbeamercolor{block body}{}
+% \setbeamercolor{block body alerted}{}
+% \setbeamercolor{block body example}{}
+% \setbeamercolor{block title}{parent=structure}
+% \setbeamercolor{block title alerted}{parent=alerted text}
+% \setbeamercolor{block title example}{parent=example text}
+% 
+% \setbeamercolor{item}{parent=local structure}
+% \setbeamercolor{subitem}{parent=item}
+% \setbeamercolor{subsubitem}{parent=subitem}
+% 
+% \setbeamercolor{item projected}{parent=item,use=item,fg=white,bg=item.fg}
+% \setbeamercolor{subitem projected}{parent=item projected}
+% \setbeamercolor{subsubitem projected}{parent=subitem projected}
+% 
+% \setbeamercolor{enumerate item}{parent=item}
+% \setbeamercolor{enumerate subitem}{parent=subitem}
+% \setbeamercolor{enumerate subsubitem}{parent=subsubitem}
+% 
+% \setbeamercolor{itemize item}{parent=item}
+% \setbeamercolor{itemize subitem}{parent=subitem}
+% \setbeamercolor{itemize subsubitem}{parent=subsubitem}
+% 
+% \setbeamercolor{itemize/enumerate body}{}
+% \setbeamercolor{itemize/enumerate subbody}{}
+% \setbeamercolor{itemize/enumerate subsubbody}{}
+% 
+% \setbeamercolor{description item}{parent=item}
+% 
+% \setbeamercolor{bibliography item}{parent=item}
+% 
+% \setbeamercolor{bibliography entry author}{use=structure,fg=structure.fg}
+% \setbeamercolor{bibliography entry title}{use=normal text,fg=normal text.fg}
+% \setbeamercolor{bibliography entry location}{use=structure,fg=structure.fg!65!bg}
+% \setbeamercolor{bibliography entry note}{use=structure,fg=structure.fg!65!bg}
+% 
+% \setbeamercolor{separation line}{}
+% 
+% \setbeamercolor{upper separation line head}{parent=separation line}
+% \setbeamercolor{middle separation line head}{parent=separation line}
+% \setbeamercolor{lower separation line head}{parent=separation line}
+% 
+% \setbeamercolor{upper separation line foot}{parent=separation line}
+% \setbeamercolor{middle separation line foot}{parent=separation line}
+% \setbeamercolor{lower separation line foot}{parent=separation line}
+% 
+% \setbeamercolor{abstract}{}
+% \setbeamercolor{abstract title}{parent=structure}
+% 
+% \setbeamercolor{verse}{}
+% 
+% \setbeamercolor{quotation}{}
+% \setbeamercolor{quote}{parent=quotation}
+% 
+% \setbeamercolor{page number in head/foot}{fg=fg!50!bg}
+% 
+% \setbeamercolor{qed symbol}{parent=structure}
+
+\mode
+<all>

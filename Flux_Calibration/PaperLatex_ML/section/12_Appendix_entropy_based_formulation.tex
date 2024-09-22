@@ -1,0 +1,79 @@
+
+
+Although not pursued in this work, it is possible to define an entropy-based EM time integrator, counterpart of that in \eqref{eqn:weak forms for proposed time integrator}. For that we introduce first the entropy-based counterpart of the weak forms in \eqref{eqn:weak forms for the dynamic formulation. Entropy based}, i.e. 
+%
+\begin{equation}\label{eqn:weak forms for the dynamic formulation. Entropy based}
+\begin{aligned}
+\mathcal{W}_{\vect{v}}&= \int_{\mathcal{B}_0}\left(\vect{v} - \dot{\vect{\phi}}\right)\cdot\rho_0\vect{w}_{\vect{v}}\,dV=0;\\
+%
+\mathcal{W}_{\vect{\phi}} &  = \int_{\mathcal{B}_0}\rho_0\dot{\vect{v}}\cdot\vect{w}_{\vect{\phi}}\,dV + \int_{\mathcal{B}_0}\vect{S}:\frac{1}{2}D\vect{C}[\vect{w}_{\vect{\phi}}]\,dV\-  -\int_{\mathcal{B}_0}\vect{f}_0\cdot\vect{w}_{\vect{\phi}}\,dV-
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\vect{w}_{\vect{\phi}}\,dA=0;\\
+%
+\mathcal{W}_{{\eta}}& =   \int_{\mathcal{B}_0}{\theta}\dot{\eta} w_{\eta}\,dV - \int_{\mathcal{B}_0}\vect{Q}\cdot\vect{\nabla}_0w_{\eta}\,dV - \int_{\mathcal{B}_0}R_{\theta}{w}_{\eta}\,dV - \int_{\partial_{Q}\mathcal{B}_{0}}Q_{\theta}w_{\eta}\,dA=0,
+%
+\end{aligned}
+\end{equation}
+%
+where
+$\{\vect{v},\vect{\phi},\eta\}\in \mathbb{V}^{\vect{\phi}}\times\mathbb{V}^{\vect{\phi}}\times\mathbb{V}^{\theta}$ and  $\{\vect{w}_{\vect{v}},\vect{w}_{\vect{\phi}},{w}_{\eta}\}\in \mathbb{V}_0^{\vect{\phi}}\times\mathbb{V}_0^{\vect{\phi}}\times\mathbb{V}_0^{\theta}
+\}$ in \eqref{eqn:functional spaces}. Notice that in order to obtain \eqref{eqn:weak forms for the dynamic formulation. Entropy based}$_c$, the classical local form in \eqref{eqn:local form energy} needs to be used, rather than its equivalent couterpart in \eqref{eqn:local form energy our format}. In order to design the entropy-based EM momentum from \eqref{eqn:weak forms for the dynamic formulation. Entropy based}, we strictly follow the steps enumerated in Remark 1, yielding 
+%
+\begin{equation}\label{eqn:weak forms for proposed time integrator. Entropy based 1}
+\begin{aligned}
+\left(\mathcal{W}_{\vect{v}}\right)_{\text{algo}}&=\int_{\mathcal{B}_0}\left(\vect{v}_{n+1/2} - \frac{\Delta\vect{\phi}}{\Delta t}\right)\cdot\rho_0\vect{w}_{\vect{v}}\,dV = 0;\\
+%
+\left(\mathcal{W}_{\vect{\phi}}\right)_{\text{algo}}&=\int_{\mathcal{B}_0}\rho_0\frac{\Delta\vect{v}}{\Delta t}\cdot\vect{w}_{\vect{\phi}}\,dV + \int_{\mathcal{B}_0}\vect{S}_{\text{algo}}:\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}\,dV-  \int_{\mathcal{B}_0}\vect{f}_{0_{n+1/2}}\cdot\vect{w}_{\vect{\phi}}\,dV\\&-
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_{0_{n+1/2}}\cdot\vect{w}_{\vect{\phi}}\,dA = 0;\\
+%
+\left(\mathcal{W}_{\eta}\right)_{\text{algo}}&=   \int_{\mathcal{B}_0}\theta_{\text{algo}}\frac{\Delta \eta}{\Delta t}w_{\eta}\,dV - \int_{\mathcal{B}_0}\vect{Q}_{n+1/2}\cdot\vect{\nabla}_0w_{\eta}\,dV - \int_{\mathcal{B}_0}{R_{\theta}}_{n+1/2}w_{\eta}\,dV - \int_{\partial_{Q}\mathcal{B}_{0}}{Q_{\theta}}_{n+1/2}w_{\eta}\,dA = 0,
+%
+\end{aligned}
+\end{equation}
+%
+where the algorithmic expressions $\{\vect{S}_{\text{algo}},\theta_{\text{algo}}\}$ are defined as
+%
+\begin{equation}\label{eqn:approximated expression for DWdeltavarphi entropy-based}
+\begin{aligned}
+\vect{S}_{\text{algo}} = 2D_{\vect{C}}\widetilde{U} + 2D_{\vect{G}}\widetilde{U}\Cross\vect{C}_{\text{algo}} + 2D_{C}\widetilde{U}\vect{G}_{\text{algo}};\qquad
+%
+\theta_{\text{algo}}=D_{\eta}\widetilde{U},
+%
+\end{aligned}
+\end{equation}
+%
+and with $\vect{C}_{\text{algo}}$ and $\vect{G}_{\text{algo}}$ in \eqref{eqn:DDC}.
+Following  a similar procedure to that in Sections \ref{sec:discrete form linear momentum} and \ref{eqn:discrete form angular momentum}, it is possible to prove that the EM time integrator in \eqref{eqn:weak forms for proposed time integrator. Entropy based 1} preserves both linear and angular momentum for vanishing external forces. With regards to its energy conservation properties,  we replace in \eqref{eqn:weak forms for proposed time integrator. Entropy based 1}  $\{\vect{w}_{\vect{v}},\vect{w}_{\vect{\phi}}\}$  with $\{\Delta{\vect{v}}/\Delta t,{\Delta{\vect{\phi}}}/\Delta t\}\in\mathbb{V}_0^{\vect{\phi}}\times\mathbb{V}_0^{\vect{\phi}}$ and $w_{\eta}=1$, yielding
+%
+\begin{equation}\label{conservation of energy discrete III entropy based}
+\begin{aligned}
+\frac{\Delta K}{\Delta t} + \int_{\mathcal{B}_0}\frac{1}{{\Delta t}}\left(D_{\vect{C}}\widetilde{U}:\Delta\vect{C} + D_{\vect{G}}\widetilde{U}:\Delta\vect{G} + D_C\widetilde{U}\Delta C + D_{\eta}\widetilde{U}\Delta\eta\right)\,dV
+%
+- \frac{\Delta\Pi_{\text{ext}}\left(\vect{\phi}\right)}{\Delta t} - \mathcal{Q}_{\text{ext}}= 0.
+%- \int_{\mathcal{B}_0}\delta\vect{D}_0\cdot\frac{\partial \vect{\nabla}_0\varphi\right)\,dV
+%
+\end{aligned}
+\end{equation}
+
+Therefore, from \eqref{conservation of energy discrete III entropy based}, the directionality property for the entropy-based formulation must be\footnote{see its temperature-based counterpart in \eqref{eqn:directionality property}} 
+%
+\begin{equation}\label{eqn:directionality property entropy based}
+D_{\vect{C}}\widetilde{U}:\Delta\vect{C} + 
+D_{\vect{G}}\widetilde{U}:\Delta\vect{G} + 
+D_{C}\widetilde{U}\Delta C  + D_{\eta}\widetilde{U}\Delta\eta =\Delta \widetilde{U}.
+%
+\end{equation}
+
+
+
+A definition of the discrete derivatives $\{D_{\vect{C}}\widetilde{U},D_{\vect{G}}\widetilde{U},D_{C}\widetilde{U},D_{\theta}\widetilde{U}\}$ based on the derivation presented in \cite{Betsch2018Thermo} for energies depending upon several arguments ensures the satisfaction of \eqref{eqn:directionality property entropy based} (see also \ref{sec:properties directionality}, where $\widetilde{W}$ and $\theta$ need to be simply replaced with $\widetilde{U}$ and $\eta$, respectively). Based on this definition of the discrete derivatives equation \eqref{conservation of energy discrete III entropy based} can be finally written as
+%
+\begin{equation}\label{conservation of energy discrete V entropy based}
+\begin{aligned}
+&\frac{\Delta K}{\Delta t} + \int_{\mathcal{B}_0}\frac{\Delta \widetilde{U}}{\Delta t}\,dV- \frac{\Delta\Pi_{\text{ext}}\left(\vect{\phi}\right)}{\Delta t} - \mathcal{Q}_{\text{ext}}= 0,
+%- \int_{\mathcal{B}_0}\delta\vect{D}_0\cdot\frac{\partial \vect{\nabla}_0\varphi\right)\,dV
+%
+\end{aligned}
+\end{equation}
+%
+which is completely equivalent to the result obtained for the temperature-based counterpart in \eqref{conservation of energy discrete V}. Equation \eqref{conservation of energy discrete V entropy based} ensures the consistency of the entropy-based EM time integrator \eqref{eqn:weak forms for proposed time integrator. Entropy based 1}. It is convenient to recall that the main drawback of entropy-based formulations is that in general, it might not be possible to find en explicit representation of the internal energy functional (and of its derivatives). However, for the Helmholtz functional presented in Section \ref{sec:constitutive models} we have been able to obtain a simple explicit expression for its associated internal energy (see \eqref{eqn:additive decomposition internal energy} and \eqref{eqn:explicit internal energy}).
+

@@ -1,0 +1,82 @@
+The objective of this appendix is to briefly recall the calorimetry considerations followed in order to derive the constitutive model presented in Section \ref{sec:constitutive models}. For that, we start by re-expressing the internal energy $\widetilde{e}(\vect{C},\eta)$ as a function of the absolute temperature as
+%
+\begin{equation}
+\hat{e}(\vect{C},\theta) = \widetilde{e}(\vect{C},\eta(\vect{C},\theta)).
+\end{equation}
+%
+%with
+%%
+%\begin{equation}
+%\hat{e}(\vect{C},\theta)=\hat{W}(\vect{C},\vect{G},C,\theta);\qquad
+%\widetilde{e}(\vect{C},\eta(\vect{C},\theta))=\widetilde{W}(\vect{C},\vect{G},C,\eta(\vect{C},\vect{G},C,\theta)).
+%\end{equation}
+
+Calorimetry principles permit to experimentally measure the change of internal energy as a function of the temperature (for a constant deformation) yielding 
+%
+\begin{equation}\label{eqn:heat capacity}
+\partial_{\theta}\hat{e} = c_v,
+\end{equation}
+%
+with $c_v$ denoting the heat capacity of the material. Notice that above equation \eqref{eqn:heat capacity} can be equivalently written as
+%
+\begin{equation}\label{eqn:thermo model I}
+\partial_{\theta}\hat{e} = \partial_{\eta}\widetilde{e}\,\partial_{\theta}\eta = \theta\partial_{\theta}\eta   =c_v\Rightarrow
+%
+\partial_{\theta}\eta = \frac{c_v}{\theta}.
+\end{equation} 
+
+Integration of \eqref{eqn:thermo model I} results in
+%
+\begin{equation}\label{eqn:thermo model II}
+\begin{aligned}
+\int_{\eta(\vect{C},\theta_R)}^{\eta(\vect{C},\theta)}\,d\eta = 
+\int_{\theta_R}^{\theta}\frac{c_v}{\theta}\,d\theta\Rightarrow 
+%
+\eta(\vect{C},\theta) = \eta_R(\vect{C}) + c_v\ln \frac{\theta}{\theta_R},
+\end{aligned}
+\end{equation}
+%
+with $\eta_R(\vect{C}):=\eta(\vect{C},\theta_R)$.
+Since $\eta=-\partial_{\theta}\widetilde{\Psi}$ we can further integrate \eqref{eqn:thermo model II} as
+%
+\begin{equation}
+\int_{\widetilde{\Psi}(\vect{C},\theta_R)}^{\widetilde{\Psi}(\vect{C},\theta)}\,d\widetilde{\Psi}  = -\int_{\theta_R}^{\theta}\eta(\vect{C},\theta)\,d\theta, 
+\end{equation}
+%
+yielding
+%
+\begin{equation}
+\begin{aligned}
+\widetilde{\Psi}(\vect{C},\theta)&= \widetilde{\Psi}(\vect{C},\theta_R)-\int_{\theta_R}^{\theta}\left(\eta_R(\vect{C})+c_v\ln\frac{\theta}{\theta_R}\right)\,d\theta\\
+%
+&=\widetilde{\Psi}(\vect{C},\theta_R)-(\theta-\theta_R)\eta_R(\vect{C}) +  c_v\left(\theta-\theta_R - \theta\ln\frac{\theta}{\theta_R}\right),
+%
+\end{aligned}
+\end{equation}
+%
+which can be finally written as
+%
+\begin{equation}
+\begin{aligned}
+\widetilde{\Psi}(\vect{C},\theta)&= \widetilde{\Psi}_m(\vect{C}) -{\eta}_R(\vect{C})(\theta-\theta_R)+\widetilde{\Psi}_{\theta}(\theta),
+%
+\end{aligned}
+\end{equation}
+%
+with
+%
+\begin{equation}
+\begin{aligned}
+\widetilde{\Psi}_m(\vect{C}) = \widetilde{\Psi}(\vect{C},\theta_R);\qquad
+%
+%
+\widetilde{\Psi}_{\theta}(\theta)= c_v\left(\theta-\theta_R - \theta\ln\frac{\theta}{\theta_R}\right).
+\end{aligned}
+%
+\end{equation}
+
+
+
+
+
+

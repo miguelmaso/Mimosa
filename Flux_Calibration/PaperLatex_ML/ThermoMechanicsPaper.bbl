@@ -1,0 +1,189 @@
+\begin{thebibliography}{10}
+
+\bibitem{Ball_1976}
+J.~M. Ball.
+\newblock Convexity conditions and existence theorems in nonlinear elasticity.
+\newblock {\em Archive for Rational Mechanics and Analysis}, 63(4):337--403,
+  1976.
+
+\bibitem{Ball_1976_2}
+J.~M. Ball.
+\newblock Energy-minimising configurations in nonlinear elasticity.
+\newblock {\em Archive for Rational Mechanics and Analysis}, 63(4):337--403,
+  1976.
+
+\bibitem{Ball_2002}
+J.~M. Ball.
+\newblock {\em Geometry, Mechanics and Dynamics}, chapter Some open problems in
+  Elasticity, pages 3--59.
+\newblock Springer, 2002.
+
+\bibitem{Ball_Murat_1976}
+J.~M. Ball and F.~Murat.
+\newblock W$^{1,p}$-quasiconvexity and variational problems for multiple
+  integrals.
+\newblock {\em Journal of Functional Analysis}, 58(3):225--253, 1984.
+
+\bibitem{Bathe_book}
+K.~J. Bathe.
+\newblock {\em Finite Element Procedures}.
+\newblock Prentice Hall, 1996.
+
+\bibitem{Betsch_EM_mixed_2017}
+P.~Betsch, A.~Janz, and C.~Hesch.
+\newblock A mixed variational framework for the design of energy-momentum
+  schemes inspired by the structure of polyconvex stored energy functions.
+\newblock {\em Computer Methods in Applied Mechanics and Engineering},
+  335:660--696, 2018.
+
+\bibitem{Bonet_hyperbolicity_partI_2015}
+J.~Bonet, A.~J. Gil, C.~H. Lee, M.~Aguirre, and R.~Ortigosa.
+\newblock A first order hyperbolic framework for large strain computational
+  solid dynamics - {P}art {I}: {T}otal {L}agrangian isothermal elasticity.
+\newblock {\em Computer Methods in Applied Mechanics and Engineering},
+  283(0):689--732, 2015.
+
+\bibitem{Bonet_polyconvexity_2015}
+J.~Bonet, A.~J. Gil, and R.~Ortigosa.
+\newblock A computational framework for polyconvex large strain elasticity.
+\newblock {\em Computer Methods in Applied Mechanics and Engineering},
+  283:1061--1094, 2015.
+
+\bibitem{Bonet_cross_product_2016}
+J.~Bonet, A.~J. Gil, and R.~Ortigosa.
+\newblock On a tensor cross product based formulation of large strain solid
+  mechanics.
+\newblock {\em International Journal of Solids and Structures}, 84:49--63,
+  2016.
+
+\bibitem{Bonet_book_statics}
+J.~Bonet, A.~J. Gil, and R.~D. Wood.
+\newblock {\em Nonlinear {C}ontinuum {M}echanics for {F}inite {E}lement
+  {A}nalysis: Statics}.
+\newblock Cambridge University Press, 2016.
+
+\bibitem{Bonet_hyperbolicity_partIII_2019}
+J.~Bonet, C.~H. Lee, A.~J. Gil, and A.~Ghavamian.
+\newblock A first order hyperbolic framework for large strain computational
+  solid dynamics - {P}art {III}: {T}hermo-elasticity.
+\newblock {\em Computer Methods in Applied Mechanics and Engineering}.
+\newblock Under review.
+
+\bibitem{Christoforou_Symmetrisation_polyconvex_thermoelasticity}
+C.~Christoforou, M.~Galanopoulou, and A.~E. Tzavaras.
+\newblock A symmetrizable extension of polyconvex thermoelasticity and
+  applications to zero-viscosity limits and weak-strong uniqueness.
+\newblock {\em Communications in Partial Differential Equations}, 0(0):1--32,
+  2018.
+
+\bibitem{Dafermos_book}
+C.~M. Dafermos.
+\newblock {\em Hyperbolic conservation laws in continuum physics}.
+\newblock Springer, 2010.
+
+\bibitem{deBoer_book}
+R.~de~Boer.
+\newblock {\em Vektor- und Tensorrechnung f\"{u}r Ingenieure}.
+\newblock Springer-Verlag, 1982.
+
+\bibitem{deSouza_book}
+E.A. de~Souza~Neto, D.~Per\'{i}c, and D.R.J. Owen.
+\newblock {\em Computational Methods for Plasticity. Theory and Applications}.
+\newblock 2008.
+
+\bibitem{Betsch2018Thermo}
+M~Franke, A.~Janz, M.~Schiebl, and P.~Betsch.
+\newblock An energy momentum consistent integration scheme using a
+  polyconvexity-based framework for nonlinear thermo-elastodynamics.
+\newblock {\em International Journal for Numerical Methods in Engineering},
+  115:549--577, 2018.
+
+\bibitem{Gonzalez_EM_2000}
+O.~Gonzalez.
+\newblock {Exact energy and momentum conserving algorithms for general models
+  in nonlinear elasticity}.
+\newblock {\em Comput. Methods Appl. Mech. Engrg.}, 190:1763--1783, 2000.
+
+\bibitem{Gonzalez_book}
+O.~Gonzalez and A.~M. Stuart.
+\newblock {\em A first course in {C}ontinuum {M}echanics}.
+\newblock Cambridge University Press, 2008.
+
+\bibitem{Betsch_EM_viscoelasticity_2010}
+M.~Gro{\ss} and P.~Betsch.
+\newblock Energy-momentum consistent finite element discretization of dynamic
+  finite viscoelasticity.
+\newblock {\em Int. J. Numer. Meth. Engng}, 81(11):1341--1386, 2010.
+
+\bibitem{Hesch_Betsch_EM_thermo_2011}
+C.~Hesch and P.~Betsch.
+\newblock Energy-momentum consistent algorithms for dynamic thermomechanical
+  problems—{A}pplication to mortar domain decomposition problems.
+\newblock {\em International Journal for Numerical Methods in Engineering},
+  86(11):1277--1302, 2011.
+
+\bibitem{Kuhl_Crisfield_1996}
+D.~Kuhl and M.~A. Crisfield.
+\newblock Constraint energy momentum algorighm and its application to
+  non-linear structural dynamics of shells.
+\newblock {\em Computer Methods in Applied Mechanics and Engineering},
+  136:293--315, 1996.
+
+\bibitem{Kuhl_Crisfield_1999}
+D.~Kuhl and M.~A. Crisfield.
+\newblock Energy‐conserving and decaying algorithms in non‐linear
+  structural dynamics.
+\newblock {\em International Journal for Numerical Methods in Engineering},
+  45:565--599, 1999.
+
+\bibitem{Marsden_book}
+J.~E. Marsden and T.~J.~R. Hughes.
+\newblock {\em Mathematical foundations of elasticity}.
+\newblock 1994.
+
+\bibitem{Conde2017}
+S.~C. Mart\'{i}n and J.~C.~Garc\'{i}a Orden.
+\newblock On energy-entropy-momentum integration methods for discrete
+  thermo-visco-elastodynamics.
+\newblock {\em Computers \& Structures}, 181:3--20, 2017.
+\newblock UK Association of Computational Mechanics.
+
+\bibitem{Miehe_material_stability_electro}
+C.~Miehe, D.~Vallicotti, and D.~Z\"{a}h.
+\newblock Computational structural and material stability analysis in finite
+  electro-elasto-statics of electro-active materials.
+\newblock {\em International Journal for Numerical Methods in Engineering},
+  102(10):1605--1637, 2015.
+\newblock nme.4855.
+
+\bibitem{EM_Electro_1}
+R.~Ortigosa, M.~Franke, A.~Janz, A.J. Gil, and P.~Betsch.
+\newblock An energy–momentum time integration scheme based on a convex
+  multi-variable framework for non-linear electro-elastodynamics.
+\newblock {\em Computer Methods in Applied Mechanics and Engineering},
+  339:1--35, 2018.
+
+\bibitem{Romero2010}
+Ignacio Romero.
+\newblock Algorithms for coupled problems that preserve symmetries and the laws
+  of thermodynamics: Part {I}: Monolithic integrators and their application to
+  finite strain thermoelasticity.
+\newblock {\em Computer Methods in Applied Mechanics and Engineering},
+  199(25):1841 -- 1858, 2010.
+
+\bibitem{Schroderbook}
+J.~Schr\"oder.
+\newblock Anisotropic polyconvex energies.
+\newblock In J.~Schr\"oder and P.~Neff, editors, {\em Poly-, quasi- and
+  rank-one convexity in Applied Mechanics, \text{volume 516 of {CISM} {C}ourses
+  and {L}ectures}}, volume 516 of {CISM} {C}ourses and {L}ectures, pages
+  53--105. Springer-Verlag, 2010.
+
+\bibitem{Simo_EM_1992}
+J.~C. Simo and N.~Tarnow.
+\newblock The discrete energy-momentum method. {C}onserving algorithms for
+  nonlinear elastodynamics.
+\newblock {\em Zeitschrift f{\"u}r angewandte Mathematik und Physik ZAMP},
+  43(5):757--792, Sep 1992.
+
+\end{thebibliography}

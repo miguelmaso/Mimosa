@@ -1,0 +1,721 @@
+
+The objective of this section is to study the performance of the new energy momentum time integrator scheme presented in equation \eqref{eqn:weak forms for proposed time integrator} in a variety of examples.
+
+
+
+\subsection{Numerical example 1}\label{s:example-bend-fix}
+
+The objective of this example is three-fold: 
+
+\vspace{-2mm}
+\begin{itemize}
+	\item [\textbf{OI}] The performance of two families of Finite Element will be compared. Specifically, a tetrahedral-based  and an hexahedral-based Finite Elements will be considered. The interpolation spaces for the fields $\{\vect{\phi},\varphi,\vect{D}_0\}$ will be carried out accordingly to Figure \ref{fig:discretisation table}.
+	
+	\item [\textbf{OII}] The thermodynamical consistency of the time integrator scheme presented in \eqref{eqn:weak forms for proposed time integrator} will be assessed for both families of Finite Elements. In particular, the conservation properties of the time EM time integrator scheme will be analysed. 
+	
+	\item [\textbf{OIII}] \Red{The accuracy of the proposed time integrator will be studied. Specifically, the convergence of the scheme with respect to time will be studied an compared to that of the midpoint-rule time integrator. The objective is to verify the mathematical conclusion obtained in \ref{sec:properties directionality}, according to which the proposed EM time integrator scheme must converge at the same rate as the midpoint-rule integrator.}%\Red{The proposed EM time integrator will be compared against the classical midpoint-rule time integrator in order to prove a  better robustness and stability of the first over the later.}
+	
+\end{itemize}
+
+The geometry and boundary conditions for the actuator considered in this example are described in Figure \ref{fig:bucklingactuator} and Table \ref{table:bucklingactuator}. The actuator is clamped on one side (zero Dirichlet displacement boundary conditions) and a prescribed displacement $\vect{u}$ is imposed on the other side. A surface electrical charge $\omega_0^e$ is applied on the purple electrode (refer to detail in Figure \ref{fig:bucklingactuator}) whereas a prescribed value of the electric potential of  $\varphi = 0\, V$ is applied on the blue electrode. The mathematical representation for both $\vect{u}$ and $\omega_0^e$ is
+%
+%
+\begin{equation}
+%
+\Red{\vect{u} = \vect{\phi} - \vect{X}  =  f\left(t\right)}\,(m);\qquad
+%
+\omega_0^e = 10^{-3}\,\times
+\begin{cases}
+\sin(\frac{0.5\,\pi}{1\,\text{s}}\,t) & \text{for } t \leq 1\,\text{s} \\
+1 & \text{for } t>\,1\,\text{s}  \\
+\end{cases}\,\,(Q/m^2).
+\end{equation}
+
+
+%\begin{minipage}[h]{0.6\textwidth}
+%\centering
+%\begin{equation*}
+%   \omega_0^e = \omega_0\,\times
+%   \begin{cases}
+%     \sin(\frac{0.5\,\pi}{1\,\text{s}}\,t) & \text{for } t \leq 1\,\text{s} \\
+%     1 & \text{for } 1\,\text{s} < t  \\
+%   \end{cases}
+%\end{equation*}
+%\end{minipage}
+%\begin{minipage}[h]{0.3\textwidth}
+%   \centering
+%  \centering
+%   \setlength{\figH}{0.1\textheight}
+%					\setlength{\figW}{0.8\textwidth}
+%					\input{figures/01_comparisonSpatial/loads.tikz}
+%\end{minipage}
+
+\begin{figure}[htbp]
+ \centering
+   \psfrag{c}[l][c]{{\small{$\vec{e}_1$}}}
+   \psfrag{b}[l][c]{{\small{$\vec{e}_2$}}}
+   \psfrag{a}[l][c]{{\small{$\vec{e}_3$}}}
+   \psfrag{w0}[l][l]{{$\omega_0^e$}}
+   \psfrag{phi}[l][l]{{$\phi=0$}}
+   \psfrag{u}[l][l]{{$\vec{u}=\vec{0}$}}
+   \epsfig{file=figures/01_comparisonSpatial/configuration.eps,width=\textwidth}
+  \caption{Numerical example 1. (a) Configuration and boundary conditions; Discretisations considered: (b) hexahedral mesh with $\{14582,14482,61440\}$ degrees of freedom for $\{\vect{\phi},\varphi,\vect{D}_0\}$; (c) tetrahedral mesh with $\{14582,14482,23040\}$ degrees of freedom for  $\{\vect{\phi},\varphi,\vect{D}_0\}$. Interpolation spaces for $\{\vect{\phi},\varphi,\vect{D}_0\}$ in Figure \ref{fig:discretisation table}.}
+  \label{fig:bucklingactuator}
+\end{figure}
+
+The purely mechanical contribution of the constitutive model considered corresponds to that of a Mooney-Rivlin model (refer to equation \eqref{eqn:Mooney-Rivlin}). The electromechanical component corresponds to that of an ideal dielectric elastomer (see equation \eqref{eqn:ideal dielectric elastomer}). The material parameters of the constitutive model can be found in Table \ref{table:bucklingactuator}.
+
+\begin{table}[htbp]
+	\centering
+	\caption{Numerical example 1. Material parameters, simulation parameters and geometry.}
+	\label{table:bucklingactuator}
+			\begin{tabular}{l c c l | c}
+		\hline
+		\\
+Mechanical parameters  & \(\mu_1\)      	& $1\times10^5$                  	& Pa                            	&Geometry of the actuator\\
+{}          		   & \(\mu_2\)      	& $1\times10^5$                  	& Pa                            	&\multirow{2}{*}{	
+\psfrag{l1}[l][l]{\small{\(1\)}}
+\psfrag{l2}[l][l]{\small{\(0.1\)}}
+\psfrag{t}[][]{\small{\(t=0.01\)}}
+\psfrag{m}[l][l]{\small{\([\text{m}]\)}}
+\includegraphics[height=0.2\textheight]{figures/01_comparisonSpatial/scratch}}\\
+{}          		   & \(\lambda\)      	& $5\times10^6$                  	& Pa                            	&\\
+Electrical parameters  & \(\epsilon_0\)      	& $8.854\times10^{-12}$                  	& $\text{A}^2\,\text{s}^4\,\text{kg}^{-1}\,\text{m}^{-3}$ &\\
+		{}          		   & \(\epsilon_r\)      	& $4$                  	& $\text{N}/\text{V}^2$                           	&\\
+		Ref. potential        & $\phi_0$ & 0            & V                             &\\
+		Surface charge        & $\omega_0$ & $3\times10^{-3}$            & $\text{Q}/\text{m}^2$                             &\\
+		Density                 & $\rho_0$   & 1000                & $\text{kg}\,\text{m}^{-3}$             &\\
+		Timestep size           & $\Delta t$ & 0.01              & s                             &\\
+		Simulation time         & $T$        & 20                & s                             &\\ 
+		Newton tolerance        & $\epsilon$        & $10^{-5}$                & -                            &\\ 
+		\\
+		\hline
+	\end{tabular}
+\end{table}
+
+With regards to \textbf{OI}, two discretisations are considered, one for each of the two families of Finite Elements described in Figure \ref{fig:discretisation table}. Both hexahedral-based and tetrahedral-based meshes are represented in Figure \ref{fig:bucklingactuator}$_b$ and \ref{fig:bucklingactuator}$_c$, respectively.
+The mesh associated with the hexahedral-based discretisation has 2,560 elements, 3,645 nodes for both fields $\{\vect{\phi},\varphi\}$ (14,582 degrees of freedom associated to each field) and 20,480 nodes for $\vect{D}_0$ (61,440 degrees of freedom). The mesh associated with the tetrahedral-based discretisation has 1,920 elements, 3645 nodes for both fields $\{\vect{\phi},\varphi\}$ (14,582 degrees of freedom associated to each field) and 7,680 nodes for $\vect{D}_0$ (23,040 degrees of freedom). In both Finite Elements, $\vect{D}_0$ is interpolated using a discontinuous interpolation across elements, which allows to condense out this field.
+%
+\begin{figure}[htbp]
+	\begin{center}
+		\includegraphics[width=0.35\textwidth]{figures/01_comparisonSpatial/table_discretisation}
+	\end{center}
+	\vspace{-4mm}
+	\caption{Numerical example 1. Discretisation spaces for tetrahedral-based and hexahedral-based Finite Elements considered. The superscripts $C$ and $D$ stand for continuous and discontinuous interpolations of fields $\{\vect{\phi},\varphi,\vect{D}_0\}$.} 
+\label{fig:discretisation table}	
+\end{figure}
+
+
+
+Figure \ref{f:buckling-snaps hexas} shows the contour plot distribution of the hydrostatic pressure for the hexahedral-based discretisation for different time steps. Figure \ref{f:buckling-snaps tets} shows the contour plot distribution of the hydrostatic pressure for the tetrahedral-based discretisation for different time steps. A good agreement is observed between both discretisations in terms of the final configuration (displacements) as well as the distribution of hydrostatic pressure. 
+%
+\begin{figure}[htbp]
+	\centering
+	\epsfig{file=figures/01_comparisonSpatial/snapshots.eps,width=0.4\textwidth}
+	\caption{Numerical example 1. Contour plot of \Red{hydrostatic pressure $p$} for the hexahedral-based discretisation for different configurations corresponding to (left to right-top to bottom): (a) $t=0\,s$;  (b) $t=0.2\,s$; (c) $t=0.4\,s$; (d) $t=0.5\,s$; (e) $t=0.6\,s$; (f) $t=0.7\,s$; (g) $t=0.8\,s$; (h) $t=0.9\,s$; (i) $t=1\,s$.}
+	\label{f:buckling-snaps hexas}
+\end{figure}
+
+\begin{figure}[htbp]
+	\centering
+	\epsfig{file=figures/01_comparisonSpatial/snapshots.eps,width=0.4\textwidth}
+	\caption{Numerical example 1: contour plot of the \Red{hydrostatic pressure $p$} for the tetrahedral-based discretisation for different configurations corresponding to (left to right-top to bottom): (a) $t=0\,s$;  (b) $t=0.2\,s$; (c) $t=0.4\,s$; (d) $t=0.5\,s$; (e) $t=0.6\,s$; (f) $t=0.7\,s$; (g) $t=0.8\,s$; (h) $t=0.9\,s$; (i) $t=1\,s$.}
+	\label{f:buckling-snaps tets}
+\end{figure}
+
+Regarding objective \textbf{OII}, Figure \ref{example 1:buckling-energy}$_a$ shows the evolution of the Hamiltonian $\mathcal{H}_{\widetilde{W}}$ \eqref{eqn:conservation 1} using both hexahedral and tetrahedral discretisations for a given time step of $\Delta t = 0.01\,s$. The evolution of  $\mathcal{H}_{\widetilde{W}}$ is exactly identical for both discretisations. Crucially, $\mathcal{H}_{\widetilde{W}}$ remains constant for the time interval $t>1\,s$, namely, when the surface charge $\omega_0^e$ and $\vect{u}$ (both in equation \eqref{fig:bucklingactuator}) remain constant, proving that the Hamiltonian is conserved in that range. This can be more clearly appreciated in Figure \ref{example 1:buckling-energydiff}, where the variation $\Delta\mathcal{H}_{\widetilde{W}}=\mathcal{H}_{\widetilde{W}_{n+1}} - \mathcal{H}_{\widetilde{W}_{n}}$ is depicted for the range $t>1\,s$. Crucially, the maximum value of $\vert\Delta\mathcal{H}_{\widetilde{W}}\vert$ is always bounded below the user-defined Newton tolerance $\epsilon$,  which for this case was selected as $\epsilon = 10^{-5}$ (refer to Table \ref{table:bucklingactuator}).
+%
+\begin{figure}[h!]
+\begin{minipage}[b!]{0.475\textwidth}
+\centering
+      \setlength{\figH}{0.25\textheight}
+					\setlength{\figW}{0.8\textwidth}
+	\vspace{-0mm}					
+					\input{figures/01_comparisonSpatial/energy.tikz}
+  \caption{Numerical example 1. Time evolution of $\mathcal{H}_{\widetilde{W}}$ for both hexahedral and  tetrahedral discretisations using the proposed EM time integrator.}
+  \label{example 1:buckling-energy}
+\end{minipage}
+\hfill
+\begin{minipage}[b!]{0.475\textwidth}
+   \centering
+      \setlength{\figH}{0.25\textheight}
+					\setlength{\figW}{0.8\textwidth}
+	\vspace{-2mm}
+					\input{figures/01_comparisonSpatial/energydiff.tikz}
+  \caption{Numerical example 1. Time evolution of $\Delta\mathcal{H}_{\widetilde{W}}$ for $t>1$ for both hexahedral and tetrahedral discretisations using the proposed EM time integrator.}
+  \label{example 1:buckling-energydiff}
+\end{minipage}
+\end{figure}
+
+
+Finally, and in relation to objective \textbf{OIII}, a study of the accuracy of the proposed EM time integrator in \eqref{eqn:weak forms for proposed time integrator} has been carried out. This can be observed in Figures \ref{example 1:convergence 1} and \ref{example 1:convergence 2}, which 
+depict the convergence with respect to time of the solution when using the hexahedral and tetrahedral Finite Elements described in Figure \ref{fig:discretisation table}. Specifically, for the (fixed) meshes described in Figure \ref{fig:bucklingactuator}$_b$ and \ref{fig:bucklingactuator}$_c$, XXX the $L^2$ norm of the error between the solution obtained with three chosen time steps $\{\Delta t_1,\Delta t_2,\Delta t_3\}$ such that $\Delta t_1 = 2\Delta t_2=4\Delta t_3$ and that obtained with a much smaller time step $\Delta {t_{\text{ref}}}$ such that $\Delta {t_{\text{ref}}}<<\Delta t_3$
+
+\begin{figure}[h!]
+	\begin{minipage}[b!]{0.475\textwidth}
+		\centering
+		\setlength{\figH}{0.25\textheight}
+		\setlength{\figW}{0.8\textwidth}
+		\vspace{-0mm}		
+		\input{figures/01_comparisonSpatial/energy.tikz}
+		\caption{Numerical example 1. Order of convergence with respect to time for the proposed EM scheme and for the midpoint-rule for the hexahedral element.}
+		\label{example 1:convergence 1}
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b!]{0.475\textwidth}
+		\centering
+		\setlength{\figH}{0.25\textheight}
+		\setlength{\figW}{0.8\textwidth}
+		\vspace{-2mm}
+		\input{figures/01_comparisonSpatial/energydiff.tikz}
+		\caption{Numerical example 1. Order of convergence with respect to time for the proposed EM scheme and for the midpoint-rule for the tetrahedral element.}
+		\label{example 1:convergence 2}
+	\end{minipage}
+\end{figure}
+
+
+
+%
+%
+%
+%
+%\newpage
+%\clearpage
+%
+%
+%
+%
+%
+%
+%
+%
+%
+\subsection{Numerical example 2}
+\subsubsection{Problem description}
+\begin{itemize}
+\item This example should show the correct energy conservation and the improved performance to other (MP) time-integrators
+\item The bending actuator is shown in Fig.~\ref{fig:bendingactuator}
+\item Blue surface: Electrical Dirichlet boundary condition where $\phi=0\,\text{V}$, placed in the half height of the actuator.
+\item Purple Surface: Electrical Neumann boundary condition with electrical surface charge, sinusoidal distributed, where\\
+\begin{minipage}[h]{0.6\textwidth}
+\centering
+\begin{equation}
+   \omega_0^e = 2\times 10^{-3}\,\times
+   \begin{cases}
+     \sin(\frac{0.5\,\pi}{0.5\,\text{s}}\,t) & \text{for } t \leq 0.5\,\text{s} \\
+     1 & \text{for } 0.5\,\text{s} < t \leq 2.0\,\text{s} \\
+     \cos(\frac{0.5\,\pi}{2.5\,\text{s}-2.0\,\text{s}}\,(t-2.5\,\text{s})) & \text{for } 2.0\,\text{s} < t \leq 2.5\,\text{s}
+   \end{cases}\,\,(Q/m^2).
+\end{equation}
+
+\end{minipage}
+%\begin{minipage}[h]{0.3\textwidth}
+%   \centering
+%  \centering
+%   \setlength{\figH}{0.1\textheight}
+%					\setlength{\figW}{0.8\textwidth}
+%					\input{figures/02_bending/loads.tikz}
+%\end{minipage}
+\item Discretization with hexahedral finite elements as shown in Fig.~\ref{fig:bendingactuator} with linear interpolation for $\{\vec{\phi}, \phi, \vec{D}_0\}$
+\item The total number of global unknowns is: 2460 global dofs (615 nodes, 320 elements)
+\item Dimensions of the actuator are given in Tab.~\ref{table:bendingactuator}.
+\item Material Parameters are given in Tab.~\ref{table:bendingactuator}.
+\end{itemize}
+\begin{figure}[h!]
+ \centering
+   \psfrag{c}[][]{{$\vec{e}_1$}}
+   \psfrag{b}[][]{{$\vec{e}_2$}}
+   \psfrag{a}[][]{{$\vec{e}_3$}}
+   \psfrag{w0}[l][l]{{$\omega_0^e$}}
+   \psfrag{phi}[l][l]{{$\phi=0$}}
+   \epsfig{file=figures/02_bending/actuator_configuration.eps,scale=0.8}
+  \caption{Numerical example 2. Configuration and discretization}
+  \label{fig:bendingactuator}
+\end{figure}
+
+\begin{table}[h!]
+	\centering
+	\caption{Numerical example 2. Material parameters, simulation parameters and geometry.}
+	\label{table:bendingactuator}
+			\begin{tabular}{l c c l | c}
+		\hline
+		\\
+Mechanical parameters  & \(\mu_1\)      	& $1\times10^5$                  	& Pa                            	&Geometry of the actuator\\
+{}          		   & \(\mu_2\)      	& $1\times10^5$                  	& Pa                            	&\multirow{2}{*}{	
+\psfrag{l1}[l][l]{\small{\(1\)}}
+\psfrag{l2}[l][l]{\small{\(0.1\)}}
+\psfrag{t}[][]{\small{\(t=0.01\)}}
+\psfrag{m}[l][l]{\small{\([\text{m}]\)}}
+\includegraphics[height=0.2\textheight]{figures/02_bending/scratch}}\\
+{}          		   & \(\lambda\)      	& $5\times10^5$                  	& Pa                            	&\\
+Electrical parameters  & \(\epsilon_0\)      	& $8.854\times10^{-12}$                  	& $\text{A}^2\,\text{s}^4\,\text{kg}^{-1}\,\text{m}^{-3}$ &\\
+		{}          		   & \(\epsilon_r\)      	& $4$                  	& $-$                           	&\\
+		Ref. potential        & $\phi_0$ & 0            & V                             &\\
+		max. Surface charge        & $\omega_0$ & $2\times10^{-3}$            & $\text{Q}/\text{m}^2$                             &\\
+		Density                 & $\rho_0$   & 1000                & $\text{kg}\,\text{m}^{-3}$             &\\
+		Timestep size           & $\Delta t$ & 0.05              & s                             &\\
+		Simulation time         & $T$        & 20                & s                             &\\ 
+		Newton tolerance        & $\epsilon$        & $10^{-5}$               & -                            &\\ 
+		\\
+		\hline
+	\end{tabular}
+\end{table}
+
+
+\subsubsection{Problem results}
+\begin{itemize}
+\item The energy is correctly reproduces when using the EMC integrator (see Fig.~\ref{f:bending-energy}).
+\item The EMC integrator is numerical very stable for the given time-step size (see Fig.~\ref{f:bending-energy}).
+\item The midpoint integrator leads to an energy blow-up (which results in a termination of the simulation, see Fig.~\ref{f:bending-energy})).
+\item The EMC integrator correctly reproduces the energy conservation in the time interval  $0.5\,\text{s} \leq t\leq2\,\text{s}$ and $t\geq2.5\,\text{s}$. 
+The discrete energy difference is under the Newton-tolerance, see Fig.~\ref{f:bending-energydiff}.
+Note that the total Hamiltonion is not zero after the external surface charge vanish.
+A swinging motion with alternating of the kinetic and mechanical energy can be observed.
+\item The motion of the bending actuator is illustrated with a sequence of subsequent snapshots, see Fig.~\ref{f:bending-snaps}.
+ 
+\end{itemize}
+
+\begin{figure}[h!]
+\begin{minipage}[b!]{0.475\textwidth}
+\centering
+   \setlength{\figH}{0.25\textheight}
+					\setlength{\figW}{0.8\textwidth}
+					\input{figures/02_bending/energy.tikz}
+  \caption{Numerical example 2. Time history of the total energy}
+  \label{f:bending-energy}
+\end{minipage}
+\hfill
+\begin{minipage}[b!]{0.475\textwidth}
+   \centering
+   \setlength{\figH}{0.25\textheight}
+					\setlength{\figW}{0.8\textwidth}
+   \input{figures/02_bending/energydiff.tikz}
+  \caption{Numerical example 2. Time history of the difference in the total energy}
+  \label{f:bending-energydiff}
+\end{minipage}
+\end{figure}
+
+
+
+\begin{figure}[h!]
+\centering
+   \epsfig{file=figures/02_bending/snapshots.eps,width=\textwidth}
+  \caption{Numerical example 1: contour plot of the \Red{hydrostatic pressure $p$} for the hexahedral-based discretisation for different configurations corresponding to (left to right-top to bottom): (a) $t=0\,s$; (b) $t=0.05\,s$;  (c) $t=0.3\,s$; (d) $t=0.55\,s$; (e) $t=0.8\,s$; (f) $t=1.05\,s$; (g) $t=1.3\,s$; (h) $t=1.55\,s$; (i) $t=1.8\,s$; (j) $t=1\,s$.Snapshots with electrical potential distribution at  $t\in\{\,0.05,\,  0.3  , \, 0.55  , \, 0.8  , \, 1.05 ,  \, 1.3   , \,1.55   ,\, 1.8\}\,\text{s} $}
+  \label{f:bending-snaps}
+\end{figure}
+
+
+\newpage
+\clearpage
+%
+%
+%
+%
+%
+%%%%%%%%%%% Rotating Cross
+%\subsection{Dynamics of a rotating cross}
+%\subsubsection{Problem description}
+%\begin{itemize}
+%\item This example shouold show the improvede performance and the conservation of angular momentum as well.
+%\item Symmetric problem: Every wing of the cross has the same boundary conditions. For the sake of clearness, Fig.~\ref{fig:rotatingX} shows the boundary condition of one wing.
+%\item The motion of the cross is initialized by the given vector field 
+%\begin{equation}
+%\vec{v}_0(\vec{X})=\vec{\omega}\times\vec{X}
+%\end{equation}
+%where $\vec{\omega}=[0,\,0,\,4]\,\text{s}^{-1}$. 
+%\item Blue surface: Electrical Dirichlet boundary condition where $\phi=0\,\text{V}$.
+%\item Purple Surface: Electrical Neumann boundary condition with electrical surface charge, sinusoidal distributed, where\\
+%\begin{minipage}[h]{0.6\textwidth}
+%\centering
+%\begin{equation*}
+%   \omega_0^e = \omega_0\,\times
+%   \begin{cases}
+%     \sin(\frac{0.5\,\pi}{0.4\,\text{s}}\,t) & \text{for } t \leq 0.4\,\text{s} \\
+%     1 & \text{for } 0.4\,\text{s} < t \leq 3.0\,\text{s} \\
+%     \cos(\frac{0.5\,\pi}{3.4\,\text{s}-3.0\,\text{s}}\,(t-3.4\,\text{s})) & \text{for } 3.0\,\text{s} < t \leq 3.4\,\text{s}
+%   \end{cases}
+%\end{equation*}
+%\end{minipage}
+%\begin{minipage}[h]{0.3\textwidth}
+%   \centering
+%  \centering
+%   \setlength{\figH}{0.1\textheight}
+%					\setlength{\figW}{0.8\textwidth}
+%					\input{figures/03_rotatingX/loads.tikz}
+%\end{minipage}
+%
+%\item Discretization with hexahedral finite elements as shown in Fig.~\ref{fig:rotatingX} with linear interpolation for $\{\vec{x}, \phi, \vec{D}_0\}$
+%\item The total number of global unknowns is: 4620 global dofs (1155 nodes, 608 elements)
+%\item Dimensions of the double-symmetric cross wing are given in Tab.~\ref{table:rotatingX}.
+%\item Material Parameters are given in Tab.~\ref{table:rotatingX}.
+%\end{itemize}
+%\begin{figure}[h!]
+% \centering
+%   \psfrag{a}[][]{{$\vec{e}_1$}}
+%   \psfrag{b}[][]{{$\vec{e}_2$}}
+%   \psfrag{c}[][]{{$\vec{e}_3$}}
+%   \psfrag{op}[r][r]{{$\omega_0^e$}}
+%   \psfrag{on}[r][r]{{$-\omega_0^e$}}
+%   \psfrag{p}[r][r]{{$\phi=0$}}
+%   \psfrag{w}[r][r]{{$\vec{\omega}$}}
+%   \epsfig{file=figures/03_rotatingX/cross.eps,scale=0.5}
+%  \caption{Configuration and discretization}
+%  \label{fig:rotatingX}
+%\end{figure}
+%
+%\begin{table}[h!]
+%	\centering
+%	\caption{Electro-mechanical compressible Mooney-Rivlin material data, simulation parameters and geometry.}
+%	\label{table:rotatingX}
+%			\begin{tabular}{l c c l | c}
+%		\hline
+%		\\
+%Mechanical parameters  & \(\mu_1\)      	& $5\times10^4$                  	& Pa                            	&Geometry of the cross\\
+%{}          		   & \(\mu_2\)      	& $1\times10^5$                  	& Pa                            	&\\
+%{}          		   & \(\lambda\)      	& $5\times10^5$                  	& Pa                            	&\\
+%Electrical parameters  & \(\epsilon_0\)      	& $8.854\times10^{-12}$                  	& $\text{A}^2\,\text{s}^4\,\text{kg}^{-1}\,\text{m}^{-3}$ &\multirow{2}{*}{	\centering
+%\psfrag{l1}[r][r]{\small{\(0.08\)}}
+%\psfrag{l2}[][]{\small{\(4\)}}
+%\psfrag{m}[l][l]{\small{\([\text{m}]\)}}
+%\psfrag{t}[][]{\small{\(t=0.04\)}}
+%\includegraphics[width=0.25\textwidth]{figures/03_rotatingX/scratch}}\\
+%		{}          		   & \(\epsilon_r\)      	& $4$                  	& $\text{N}/\text{V}^2$                           	&\\
+%		Ref. potential        & $\phi_0$ & 0            & V                             &\\
+%		Surface charge        & $\omega_0$ & $5\times10^{-3}$            & $\text{Q}/\text{m}^2$                             &\\
+%		Density                 & $\rho_0$   & 1000                & $\text{kg}\,\text{m}^{-3}$             &\\
+%		Timestep size           & $\Delta t$ & 0.01              & s                             &\\
+%		Simulation time         & $T$        & 10                & s                             &\\ 
+%		Newton tolerance        & $\epsilon$        & $10^{-5}$                & -                            &\\ 
+%		\\
+%		\hline
+%	\end{tabular}
+%\end{table}
+%
+%
+%\subsubsection{Problem results}
+%\begin{itemize}
+%\item The energy is correctly reproduces when using the EMC integrator (see Fig.~\ref{f:rotatingX-energy}).
+%\item The EMC integrator is numerical very stable for the given time-step size (see Fig.~\ref{f:rotatingX-energy}).
+%\item The midpoint integrator leads to a energy blow-up (which results in a termination of the simulation, see Fig.~\ref{f:rotatingX-energy})).
+%\item The EMC integrator correctly reproduces the energy conservation in the time interval $0.4\,\text{s} \leq t\leq3\,\text{s}$ and $t\geq3.4\,\text{s}$. The discrete energy difference is under the Newton-tolerance, see Fig.~\ref{f:rotatingX-energydiff}.
+%\item The angular momentum is a conserved quantity (see Fig.~\ref{f:rotatingX-angular-momentum}).
+%\item The discrete angular momentum difference is under the Newton-tolerance,  see Fig.~\ref{f:rotatingX-angular-momentum-diff}).
+%\item The motion of the rotating cross is illustrated with a sequence of subsequent snapshots, see Fig.~\ref{f:rotatingX-snaps} 
+%\end{itemize}
+%
+%
+%\begin{figure}[h!]
+%\begin{minipage}[b!]{0.475\textwidth}
+%\centering
+%   \setlength{\figH}{0.25\textheight}
+%					\setlength{\figW}{0.8\textwidth}
+%					\input{figures/03_rotatingX/energy.tikz}
+%  \caption{Total energy evolution}
+%  \label{f:rotatingX-energy}
+%\end{minipage}
+%\hfill
+%\begin{minipage}[b!]{0.475\textwidth}
+%   \centering
+%   \setlength{\figH}{0.25\textheight}
+%					\setlength{\figW}{0.8\textwidth}
+%					\input{figures/03_rotatingX/energydiff.tikz}
+%  \caption{Discrete energy difference}
+%  \label{f:rotatingX-energydiff}
+%\end{minipage}
+%\end{figure}
+%
+%\begin{figure}[h!]
+%\begin{minipage}[b!]{0.475\textwidth}
+%\centering
+%   \setlength{\figH}{0.25\textheight}
+%					\setlength{\figW}{0.8\textwidth}
+%					\input{figures/03_rotatingX/angularmomentum.tikz}
+%  \caption{Total angular momentum evolution}
+%  \label{f:rotatingX-angular-momentum}
+%\end{minipage}
+%\hfill
+%\begin{minipage}[b!]{0.475\textwidth}
+%   \centering
+%   \setlength{\figH}{0.25\textheight}
+%					\setlength{\figW}{0.8\textwidth}
+%					\input{figures/03_rotatingX/angularmomentumdiff.tikz}
+%  \caption{Discrete angular momentum difference}
+%  \label{f:rotatingX-angular-momentum-diff}
+%\end{minipage}
+%\end{figure}
+%
+%\begin{figure}[h!]
+%\centering
+%   \epsfig{file=figures/03_rotatingX/snapshots.eps,width=\textwidth}
+%  \caption{Snapshots with electrical potential distribution at  $t\in\{ 0, 0.1, 0.2, 0.3, 0.4, 0.5\}\,\text{s} $}
+%  \label{f:rotatingX-snaps}
+%\end{figure}
+%
+%
+%\newpage
+%\clearpage
+%
+%
+%
+%
+%
+%
+%\subsection{Dynamics of a transversely isotropic actuator}
+%\subsubsection{Problem description}
+%\begin{itemize}
+%\item This example should show, that the EMC scheme can be easily extend to more complex material models without losing the beneficial behavior
+%\item We use a additive transversal isotropic material model, introduces in (SWB2011) and investigated in terms of EMC schemes in (BJH2017). 
+%The material modes is given by:
+%\begin{equation}
+%W(\vec{C},\vec{G},C,\vec{D}_0)=W_\mathrm{iso}(\vec{C},\vec{G},C,\vec{D}_0) + W_\mathrm{aniso}(\vec{C},\vec{G},C)
+%\end{equation}
+%The anisotropic part of the stored energy reads
+%\begin{equation} \label{e:W-tr-iso}
+%W_\mathrm{aniso}(\vec{C},\vec{G},C)=\frac{g_0}{g_\mathbf{C}+1}\,(\mathrm{tr}(\vec{C}\,\vec{M}))^{g_\mathbf{C}+1}+\frac{g_0}{g_\mathbf{G}+1}\,(\mathrm{tr}(\vec{G}\,\vec{M}))^{g_\mathbf{G}+1}+\frac{g_0}{g_C}\,C^{-g_C}
+%\end{equation}
+%where $g_0>0$, $g_\mathbf{C}>0$, $g_\mathbf{G}>0$ and $g_C \geq 1$.
+%The local fiber direction in the undeformed configuration is characterized by a unit vector $\vec{a}_0\in\mathbb{R}^3$ that enters the structural tensor defined by $\vec{M}=\vec{a}_0\otimes\vec{a}_0$
+%\item The  actuator is shown in Fig.~\ref{fig:actuatorTI}
+%\item Blue surface: Electrical Dirichlet boundary condition where $\phi=0\,\text{V}$, placed in the half height of the actuator.
+%\item Purple Surface: Electrical Neumann boundary condition with electrical surface charge, sinusoidal distributed, where\\
+%\begin{minipage}[h]{0.6\textwidth}
+%\centering
+%\begin{equation*}
+%   \omega_0^e = \omega_0\,\times
+%   \begin{cases}
+%     \sin(\frac{0.5\,\pi}{0.5\,\text{s}}\,t) & \text{for } t \leq 0.25\,\text{s} \\
+%     1 & \text{for } 0.25\,\text{s} < t \leq 2.25\,\text{s} \\
+%     \cos(\frac{0.5\,\pi}{2.5\,\text{s}-2.25\,\text{s}}\,(t-2.5\,\text{s})) & \text{for } 2.25\,\text{s} < t \leq 2.5\,\text{s}
+%   \end{cases}
+%\end{equation*}
+%\end{minipage}
+%\begin{minipage}[h]{0.3\textwidth}
+%   \centering
+%  \centering
+%   \setlength{\figH}{0.1\textheight}
+%					\setlength{\figW}{0.5\textwidth}
+%					\input{figures/04_bendingTI/loads.tikz}
+%\end{minipage}
+%\item Green surface: Mechanical Dirichlet boundary condition, where $\vec{u}=\vec{0}$
+%\item The vector in Fig.~\ref{fig:actuatorTI} represents the fiber direction and is given by $\vec{a}_0 = \vec{a}/||\vec{a}||$, where $\vec{a}=[0.2\ 1\ 1]\transp$.
+%\item Discretization with hexahedral finite elements as shown in Fig.~\ref{fig:actuatorTI} with linear interpolation for $\{\vec{\phi}, \phi, \vec{D}_0\}$
+%\item The total number of global unknowns is: 4100 global dofs (1025 nodes, 640 elements)
+%\item Dimensions of the actuator are given in Tab.~\ref{table:actuatorTI}.
+%\item Material Parameters are given in Tab.~\ref{table:actuatorTI}.
+%\end{itemize}
+%\begin{figure}[h!]
+% \centering
+%   \psfrag{c}[][]{{$\vec{e}_1$}}
+%   \psfrag{b}[][]{{$\vec{e}_2$}}
+%   \psfrag{a}[][]{{$\vec{e}_3$}}
+%   \psfrag{w0}[l][l]{{$\omega_0^e$}}
+%   \psfrag{phi}[l][l]{{$\phi=0$}}
+%   \psfrag{u=0}[l][l]{{$\vec{u}=\vec{0}$}}
+%   \psfrag{a_0}[l][l]{{$\vec{a}_0$}}
+%   \epsfig{file=figures/04_bendingTI/configuration.eps,scale=0.8}
+%  \caption{Configuration and discretization}
+%  \label{fig:actuatorTI}
+%\end{figure}
+%
+%\begin{table}[h!]
+%	\centering
+%	\caption{Electro-mechanical compressible Mooney-Rivlin material data, simulation parameters and geometry.}
+%	\label{table:actuatorTI}
+%			\begin{tabular}{l c c l | c}
+%		\hline
+%		\\
+%Mechanical parameters  & \(\mu_1\)      	& $1\times10^5$                  	& Pa                            	&Geometry of the actuator\\
+%{}          		   & \(\mu_2\)      	& $5\times10^4$                  	& Pa                            	&\\
+%{}          		   & \(\lambda\)      	& $5\times10^5$                  	& Pa                            	&\\
+%{}          		   & \(g_0\)      	& $1\times10^6$                  	& Pa                            	&\multirow{2}{*}{	
+%\psfrag{l1}[l][l]{\small{\(1\)}}
+%\psfrag{l2}[l][l]{\small{\(0.1\)}}
+%\psfrag{t}[][]{\small{\(t=0.02\)}}
+%\psfrag{m}[l][l]{\small{\([\text{m}]\)}}
+%\includegraphics[height=0.2\textheight]{figures/04_bendingTI/scratch}}\\
+%{}          		   & \(g_\mathbf{C}\)      	& $3$                  	& -                            	&\\
+%{}          		   & \(g_\mathbf{G}\)      	& $6$                  	& -                            	&\\
+%{}          		   & \(g_C\)      	& $1$                  	& -                            	&\\
+%%Preferred fiber direction          		   & \(\vec{a}_0\)      	& $[0.2\ 1\ 1]\transp\cdot 5/\sqrt{51}$                  	& Pa                            	&\\
+%Electrical parameters  & \(\epsilon_0\)      	& $8.854\times10^{-12}$                  	& $\text{A}^2\,\text{s}^4\,\text{kg}^{-1}\,\text{m}^{-3}$ &\\
+%		{}          		   & \(\epsilon_r\)      	& $4$                  	& $-$                           	&\\
+%		Ref. potential        & $\phi_0$ & 0            & V                             &\\
+%		max. Surface charge        & $\omega_0$ & $2\times10^{-3}$            & $\text{Q}/\text{m}^2$                             &\\
+%		Density                 & $\rho_0$   & 1000                & $\text{kg}\,\text{m}^{-3}$             &\\
+%		Timestep size           & $\Delta t$ & 0.01              & s                             &\\
+%		Simulation time         & $T$        & 10                & s                             &\\ 
+%		Newton tolerance        & $\epsilon$        & $10^{-5}$               & -                            &\\ 
+%		\\
+%		\hline
+%	\end{tabular}
+%\end{table}
+%
+%
+%\subsubsection{Problem results}
+%\begin{itemize}
+%\item The energy is correctly reproduces when using the EMC integrator (see Fig.~\ref{f:bendingTI-energy}).
+%\item The EMC integrator is numerical very stable for the given time-step size (see Fig.~\ref{f:bendingTI-energy}).
+%\item The midpoint integrator leads to an energy blow-up (which results in a termination of the simulation, see Fig.~\ref{f:bendingTI-energy})).
+%\item The EMC integrator correctly reproduces the energy conservation in the time interval  $0.25\,\text{s} \leq t\leq2.25\,\text{s}$ and $t\geq2.5\,\text{s}$. 
+%\item The discrete energy difference is under the Newton-tolerance, see Fig.~\ref{f:bendingTI-energydiff}.
+%\item The motion of the fiber-reinforced bending actuator is illustrated with a sequence of subsequent snapshots, see Fig.~\ref{f:bending-snaps}.
+% 
+%\end{itemize}
+%
+%\begin{figure}[h!]
+%\begin{minipage}[b!]{0.475\textwidth}
+%\centering
+%   \setlength{\figH}{0.25\textheight}
+%					\setlength{\figW}{0.8\textwidth}
+%					\input{figures/04_bendingTI/energy.tikz}
+%  \caption{Time history of the total energy}
+%  \label{f:bendingTI-energy}
+%\end{minipage}
+%\hfill
+%\begin{minipage}[b!]{0.475\textwidth}
+%   \centering
+%   \setlength{\figH}{0.25\textheight}
+%					\setlength{\figW}{0.8\textwidth}
+%   \input{figures/04_bendingTI/energydiff.tikz}
+%  \caption{Time history of the difference in the total energy}
+%  \label{f:bendingTI-energydiff}
+%\end{minipage}
+%\end{figure}
+%
+%
+%
+%\begin{figure}[h!]
+%\centering
+%   \epsfig{file=figures/04_bendingTI/snapshots.eps,width=\textwidth}
+%  \caption{Snapshots with electrical potential distribution at  $t\in\{\,0.05,\,  0.3  , \, 0.55  , \, 0.8  , \, 1.05 ,  \, 1.3   , \,1.55   ,\, 1.8\}\,\text{s} $}
+%  \label{f:bending-snaps}
+%\end{figure}
+%
+%
+%\newpage
+%\clearpage
+%
+%
+%
+%
+%
+%
+%
+%
+%
+%\subsection{Dynamics of a  buckling disc}
+%\subsubsection{Problem description}
+%\begin{itemize}
+%\item This last example should show, that the integrator is also suitable for very challenging problems, with a lot of dofs and very complex deformations
+%\item Due to expected buckling occupied by large deformations, this numerical example is very challenging.
+%\item The disc configuration and its discretization are shown in Fig.~\ref{fig:disc}
+%\item Mechanical Dirichlet boundary is applied on the green line (the outer boundary on the bottom of the disc, see detail sketch of Fig.~\ref{fig:disc}) at $\vec{X}=[x,y,0]\transp$ \ \text{s.t.} \ $x^2+y^2=1^2$, where the displacements are fixed to $\vec{u}=\vec{0}\,[\text{m}]$
+%\item Blue surface at $\vec{X}=[x,y,0]\transp$ : Electrical Dirichlet boundary condition where $\phi=0\,\text{V}$.
+%\item Purple Surface at $\vec{X}=[x,y,0.01]\transp$: Electrical Neumann boundary condition with electrical surface charge, with a sinusoidal distributed ramp given by\\
+%\begin{minipage}[h]{0.6\textwidth}
+%\centering
+%\begin{equation*}
+%   \omega_0^e = \omega_0\,\times
+%   \begin{cases}
+%     \sin(\frac{0.5\,\pi}{1\,\text{s}}\,t) & \text{for } t \leq 1\,\text{s} \\
+%     1 & \text{for } 1\,\text{s} < t  \\
+%   \end{cases}
+%\end{equation*}
+%\end{minipage}
+%\begin{minipage}[h]{0.3\textwidth}
+%   \centering
+%  \centering
+%   \setlength{\figH}{0.1\textheight}
+%					\setlength{\figW}{0.8\textwidth}
+%					\input{figures/05_disc/loads.tikz}
+%\end{minipage}
+%
+%\item Due the electrical boundary conditions, the disc extend and due the mechanical boundary conditions a buckling process occurs
+%\item Discretization with hexahedral finite elements as shown in Fig.~\ref{fig:disc} with linear interpolation for $\{\vec{x}, \phi, \vec{D}_0\}$
+%\item Dimensions of the actuator are given in Tab.~\ref{table:disc}.
+%\item Material Parameters are given in Tab.~\ref{table:disc}.
+%\end{itemize}
+%\begin{figure}[h!]
+% \centering
+%   \psfrag{c}[l][c]{{$\vec{e}_1$}}
+%   \psfrag{b}[l][c]{{$\vec{e}_2$}}
+%   \psfrag{a}[l][c]{{$\vec{e}_3$}}
+%   \psfrag{w0}[l][l]{{$\omega_0^e$}}
+%   \psfrag{phi}[l][l]{{$\phi=0$}}
+%   \psfrag{u=0}[l][l]{{$\vec{u}=0$}}
+%   \epsfig{file=figures/05_disc/configuration.eps,width=\textwidth}
+%  \caption{Configuration and discretization}
+%  \label{fig:disc}
+%\end{figure}
+%
+%\begin{table}[h!]
+%	\centering
+%	\caption{Electro-mechanical compressible Mooney-Rivlin material data, simulation parameters and geometry.}
+%	\label{table:disc}
+%			\begin{tabular}{l c c l | c}
+%		\hline
+%		\\
+%Mechanical parameters  & \(\mu_1\)      	& $1\times10^5$                  	& Pa                            	&Geometry of the disc\\
+%{}          		   & \(\mu_2\)      	& $2\times10^5$                  	& Pa                            	&\\
+%{}          		   & \(\lambda\)      	& $1\times10^5$                  	& Pa                            	&\multirow{2}{*}{	
+%\psfrag{r}[r][r]{\small{\(0.5\)}}
+%\psfrag{t}[l][l]{\small{\(t=0.01\)}}
+%\psfrag{m}[l][l]{\small{\([\text{m}]\)}}
+%\includegraphics[height=0.15\textheight]{figures/05_disc/scratch}}\\
+%Electrical parameters  & \(\epsilon_0\)      	& $8.854\times10^{-12}$                  	& $\text{A}^2\,\text{s}^4\,\text{kg}^{-1}\,\text{m}^{-3}$ &\\
+%		{}          		   & \(\epsilon_r\)      	& $4$                  	& $\text{N}/\text{V}^2$                           	&\\
+%		Ref. potential        & $\phi_0$ & 0            & V                             &\\
+%		Surface charge        & $\omega_0$ & $2\times10^{-3}$            & $\text{Q}/\text{m}^2$                             &\\
+%		Density                 & $\rho_0$   & 1000                & $\text{kg}\,\text{m}^{-3}$             &\\
+%		Timestep size           & $\Delta t$ & 0.01              & s                             &\\
+%		Simulation time         & $T$        & 20                & s                             &\\ 
+%		Newton tolerance        & $\epsilon$        & $10^{-4}$                & -                            &\\ 
+%		\\
+%		\hline
+%	\end{tabular}
+%\end{table}
+%
+%
+%\subsubsection{Problem results}
+%\begin{itemize}
+%\item The energy is correctly reproduces when using the EMC integrator (see Fig.~\ref{f:buckling-energy}).
+%\item The EMC integrator is numerical very stable for the given time-step size (see Fig.~\ref{f:buckling-energy}).
+%\item The midpoint integrator leads to a energy blow-up (which results in a termination of the simulation, see Fig.~\ref{f:buckling-energy})) during the electric surface charge.
+%\item The EMC integrator correctly reproduces the energy conservation for time $t\geq 1\,\text{s}$, see Fig.~\ref{f:buckling-energydiff}.
+%\item The motion of the bending actuator is illustrated with a sequence of subsequent snapshots, see Fig.~\ref{f:buckling-snaps}.
+%\end{itemize}
+%
+%\begin{figure}[h!]
+%\begin{minipage}[b!]{0.475\textwidth}
+%\centering
+%      \setlength{\figH}{0.25\textheight}
+%					\setlength{\figW}{0.8\textwidth}
+%					\input{figures/05_disc/energy.tikz}
+%  \caption{Time history of the total energy}
+%  \label{f:buckling-energy}
+%\end{minipage}
+%\hfill
+%\begin{minipage}[b!]{0.475\textwidth}
+%   \centering
+%      \setlength{\figH}{0.25\textheight}
+%					\setlength{\figW}{0.8\textwidth}
+%					\input{figures/05_disc/energydiff.tikz}
+%  \caption{Time history of the difference in the total energy}
+%  \label{f:buckling-energydiff}
+%\end{minipage}
+%\end{figure}
+%
+%\begin{figure}[htbp]
+%	\begin{center}
+%		\includegraphics[width=0.9\textwidth]{figures/05_disc/snapshots_disc_Rogelio}\label{fig:discretisation table}
+%	\end{center}
+%\end{figure}
+%
+%
+%%\begin{figure}[h!]
+%%\centering
+%%   \epsfig{file=figures/05_disc/snapshots.eps,width=\textwidth}
+%%   snapshots_disc_Rogelio
+%%  \caption{Snapshots with electrical potential distribution at  $t\in\{ 0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,1.1\}\,\text{s} $}
+%%  \label{f:buckling-snaps}
+%%\end{figure}

@@ -1,0 +1,239 @@
+   
+
+
+
+
+
+
+\section{Introduction into HSMSs}
+
+
+
+\begin{frame}
+	\frametitle[]{The problem description \hspace{5cm}\raisebox{-.5\totalheight}{\includegraphics[width=2cm]{ministerio}}}
+	\footnotesize
+	
+	\vspace{0mm}
+	
+	
+\begin{itemize}
+	\item The toy function and the domain
+	
+	
+	\begin{equation*}
+		y(x_1,x_2)   =  x_1^2 - \beta x_1^2x_2^2;  \qquad  x_1\in \left[0,1\right], x_2\in \left[0,1\right]
+	\end{equation*}
+
+\vspace{2mm}
+
+	\item When $\beta=1$ everything works fine! When $\beta<<1$ we are fucked!!!
+
+
+\vspace{2mm}
+
+\item The function for different values of $\beta$
+
+\vspace{2mm}
+
+\begin{center}
+	\begin{tabular}{cc}
+		\incg[width=0.38\textwidth,keepaspectratio=true,draft=false]{fig/pdf/beta_1}				&
+		\incg[width=0.38\textwidth,keepaspectratio=true,draft=false]{fig/pdf/beta_1e_4}\\
+		$\beta=1$  &  $\beta=10^{-4}$
+	\end{tabular}	
+\end{center}				
+
+
+\end{itemize}	
+	
+
+\vspace{0mm}
+	
+\begin{itemize}
+	\item Error metrics that we would like to monitor:
+\begin{equation*}
+	\mathcal{J}_1  =  \frac{\sum_i \Bigg(\Big(\partial y/\partial x_1\Big)_i-\Big(\partial y/\partial x_1^{\star}\Big)_i\Bigg)^2}{\sum_i\Bigg(\Big(\partial y/\partial x_1^{\star}\Big)_i\Bigg)^2};\qquad	
+	%
+	\mathcal{J}_2=	\frac{\sum_i \Bigg(\Big(\partial y/\partial x_2\Big)_i-\Big(\partial y/\partial x_2^{\star}\Big)_i\Bigg)^2}{\sum_i\Bigg(\Big(\partial y/\partial x_2^{\star}\Big)_i\Bigg)^2}
+\end{equation*}
+	
+	
+
+\end{itemize}		
+	
+	
+	
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle[]{Option 1  \hspace{8cm}\raisebox{-.5\totalheight}{\includegraphics[width=2cm]{ministerio}}}
+	\footnotesize
+	
+	\vspace{-3mm}
+	
+	\begin{itemize}
+		\item Objective function option 1:
+	\begin{equation*}
+		\boxed{\mathcal{J}  =  \mathcal{J}_1 + 
+			%
+\mathcal{J}_2}
+	\end{equation*}
+	
+	
+	\begin{center}
+		
+		\incg[width=0.5\textwidth,keepaspectratio=true,draft=false]{fig/pdf/Option1Flux}						
+	\end{center}				
+
+\item \textcolor[rgb]{1.0,0.0,0.0}{\textbf{Excessive amount of iterations}}. Values of $\mathcal{J}_1$	and $\mathcal{J}_2$ are
+
+\begin{equation*}
+	\mathcal{J}_1  =  2.9\times 10^{-4};\qquad \mathcal{J}_2=2\times 10^{-2}
+\end{equation*}
+
+	\end{itemize}		
+
+	
+\end{frame}
+
+
+\begin{frame}
+	\frametitle[]{Option 2  \hspace{8cm}\raisebox{-.5\totalheight}{\includegraphics[width=2cm]{ministerio}}}
+	\footnotesize
+	
+	\vspace{0mm}
+	
+	\begin{itemize}
+		\item Objective function option 2 (trying to help with values of the function itself!):
+		\begin{equation*}
+			\boxed{\mathcal{J}  =  \mathcal{J}_1 + 
+				%
+				\mathcal{J}_2 + \mathcal{J}_3;\qquad 	\mathcal{J}_3=	\frac{\sum_i \Big(y_i-y^{\star}_i\Big)^2}{\sum_i\Big(y^{\star}_i\Big)^2}}
+		\end{equation*}
+		
+		
+		\begin{center}
+			
+			\incg[width=0.5\textwidth,keepaspectratio=true,draft=false]{fig/pdf/Option2Flux}						
+		\end{center}				
+		
+		\item \textcolor[rgb]{1.0,0.0,0.0}{\textbf{Excessive amount of iterations}}. Values of $\mathcal{J}_1$	and $\mathcal{J}_2$ are
+		
+		\begin{equation*}
+			\mathcal{J}_1  =  5\times 10^{-4};\qquad \mathcal{J}_2=4.2\times 10^{-4}
+		\end{equation*}
+		
+	\end{itemize}		
+	
+	
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle[]{Option 3  \hspace{8cm}\raisebox{-.5\totalheight}{\includegraphics[width=2cm]{ministerio}}}
+	\footnotesize
+	
+	\vspace{0mm}
+	
+	\begin{itemize}
+		\item Objective function option 3:
+		\begin{equation*}
+			\boxed{\mathcal{J}  =  \frac{\sum_i \Bigg(\Big(\partial y/\partial x_1\Big)_i-\Big(\partial y/\partial x_1^{\star}\Big)_i\Bigg)^2 + \alpha\sum_i \Bigg(\Big(\partial y/\partial x_2\Big)_i-\Big(\partial y/\partial x_2^{\star}\Big)_i\Bigg)^2}{\sum_i\Bigg(\Big(\partial y/\partial x_1^{\star}\Big)_i\Bigg)^2 + \alpha\sum_i\Bigg(\Big(\partial y/\partial x_2^{\star}\Big)_i\Bigg)^2}, \qquad \alpha = \frac{1}{\beta^2}}
+		\end{equation*}
+		
+		
+		\begin{center}
+			
+			\incg[width=0.5\textwidth,keepaspectratio=true,draft=false]{fig/pdf/Option3Flux}						
+		\end{center}				
+		
+		\item \textcolor[rgb]{1.0,0.0,0.0}{\textbf{We observe an improvement}}. Values of $\mathcal{J}_1$	and $\mathcal{J}_2$ are
+		
+		\begin{equation*}
+			\mathcal{J}_1  =  3\times 10^{-4};\qquad \mathcal{J}_2=8\times 10^{-3}
+		\end{equation*}
+		
+	\end{itemize}		
+	
+	
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle[]{Option 4  \hspace{8cm}\raisebox{-.5\totalheight}{\includegraphics[width=2cm]{ministerio}}}
+	\footnotesize
+	
+	\vspace{0mm}
+	
+	\begin{itemize}
+		\item Objective function option 4: consistent scaling of $\partial y/\partial x_j$ and $\partial y/\partial x_j^{\star}$
+		\begin{equation*}
+			\boxed{\mathcal{J}  =  \frac{\sum_i \Bigg(\Big(\widetilde{\partial y/\partial x_1}\Big)_i-\Big(\widetilde{\partial y/\partial x_1^{\star}}\Big)_i\Bigg)^2 + \sum_i \Bigg(\Big(\widetilde{\partial y/\partial x_2}\Big)_i-\Big(\widetilde{\partial y/\partial x_2^{\star}}\Big)_i\Bigg)^2}{\sum_i\Bigg(\Big(\widetilde{\partial y/\partial x_1^{\star}}\Big)_i\Bigg)^2 + \sum_i\Bigg(\Big(\widetilde{\partial y/\partial x_2^{\star}}\Big)_i\Bigg)^2}}
+		\end{equation*}
+		
+		
+		\begin{equation*}
+			\Big(\widetilde{\partial y/\partial x_j}\Big)_i  =  \frac{\Big(\partial y/\partial x_j\Big)_i-\min_{i}\Big(\partial y/\partial x_j^{\star}\Big)}{\max_{i}\Big(\partial y/\partial x_j^{\star}\Big)-\min_{i}\Big(\partial y/\partial x_j^{\star}\Big)};\qquad
+			%
+			\Big(\widetilde{\partial y/\partial x_j^{\star}}\Big)_i  =  \frac{\Big(\partial y/\partial x_j^{\star}\Big)_i-\min_{i}\Big(\partial y/\partial x_j^{\star}\Big)}{\max_{i}\Big(\partial y/\partial x_j^{\star}\Big)-\min_{i}\Big(\partial y/\partial x_j^{\star}\Big)}			
+		\end{equation*}		
+		
+		\begin{center}
+			
+			\incg[width=0.4\textwidth,keepaspectratio=true,draft=false]{fig/pdf/Option4Flux}						
+		\end{center}				
+		
+		\item \textcolor[rgb]{1.0,0.0,0.0}{\textbf{Drastic improvement}}. Values of $\mathcal{J}_1$	and $\mathcal{J}_2$ are $\mathcal{J}_1  =  1.7\times 10^{-7}$ and $\mathcal{J}_2=8.67\times 10^{-6}$
+
+		
+	\end{itemize}		
+	
+	
+\end{frame}
+
+
+
+\begin{frame}
+	\frametitle[]{Option 5  \hspace{8cm}\raisebox{-.5\totalheight}{\includegraphics[width=2cm]{ministerio}}}
+	\footnotesize
+	
+	\vspace{0mm}
+	
+	\begin{itemize}
+		\item Objective function option 5: separate scaling of $\partial y/\partial x_j$ and $\partial y/\partial x_j^{\star}$
+		\begin{equation*}
+			\boxed{\mathcal{J}  =  \frac{\sum_i \Bigg(\Big(\widetilde{\partial y/\partial x_1}\Big)_i-\Big(\widetilde{\partial y/\partial x_1^{\star}}\Big)_i\Bigg)^2 + \sum_i \Bigg(\Big(\widetilde{\partial y/\partial x_2}\Big)_i-\Big(\widetilde{\partial y/\partial x_2^{\star}}\Big)_i\Bigg)^2}{\sum_i\Bigg(\Big(\widetilde{\partial y/\partial x_1^{\star}}\Big)_i\Bigg)^2 + \sum_i\Bigg(\Big(\widetilde{\partial y/\partial x_2^{\star}}\Big)_i\Bigg)^2}}
+		\end{equation*}
+
+
+\begin{equation*}
+	\begin{aligned}
+	\Big(\widetilde{\partial y/\partial x_j}\Big)_i  =  \frac{\Big(\partial y/\partial x_j\Big)_i-\min_{i}\Big(\partial y/\partial x_j\Big)}{\max_{i}\Big(\partial y/\partial x_j\Big)-\min_{i}\Big(\partial y/\partial x_j\Big)};\quad
+	%
+	\Big(\widetilde{\partial y/\partial x_j^{\star}}\Big)_i  =  \frac{\Big(\partial y/\partial x_j^{\star}\Big)_i-\min_{i}\Big(\partial y/\partial x_j^{\star}\Big)}{\max_{i}\Big(\partial y/\partial x_j^{\star}\Big)-\min_{i}\Big(\partial y/\partial x_j^{\star}\Big)}	
+	\end{aligned}
+\end{equation*}		
+		
+		\begin{center}
+			
+			\incg[width=0.4\textwidth,keepaspectratio=true,draft=false]{fig/pdf/Option5Flux}						
+		\end{center}				
+		
+		\item \textcolor[rgb]{1.0,0.0,0.0}{\textbf{Drastic improvement}}. Values of $\mathcal{J}_1$	and $\mathcal{J}_2$ are $\mathcal{J}_1  =  1.7\times 10^{-7}$ and $\mathcal{J}_2=8.67\times 10^{-6}$
+
+		\item \textcolor[rgb]{1.0,0.0,0.0}{\textbf{Energetic inconsistency!!}}
+
+		
+	\end{itemize}		
+	
+	
+\end{frame}
+
+
+
+
+

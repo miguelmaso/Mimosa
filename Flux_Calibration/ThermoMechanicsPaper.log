@@ -1,0 +1,130 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.19)  22 SEP 2024 20:24
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/PaperLatex_ML/Ther
+moMechanicsPaper.tex
+
+(/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/PaperLatex_ML/Therm
+oMechanicsPaper.tex
+LaTeX2e <2024-06-01> patch level 2
+L3 programming layer <2024-08-30>
+(/usr/local/texlive/2024/texmf-dist/tex/latex/elsarticle/elsarticle.cls
+Document Class: elsarticle 2024/04/04, 3.4: Elsevier Ltd
+(/usr/local/texlive/2024/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+)
+(/usr/local/texlive/2024/texmf-dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2024-08-30 L3 programming layer (loader) 
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count194
+\l__pdf_internal_box=\box52
+))
+(/usr/local/texlive/2024/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
+Package: xparse 2024-08-16 L3 Experimental document command parser
+)
+(/usr/local/texlive/2024/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count195
+)
+\@bls=\dimen141
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2024/02/08 v1.4n Standard LaTeX document class
+(/usr/local/texlive/2024/texmf-dist/tex/latex/base/size12.clo
+File: size12.clo 2024/02/08 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count196
+\c@section=\count197
+\c@subsection=\count198
+\c@subsubsection=\count199
+\c@paragraph=\count266
+\c@subparagraph=\count267
+\c@figure=\count268
+\c@table=\count269
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen142
+)
+(/usr/local/texlive/2024/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks17
+)
+(/usr/local/texlive/2024/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2024/05/23 v1.4g Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(/usr/local/texlive/2024/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2024/04/13 v1.2c Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen143
+\Gin@req@width=\dimen144
+)
+\c@tnote=\count270
+\c@fnote=\count271
+\c@cnote=\count272
+\c@ead=\count273
+\c@author=\count274
+\@eadauthor=\toks18
+\c@affn=\count275
+\absbox=\box53
+\elsarticlehighlightsbox=\box54
+\elsarticlegrabsbox=\box55
+\keybox=\box56
+\Columnwidth=\dimen145
+\space@left=\dimen146
+\els@boxa=\box57
+\els@boxb=\box58
+\leftMargin=\dimen147
+\@enLab=\toks19
+\@sep=\skip51
+\@@sep=\skip52
+
+(/usr/local/texlive/2024/texmf-dist/tex/latex/natbib/natbib.sty
+Package: natbib 2010/09/13 8.31b (PWD, AO)
+\bibhang=\skip53
+\bibsep=\skip54
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count276
+)
+\splwrite=\write3
+\openout3 = `ThermoMechanicsPaper.spl'.
+
+\appnamewidth=\dimen148
+)
+
+! LaTeX Error: File `header.tex' not found.
+
+Type X to quit or <RETURN> to proceed,
+or enter new name. (Default extension: tex)
+
+Enter file name: 
+! Emergency stop.
+<read *> 
+         
+l.2 \input{header}
+                   % All packages included^^M
+End of file on the terminal!
+
+ 
+Here is how much of TeX's memory you used:
+ 2197 strings out of 473579
+ 32345 string characters out of 5728234
+ 418183 words of memory out of 5000000
+ 25136 multiletter control sequences out of 15000+600000
+ 559596 words of font info for 38 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 72i,0n,79p,326b,40s stack positions out of 10000i,1000n,20000p,200000b,200000s
+!  ==> Fatal error occurred, no output PDF file produced!

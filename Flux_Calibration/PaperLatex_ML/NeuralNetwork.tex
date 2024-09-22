@@ -1,0 +1,113 @@
+% I will take 4 combinations of n_nodes and n_experiments
+
+% n_nodes = 10
+% n_experiments=4000
+
+%n_nodes = 10 
+% n_experiments=2000
+
+
+%n_nodes = 30 
+% n_experiments=4000
+
+%n_nodes = 30 
+% n_experiments=2000
+
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table}[!hb]
+
+\begin{minipage}{.49\textwidth}
+
+\begin{tabular}{lllllllcc|ccc}
+\multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=10$\\ $n_{experiments}=4000$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
+\multicolumn{9}{c|}{}                                                                                                 & 10        & 20        & 40        \\ \hline
+        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 2        & a         & b         & c         \\
+        &         &         &         &         &         &         &                                      & 3        & a         & b         & c         \\
+        &         &         &         &         &         &         &                                      & 4        & a         & b         & c         \\
+        &         &         &         &         &         &         &                                      & 6        & a         & b         & c        
+\end{tabular}
+
+
+
+\end{minipage}
+
+\begin{minipage}{.49\textwidth}
+\begin{tabular}{lllllllcc|ccc}
+\multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=10$\\ $n_{experiments}=2000$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
+\multicolumn{9}{c|}{}                                                                                                 & 10        & 20        & 40        \\ \hline
+        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 2        & a         & b         & c         \\
+        &         &         &         &         &         &         &                                      & 3        & a         & b         & c         \\
+        &         &         &         &         &         &         &                                      & 4        & a         & b         & c         \\
+        &         &         &         &         &         &         &                                      & 6        & a         & b         & c        
+\end{tabular}
+\end{minipage}
+
+\begin{minipage}{.49\textwidth}
+\begin{tabular}{lllllllcc|ccc}
+\multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=30$\\ $n_{experiments}=4000$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
+\multicolumn{9}{c|}{}                                                                                                 & 10        & 20        & 40        \\ \hline
+        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 2        & a         & b         & c         \\
+        &         &         &         &         &         &         &                                      & 3        & a         & b         & c         \\
+        &         &         &         &         &         &         &                                      & 4        & a         & b         & c         \\
+        &         &         &         &         &         &         &                                      & 6        & a         & b         & c        
+\end{tabular}
+\end{minipage}
+
+\begin{minipage}{.49\textwidth}
+\begin{tabular}{lllllllcc|ccc}
+\multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=30$\\ $n_{experiments}=2000$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
+\multicolumn{9}{c|}{}                                                                                                 & 10        & 20        & 40        \\ \hline
+        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 2        & a         & b         & c         \\
+        &         &         &         &         &         &         &                                      & 3        & a         & b         & c         \\
+        &         &         &         &         &         &         &                                      & 4        & a         & b         & c         \\
+        &         &         &         &         &         &         &                                      & 6        & a         & b         & c        
+\end{tabular}
+\end{minipage}
+
+
+\end{table}
+
+
+
+
+\begin{table}[hbtp!]
+	\centering
+	\begin{tabular}{c c c c c c c c c c c c}
+		\toprule
+		\rowcolor{gray!30}	\small{} & $n_L+1$ & 2 &  3& 4& 5& 6& 2& 3& 4& 5 & 6\\
+		\midrule 
+		\rowcolor{gray!30}	\small{} & $n_n$ & 8 & 8& 8& 8 &8 &16& 16& 16& 16 &  16\\
+		\midrule
+		\multirow{3}{*}{\rotatebox{90}{\textcolor{red}{\textbf{MR}}/\textcolor{blue}{\textbf{ID}}}}  &$R^2(\partial_{\vect{F}}\Psi)$ & 0.9994&  0.9999 & 0.9999 & 0.9998 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9997\\
+		&$R^2(\partial_{\vect{E}_0}\Psi)$ & 0.9999 &  0.9999 & 0.99999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
+		&$R^2(\partial_{\theta}\Psi)$ & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\	
+		\midrule
+		\multirow{3}{*}{\rotatebox{90}{\textcolor{red}{\textbf{QMR}}/\textcolor{blue}{\textbf{ID}}}} &$R^2(\partial_{\vect{F}}\Psi)$ & 0.9989 & 0.9989 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
+		&$R^2(\partial_{\vect{E}_0}\Psi)$ & 0.9995 & 0.9996 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
+		&$R^2(\partial_{\theta}\Psi)$ & 0.9999 &  0.9999 & 0.99999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
+		\\
+		\midrule
+		\multirow{3}{*}{\rotatebox{90}{\textcolor{red}{\textbf{Y}}/\textcolor{blue}{\textbf{ID}}}} &$R^2(\partial_{\vect{F}}\Psi)$ & 0.9992 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.99999 & 0.9999 & 0.9999  & 0.9999\\
+&$R^2(\partial_{\vect{E}_0}\Psi)$ & 0.9994 &  0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
+&$R^2(\partial_{\theta}\Psi)$ & 0.9999 &  0.9999 & 0.99999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\	
+\midrule
+		\multirow{3}{*}{\rotatebox{90}{\textcolor{red}{\textbf{G}}/\textcolor{blue}{\textbf{ID}}}} &$R^2(\partial_{\vect{F}}\Psi)$ & 0.9999  & 0.9998 & 0.9998 & 0.9998 & 0.9998 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
+&$R^2(\partial_{\vect{E}_0}\Psi)$ & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
+&$R^2(\partial_{\theta}\Psi)$ & 0.9999 &  0.9999 & 0.99999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\	
+\midrule
+		\multirow{3}{*}{\rotatebox{90}{\textcolor{red}{\textbf{TI}}/\textcolor{blue}{\textbf{ID}}}} &$R^2(\partial_{\vect{F}}\Psi)$ & 0.9996 & 0.9996 & 0.9999 & 0.9999&  0.9999&  0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
+&$R^2(\partial_{\vect{E}_0}\Psi)$ &  0.9994 & 0.9992 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
+&$R^2(\partial_{\theta}\Psi)$ & 0.9999 &  0.9999 & 0.99999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\	
+\midrule
+		\multirow{3}{*}{\rotatebox{90}{\textcolor{red}{\textbf{MR}}/\textcolor{blue}{\textbf{ES}}}} &$R^2(\partial_{\vect{F}}\Psi)$ &  0.9996 &  0.9995 & 0.9995 & 0.9999 & 0.9998 & 0.9999 & 0.9996 & 0.9999 & 0.9999 & 0.9999\\
+&$R^2(\partial_{\vect{E}_0}\Psi)$ & 0.9998 & 0.9998 & 0.9998 & 0.9999 & 0.9998 & 0.9999 & 0.9998 & 0.9999 & 0.9999 & 0.9999\\
+&$R^2(\partial_{\theta}\Psi)$ & 0.9999 &  0.9999 & 0.99999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\	
+\midrule
+	\end{tabular}
+	\caption{Values of the $R^2(\partial_{\vect{F}}\Psi)$, $R^2(\partial_{\vect{E}_0}\Psi)$ and $R^2(\partial_{\theta}\Psi)$ obtained in the calibration of $\Psi_{nn}$ (hence using the training dataset) using the purely mechanical (in red) and electro-mechanical (in blue) contributions of the ground truth Helmholtz strain energy model used for the calibration.}
+	\label{table: results calibration strategy 1}
+\end{table}
+

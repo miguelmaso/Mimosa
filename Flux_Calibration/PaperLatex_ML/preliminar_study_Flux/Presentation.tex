@@ -1,0 +1,424 @@
+\documentclass[compress,8pt,dvipsnames]{beamer}                              %\documentclass[compress,8pt,handout]{beamer}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{./utilities/preamble}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{./utilities/rdw_macro}
+\input{./utilities/stmary}
+\input{./utilities/macpap2}
+\input{./utilities/presentation_template}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+%--------------------------------------------------------
+% Packages
+%--------------------------------------------------------
+\usepackage{eurosym} % para el euro
+
+\usepackage{bigints}
+\usepackage{color}
+\usepackage[english]{babel}
+\usepackage{times}		
+\usepackage{amsmath,amssymb,amsfonts,mathrsfs}
+%\usepackage{colortbl}
+%\usepackage{multimedia}
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes,backgrounds}
+%  \usepackage{movie15}
+ \usepackage{media9}
+\usepackage{lib/appendixnumberbeamer}
+\usepackage{subfigure}
+\usepackage[small,labelformat=empty]{caption}
+\usepackage{hyperref}
+\usepackage{leftidx}
+\usepackage{tcolorbox}
+\usepackage{color, colortbl}
+\usepackage{ifpdf}
+\ifpdf
+\graphicspath{{fig/pdf/}}
+\else
+\graphicspath{{fig/eps/}}
+\fi
+
+\usepackage{ragged2e}
+\usepackage{multirow, makecell}
+\usepackage{changepage}
+
+
+% EQUATION BOX
+\usepackage{empheq}
+\usepackage{tcolorbox} 
+\newcommand{\bfin}{\hspace{12cm}\ \ \ \ \rule[-10pt]{6pt}{6pt}}
+\newtheorem{scheme}{\sc Scheme}
+ \newtheorem{assum}{Assumption}
+\newtheorem{com}{Observation}
+ 
+\newcommand{\Vol}{\text{\rm Vol}}
+\newcommand{\Gout}{\Gamma_\text{\rm out}}
+\newcommand{\Winfty}{W^{1,\infty}(\mathbb{R}^d,\mathbb{R}^d)}
+\newcommand{\dis}{\displaystyle}
+\newcommand{\Fin}{\hfill$\Box$}
+%\newcommand{\Fin}{\begin{flushright} \rule{2mm}{2mm} \end{flushright}}
+\newcommand{\jnt}{\dis\int}
+\newcommand{\jjntQT}{\jnt\!\!\!\jnt_{Q_{T}}}
+\newcommand{\jjntqT}{\jnt\!\!\!\jnt_{q_{T}}}
+\newcommand{\wfin}{\ \ \ \ $ _{_{{\textstyle \Box} }} $}
+ 
+\newcommand{\sen}{\mathop{\hbox{\rm sen}}\nolimits}
+
+\newcommand{\CD}[1]{{\textcolor{blue}{#1}}}
+
+
+ \newcommand{\ph}{\varphi}
+
+\providecommand{\tabularnewline}{\\}
+
+\newcommand{\myinput}[2]{
+ {\resizebox{#1}{!}{\input #2.pstex_t}}
+}
+
+\def\Id{\text{\rm Id}}
+\def\R{\mathbb{R}}
+\def\Uad{{\mathcal U}_{\text{\rm ad}}}
+\def\Tad{\Theta_{\text{\rm ad}}}
+
+
+
+\newtcbox{\equationboxbluethick}[1][]
+{
+	left=2pt, right=2pt, top=2pt, bottom=2pt, nobeforeafter, math upper, tcbox raise base, enhanced, colframe=blue, colback=blue!3, boxrule=2.5pt, #1
+}
+
+\newtcbox{\equationboxyellowthick}[1][]
+{
+	left=2pt, right=2pt, top=2pt, bottom=2pt, nobeforeafter, math upper, tcbox raise base, enhanced, colframe=red, colback=yellow!10, boxrule=2.5pt, #1
+}
+\newtcbox{\equationboxredthick}[1][]
+{
+	left=2pt, right=2pt, top=2pt, bottom=2pt, nobeforeafter, math upper, tcbox raise base, enhanced, colframe=orange, colback=red!3, boxrule=2.5pt, #1
+}
+
+
+\addtobeamertemplate{block example begin}{%
+	\setlength{\textwidth}{1.1\textwidth}
+}{}
+
+
+% ---------------------------------------------------------------------
+% Customization
+% ---------------------------------------------------------------------
+
+\setbeamercovered{dynamic}
+ 
+\definecolor{Light}{gray}{.80}
+\definecolor{Light2}{gray}{.90}
+\definecolor{ggreen}{RGB}{0,153,0}
+\definecolor{tugred3}{RGB}{38,76,128}
+
+\definecolor{blue2}{RGB}{25,25,112}
+\definecolor{GREEN2}{RGB}{53,115,0}
+
+\definecolor{beetle@other}{RGB}{72,108,134}
+
+\newcommand*\oldmacro{}%
+\let\oldmacro\insertshorttitle%
+\renewcommand*\insertshorttitle{%
+  \oldmacro\hfill%
+  \insertframenumber\,/\,\inserttotalframenumber}
+
+  
+      \newenvironment{withoutheadline}{
+        \setbeamertemplate{headline}[default]
+        \def\beamer@entrycode{\vspace*{-\headheight}}
+    }{}
+    
+
+      
+      
+% ---------------------------------------------------------------------
+% Declarations
+% ---------------------------------------------------------------------
+
+
+% \second logo
+\usepackage[absolute,overlay]{textpos}
+\newcommand{\twoLogo}{
+  \begin{textblock*}{10mm}(1mm,78mm)
+   \includegraphics[width=15mm]{upct}
+  \end{textblock*}
+}
+
+% \second logo vertical
+\usepackage[absolute,overlay]{textpos}
+\newcommand{\twoLogov}{
+  \begin{textblock*}{10mm}(80mm,20mm)
+   \includegraphics[scale=0.05]{logo}
+\vspace{130pt} \includegraphics[scale=0.12]{logoini}
+  \end{textblock*}
+}
+
+% \logoUPCT
+\newcommand{\logoUPCT}{
+ \logo{
+% \hfil
+\centering
+ \includegraphics[scale=0.18]{logoini}  
+
+
+ } % logo at bottom right
+
+}
+
+\newcommand{\logotitle}{
+\rlap{\raisebox{-\dp\strutbox}{\hspace{11cm}\includegraphics[height=0.07\textheight]{escudo}}} 
+}
+
+
+% \logoUPCT
+\newcommand{\logoslides}{
+ \logo{} % logo at bottom right
+
+}
+
+
+
+% \logoUPCT
+\newcommand{\logoFINAL}{
+ \logo{
+% \hfil
+  \includegraphics[scale=0.14]{code}~%
+  \hspace{100pt} \includegraphics[scale=0.06]{MEyC1}~%\vspace{280pt} 
+  \hspace{100pt} 
+\includegraphics[scale=0.12]{logoini2}%\vspace{280pt} 
+ } % logo at bottom right
+
+}
+
+
+% \logoUPCT
+\newcommand{\nologo}{
+ \logo{
+ } 
+}
+
+
+
+\newcommand{\logoscv}{
+	\logo{
+		% \hfil
+		
+		\begin{tabular}{@{\hspace{18em}}c}
+			\includegraphics[scale=0.25]{cv}\\
+			\vspace{10pt} 
+		\end{tabular}
+		
+	} % logo at bottom right
+	
+}
+
+\newcommand{\logosinv}{
+	\logo{
+		% \hfil
+		
+		\begin{tabular}{@{\hspace{18em}}c}
+			\includegraphics[scale=0.25]{inv}\\
+			\vspace{10pt} 
+		\end{tabular}
+		
+	} % logo at bottom right
+	
+}
+\newcommand{\logosdoc}{
+	\logo{
+		% \hfil
+		
+		\begin{tabular}{@{\hspace{18em}}c}
+			\includegraphics[scale=0.25]{doc}\\
+			\vspace{10pt} 
+		\end{tabular}
+		
+	} % logo at bottom right
+	
+}
+\newcommand{\logoscontent}{
+	\logo{
+		% \hfil
+		
+		\begin{tabular}{@{\hspace{18em}}c}
+			\includegraphics[scale=0.11]{intro}\\
+			\vspace{10pt} 
+		\end{tabular}
+		
+	} % logo at bottom right
+	
+}
+
+
+\newcommand\BackgroundPicture[1]{%
+   \setbeamertemplate{background}{%
+   \parbox[c][\paperheight]{\paperwidth}{%
+       \vfill %\hfill
+ 
+\includegraphics[width=1.0\paperwidth,height=0.8\paperheight]{
+#1}
+        %\hfill
+         \vfill
+     }}}
+
+
+% ---------------------------------------------------------------------
+% Uncomment the second lines to get rid of them
+%----------------------------------------------------------------------
+% Notes
+%----------------------------------------------------------------------
+
+%----------------------------------------------------------------------
+% Pauses for printing
+%----------------------------------------------------------------------
+\def\mypause{\pause}
+\def\mypause{}
+
+
+
+
+% ---------------------------------------------------------------------
+% Slides configuration
+% ---------------------------------------------------------------------
+%\logoUPCT % logo at bottom right
+
+
+%\definecolor{blue2}{RGB}{48,101,139}
+\definecolor{blue2}{RGB}{0,44,121}
+\definecolor{GREEN2}{RGB}{53,115,0}
+ 
+% ---------------------------------------------------------------------
+% Main slide
+% ---------------------------------------------------------------------
+ 
+ % ---------------------------------------------------------------------
+ % Main slide
+ % ---------------------------------------------------------------------
+ \title[ MultiSimO Lab]{
+ 	\textbf{\normalsize PROGRAMMING SHAPE-MORPHING MAGNETO-ACTIVE POLYMER COMPOSITES THROUGH MULTI-PHYSICS INFORMED TOPOLOGY OPTIMIZATION\\
+ 	}
+ } 
+ 
+ \author[Grant PID2022-141957OA-C22 funded by MCIN/AEI/10.13039/501100011033 and by ERDF A way of making Europe \hspace{0cm}]{  	\vspace{0cm}
+ 	\color{blue2}
+% 	{\large	\bf     \\\vspace{0.2cm}SUBTITLE}\\\vspace{0.5cm}
+ 	{\normalsize \bf R. Ortigosa$^{1}$, J. Mart\'inez-Frutos$^{1}$, D. Garc\'ia-Gonz\'alez$^{2}$, C. P\'erez-Garc\'ia$^{2}$, M. L\'opez-Donaire$^{2}$} \normalsize \\\vspace{0.2cm}
+ 	{\normalsize \bf $^{1}$ Universidad Polit\'ecnica de Cartagena (Spain)\\
+ 	$^{2}$ Universidad Carlos III de Madrid (Spain)} \normalsize \\
+ \vspace{1.5cm}
+ 	{\normalsize \bf ECCOMAS Congress 2024, 3-7 June 2024, Lisboa, Portugal} \normalsize \\\vspace{0.5cm}
+ }
+
+ 
+\date[6 Feb 2024]{   }
+\subject{INI}
+%
+\AtBeginSection[]
+{
+	 
+\begin{frame}<beamer>
+\large
+\tableofcontents[currentsection, hideothersubsections]
+\normalsize
+\end{frame}
+}
+\newif\ifshowtoc
+\showtocfalse% toggles to show the toc
+\newif\ifcv
+\newif\ifdoc
+\newif\ifinv
+\cvfalse% toggles to show the toc
+\docfalse% toggles to show the toc
+\invfalse% toggles to show the toc
+
+\newif\ifshowbi
+\newif\ifshowbii
+\newif\ifshowbiii
+\showbitrue% toggles to show the toc
+\showbiitrue% toggles to show the toc
+\showbiiitrue% toggles to show the toc
+
+%\AtBeginSection{%
+%	\ifshowtoc
+%	\begin{frame}
+%		\tableofcontents[currentsection, subsectionstyle=show]
+%	\end{frame}
+%	\fi
+%}
+
+
+
+\newcommand\Wider[2][5em]{%
+	\makebox[\linewidth][c]{%
+		\begin{minipage}{\dimexpr\textwidth+#1\relax}
+			\raggedright#2
+		\end{minipage}%
+	}%
+}
+ 
+
+%--------------------------------------------------------
+% Begin Document
+%----------------------------------------------------------------------
+\begin{document}
+%----------------------------------------------------------------------
+ % For every picture that defines or uses external nodes, you'll have to
+% apply the 'remember picture' style. To avoid some typing, we'll apply
+% the style to all pictures.
+\tikzstyle{every picture}+=[remember picture]
+\tikzstyle{na} = [baseline=-.5ex]
+%--------------------------------------------------------
+% Main slide
+%----------------------------------------------------------------------
+
+   {	\usebackgroundtemplate{\includegraphics[width=\paperwidth]{portadav1}}%
+ 	\begin{frame}
+ 		\titlepage
+ 	\end{frame}
+ }
+
+%--------------------------------------------------------
+% Outline
+%----------------------------------------------------------------------
+ 
+ 
+\normalsize
+
+ 
+ 
+\logoslides
+
+	\ifshowbi 
+	
+ 
+ \input{input/content}
+\fi
+ 
+  
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%	
+
+		\begin{frame}
+ 	\vspace{0.4cm}
+% 	\begin{center}
+%	\incg[height=0.6\textheight,keepaspectratio=true,draft=false]{fig/pdf/acknowledgements}\\
+%	\incg[height=0.3\textheight,keepaspectratio=true,draft=false]{fig/pdf/ERC_image}	
+% 	\end{center}
+
+
+\end{frame}
+
+
+
+
+\end{document}

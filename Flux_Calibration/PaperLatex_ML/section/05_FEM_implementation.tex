@@ -1,0 +1,357 @@
+
+\subsection{Continuum formulation}
+%
+%
+
+An objective of this study is to integrate neural network-based potentials, calibrated using the strategies outlined in Section \ref{eqn:calibration strategies}, into a Finite Element computational framework for the numerical modeling of the governing equations presented in \eqref{eqn:local form conservation of linear momentum},
+\eqref{eqn:local form Gauss Faraday} and
+\eqref{eqn:local form energy}. It is assumed that, irrespective of the chosen thermodynamic potential—whether it be $\Psi(\vect{F},\vect{E}_0,\theta)$, $e(\vect{F},\vect{D}_0,\eta)$, $\Gamma(\vect{F},\vect{E}_0,\eta)$, or $\Upsilon(\vect{F},\vect{D}_0,\theta)$—the corresponding Helmholtz potential, $\Psi(\vect{F},\vect{E}_0,\theta)$, can always be derived via an appropriate Legendre transformation (as shown in equation \eqref{eqn:other potentials}). Based on this, the weak forms of the governing equations \eqref{eqn:local form conservation of linear momentum},
+\eqref{eqn:local form Gauss Faraday} and
+\eqref{eqn:local form energy} can be formulated as follows:
+
+
+
+%In  addition, $H^1$ denotes the Sobolev functional space of square integrable functions and derivatives and $\mathbb{L}_2$, the space of square integrable functions. 
+%
+\begin{equation}\label{eqn:weak forms for the dynamic formulation}
+	\begin{aligned}
+%
+		\mathcal{W}_{\vect{\phi}} &  = \int_{\mathcal{B}_0}\rho_0\dot{\vect{v}}\cdot\vect{w}_{\vect{\phi}}\,dV + \int_{\mathcal{B}_0}\partial_{\vect{F}}\Psi:\partial_{\vect{X}}\vect{w}_{\vect{\phi}}\,dV\-  -\int_{\mathcal{B}_0}\vect{f}_0\cdot\vect{w}_{\vect{\phi}}\,dV-
+		\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\vect{w}_{\vect{\phi}}\,dA=0;\\
+		%
+		\mathcal{W}_{{\varphi}} &  =  -\int_{\mathcal{B}_0}\partial_{\vect{D}_0}\Psi\cdot\partial_{\vect{X}}{w}_{{\varphi}}\,dV +\int_{\mathcal{B}_0}\rho_0^e {w}_{{\varphi}}\,dV+
+\int_{\partial_{\omega}\mathcal{B}_0}{\omega}^e_0\cdot{w}_{{\varphi}}\,dA=0;\\		
+		%
+		\mathcal{W}_{{\theta}}& =  -\int_{\mathcal{B}_0}\theta\dot{\left({\partial_{\theta}\Psi}\right)}w_{\theta}\,dV - \int_{\mathcal{B}_0}\vect{Q}\cdot\vect{\nabla}_0w_{\theta}\,dV - \int_{\mathcal{B}_0}R_{\theta}{w}_{\theta}\,dV - \int_{\partial_{Q}\mathcal{B}_{0}}Q_{\theta}w_{\theta}\,dA=0,
+		%
+	\end{aligned}
+\end{equation}
+%
+{where
+	$\{\vect{\phi},\varphi,\theta\}\in \mathbb{V}^{\vect{\phi}}\times\mathbb{V}^{{\varphi}}\times\mathbb{V}^{\theta}$ and  $\{\vect{w}_{\vect{\phi}},{w}_{{\varphi}},{w}_{\theta}\}\in \mathbb{V}_0^{\vect{\phi}}\times\mathbb{V}_0^{{\varphi}}\times\mathbb{V}_0^{\theta}$\footnote{Notice in that $\vect{\phi}$ must satisfy in addition the condition $J>0$ a.e.}, with}
+%
+{\begin{equation}\label{eqn:functional spaces}
+		\begin{aligned}
+			\mathbb{V}^{\vect{\phi}} & = \left\{\vect{\phi}:\mathcal{B}_0\rightarrow \mathbb{R}^3;\,\,\,\,\, \left(\vect{\phi}\right)_{i}\in H^1\left(\mathcal{B}_0\right)\right\};&\quad
+			%
+%			
+			\mathbb{V}_0^{{\vect{\phi}}} & = \left\{\forall\vect{\phi}\in\mathbb{V}^{\vect{\phi}};\,\,\,\,\, \vect{\phi} = \vect{0} \,\,\text{on}\,\,\partial_{\vect{\phi}}\mathcal{B}_0\right\}\\
+%						
+			\mathbb{V}^{{\varphi}} & = \left\{{\varphi}:\mathcal{B}_0\rightarrow \mathbb{R};\,\,\,\,\, {\varphi}\in H^1\left(\mathcal{B}_0\right)\right\};&\quad			
+			%
+			\mathbb{V}_0^{{{\varphi}}} & = \left\{\forall{\varphi}\in\mathbb{V}^{\varphi};\,\,\,\,\, {\varphi} = {0} \,\,\text{on}\,\,\partial_{{\varphi}}\mathcal{B}_0\right\}\\
+%			
+			\mathbb{V}^{{\theta}} & = \left\{\theta:\mathcal{B}_0\rightarrow\mathbb{R};\,\,\,\,\, {\theta}\in H^1\left(\mathcal{B}_0\right)\right\};&\quad
+			%
+			\mathbb{V}_0^{{\theta}} & = \left\{\forall\theta\in\mathbb{V}^{\theta};\,\,\,\,\,\,\,{\theta} = {0} \,\,\text{on}\,\,\partial_{{\theta}}\mathcal{B}_0\right\}.
+			%
+		\end{aligned}
+\end{equation}}
+
+
+
+As standard in finite elements, the domain $\mathcal{B}_0$ described in Section \ref{sec:kinematics} and representing a thermo-elastic continuum is sub-divided into a finite set of non-overlapping elements $e\in \mathbb{E}$ such that 
+%
+\begin{equation}
+\mathcal{B}_0\approx \mathcal{B}_0^h = \bigcup_{e\in\mathbb{E}}   \mathcal{B}^e_{0}.
+\end{equation}
+
+The unknown fields $\{\vect{\phi},{\varphi},\theta\}$ in the weak forms $\mathcal{W}_{\vect{\phi}}$, $\mathcal{W}_{{\varphi}}$ and $\mathcal{W}_{{\theta}}$ in \eqref{eqn:weak forms for the dynamic formulation} are discretised employing the following functional spaces $\mathbb{V}^{\vect{\phi}^h}\times\mathbb{V}^{{\varphi}^h}\times\mathbb{V}^{{\theta}^h}$ defined as
+%
+\begin{equation}\label{eqn:functional spaces for discretisation}
+\begin{aligned}
+&	\begin{aligned}
+\mathbb{V}^{\vect{\phi}^h}& = \{\vect{\phi}\in \mathbb{V}^{\vect{\phi}};\,\,\,\,
+\left.\vect{\phi}^h\right\vert_{\mathcal{B}_0^e} = \sum_{a=1}^{n_{\text{node}}^{\vect{\phi}}}N^{\vect{\phi}}_a\vect{\phi}_a\};\qquad
+%
+%
+\mathbb{V}^{{\varphi}^h}& = \{{\varphi}\in \mathbb{V}^{{\varphi}};\,\,\,\,
+\left.{\varphi}^h\right\vert_{\mathcal{B}_0^e} = \sum_{a=1}^{n_{\text{node}}^{{\varphi}}}N^{{\varphi}}_a{\varphi}_a\};\\
+%
+\end{aligned}
+\\
+%
+&\mathbb{V}^{\theta^h} = \{\theta\in \mathbb{V}^{\theta};\,\,\,\,\left.\theta^h\right\vert_{\mathcal{B}_0^e} = \sum_{a=1}^{n_{\text{node}}^{\theta}}N^{\theta}_a\theta_{a}\},
+%
+%
+\end{aligned}
+\end{equation}
+%
+where for any field $\vect{\mathcal{Y}}\in\{\vect{\phi},\varphi,\theta\}$, $n_{\text{node}}^{\vect{\mathcal{Y}}}$ denotes the number of nodes per element of the discretisation associated with the field $\vect{\mathcal{Y}}$ and $N^{\vect{\mathcal{Y}}}_{a}:\mathcal{B}_0^e\rightarrow \mathbb{R}$,  the $a^{th}$ shape function used for the interpolation of  $\vect{\mathcal{Y}}$. 
+In addition, $\vect{\mathcal{Y}}_a$ represents the value of the field $\vect{\mathcal{Y}}$ at the $a^{th}$ node of a given finite element. 
+Similarly, following a Bubnov-Galerkin approach, the functional spaces for the test functions $\{\vect{w}_{\vect{\phi}},w_{\varphi},w_{\theta}\}\in \mathbb{V}^{\vect{\phi}^h}_0\times \mathbb{V}^{{\varphi}^h}_0\times\mathbb{V}_0^{\theta^h}$ are defined as
+%
+{\begin{equation}\label{eqn:functional spaces for discretisation virtual}
+\begin{aligned}
+&	\begin{aligned}
+\mathbb{V}_0^{{\vect{\phi}}^h}  = \left\{\forall \vect{\phi}\in\mathbb{V}^{\vect{\phi}^h};\,\,\,\,\, \vect{\phi} = \vect{0} \,\,\text{on}\,\,\partial_{\vect{\phi}}\mathcal{B}_0\right\};\qquad
+%
+\mathbb{V}_0^{{{\varphi}}^h}  = \left\{\forall {\varphi}\in\mathbb{V}^{{\varphi}^h};\,\,\,\,\, {\varphi} = 0 \,\,\text{on}\,\,\partial_{{\varphi}}\mathcal{B}_0\right\};
+	\end{aligned}\\
+%
+&\mathbb{V}_0^{{\theta}^h}  = \left\{\forall\theta\in\mathbb{V}^{\theta^h};\,\,\,\,\,\,\,{\theta} = {0} \,\,\text{on}\,\,\partial_{{\theta}}\mathcal{B}_0\right\}.
+%
+\end{aligned}
+\end{equation}}
+
+We have made use of a mid point time integrator where the time derivatives $\dot{\vect{v}}$ and $\dot{\eta}$ are replaced by the discrete counterparts according to
+%
+\begin{equation}\label{eqn:strong form first equations}
+\dot{\vect{v}}=\frac{\Delta\vect{v}}{\Delta t};\qquad 
+%
+\dot{\eta}=\frac{\Delta \eta}{\Delta t},
+%
+\end{equation}
+%
+where 
+%
+\begin{equation}
+	\Delta\vect{v} =  \vect{v} - \vect{v}_n;\qquad 
+	\Delta\eta =  \eta - \eta_n	
+\end{equation}
+%
+where $\bullet_n$ stands for the value of a field $\bullet$ in the previous time step, and with $\Delta t$ the time step size used for the discretization. Furthermore, the velocity field is related with the deformed mapping $\vect{\phi}$ through the following relationship
+%
+\begin{equation}
+\frac{\Delta\vect{\phi}}{\Delta t} = \vect{v}_{n+1/2}.
+\end{equation}
+%
+where, for any field $\bullet$,  $\bullet_{n+1/2}$ stands for 
+%
+\begin{equation}
+	\bullet_{n+1/2}=\bullet + \bullet_n
+\end{equation}
+
+Consideration of the functional spaces for $\{\vect{\phi},{\varphi},\theta\}$ and $\{\vect{w}_{\vect{\phi}},{w}_{{\varphi}},w_{\theta}\}$ in \eqref{eqn:functional spaces for discretisation} and \eqref{eqn:functional spaces for discretisation virtual} enables to obtain the semi-discrete version of $\{\mathcal{W}_{\vect{\phi}},\mathcal{W}_{{\varphi}},\mathcal{W}_{{\theta}}\}$ in \eqref{eqn:weak forms for the dynamic formulation} in terms of their associated elemental residual contributions, namely
+%
+\begin{equation}
+\mathcal{W}_{\vect{\phi}} = \sum_{e=1}^N{\vect{w}_{\vect{\phi}}}_a\cdot\vect{R}_{a,e}^{\vect{\phi}};\qquad
+%
+\mathcal{W}_{{\varphi}} = \sum_{e=1}^N{{w}_{{\varphi}}}_a\cdot\vect{R}_{a,e}^{{\varphi}};\qquad
+%
+\mathcal{W}_{\theta} = \sum_{e=1}^N{w_{\theta}}_a{R}_{a,e}^{\theta},
+\end{equation}
+%
+where $N$ denotes the number of elements for the underlying discretisation. 
+The residual contributions $\vect{R}^{\vect{\phi}}_{a,e}$ and ${R}^{{\theta}}_{a,e}$ can be expressed as\footnote{For simplicity, the external contributions on the boundary of the continuum and associated with $\vect{t}_0$ and $Q_{\theta}$ have not been included in \eqref{eqn:the residuals}.}
+%
+\begin{equation}\label{eqn:the residuals}
+\begin{aligned}
+\vect{R}_{a,e}^{\vect{\phi}} & = \int_{\mathcal{B}^e_0}\rho_0N^a_{\vect{\phi}}\left(2\frac{\Delta\vect{\phi}}{\Delta t^2} - 2\frac{\vect{v}_n}{\Delta t}\right)\,dV + \int_{\mathcal{B}_0^e}\left(\partial_{\vect{F}}\Psi\right)_{n+1/2}\vect{\nabla}_0N^{\vect{\phi}}_a\,dV - \int_{\mathcal{B}_0^e}N^{\vect{\phi}}_{a}\vect{f}_{0_{n+1/2}}\,dV;\\
+%
+\vect{R}_{a,e}^{{\varphi}} & = -\int_{\mathcal{B}_0^e}\left(\partial_{\vect{E}_0}\Psi\right)_{n+1/2}\vect{\nabla}_0N^{{\varphi}}_a\,dV + \int_{\mathcal{B}_0^e}N^{{\varphi}}_{a}{\rho}^e_{0_{n+1/2}}\,dV;\\
+%
+R_{a,e}^{\theta} & =-\int_{\mathcal{B}_0}\frac{\theta_{n+1/2}\Delta\left(\partial_{\theta}\Psi\right)}{\Delta t}N^{\theta}_a\,dV - \int_{\mathcal{B}_0}\vect{Q}_{n+1/2}\cdot\vect{\nabla}_0N^{\theta}_a\,dV - \int_{\mathcal{B}_0}{R_{\theta}}_{n+1/2}N^{\theta}_a\,dV.
+%
+\end{aligned}
+\end{equation}
+%
+where use of equation \eqref{eqn:strong form first equations} has been made of in the inertial term of the residual $\vect{R}^{\vect{\phi}}_{a,e}$ in \eqref{eqn:the residuals}$_a$. 
+A consistent linearisation of the nonlinear residual contributions \eqref{eqn:the residuals} has been used in this work. Some details of this linearization can be found in the subsequent section
+
+\subsubsection{Relationship between first and second derivatives of $\Psi(\vect{F},\vect{E}_0,\theta)$ and alternative potentials}
+
+The coupled weak forms presented in equation \eqref{eqn:weak forms for the dynamic formulation} and their residuals in \eqref{eqn:the residuals} are expressed in terms of the derivatives of the Helmholtz potential, $\Psi(\vect{F},\vect{E}_0,\theta)$. However, the fundamental thermodynamic potential governing the constitutive model can alternatively be one of the three other thermodynamic potentials: $e(\vect{F},\vect{D}_0,\eta)$, $\Gamma(\vect{F},\vect{E}_0,\eta)$, or $\Upsilon(\vect{F},\vect{D}_0,\theta)$. In such cases, the derivatives in \eqref{eqn:weak forms for the dynamic formulation} and  \eqref{eqn:the residuals}, specifically $\{\partial_{\vect{F}}\Psi,\partial_{\vect{E}_0}\Psi,\partial_{\theta}\Psi\}$, must be redefined in terms of these alternative potentials. This is accomplished through the appropriate Legendre transformation (refer to \eqref{eqn:other potentials}).
+
+
+
+This transformation is not only essential for obtaining the first derivatives but is also crucial for deriving the second derivatives of $\Psi(\vect{F},\vect{E}_0,\theta)$,, i.e., the components of its Hessian, when the primary thermodynamic potential is either $e(\vect{F},\vect{D}_0,\eta)$, $\Gamma(\vect{F},\vect{E}_0,\eta)$, or $\Upsilon(\vect{F},\vect{D}_0,\theta)$. The following sections will detail the procedures for relating both the first derivatives of $\Psi(\vect{F},\vect{E}_0,\theta)$ and the components of its Hessian to their respective counterparts in the potentials $e(\vect{F},\vect{D}_0,\eta)$, $\Gamma(\vect{F},\vect{E}_0,\eta)$, or $\Upsilon(\vect{F},\vect{D}_0,\theta)$.
+
+
+
+
+
+
+
+\subsubsection{Potential $\Upsilon$}
+
+In this case we consider the case when the underlying thermo-electro-mechanical constitutive model is $\Upsilon(\vect{F},\vect{D}_0,\theta)$.  The Legendre transformation in equation \eqref{eqn:other potentials}$_b$ implies that the field
+ $\vect{D}_0:=-\partial_{\vect{E_0}}\Psi$ must be considered as a function of the fields $\{\vect{F},\vect{E}_0,\theta\}$, namely
+%
+\begin{equation}\label{eqn:change of variable for Upsilon}
+	\Upsilon=\Upsilon\left(\vect{F},\vect{D}_0(\vect{F},\vect{E}_0,\theta),\theta\right)
+\end{equation}
+%
+and then, $\vect{D}_0:=-\partial_{\vect{E_0}}\Psi$ is implicitly solved from this equation
+%
+\begin{equation}
+	\vect{E}_0=\partial_{\vect{D}_0}\Upsilon\left(\vect{F},\vect{D}_0(\vect{F},\vect{E}_0,\theta),\theta\right)
+\end{equation}
+
+Once $\vect{D}_0:=-\partial_{\vect{E_0}}\Psi$ is obtained, $\vect{P}:=\partial_{\vect{F}}\Psi$ and $\eta:=-\partial_{\theta}\Psi$ can be obtained as
+%
+\begin{equation}
+	\begin{aligned}
+	\partial_{\vect{F}}\Psi\left(\vect{F},\vect{E}_0,\theta\right)&=\partial_{\vect{F}}\Upsilon\left(\vect{F},\vect{D}_0(\vect{F},\vect{E}_0,\theta),\theta\right);\\
+	%
+	\partial_{\theta}\Psi\left(\vect{F},\vect{E}_0,\theta\right)&=\partial_{\theta}\Upsilon\left(\vect{F},\vect{D}_0(\vect{F},\vect{E}_0,\theta),\theta\right);
+	\end{aligned}
+	%
+\end{equation}
+
+The components of the Hessian operator of $\Psi(\vect{F},\vect{E}_0,\theta)$, needed for the consistent linearization of \eqref{eqn:the residuals} can then be related to the components of the Hessian operator of $\Upsilon$ by considering $\vect{D}_0$ as a function of $\{\vect{F},\vect{E}_0,\theta\}$, as in \eqref{eqn:change of variable for Upsilon}, yielding the following relationships
+%
+\begin{equation}
+	\begin{aligned}
+\partial^2_{\vect{F}\vect{F}}\Psi & =  \partial^2_{\vect{F}\vect{F}}\Upsilon - 
+\partial^2_{\vect{F}\vect{D}_0}\Upsilon \cdot \partial_{\vect{E}_0\vect{F}}\Psi;&\quad
+%
+\partial^2_{\vect{F}\vect{E}_0}\Psi & = 
+-\partial^2_{\vect{F}\vect{D}_0}\Upsilon \cdot \partial_{\vect{E}_0\vect{E}_0}\Psi;&\quad
+%
+\partial^2_{\vect{F}\theta}\Psi & = 
+\partial^2_{\vect{F}\theta}\Upsilon
+-\partial^2_{\vect{F}\vect{D}_0}\Upsilon\cdot\partial_{\vect{E}_0\theta}\Psi\\
+%
+%
+\partial^2_{\vect{E}_0\vect{F}}\Psi & =  \Big(\partial^2_{\vect{E}_0\vect{F}}\Psi\Big)^T;&\quad
+%
+\partial^2_{\vect{E}_0\vect{E}_0}\Psi & = -
+\Big(\partial^2_{\vect{D}_0\vect{D}_0}\Upsilon\Big)^{-1};&\quad
+%
+\partial^2_{\vect{E}_0\theta}\Psi & = 
+\Big(\partial^2_{\theta\vect{E}_0}\Psi\Big)^T\\
+%
+%
+%
+\partial^2_{\theta\vect{F}}\Psi & =\Big(\partial^2_{\theta\vect{F}}\Psi\Big)^T;&\quad
+%
+\partial^2_{\theta\vect{E}_0}\Psi & = -\partial^2_{\theta\vect{D}_0}\Upsilon\cdot\partial_{\vect{E}_0\vect{E}_0}\Psi ;&\quad
+%
+\partial^2_{\theta\theta}\Psi & =\partial^2_{\theta\theta}\Upsilon- \partial^2_{\theta\vect{D}_0}\Upsilon\cdot\partial_{\vect{E}_0\theta}\Psi 
+%
+	\end{aligned}
+\end{equation}
+
+
+\subsubsection{Potential $\Gamma$}
+
+Let us know consider the case when the underlying thermo-electro-mechanical constitutive model is $\Gamma(\vect{F},\vect{E}_0,\eta)$. In this case, the Legendre transformation in equation \eqref{eqn:other potentials}$_c$ implies that the field
+$\eta:=-\partial_{\theta}\Psi$ must be considered as a function of the fields $\{\vect{F},\vect{E}_0,\theta\}$, namely
+%
+\begin{equation}\label{eqn:change of variable for Gamma}
+	\Gamma=\Gamma\left(\vect{F},\vect{E}_0,\eta(\vect{F},\vect{E}_0,\theta)\right)
+\end{equation}
+%
+and then, $\eta:=-\partial_{\theta}\Psi$ is implicitly solved from this equation
+%
+\begin{equation}
+	\theta=\partial_{\theta}\Gamma\left(\vect{F},\vect{E}_0,\eta(\vect{F},\vect{E}_0,\theta)\right)
+\end{equation}
+
+Once $\eta:=-\partial_{\theta}\Psi$ is obtained, $\vect{P}=\partial_{\vect{F}}\Psi$ and $\vect{D}_0=-\partial_{\vect{E}_0}\Psi$ can be obtained as
+%
+\begin{equation}
+	\begin{aligned}
+		\partial_{\vect{F}}\Psi\left(\vect{F},\vect{E}_0,\theta\right)&=\partial_{\vect{F}}\Gamma\left(\vect{F},\vect{D}_0,\eta(\vect{F},\vect{E}_0,\theta)\right);\\
+		%
+		\partial_{\vect{E}_0}\Psi\left(\vect{F},\vect{E}_0,\theta\right)&=\partial_{\vect{E}_0}\Gamma\left(\vect{F},\vect{D}_0,\eta(\vect{F},\vect{E}_0,\theta)\right);
+	\end{aligned}
+	%
+\end{equation}
+
+The components of the Hessian operator of $\Psi(\vect{F},\vect{E}_0,\theta)$, needed for the consistent linearization of \eqref{eqn:the residuals} can then be related to the components of the Hessian operator of $\Gamma$ by considering $\eta$ as a function of $\{\vect{F},\vect{E}_0,\theta\}$, as in \eqref{eqn:change of variable for Gamma}, yielding the following relationships
+%
+\begin{equation}
+	\begin{aligned}
+		\partial^2_{\vect{F}\vect{F}}\Psi & =  \partial^2_{\vect{F}\vect{F}}\Gamma - 
+		\partial^2_{\vect{F}\eta}\Gamma \cdot \partial_{\theta\vect{F}}\Psi;&\quad
+		%
+		\partial^2_{\vect{F}\vect{E}_0}\Psi & = 
+\partial^2_{\vect{F}\vect{E}_0}\Gamma		-\partial^2_{\vect{F}\eta}\Gamma \cdot \partial_{\theta\vect{E}_0}\Psi;&\quad
+		%
+		\partial^2_{\vect{F}\theta}\Psi & = 
+		-\partial^2_{\vect{F}\eta}\Gamma\cdot\partial_{\theta\theta}\Psi\\
+		%
+		%
+		\partial^2_{\vect{E}_0\vect{F}}\Psi & =  \Big(\partial^2_{\vect{E}_0\vect{F}}\Psi\Big)^T;&\quad
+		%
+		\partial^2_{\vect{E}_0\vect{E}_0}\Psi & = -
+		\partial^2_{\vect{E}_0\vect{E}_0}\Gamma - 
+		\partial^2_{\vect{E}_0\eta}\Gamma \cdot \partial_{\theta\vect{E}_0}\Psi;&\quad
+		%
+		\partial^2_{\vect{E}_0\theta}\Psi & = 
+		-\partial^2_{\vect{E}_0\eta}\Gamma\cdot \partial_{\theta\theta}\Psi \\
+		%
+		%
+		%
+		\partial^2_{\theta\vect{F}}\Psi & =\Big(\partial^2_{\theta\vect{F}}\Psi\Big)^T;&\quad
+		%
+		\partial^2_{\theta\vect{E}_0}\Psi & = \Big(		\partial^2_{\vect{E}_0\theta}\Psi\Big)^T ;&\quad
+		%
+		\partial^2_{\theta\theta}\Psi & =-\left(\partial^2_{\eta\eta}\Gamma\right)^{-1}
+		%
+	\end{aligned}
+\end{equation}
+	
+
+\subsubsection{Potential $e$}
+
+Finally, let us consider the case when the underlying thermo-electro-mechanical constitutive model is $e(\vect{F},\vect{D}_0,\eta)$.
+In this case, the Legendre transformation in equation \eqref{eqn:other potentials}$_a$ implies that both fields
+$\vect{D}_0:=-\partial_{\vect{E}_0}\Psi$ and $\eta:=-\partial_{\theta}\Psi$ must be considered as functions of the fields $\{\vect{F},\vect{E}_0,\theta\}$, namely
+%
+\begin{equation}\label{eqn:change of variable for e}
+	e=e\left(\vect{F},\vect{D}_0(\vect{F},\vect{E}_0,\theta),\eta(\vect{F},\vect{E}_0,\theta)\right)
+\end{equation}
+%
+and then, $\vect{D}_0:=-\partial_{\vect{E}_0}\Psi$ and $\eta:=-\partial_{\theta}\Psi$ are simultaneously implicitly solved from these equations
+%
+\begin{equation}
+	\begin{aligned}
+	\vect{E}_0&=\partial_{\vect{D}_0}e\left(\vect{F},\vect{D}_0(\vect{F},\vect{E}_0,\theta),\eta(\vect{F},\vect{E}_0,\theta)\right);\\
+	%
+	%
+			\theta&=\partial_{\eta}e\left(\vect{F},\vect{D}_0(\vect{F},\vect{E}_0,\theta),\eta(\vect{F},\vect{E}_0,\theta)\right)
+	\end{aligned}
+\end{equation}
+
+Once $\vect{D}_0:=-\partial_{\vect{E}_0}\Psi$ and $\eta:=-\partial_{\theta}\Psi$ are obtained, $\vect{P}=\partial_{\vect{F}}\Psi$ can be obtained as
+%
+\begin{equation}
+	\begin{aligned}
+		\partial_{\vect{F}}\Psi\left(\vect{F},\vect{E}_0,\theta\right)&=\partial_{\vect{F}}e\left(\vect{F},\vect{D}_0(\vect{F},\vect{E}_0,\theta),\eta(\vect{F},\vect{E}_0,\theta)\right).
+	\end{aligned}
+	%
+\end{equation}
+
+The components of the Hessian operator of $\Psi(\vect{F},\vect{E}_0,\theta)$, needed for the consistent linearization of \eqref{eqn:the residuals} can then be related to the components of the Hessian operator of $e$ by considering $\vect{D}_0$ and $\eta$ as functions of $\{\vect{F},\vect{E}_0,\theta\}$, as in \eqref{eqn:change of variable for e}, yielding the following relationships
+%
+\begin{equation}
+	\begin{aligned}
+		\partial^2_{\vect{F}\vect{F}}\Psi & =  \partial^2_{\vect{F}\vect{F}}e -
+		\partial^2_{\vect{F}\vect{D}_0}e \cdot \partial_{\vect{E}_0\vect{F}}\Psi 
+		-
+		\partial^2_{\vect{F}\eta}e \cdot \partial_{\theta\vect{F}}\Psi;&\quad
+		%
+		\partial^2_{\vect{F}\vect{E}_0}\Psi & = 
+			-\partial^2_{\vect{F}\vect{D}_0}e \cdot \partial_{\vect{E}_0\vect{E}_0}\Psi-\partial^2_{\vect{F}\eta}e \cdot \partial_{\theta\vect{E}_0}\Psi;\\
+		%
+				\partial^2_{\vect{F}\theta}\Psi & = 
+		-\partial^2_{\vect{F}\vect{D}_0}e \cdot \partial_{\vect{E}_0\theta}\Psi-\partial^2_{\vect{F}\eta}e \cdot \partial_{\theta\theta}\Psi;&\quad
+		%
+		%
+		%
+		\partial^2_{\vect{E}_0\vect{F}}\Psi & =  \Big(\partial^2_{\vect{F}\vect{E}_0}\Psi\Big)^T;\\
+		%
+		\partial^2_{\theta\vect{F}}\Psi & = \Big(
+		\partial^2_{\vect{F}\theta}\Psi\Big)^T; &\quad
+		%
+		%
+		%
+		&\begin{bmatrix}
+			\partial^2_{\vect{E}_0\vect{E}_0}\Psi  &  \partial^2_{\vect{E}_0\theta}\Psi\\
+			%
+			\partial^2_{\theta\vect{E}_0}\Psi  &  \partial^2_{\theta\theta}\Psi			
+		\end{bmatrix}=-\begin{bmatrix}
+		\partial^2_{\vect{D}_0\vect{D}_0}e  &  \partial^2_{\vect{D}_0\eta}e\\
+		%
+		\partial^2_{\eta\vect{D}_0}e  &  \partial^2_{\eta\eta}e			
+		\end{bmatrix}^{-1}
+		%
+	\end{aligned}
+\end{equation}
+	
+
+
+

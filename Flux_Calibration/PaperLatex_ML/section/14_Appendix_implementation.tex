@@ -1,0 +1,202 @@
+
+\begin{equation}\label{eqn:stiffness matrices I}
+\begin{aligned}
+D(\mathcal{W}_{\vect{\phi}})_{\text{algo}}[\vect{\omega}_{\vect{\phi}}]& = 	\int_{\mathcal{B}_0}\rho_0D\left(\frac{\Delta\vect{v}}{\Delta t}\right)[\vect{\omega}_{\vect{\phi}}]\cdot\vect{w}_{\vect{\phi}}\,dV
+%
++\int_{\mathcal{B}_0}D\left(\vect{S}_{\text{algo}}:\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}\right)[\vect{\omega}_{\vect{\phi}}]\,dV\\
+%
+%
+&= 	\int_{\mathcal{B}_0}\frac{2\rho_0}{\Delta t^2}\vect{\omega}_{\vect{\phi}}\cdot\vect{w}_{\vect{\phi}}\,dV
+%
++\int_{\mathcal{B}_0}D\vect{F}[\vect{w}_{\vect{\phi}}]:\vect{\mathcal{C}}_{\text{algo}}:D\vect{F}[\vect{\omega}_{\vect{\phi}}]\,dV,
+%
+\end{aligned}
+\end{equation}
+%
+where use of \eqref{eqn:strong form first equations} has been made of in the first term on the right-hand side of \eqref{eqn:stiffness matrices I} in order to obtain the mass matrix-type term. In addition, $\vect{\mathcal{C}}_{\text{algo}}$ represents the algorithmic elasticity tensor, whose expression will be obtained in Section \ref{sec:elasticity tensor}. Linearisation ...
+
+\begin{equation}\label{eqn:stiffness matrices II}
+D\left(\mathcal{W}_{\vect{\phi}}\right)_{\text{algo}}[\omega_{\theta}] = \int_{\mathcal{B}_0}D\vect{S}_{\text{algo}}[\omega_{\theta}]:\frac{1}{2}(D\vect{C}_{\text{algo}}[\vect{w}_{\vect{\phi}}])_{\text{algo}}\,dV=\int_{\mathcal{B}_0}D\vect{C}_{\text{algo}}[\vect{w}_{\vect{\phi}}]:\vect{\mathcal{G}}_{\text{algo}}\omega_{\theta}\,dV,
+\end{equation}
+%
+where the expression for the second order coupled constitutive tensor $\vect{\mathcal{G}}_{\text{algo}}$ will be presented in Section \ref{sec:coupled tensor 1}. Linearisation of ...
+
+
+\begin{equation}\label{eqn:stiffness matrices III}
+\begin{aligned}
+D\left(\mathcal{W}_{\theta}\right)_{\text{algo}}[\vect{\omega}_{\vect{\phi}}]&=   - \int_{\mathcal{B}_0}D\left(\vect{Q}_{n+1/2}\right)[\vect{\omega}_{\vect{\phi}}]\cdot\vect{\nabla}_0w_{\theta}\,dV = -\int_{\mathcal{B}_0}\vect{\nabla}_0w_{\theta}\cdot \left(\vect{\mathcal{H}}_{\text{algo}}:D\vect{C}[\vect{\omega}_{\vect{\phi}}]\right)\,dV,
+\end{aligned}
+\end{equation}
+%
+where the expression for the third order couple constitutive tensor $\vect{\mathcal{H}}_{\text{algo}}$ can be found in Section \ref{sec:coupled tensor 2}.
+
+\subsection{Algorithmic Elasticity tensor}\label{sec:elasticity tensor}
+
+Let us recall from \eqref{eqn:S algo appendix} that the integrand on the second term of the right-hand side of \eqref{eqn:stiffness matrices I} is
+%
+\begin{equation}\label{eqn:S algo appendix}
+\vect{S}_{\text{algo}}:\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}=\left(2D_{\vect{C}}\widetilde{W} + 2D_{\vect{G}}\widetilde{W}\Cross\vect{C}_{\text{algo}} + 2D_{C}\widetilde{W}\vect{G}_{\text{algo}}\right):\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}.
+\end{equation}
+
+
+Linearisation of the integrand on the second term of the right-hand side of \eqref{eqn:stiffness matrices I} with respect to incremental variations $\vect{\omega}_{\vect{\phi}}$ leads to
+%
+\begin{equation}\label{eqn:linearisation elastictiy I}
+\begin{aligned}
+D(\vect{S}_{\text{algo}}:\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}})[\vect{\omega}_{\vect{\phi}}]&=
+%
+%
+\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}:2\partial_{\vect{C}}D_{\vect{C}}\widetilde{W}:D\vect{C}[{\vect{\omega}_{\vect{\phi}}}]\\& +
+%
+\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}:2\partial_{\vect{G}}D_{\vect{C}}\widetilde{W}\Cross\vect{C}:D\vect{C}[{\vect{\omega}_{\vect{\phi}}}] \\&+
+%
+\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}:2\partial_{{C}}D_{\vect{C}}\widetilde{W}\otimes\vect{G}:D\vect{C}[{\vect{\omega}_{\vect{\phi}}}]\\& +
+%
+\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}:\vect{C}_{\text{algo}}\Cross 2\partial_{\vect{C}}D_{\vect{G}}\widetilde{W}:D\vect{C}[{\vect{\omega}_{\vect{\phi}}}]\\& 
+%
++\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}:\vect{C}_{\text{algo}}\Cross 2\partial_{\vect{G}}D_{\vect{G}}\widetilde{W}\Cross\vect{C}:D\vect{C}[{\vect{\omega}_{\vect{\phi}}}]\\& 
+%
++\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}:\vect{C}_{\text{algo}}\Cross 2\partial_{{C}}D_{\vect{G}}\widetilde{W}\otimes\vect{G}:D\vect{C}[{\vect{\omega}_{\vect{\phi}}}]\\& 
+%
++\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}:\vect{G}_{\text{algo}}\otimes 2\partial_{\vect{C}}D_{{C}}\widetilde{W}:D\vect{C}[{\vect{\omega}_{\vect{\phi}}}]\\& 
+%
++\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}:\vect{G}_{\text{algo}}\otimes 2\partial_{\vect{G}}D_{{C}}\widetilde{W}\Cross\vect{C}:D\vect{C}[{\vect{\omega}_{\vect{\phi}}}]\\& 
+%
++\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}:\vect{G}_{\text{algo}}\otimes 2\partial_{{C}}D_{{C}}\widetilde{W}\otimes\vect{G}:\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}\\& 
+%
++\vect{S}_{\text{algo}}:D(\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}})[\vect{\omega}_{\vect{\phi}}]\\&
+%
++2D_{\vect{G}}\widetilde{W}:\left(D\vect{C}_{\text{algo}}[\vect{\omega}_{\vect{\phi}}]\Cross \frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}\right)\\&
+%
++2D_C\widetilde{W}\left(D\vect{G}_{\text{algo}}[\vect{\omega}_{\vect{\phi}}]:\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}\right).
+%
+\end{aligned}
+\end{equation}
+
+Equation \eqref{eqn:linearisation elastictiy I} can be conveniently re-written as
+%
+\begin{equation}\label{eqn:linearisation elastictiy II}
+\begin{aligned}
+D(\vect{S}_{\text{algo}}:\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}})[\vect{\omega}_{\vect{\phi}}]&=
+\underbrace{\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}:\vect{\mathcal{C}}^{\star}:\frac{1}{2}D\vect{C}[\vect{\omega}_{\vect{\phi}}]}_{\mathcal{T}_1}\\&
+%
++\underbrace{\vect{S}_{\text{algo}}:D(\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}})[\vect{\omega}_{\vect{\phi}}]}_{\mathcal{T}_2}] \\&
+%
++ \underbrace{\vect{S}_{\text{geom}}:\left(\frac{1}{2}(D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}\Cross D\vect{C}_{\text{algo}}[\vect{\omega}_{\vect{\phi}}]\right)}_{\mathcal{T}_3}
+\end{aligned}
+\end{equation}
+%
+with
+%
+\begin{equation}
+\begin{aligned}
+\vect{\mathcal{C}}^{\star}  = 4&\left(\partial_{\vect{C}}D_{\vect{C}}\widetilde{W}
+%
+ + \vect{C}_{\text{algo}}\Cross\partial_{\vect{G}}D_{\vect{G}}\widetilde{W}\Cross\vect{C} 
+ %
+ +\partial_{{C}}D_{{C}}\widetilde{W}\vect{G}_{\text{algo}}\otimes\vect{G}\right.\\
+ &\left.\partial_{\vect{G}}D_{\vect{C}}\widetilde{W}\Cross\vect{C} + \vect{C}_{\text{algo}}\Cross\partial_{\vect{C}}D_{\vect{G}}\widetilde{W} 
+ %
+ +\partial_{{C}}D_{\vect{C}}\widetilde{W}\otimes\vect{G}_{\text{algo}}
+ 	+\vect{G}_{\text{algo}}\otimes\partial_{\vect{C}}D_{{C}}\widetilde{W}\right.\\
+ 	%
+ 	&\left.
+ 	%
+ 	\left(\vect{C}_{\text{algo}}\Cross\partial_{{C}}D_{\vect{G}}\widetilde{W}\right)\otimes\vect{G} + 
+ 	%
+ 	\vect{G}_{\text{algo}}\otimes\left(\partial_{\vect{G}}D_{{C}}\widetilde{W}\Cross\vect{C}\right)
+\right);\\
+%
+\vect{S}_{\text{geom}}& = 2D_{\vect{G}}\widetilde{W} + 2D_C\widetilde{W}\vect{C}_{\text{algo}}
+\end{aligned}
+\end{equation}
+
+Each of the terms $\{\mathcal{T}_1,\mathcal{T}_2,\mathcal{T}_3\}$ in \eqref{eqn:linearisation elastictiy II} will be conveniently re-expressed in terms of the directional derivative of $\vect{F}$. The first term, namely $\mathcal{T}_1$ can be simply transformed as
+	%
+\begin{equation}\label{eqn:T1}
+\begin{aligned}
+\mathcal{T}_1&=D\vect{F}^T[\vect{w}_{\vect{\phi}}]\vect{F}_{n+1/2}:\vect{\mathcal{C}}^{\star}:D\vect{F}^T[\vect{\omega}_{\vect{\phi}}]\vect{F}=D\vect{F}[\vect{w}_{\vect{\phi}}]:\left(\left(\vect{F}_{n+1/2}\otimes\vect{F}\right)\odot\vect{\mathcal{C}}^{\ast}\right):D\vect{F}[\vect{\omega}_{\vect{\phi}}].
+%
+\end{aligned}
+\end{equation}
+%
+with $((\vect{A}\otimes\vect{B})\odot\vect{\mathcal{A}})_{iIjJ}=A_{iJ}\mathcal{A}_{IJKL}B_{jL}$, for any second order tensors $\vect{A}$ and $\vect{B}$ and for any fourth order tensor $\vect{\mathcal{A}}$.
+The term $\mathcal{T}_2$ in \eqref{eqn:linearisation elastictiy II}  can be written, after some careful manipulations as 
+%
+\begin{equation}\label{eqn:T2}
+\begin{aligned}	
+\mathcal{T}_2&=
+%
+\vect{S}_{\text{algo}}:\frac{1}{2}\left(D\vect{F}^T[\vect{w}_{\vect{\phi}}]D\vect{F}_{n+1/2}[\vect{\omega}_{\vect{\phi}}]+D\vect{F}^T[\vect{\omega}_{\vect{\phi}}]D\vect{F}_{n+1/2}[\vect{w}_{\vect{\phi}}]\right)\\
+%
+&=\vect{S}_{\text{algo}}:\left(D\vect{F}^T[\vect{w}_{\vect{\phi}}]D\vect{F}_{n+1/2}[\vect{\omega}_{\vect{\phi}}]\right)\\
+%
+&=\vect{S}_{\text{algo}}:\frac{1}{2}\left(D\vect{F}^T[\vect{w}_{\vect{\phi}}]D\vect{F}[\vect{\omega}_{\vect{\phi}}]\right)\\
+%
+&= D\vect{F}[\vect{w}_{\vect{\phi}}] : \frac{1}{2}\vect{I}\bar{\otimes}\vect{S}_{\text{algo}}:D\vect{F}[\vect{\omega}_{\vect{\phi}}],
+\end{aligned}
+\end{equation}
+%
+with $\left(\vect{A}\bar{\otimes}\vect{B}\right)_{iIjJ}=A_{ij}B_{IJ}$ for any two second order tensors $\vect{A}$ and $\vect{B}$. Regarding term $\mathcal{T}_3$ in \eqref{eqn:linearisation elastictiy II} , this can be written as
+%
+\begin{equation}\label{eqn:T3}
+\begin{aligned}
+\mathcal{T}_3 & = \vect{S}_{\text{geom}}:\frac{1}{2}\left((D\vect{F}^T[\vect{w}_{\phi}]\vect{F}_{n+1/2} + \vect{F}^T_{n+1/2}D\vect{F}[\vect{w}_{\phi}])\Cross \frac{1}{2}(D\vect{F}^T[\vect{\omega}_{\vect{\phi}}]\vect{F} + \vect{F}^TD\vect{F}[\vect{\omega}_{\vect{\phi}}])\right)\\&
+=
+%
+\vect{S}_{\text{geom}}:\left(D\vect{F}^T[\vect{w}_{\phi}]\vect{F}_{n+1/2}\Cross D\vect{F}^T[\vect{\omega}_{\vect{\phi}}]\vect{F}\right)\\
+&=\left(\vect{\mathcal{I}}\Cross\vect{S}_{\text{geom}}\right):\left(D\vect{F}^T[\vect{w}_{\phi}]\vect{F}_{n+1/2}\Cross D\vect{F}^T[\vect{\omega}_{\vect{\phi}}]\vect{F}\right)\\
+&=
+%
+\left(\vect{F}_{n+1/2}\otimes\vect{F}\right)\odot\left(\vect{\mathcal{I}}\Cross\vect{S}_{\text{geom}}\right).
+%
+\end{aligned}
+\end{equation}
+%
+
+Introduction of \eqref{eqn:T1}, \eqref{eqn:T2} and \eqref{eqn:T3} into  \eqref{eqn:linearisation elastictiy II} enables to re-express $(\vect{S}:\frac{1}{2}D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}$ as
+%
+\begin{equation}
+(\vect{S}:\frac{1}{2}D\vect{C}[\vect{w}_{\vect{\phi}}])_{\text{algo}}=
+%
+D\vect{F}[\vect{w}_{\vect{\phi}}]: \vect{\mathcal{C}}:D\vect{F}[\vect{\omega}_{\vect{\phi}}],
+%
+\end{equation} 
+%
+with the elasticity tensor $\vect{\mathcal{C}}$ finally expressed as
+%
+\begin{equation}
+\vect{\mathcal{C}} = \left(\vect{F}_{n+1/2}\otimes\vect{F}\right)\odot\left(\vect{\mathcal{C}}^{\ast} + \vect{\mathcal{I}}\Cross\vect{S}_{\text{geom}}\right) + \frac{1}{2}\vect{I}\bar{\otimes}\vect{S}_{\text{algo}}.
+%
+\end{equation}
+
+\subsection{Algorithmic coupled tensor $\vect{\mathcal{G}}^{\text{algo}}$}\label{sec:coupled tensor 1}
+
+Linearisation of the integrand on the second term of the right-hand side of \eqref{eqn:stiffness matrices II} with respect to incremental variations ${\omega}_{\theta}$ leads to
+%
+\begin{equation}\label{eqn:linearisation coupled tensor 1 I}
+\begin{aligned}
+D\vect{S}_{\text{algo}}[\omega_{\theta}]:D\vect{C}_{\text{algo}}[\vect{w}_{\vect{\phi}}]&=
+%
+%
+D\vect{C}_{\text{algo}}[\vect{w}_{\vect{\phi}}]:\left(2\partial_{\theta}D_{\vect{C}}\widetilde{W} + 2\partial_{\theta}D_{\vect{G}}\widetilde{W}\Cross\vect{C}_{\text{algo}} + 2\partial_{\theta}D_{{C}}\widetilde{W}\vect{G}_{\text{algo}}\right)\omega_{\theta}.
+%
+\end{aligned}
+\end{equation}
+
+Hence, the algorithmic tensor $\vect{\mathcal{G}}_{\text{algo}}$ in 
+\eqref{eqn:stiffness matrices II} is
+%
+\begin{equation}
+\vect{\mathcal{G}}_{\text{algo}}=2\partial_{\theta}D_{\vect{C}}\widetilde{W} + 2\partial_{\theta}D_{\vect{G}}\widetilde{W}\Cross\vect{C}_{\text{algo}} + 2\partial_{\theta}D_{{C}}\widetilde{W}\vect{G}_{\text{algo}}.
+\end{equation}
+
+\subsection{Algorithmic coupled tensor $\vect{\mathcal{H}}_{\text{algo}}$}\label{sec:coupled tensor 2}
+
+Linearisation of the only integrand on the right-hand side of \eqref{eqn:stiffness matrices III} yields
+%
+\begin{equation}
+\begin{aligned}
+\vect{\mathcal{H}}_{\text{algo}}=D\left(\vect{Q}_{n+1/2}\right)[\vect{\omega}_{\vect{\phi}}] = 
+\end{aligned}
+\end{equation}

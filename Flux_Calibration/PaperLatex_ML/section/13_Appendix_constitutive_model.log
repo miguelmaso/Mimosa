@@ -1,0 +1,75 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (MiKTeX 2.9.6840 64-bit) (preloaded format=pdflatex 2018.11.6)  9 NOV 2018 15:26
+entering extended mode
+**./13_Appendix_constitutive_model.tex
+(13_Appendix_constitutive_model.tex
+LaTeX2e <2018-04-01> patch level 5
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.3 \begin{equation}
+                    
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+Overfull \hbox (20.0pt too wide) in paragraph at lines 3--3
+[] 
+ []
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 3.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 3.
+! Undefined control sequence.
+l.4 \hat{e}(\vect
+                 {C},\theta) = \hat{W}(\vect{C},\vect{G},C,\theta)
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.4 \hat{e}(\vect{C},\theta) = \hat{W}(\vect
+                                            {C},\vect{G},C,\theta)
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.4 ...}(\vect{C},\theta) = \hat{W}(\vect{C},\vect
+                                                  {G},C,\theta)
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Overfull \hbox (101.88382pt too wide) detected at line 5
+[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 C; \OT1/cmr/m/n/10 ) = [](\OML/cmm/m/it/10
+ C; G; C; \OT1/cmr/m/n/10 )
+ []
+
+)
+! Emergency stop.
+<*> ./13_Appendix_constitutive_model.tex
+                                        
+*** (job aborted, no legal \end found)
+
+ 
+Here is how much of TeX's memory you used:
+ 10 strings out of 492970
+ 290 string characters out of 3126594
+ 56180 words of memory out of 3000000
+ 3983 multiletter control sequences out of 15000+200000
+ 3640 words of font info for 14 fonts, out of 3000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 18i,3n,12p,102b,79s stack positions out of 5000i,500n,10000p,200000b,50000s
+!  ==> Fatal error occurred, no output PDF file produced!

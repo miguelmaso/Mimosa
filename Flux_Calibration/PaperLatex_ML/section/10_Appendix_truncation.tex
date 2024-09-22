@@ -1,0 +1,416 @@
+
+
+\subsection{Definition of the discrete derivatives}
+
+Let us introduce the following notation, $\{\mathcal{V}_{1},\mathcal{V}_2,\mathcal{V}_3,\mathcal{V}_4\} = \{\vect{C},\vect{G},C,\theta\}$. This will facilitate the definition of the discrete derivatives $D_{\widetilde{\mathcal{V}}_1}\widetilde{W} = D_{\vect{C}}\widetilde{W}$, $D_{\widetilde{\mathcal{V}}_2}\widetilde{W} = D_{\vect{G}}\widetilde{W}$ and $D_{\widetilde{\mathcal{V}}_3}\widetilde{W} = D_{{C}}\widetilde{W}$ in \eqref{eqn:approximated expression for DWdeltavarphi} and $D_{\widetilde{\mathcal{V}}_4}\widetilde{W} = D_{\theta}\widetilde{W}$ in \eqref{eqn:weak forms for proposed time integrator}$_d$.
+
+
+\begin{equation}\label{eqn:definition of partitioned discrete gradient}
+\begin{aligned}
+D_{\widetilde{\mathcal{V}}_i}\widetilde{W} & = \frac{1}{2}\left(D_{\widetilde{\mathcal{V}}_{i_{n+1,n}}}\widetilde{W} + D_{\widetilde{\mathcal{V}}_{i_{n,n+1}}}\widetilde{W}\right);&\qquad &i\in Y = \left\{1,2,3,4\right\};\\
+%
+D_{\widetilde{\mathcal{V}}_{i_{n+1,n}}}\widetilde{W} &= \left.D_{\widetilde{\mathcal{V}}_i}\widetilde{W}\left(\widetilde{\mathcal{V}}_{i_{n+1}},\widetilde{\mathcal{V}}_{i_{n}}\right)\right\vert_{\widetilde{\mathcal{V}}_{j_{n+1}},\widetilde{\mathcal{V}}_{k_{n}}};&\qquad &\forall j\in Y: j<i;\,\, \forall k\in Y: k >i;\\
+%
+%
+D_{\widetilde{\mathcal{V}}_{i_{n,n+1}}}\widetilde{W} &= \left.D_{\widetilde{\mathcal{V}}_i}\widetilde{W}\left(\widetilde{\mathcal{V}}_{i_{n}},\widetilde{\mathcal{V}}_{i_{n+1}}\right)\right\vert_{\widetilde{\mathcal{V}}_{j_{n}},\widetilde{\mathcal{V}}_{k_{n+1}}};&\qquad &\forall j\in Y: j<i;\,\, \forall k\in Y: k >i,
+%
+\end{aligned}
+\end{equation}
+%
+where the discrete operators $\left.D_{\widetilde{\mathcal{V}}_i}\widetilde{W}\right\vert_{\widetilde{\mathcal{V}}_{j_{n+1}},\widetilde{\mathcal{V}}_{k_{n}}}$ and $\left.D_{\widetilde{\mathcal{V}}_i}\widetilde{W}\right\vert_{\widetilde{\mathcal{V}}_{j_{n}},\widetilde{\mathcal{V}}_{k_{n+1}}}$ are defined as
+%
+\begin{equation}\label{eqn:definition of partitioned discrete gradient I}
+\begin{aligned}
+\left.D_{\widetilde{\mathcal{V}}_i}\widetilde{W}\right\vert_{\widetilde{\mathcal{V}}_{j_{n+1}},\widetilde{\mathcal{V}}_{k_{n}}}&  = \left.\partial_{\widetilde{\mathcal{V}}_i}\widetilde{W}\left(\widetilde{\mathcal{V}}_{n+1/2}\right)\right\vert_{\widetilde{\mathcal{V}}_{j_{n+1}},\widetilde{\mathcal{V}}_{k_{n}}}\\& + 
+%
+\frac{\left.\widetilde{W}\left(\widetilde{\mathcal{V}}_{n+1}\right)\right\vert_{\widetilde{\mathcal{V}}_{j_{n+1}},\widetilde{\mathcal{V}}_{k_{n}}} - 
+	\left.\widetilde{W}\left(\widetilde{\mathcal{V}}_{n}\right)\right\vert_{\widetilde{\mathcal{V}}_{j_{n+1}},\widetilde{\mathcal{V}}_{k_{n}}}
+	-\left.\partial_{\widetilde{\mathcal{V}}_i}\widetilde{W}\left(\widetilde{\mathcal{V}}_{n+1/2}\right)\right\vert_{\widetilde{\mathcal{V}}_{j_{n+1}},\widetilde{\mathcal{V}}_{k_{n}}}:\Delta\widetilde{\mathcal{V}}_i}{\vert\vert\Delta\widetilde{\mathcal{V}}_i\vert\vert^2}\Delta\widetilde{\mathcal{V}}_i;\\
+%
+%
+\left.D_{\widetilde{\mathcal{V}}_i}\widetilde{W}\right\vert_{\widetilde{\mathcal{V}}_{j_{n}},\widetilde{\mathcal{V}}_{k_{n+1}}}&  = \left.\partial_{\widetilde{\mathcal{V}}_i}\widetilde{W}\left(\widetilde{\mathcal{V}}_{n+1/2}\right)\right\vert_{\widetilde{\mathcal{V}}_{j_{n}},\widetilde{\mathcal{V}}_{k_{n+1}}}\\& + 
+%
+\frac{\left.\widetilde{W}\left(\widetilde{\mathcal{V}}_{n+1}\right)\right\vert_{\widetilde{\mathcal{V}}_{j_{n}},\widetilde{\mathcal{V}}_{k_{n+1}}} - 
+	\left.\widetilde{W}\left(\widetilde{\mathcal{V}}_{n}\right)\right\vert_{\widetilde{\mathcal{V}}_{j_{n}},\widetilde{\mathcal{V}}_{k_{n+1}}}
+	-\left.\partial_{\widetilde{\mathcal{V}}_i}\widetilde{W}\left(\widetilde{\mathcal{V}}_{n+1/2}\right)\right\vert_{\widetilde{\mathcal{V}}_{j_{n}},\widetilde{\mathcal{V}}_{k_{n+1}}}:\Delta\widetilde{\mathcal{V}}_i}{\vert\vert\Delta\widetilde{\mathcal{V}}_i\vert\vert^2}\Delta\widetilde{\mathcal{V}}_i.
+\end{aligned}
+\end{equation}
+
+Let us introduce the following set $\widetilde{\mathcal{V}}_{\vect{C}}=\widetilde{\mathcal{V}}\setminus\{\vect{C}\}$, i.e. ${\mathcal{V}_{\vect{C}}}=\{\vect{G},C,\theta\}$. From above equations \eqref{eqn:definition of partitioned discrete gradient} and \eqref{eqn:definition of partitioned discrete gradient I} , 
+the directional derivative $D_{\vect{C}}\widetilde{W}$ can be computed as
+%
+\begin{equation}\label{eqn:DC}
+\begin{aligned}
+D_{\vect{C}}\widetilde{W}& =  \frac{1}{2}\left(\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{1_{n+1}}\right) + 
+\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)\right)\\
+%
+&+\frac{1}{2}\frac{\widetilde{W}\left(\vect{C}_{n+1},\widetilde{\mathcal{V}}_{1_{n+1}}\right) - \widetilde{W}\left(\vect{C}_{n},\widetilde{\mathcal{V}}_{1_{n+1}}\right)}{\vert\vert\Delta\vect{C}\vert\vert^2}\Delta\vect{C}
+%
++\frac{1}{2}\frac{\widetilde{W}\left(\vect{C}_{n+1},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right) - \widetilde{W}\left(\vect{C}_{n},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)}{\vert\vert\Delta\vect{C}\vert\vert^2}\Delta\vect{C}\\
+%
+&-\frac{1}{2}\frac{\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{1_{n+1}}\right):\Delta\vect{C}}{\vert\vert\Delta\vect{C}\vert\vert^2}\Delta\vect{C} - \frac{1}{2}\frac{\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right):\Delta\vect{C}}{\vert\vert\Delta\vect{C}\vert\vert^2}\Delta\vect{C}.
+%
+%
+\end{aligned}
+\end{equation}
+
+From the previous equation, the discrete derivatives with respect to $\vect{C}$ when $\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}$ and $\widetilde{\mathcal{V}}_{\vect{C}_{n}}$ are kept fixed are defined as
+%
+\begin{equation}\label{eqn:DC1}
+\begin{aligned}
+D_{\vect{C}}\widetilde{W}(\bullet,\widetilde{\mathcal{V}}_{\vect{C}_{n+1}})&: =  \partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) \\
+%
+&+\frac{\widetilde{W}\left(\vect{C}_{n+1},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) - \widetilde{W}\left(\vect{C}_{n},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right)-\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right):\Delta\vect{C}}{\vert\vert\Delta\vect{C}\vert\vert^2}\Delta\vect{C};\\
+%
+%
+D_{\vect{C}}\widetilde{W}(\bullet,\widetilde{\mathcal{V}}_{\vect{C}_{n}})&: =   
+\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)\\
+%
+&+\frac{\widetilde{W}\left(\vect{C}_{n+1},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right) - \widetilde{W}\left(\vect{C}_{n},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)-\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right):\Delta\vect{C}}{\vert\vert\Delta\vect{C}\vert\vert^2}\Delta\vect{C}.
+%
+%
+%
+\end{aligned}
+\end{equation}
+%
+
+Therefore, equation \eqref{eqn:DC} can be conveniently written in a compact manner as
+%
+\begin{equation}
+D_{\vect{C}}\widetilde{W}=\frac{1}{2}\left(D_{\vect{C}}\widetilde{W}(\bullet,\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}) + D_{\vect{C}}\widetilde{W}(\bullet,\widetilde{\mathcal{V}}_{\vect{C}_n})\right).
+\end{equation}
+
+Similarly, defining the following sets $\widetilde{\mathcal{V}}_{\vect{G}}=\widetilde{\mathcal{V}}\setminus\{\vect{G}\}$, $\widetilde{\mathcal{V}}_{C}=\widetilde{\mathcal{V}}\setminus\{{C}\}$ and $\widetilde{\mathcal{V}}_{\theta}=\widetilde{\mathcal{V}}\setminus\{\theta\}$, it is possible to express the directional derivatives $D_{\vect{G}}\widetilde{W}$, $D_{{C}}\widetilde{W}$ and $D_{{\theta}}\widetilde{W}$ as
+%
+\begin{equation}\label{eqn:discrete expression for remaining variables}
+\begin{aligned}
+D_{\vect{G}}\widetilde{W}&=\frac{1}{2}\left(D_{\vect{G}}\widetilde{W}(\bullet,\mathcal{V}_{\vect{G}_{n+1}}) + D_{\vect{G}}\widetilde{W}(\bullet,\mathcal{V}_{\vect{G}_n})\right);\\
+%
+D_{{C}}\widetilde{W}&=\frac{1}{2}\left(D_{{C}}\widetilde{W}(\bullet,\mathcal{V}_{C_{n+1}}) + D_{{C}}\widetilde{W}(\bullet,\mathcal{V}_{C_n})\right);\\
+%
+D_{{\theta}}\widetilde{W}&=\frac{1}{2}\left(D_{{\theta}}\widetilde{W}(\bullet,\mathcal{V}_{\theta_{n+1}}) + D_{{\theta}}\widetilde{W}(\bullet,\mathcal{V}_{\theta_n})\right).
+%
+\end{aligned}
+\end{equation}
+
+In the particular case of the last to directional derivatives (with respect to $C$ and $\theta$),  the terms $D_{{C}}\widetilde{W}(\bullet,\mathcal{V}_{C_{n+1}})$ (and $D_{{C}}\widetilde{W}(\bullet,\mathcal{V}_{C_{n}})$) and $D_{{\theta}}\widetilde{W}(\bullet,\mathcal{V}_{\theta_{n+1}})$ (and similarly $D_{{\theta}}\widetilde{W}(\bullet,\mathcal{V}_{\theta_{n}})$) are extremely simplified since $C$ and $\theta$ are scalar fields, i.e.
+%
+\begin{equation}
+\begin{aligned}
+D_{{C}}\widetilde{W}(\bullet,\mathcal{V}_{C_{n+1}}) & =  \frac{\widetilde{W}(C_{n+1},\mathcal{V}_{C_{n+1}})-\widetilde{W}(C_{n},\mathcal{V}_{C_{n+1}})}{\Delta C};\\
+%
+D_{{\theta}}\widetilde{W}(\bullet,\mathcal{V}_{\theta_{n+1}}) & =  \frac{\widetilde{W}(\theta_{n+1},\mathcal{V}_{\theta_{n+1}})-\widetilde{W}(\theta_{n},\mathcal{V}_{\theta_{n+1}})}{\Delta \theta};\\
+%
+\end{aligned}
+\end{equation}
+
+
+%Similarly, the directional derivative $D_{\vect{G}}\widetilde{W}$ can be computed as
+%%
+%\begin{equation}\label{eqn:DG}
+%\begin{aligned}
+%D_{\vect{G}}\widetilde{W}& =  \frac{1}{2}\left(\partial_{\vect{G}}\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n+1/2},C_{n+1},\theta_{{n+1}}\right) + 
+%\partial_{\vect{G}}\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1/2},C_{n},\theta_{{n}}\right)\right)\\
+%%
+%&+\frac{1}{2}\frac{\widetilde{W}\left(\vect{C}_{n},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) - \widetilde{W}\left(\vect{C}_{n},\vect{G}_{n},C_{n+1},\theta_{{n+1}}\right)}{\vert\vert\Delta\vect{G}\vert\vert^2}\Delta\vect{G}\\
+%%
+%&+\frac{1}{2}\frac{\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1},C_{n},\theta_{{n}}\right) - \widetilde{W}\left(\vect{C}_{n+1},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)}{\vert\vert\Delta\vect{G}\vert\vert^2}\Delta\vect{G}\\
+%%
+%&-\frac{1}{2}\frac{\partial_{\vect{G}}\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n+1/2},C_{n+1},\theta_{{n+1}}\right):\Delta\vect{G}}{\vert\vert\Delta\vect{G}\vert\vert^2}\Delta\vect{G}\\& - \frac{1}{2}\frac{\partial_{\vect{G}}\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1/2},C_{n},\theta_{{n}}\right):\Delta\vect{G}}{\vert\vert\Delta\vect{G}\vert\vert^2}\Delta\vect{G}.
+%%
+%\end{aligned}
+%\end{equation}
+%
+%Furthermore, the directional derivative $D_{C}\widetilde{W}$ can be computed as
+%%
+%\begin{equation}\label{eqn:DCdet}
+%\begin{aligned}
+%D_{C}\widetilde{W}& =  \frac{1}{2}\frac{\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n},C_{n+1},\theta_{{n+1}}\right) - \widetilde{W}\left(\vect{C}_{n},\vect{G}_{n},C_{n},\theta_{{n+1}}\right)}{\vert\vert\Delta{C}\vert\vert}\\
+%%
+%&+\frac{1}{2}\frac{\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1},C_{n+1},\theta_{{n}}\right) - \widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1},C_{n},\theta_{{n}}\right)}{\vert\vert\Delta{C}\vert\vert}.
+%%
+%\end{aligned}
+%\end{equation}
+%
+%Finally, the directional derivative $D_{\theta}\widetilde{W}$ can be computed as
+%%
+%\begin{equation}\label{eqn:DD0}
+%\begin{aligned}
+%D_{\theta}\widetilde{W}& =  \frac{1}{2}\left(\partial_{\theta}\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n},C_{n},\theta_{{n+1/2}}\right) + 
+%\partial_{\theta}\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1},C_{n+1},\theta_{{n+1/2}}\right)\right)\\
+%%
+%&\frac{1}{2}\frac{\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n},C_{n},\theta_{{n+1}}\right) - \widetilde{W}\left(\vect{C}_{n},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)}{\vert\vert\Delta\theta\vert\vert^2}\Delta\theta\\
+%%
+%&+\frac{1}{2}\frac{\widetilde{W}\left(\vect{C}_{n+1},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) - \widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1},C_{n+1},\theta_{{n}}\right)}{\vert\vert\Delta\theta\vert\vert^2}\Delta\theta\\
+%%
+%&-\frac{1}{2}\frac{\partial_{\theta}\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n},C_{n},\theta_{{n+1/2}}\right)\cdot\Delta\theta}{\vert\vert\Delta\theta\vert\vert^2}\Delta\theta\\& - \frac{1}{2}\frac{\partial_{\theta}\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1},C_{n+1},\theta_{{n+1/2}}\right)\cdot\Delta\theta}{\vert\vert\Delta\theta\vert\vert^2}\Delta\theta.
+%%
+%\end{aligned}
+%\end{equation}
+%
+%For a constitutive model based on the additive decompossition presented in Section \ref{sec:constitutive models}, where the Helmholtz free energy is decomposed as (see equations \eqref{eqn:additive decomposition} and \eqref{eqn:MR}), 
+%%
+%\begin{equation}
+%\widetilde{W}(\vect{C},\vect{G},C,\theta) = \widetilde{W}_{m_{\vect{C}}}(\vect{C}) + \widetilde{W}_{m_{\vect{G}}}(\vect{G})+\widetilde{W}_{m_{{C}}}({C}) + \widetilde{W}_{\theta}(\theta) + \widetilde{W}_c(C,\theta),
+%\end{equation}
+%%
+%the expressions for $\{D_{\vect{C}}\widetilde{W},D_{\vect{G}}\widetilde{W},D_{{C}}\widetilde{W},D_{\theta}\widetilde{W}\}$ are considerably simplified with respect to the generic expressions in \eqref{eqn:DC}, \eqref{eqn:DG}, \eqref{eqn:DCdet} and \eqref{eqn:DD0}, i.e.
+%%
+%\begin{equation}
+%\begin{aligned}
+%D_{\vect{C}}\widetilde{W} &= \partial_{\vect{C}}\widetilde{W}_{m_{\vect{C}}}(\vect{C}_{n+1/2}) + \frac{\widetilde{W}_{m_{\vect{C}}}(\vect{C}_{n+1})-\widetilde{W}_{m_{\vect{C}}}(\vect{C}_n) - \partial_{\vect{C}}\widetilde{W}_{m_{\vect{C}}}(\vect{C}_{n+1/2}):\Delta\vect{C}}{\vert\vert\Delta\vect{C}\vert\vert^2}\Delta\vect{C};\\
+%%
+%D_{\vect{G}}\widetilde{W} &= \partial_{\vect{G}}\widetilde{W}_{m_{\vect{G}}}(\vect{G}_{n+1/2}) + \frac{\widetilde{W}_{m_{\vect{G}}}(\vect{G}_{n+1})-\widetilde{W}_{m_{\vect{G}}}(\vect{G}_n) - \partial_{\vect{G}}\widetilde{W}_{m_{\vect{G}}}(\vect{G}_{n+1/2}):\Delta\vect{G}}{\vert\vert\Delta\vect{G}\vert\vert^2}\Delta\vect{G};\\
+%%
+%D_{C}\widetilde{W}& = \frac{\widetilde{W}_{m_C}(C_{n+1})-\widetilde{W}_{m_C}(C_{n})}{\Delta C}\\&+ \frac{1}{2}\frac{\widetilde{W}_c(C_{n+1},\theta_n)-\widetilde{W}_c(C_{n},\theta_n)}{\Delta C} + \frac{1}{2}\frac{\widetilde{W}_c(C_{n+1},\theta_{n+1})-\widetilde{W}_c(C_{n},\theta_{n+1})}{\Delta C};\\
+%%
+%D_{\theta}\widetilde{W}& = \frac{\widetilde{W}_{\theta}(\theta_{n+1})-\widetilde{W}_{\theta}(\theta_{n})}{\Delta \theta}\\&+ \frac{1}{2}\frac{\widetilde{W}_c(C_{n},\theta_{n+1})-\widetilde{W}_c(C_{n},\theta_n)}{\Delta \theta} + \frac{1}{2}\frac{\widetilde{W}_c(C_{n+1},\theta_{n+1})-\widetilde{W}_c(C_{n+1},\theta_{n})}{\Delta \theta}.
+%%
+%\end{aligned}
+%\end{equation}
+
+In particular, for the Mooney-Rivlin model in equation \eqref{eqn:MR} and \eqref{eqn:MRv2}, the tensor discrete derivatives $\{D_{\vect{C}}\widetilde{W},D_{\vect{G}}\widetilde{W}\}$ adopt the following extremely simple expressions
+%
+\begin{equation}
+D_{\vect{C}}\widetilde{W}= \frac{\mu_1}{2}\vect{I};\qquad
+D_{\vect{G}}\widetilde{W}= \frac{\mu_2}{2}\vect{I}.
+\end{equation}
+
+
+\subsection{Proof of directionality property}
+
+
+The objective of this section is to prove that the definition of the discrete derivatives of the internal energy $\widetilde{W}\left(\vect{C},\vect{G},C,\theta\right)$ in \eqref{eqn:definition of partitioned discrete gradient} and \eqref{eqn:definition of partitioned discrete gradient I} satisfy the directionality property in equation \eqref{eqn:directionality property}. For that, let us denote the expression on the left-hand side of the directionality property in \eqref{eqn:directionality property} as $\mathcal{T}$, namely
+%
+\begin{equation}\label{eqn:directionality property X}
+\mathcal{T} = D_{\vect{C}}W:\Delta\vect{C} + D_{\vect{G}}W:\Delta\vect{G} + D_{{C}}W\Delta{C} + D_{\theta}W\cdot\Delta\theta .
+\end{equation}
+
+
+
+
+Substitution of the expressions for $D_{\vect{C}}\widetilde{W}$  \eqref{eqn:DC}, $D_{\vect{G}}\widetilde{W}$ \eqref{eqn:discrete expression for remaining variables}, $D_{{C}}\widetilde{W}$ \eqref{eqn:discrete expression for remaining variables} and $D_{\theta}\widetilde{W}$ \eqref{eqn:discrete expression for remaining variables} into \eqref{eqn:directionality property X} leads to
+%
+\begin{equation}
+\begin{aligned}
+\mathcal{T} 
+& =\frac{1}{2}{\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1},C_{n+1},\theta_{{n+1}}\right) - \frac{1}{2}\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n+1},C_{n+1},\theta_{{n+1}}\right)}\\
+%
+&+\frac{1}{2}{\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n},C_{n},\theta_{{n}}\right) - \frac{1}{2}\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n},C_{n},\theta_{{n}}\right)}\\
+%
+&+\frac{1}{2}{\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n+1},C_{n+1},\theta_{{n+1}}\right) - \frac{1}{2}\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n},C_{n+1},\theta_{{n+1}}\right)}\\
+%
+&+\frac{1}{2}{\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1},C_{n},\theta_{{n}}\right) - \frac{1}{2}\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n},C_{n},\theta_{{n}}\right)}\\
+%
+& +  \frac{1}{2}{\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n},C_{n+1},\theta_{{n+1}}\right) - \frac{1}{2}\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n},C_{n},\theta_{{n+1}}\right)}\\
+%
+&+\frac{1}{2}{\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1},C_{n+1},\theta_{{n}}\right) - \frac{1}{2}\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1},C_{n},\theta_{{n}}\right)}\\
+%
+&+\frac{1}{2}{\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n},C_{n},\theta_{{n+1}}\right) - \frac{1}{2}\widetilde{W}\left(\vect{C}_{n},\vect{G}_{n},C_{n},\theta_{{n}}\right)}\\
+%
+&+\frac{1}{2}{\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1},C_{n+1},\theta_{{n+1}}\right) - \frac{1}{2}\widetilde{W}\left(\vect{C}_{n+1},\vect{G}_{n+1},C_{n+1},\theta_{{n}}\right)}\\
+%
+&=
+\Delta \widetilde{W},
+%
+\end{aligned}
+\end{equation}
+%
+which proves that the definition of the discrete derivatives satisfy the directionality property.
+
+\subsection{Definition of the discrete derivatives in the limit}
+
+The objective of this section is to prove that the defition of the directional derivatives in equations \eqref{eqn:definition of partitioned discrete gradient} and \eqref{eqn:definition of partitioned discrete gradient I} satisfies the second condition stated in Section \ref{eqn:definition of the discrete derivatives}, namely that they are well defined in the limit $\vert\vert\Delta\vect{C}\vert\vert\rightarrow {0}$, 
+$\vert\vert\Delta\vect{G}\vert\vert\rightarrow {0}$, 
+$\vert\vert\Delta{C}\vert\vert\rightarrow {0}$ and $\vert\vert\Delta\theta\vert\vert\rightarrow 0$. In particular, it will be proved in this Section that based on the definition of the discrete derivatives, these can be equivalently written as
+%
+\begin{equation}\label{eqn:desired property convergence discrete gradient}
+\begin{aligned}
+D_{\widetilde{\mathcal{V}}_{i}}\widetilde{W} & = \partial_{\widetilde{\mathcal{V}}_i}\widetilde{W}\left(\widetilde{\mathcal{V}}_{n+1/2}\right) + \sum_{i=1}^4O\left(\vert\vert\Delta\widetilde{\mathcal{V}}_{i}\vert\vert^2\right) + \sum_{j=1,j\neq i}^4\sum_{k=j+1,k\neq 1}^4O\left(\vert\vert\Delta\widetilde{\mathcal{V}}_{j}\vert\vert\vert\vert\Delta\widetilde{\mathcal{V}}_{k}\vert\vert\right),
+%
+\end{aligned}
+\end{equation}
+%
+which would prove that they are well defined in the limit. For that, let us carry out a Taylor series expansion of the four different evaluations of the internal energy $\widetilde{W}$ in equation \eqref{eqn:DC} around $\vect{C}_{n+1/2}$. This enables to express them as
+%
+%\begin{equation}\label{eqn:Taylor series for W}
+%\begin{aligned}
+%\widetilde{W}\left(\vect{C}_{n+1},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) & = 
+%\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right)\\& + \partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right):\left(\frac{1}{2}\Delta\vect{C}\right)\\&
+%%
+%+\left(\frac{1}{2}\Delta\vect{C}\right):\frac{\partial^2\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right)}{\partial\vect{C}\partial\vect{C}}:\left(\frac{1}{2}\Delta\vect{C}\right) + O\left(\vert\vert\Delta\vect{C}\vert\vert^3\right);\\
+%%
+%%
+%\widetilde{W}\left(\vect{C}_{n},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) & = 
+%\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right)\\& - \partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right):\left(\frac{1}{2}\Delta\vect{C}\right)\\&
+%%
+%+\left(\frac{1}{2}\Delta\vect{C}\right):\frac{\partial^2\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right)}{\partial\vect{C}\partial\vect{C}}:\left(\frac{1}{2}\Delta\vect{C}\right) + O\left(\vert\vert\Delta\vect{C}\vert\vert^3\right);\\
+%%
+%%
+%%
+%\widetilde{W}\left(\vect{C}_{n+1},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right) & = 
+%\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)\\& + \partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right):\left(\frac{1}{2}\Delta\vect{C}\right)\\&
+%%
+%+\left(\frac{1}{2}\Delta\vect{C}\right):\frac{\partial^2\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)}{\partial\vect{C}\partial\vect{C}}:\left(\frac{1}{2}\Delta\vect{C}\right) + O\left(\vert\vert\Delta\vect{C}\vert\vert^3\right);\\
+%%
+%%
+%\widetilde{W}\left(\vect{C}_{n},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right) & = 
+%\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)\\& - \partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right):\left(\frac{1}{2}\Delta\vect{C}\right)\\&
+%%
+%+\left(\frac{1}{2}\Delta\vect{C}\right):\frac{\partial^2\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)}{\partial\vect{C}\partial\vect{C}}:\left(\frac{1}{2}\Delta\vect{C}\right) + O\left(\vert\vert\Delta\vect{C}\vert\vert^3\right).
+%%
+%%
+%\end{aligned}
+%\end{equation}
+\begin{equation}\label{eqn:Taylor series for W}
+\begin{aligned}
+\widetilde{W}\left(\vect{C}_{n+1},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) & = 
+\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) + \partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right):\left(\frac{1}{2}\Delta\vect{C}\right)\\&
+%
++\left(\frac{1}{2}\Delta\vect{C}\right):{\partial_{\vect{CC}}^2\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right)}:\left(\frac{1}{2}\Delta\vect{C}\right) + O\left(\vert\vert\Delta\vect{C}\vert\vert^3\right);\\
+%
+%
+\widetilde{W}\left(\vect{C}_{n},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) & = 
+\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) - \partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right):\left(\frac{1}{2}\Delta\vect{C}\right)\\&
+%
++\left(\frac{1}{2}\Delta\vect{C}\right):{\partial^2_{\vect{C}\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right)}:\left(\frac{1}{2}\Delta\vect{C}\right) + O\left(\vert\vert\Delta\vect{C}\vert\vert^3\right);\\
+%
+%
+%
+\widetilde{W}\left(\vect{C}_{n+1},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right) & = 
+\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right) + \partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right):\left(\frac{1}{2}\Delta\vect{C}\right)\\&
+%
++\left(\frac{1}{2}\Delta\vect{C}\right):{\partial_{\vect{CC}}^2\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)}:\left(\frac{1}{2}\Delta\vect{C}\right) + O\left(\vert\vert\Delta\vect{C}\vert\vert^3\right);\\
+%
+%
+\widetilde{W}\left(\vect{C}_{n},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right) & = 
+\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right) - \partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right):\left(\frac{1}{2}\Delta\vect{C}\right)\\&
+%
++\left(\frac{1}{2}\Delta\vect{C}\right):{\partial_{\vect{CC}}^2\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)}:\left(\frac{1}{2}\Delta\vect{C}\right) + O\left(\vert\vert\Delta\vect{C}\vert\vert^3\right).
+%
+%
+\end{aligned}
+\end{equation}
+
+Introduction of above equation \eqref{eqn:Taylor series for W} into the last four terms on the right-hand side of equation \eqref{eqn:DC} yields
+%
+\begin{equation}\label{eqn:four terms}
+\begin{aligned}
+&\frac{1}{2}\frac{\widetilde{W}\left(\vect{C}_{n+1},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) - \widetilde{W}\left(\vect{C}_{n},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right)}{\vert\vert\Delta\vect{C}\vert\vert^2}\Delta\vect{C}
+%
++\frac{1}{2}\frac{\widetilde{W}\left(\vect{C}_{n+1},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right) - \widetilde{W}\left(\vect{C}_{n},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)}{\vert\vert\Delta\vect{C}\vert\vert^2}\Delta\vect{C}\\
+%
+&-\frac{1}{2}\frac{\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right):\Delta\vect{C}}{\vert\vert\Delta\vect{C}\vert\vert^2}\Delta\vect{C} - \frac{1}{2}\frac{\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right):\Delta\vect{C}}{\vert\vert\Delta\vect{C}\vert\vert^2}\Delta\vect{C} = O\left(\vert\vert\Delta\vect{C}\vert\vert^2\right).
+%
+\end{aligned}
+\end{equation}
+
+Introduction of the result in \eqref{eqn:four terms} into the expression for the directional derivative $D_{\vect{C}}\widetilde{W}$ in \eqref{eqn:directional derivatives C} leads to
+%
+\begin{equation}\label{eqn:DC II}
+\begin{aligned}
+D_{\vect{C}}\widetilde{W}& =  \frac{1}{2}\left(\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) + 
+\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right)\right) + O\left(\vert\vert\Delta\vect{C}\vert\vert^2\right).
+%
+%
+\end{aligned}
+\end{equation}
+
+A Taylor series expansion on the two first terms on the right-hand side of above equation \eqref{eqn:DC II} enables these to be expressed as
+%
+\begin{equation}\label{eqn:Taylor expansion around SiamgC}
+\begin{aligned}
+\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1}}\right) & = \partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1/2}}\right)
+%
++{\partial_{\vect{CG}}^2 \widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1/2}}\right)}:\left(\frac{1}{2}\Delta\vect{G}\right)\\
+%
+&+{\partial_{\vect{C}C}^2 \widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1/2}}\right)}\left(\frac{1}{2}\Delta{C}\right)
+%
++{\partial_{\vect{C}\theta}^2 \widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1/2}}\right)}:\left(\frac{1}{2}\Delta\theta\right)\\
+%
+&+O\left(\vert\vert\Delta\vect{G}\vert\vert^2\right)+
+O\left(\Delta{C}^2\right)+
+O\left(\vert\vert\Delta\theta\vert\vert^2\right)\\& + 
+O\left(\vert\vert\Delta\vect{G}\vert\vert\Delta C\right) + 
+O\left(\vert\vert\Delta\vect{G}\vert\vert\vert\vert\Delta\theta\vert\vert\right) 
+ + 
+ O\left(\Delta C\vert\vert\Delta\theta\vert\vert\right);\\
+ %
+ %
+ %
+\partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n}}\right) & = \partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1/2}}\right)
+%
+-{\partial_{\vect{CG}}^2 \widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1/2}}\right)}:\left(\frac{1}{2}\Delta\vect{G}\right)\\
+%
+&-{\partial_{\vect{C}C}^2 \widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1/2}}\right)}\left(\frac{1}{2}\Delta{C}\right)
+%
+-{\partial_{\vect{C}\theta}^2 \widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1/2}}\right)}:\left(\frac{1}{2}\Delta\theta\right)\\
+%
+&+O\left(\vert\vert\Delta\vect{G}\vert\vert^2\right)+
+O\left(\Delta{C}^2\right)+
+O\left(\vert\vert\Delta\theta\vert\vert^2\right)\\& + 
+O\left(\vert\vert\Delta\vect{G}\vert\vert\Delta C\right) + 
+O\left(\vert\vert\Delta\vect{G}\vert\vert\vert\vert\Delta\theta\vert\vert\right) 
++ 
+O\left(\Delta C\vert\vert\Delta\theta\vert\vert\right). 
+%
+\end{aligned}
+\end{equation}
+	
+Introduction of \eqref{eqn:Taylor expansion around SiamgC} into \eqref{eqn:DC II} leads to the final expression for  $D_{\vect{C}}\widetilde{W}$ \eqref{eqn:DC} as
+%
+\begin{equation}\label{eqn:DCW proof Taylor series expansion}
+\begin{aligned}
+D_{\vect{C}}\widetilde{W} & = \partial_{\vect{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1/2}}\right)\\& + 
+%
+O\left(\vert\vert\Delta\vect{C}\vert\vert^2\right)+ O\left(\vert\vert\Delta\vect{G}\vert\vert^2\right)+
+O\left(\Delta{C}^2\right)+
+O\left(\vert\vert\Delta\theta\vert\vert^2\right)\\& + 
+O\left(\vert\vert\Delta\vect{G}\vert\vert\Delta C\right) + 
+O\left(\vert\vert\Delta\vect{G}\vert\vert\vert\vert\Delta\theta\vert\vert\right) 
++ 
+O\left(\Delta C\vert\vert\Delta\theta\vert\vert\right),
+%
+\end{aligned}
+\end{equation}
+%
+which proves condition \eqref{eqn:desired property convergence discrete gradient}. Proceeding similarly, it would be possible to generalise above result \eqref{eqn:DCW proof Taylor series expansion} to the discrete derivatives $D_{\vect{G}}\widetilde{W}$, $D_C\widetilde{W}$  and $D_{\theta}\widetilde{W}$ (all of them in \eqref{eqn:discrete expression for remaining variables}), namely
+%
+\begin{equation}
+\begin{aligned}
+D_{\vect{G}}\widetilde{W} & = \partial_{\vect{G}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1/2}}\right)\\& + 
+%
+O\left(\vert\vert\Delta\vect{C}\vert\vert^2\right)+ O\left(\vert\vert\Delta\vect{G}\vert\vert^2\right)+
+O\left(\Delta{C}^2\right)+
+O\left(\vert\vert\Delta\theta\vert\vert^2\right)\\& + 
+O\left(\vert\vert\Delta\vect{C}\vert\vert\Delta C\right) + 
+O\left(\vert\vert\Delta\vect{C}\vert\vert\vert\vert\Delta\theta\vert\vert\right) 
++ 
+O\left(\Delta C\vert\vert\Delta\theta\vert\vert\right);\\
+%
+%
+%
+D_{{C}}\widetilde{W} & = \partial_{{C}}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1/2}}\right)\\& + 
+%
+O\left(\vert\vert\Delta\vect{C}\vert\vert^2\right)+ O\left(\vert\vert\Delta\vect{G}\vert\vert^2\right)+
+O\left(\Delta{C}^2\right)+
+O\left(\vert\vert\Delta\theta\vert\vert^2\right)\\& + 
+O\left(\vert\vert\Delta\vect{C}\vert\vert\vert\vert\Delta\vect{G}\vert\vert\right) + 
+O\left(\vert\vert\Delta\vect{C}\vert\vert\vert\vert\Delta\theta\vert\vert\right) 
++ 
+O\left(\vert\vert\Delta\vect{G}\vert\vert\vert\vert\Delta\theta\vert\vert\right);\\
+%
+%
+%
+D_{\theta}\widetilde{W} & = \partial_{\theta}\widetilde{W}\left(\vect{C}_{n+1/2},\widetilde{\mathcal{V}}_{\vect{C}_{n+1/2}}\right)\\& + 
+%
+O\left(\vert\vert\Delta\vect{C}\vert\vert^2\right)+ O\left(\vert\vert\Delta\vect{G}\vert\vert^2\right)+
+O\left(\Delta{C}^2\right)+
+O\left(\vert\vert\Delta\theta\vert\vert^2\right)\\& + 
+O\left(\vert\vert\Delta\vect{C}\vert\vert\vert\vert\Delta\vect{G}\vert\vert\right) + 
+O\left(\vert\vert\Delta\vect{C}\vert\vert\Delta C\right) 
++ 
+O\left(\vert\vert\Delta\vect{G}\vert\vert\Delta C\right).
+%
+\end{aligned}
+\end{equation}

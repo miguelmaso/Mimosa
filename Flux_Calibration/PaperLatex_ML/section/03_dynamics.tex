@@ -1,0 +1,139 @@
+The objective of this section is to present the variational formulation that will be used in order to develop an EM time integration scheme in Section \ref{sec:time integrator}. 
+
+
+\subsection{Balance laws and integrals in thermo-elastodynamics}
+
+Starting with the stationary conditions \eqref{eqn:weak forms for the dynamic formulation} %of the action integral $L_{\widetilde{W}}$ \eqref{eqn:action integral}, 
+%the objective of 
+the following sections  derive the global conservation laws that govern the motion of the thermo-elastic continuum.% represented by the domain $\mathcal{B}_0$.
+
+\subsubsection{Global form for conservation of linear momentum}\label{sec:conservation linear momentum global}
+
+For a displacement field $\vect{w}_{\vect{\phi}} = \vect{\xi}$, with $\mathbb{R}^3\ni\vect{\xi}=const.$, the stationary condition in \eqref{eqn:weak forms for the dynamic formulation}$_b$ leads to the global form of the conservation of linear momentum, namely
+%
+\begin{equation}\label{eqn:global conservation linear momentum}
+%
+\dot{\vect{L}} - \vect{F}^{\text{ext}} = \vect{0};\qquad
+%
+{\vect{L}} = \int_{\mathcal{B}_0}\rho_0\vect{v}\,dV;\qquad
+%
+\vect{F}^{\text{ext}} =    
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\,dA
++\int_{\mathcal{B}_0}\vect{f}_0\,dV,
+\end{equation}
+%
+where %\eqref{eqn:global conservation linear momentum}
+$\vect{L}$ represents the total linear momentum %of the system 
+and $\vect{F}^{\text{ext}}$, the total external force.
+From \eqref{eqn:global conservation linear momentum} it is possible to conclude that $\vect{L}$ is a constant of motion for the case of vanishing external forces $\vect{F}^{\text{ext}}$. Nonetheless, notice that a translational field is potentially incompatible with the presence of Dirichlet boundary conditions. This entails that above result is only valid for the case where Dirichlet boundary conditions are not applied. Otherwise, the global balance in equation \eqref{eqn:global conservation linear momentum} must account for the \textit{reaction} forces induced in the boundary $\partial_{\vect{\phi}}\mathcal{B}_0$ as a result of the application of the Dirichlet boundary conditions. However, for the {sake of simplicity} and brevity of exposition, we will not include the effect of mechanical or thermal boundary conditions in the forthcoming balance laws.   
+
+\subsubsection{Global form for conservation of angular momentum}\label{sec:conservation angular momentum global}
+
+For a rotational field $\vect{w}_{\vect{\phi}} = \vect{\xi}\times\vect{\phi}$, with $\mathbb{R}^3\ni\vect{\xi}=const.$, the stationary condition in \eqref{eqn:weak forms for the dynamic formulation}$_b$ leads to the global form of the conservation of angular momentum, namely
+%
+\begin{equation}\label{eqn:global conservation angular momentum}
+%
+\dot{\vect{J}} - \vect{M}^{\text{ext}} = \vect{0};\qquad
+%
+\vect{J}= \int_{\mathcal{B}_0}\vect{\phi}\times\rho_0{\vect{v}}\,dV;\qquad
+%
+\vect{M}^{\text{ext}} =    
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{\phi}\times\vect{t}_0\,dA
++\int_{\mathcal{B}_0}\vect{\phi}\times\vect{f}_0\,dV,
+\end{equation}
+%
+where $\vect{J}$ represents the total angular momentum and $\vect{M}^{\text{ext}}$, the total external torque. 
+From \eqref{eqn:global conservation angular momentum}, it is clear that $\vect{J}$ is a constant of motion for vanishing external torques $\vect{M}^{\text{ext}}$. 
+
+
+\subsubsection{Global form for conservation of power}\label{eqn:conservation of energy}
+
+Let us replace the test functions
+$\{\vect{w}_{\vect{v}},\vect{w}_{\vect{\phi}}\}$ in \eqref{eqn:weak forms for the dynamic formulation} with $\{\dot{\vect{v}},\dot{\vect{\phi}}\}\in\{\mathbb{V}_0^{\vect{\phi}}\times\mathbb{V}_0^{\vect{\phi}}\}$ and let us take $w_{\theta}=1$. 
+This yields
+%
+\begin{equation}\label{eqn:weak forms for the dynamic formulation Dirichlet bcs}
+\begin{aligned}
+&\int_{\mathcal{B}_0}\left(\vect{v} - \dot{\vect{\phi}}\right)\cdot\rho_0\dot{\vect{v}}\,dV=0;\\
+%
+&\int_{\mathcal{B}_0}\rho_0\dot{\vect{v}}\cdot\dot{\vect{\phi}}\,dV + \int_{\mathcal{B}_0}\vect{S}:\frac{1}{2}\dot{\vect{C}}\,dV-  \int_{\mathcal{B}_0}\vect{f}_0\cdot\dot{\vect{\phi}}\,dV-
+\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\dot{\vect{\phi}}\,dA=0 ;\\
+%
+&\int_{\mathcal{B}_0}\frac{d}{dt}\left(\theta\eta\right)\,dV - \int_{\mathcal{B}_0}\dot{\theta}\eta\,dV - \int_{\mathcal{B}_0}R_{\theta}\,dV - \int_{\partial_Q\mathcal{B}_0}Q_{\theta}\,dA=0.
+%
+\end{aligned}
+\end{equation}
+
+%Use of equation \eqref{eqn:weak forms for the dynamic formulation Dirichlet bcs}$_a$ into the first term of \eqref{eqn:weak forms for the dynamic formulation Dirichlet bcs}$_b$ enables to re-express the later as
+%%
+%\begin{equation}\label{eqn:transformation of inertial term}
+%\int_{\mathcal{B}_0}\rho_0\dot{\vect{v}}\cdot\dot{\vect{\phi}}\,dV = \int_{\mathcal{B}_0}\rho_0\vect{v}\cdot\dot{\vect{v}}\,dV = \dot{K};\qquad
+%K = \int_{\mathcal{B}_0}\frac{1}{2}\rho_0\vect{v}\cdot\vect{v}\,dV,
+%\end{equation}
+%
+
+%Inserting the result in equations \eqref{eqn:DPiextr} into \eqref{eqn:weak forms for the dynamic formulation Dirichlet bcs} and 
+Addition of the three equations in \eqref{eqn:weak forms for the dynamic formulation Dirichlet bcs} leads, in the case of time independent forces $\vect{f}_0$ and $\vect{t}_0$ to
+%
+\begin{equation}\label{eqn:Wvarphi conservation of energy}
+\begin{aligned}
+\dot{K} + \int_{\mathcal{B}_0}\left(\vect{S}:\frac{1}{2}\dot{\vect{C}}
+%
+- \dot{\theta}\eta\right)\,dV + \int_{\mathcal{B}_0}\frac{d}{dt}\left(\theta\eta\right)\,dV -\dot{\Pi}_{\text{ext}}\left(\vect{\phi}\right)  - \dot{\mathcal{Q}}_{\text{ext}} = 0,
+%
+\end{aligned}
+\end{equation}
+%
+%where use of  time independent forces $\vect{f}_0$ and $\vect{t}_0$ and charges $\rho^e_0$ and $\omega_0^e$)
+%%
+%\begin{equation}\label{eqn:DPiextr}
+%\begin{aligned}
+%\int_{\mathcal{B}_0}\vect{f}_0\cdot\dot{\vect{\phi}}\,dV + 
+%\int_{\partial_{\boldsymbol{t}}\mathcal{B}_0}\vect{t}_0\cdot\dot{\vect{\phi}}\,dA  = \dot{\Pi}^m_{\text{ext}}\left({\vect{\phi}}\right);\qquad
+%%
+%\int_{\mathcal{B}_0}{\rho}^e_0\dot{{\varphi}}\,dV + 
+%\int_{\partial_{\omega}\mathcal{B}_0}\omega^e_0\dot{\varphi}\,dA  = -\dot{\Pi}^e_{\text{ext}}\left({{\varphi}}\right).
+%%
+%\end{aligned}
+%\end{equation}
+where $\dot{K}$, $\dot{\Pi}_{\text{ext}}$ and $\dot{\mathcal{Q}}_{\text{ext}}$ represent the kinetic power, the external mechanical power and the external heat power, defined as
+%
+{\begin{equation}
+\dot{K}=\int_{\mathcal{B}_0}\rho_0\vect{v}\cdot\dot{\vect{v}}\,dV;\quad
+%
+\dot{\Pi}_{\text{ext}} = \int_{\mathcal{B}_0}\vect{f}_0\cdot\dot{\vect{\phi}}\,dV+\int_{\partial_{\vect{t}}\mathcal{B}_0}\vect{t}_0\cdot\dot{\vect{\phi}}\,dA;\quad
+%
+\dot{\mathcal{Q}}_{\text{ext}} = \int_{\mathcal{B}_0}R_{\theta}\,dV + \int_{\partial_Q\mathcal{B}_0}Q_{\theta}\,dA.
+\end{equation}} 
+
+Making use of \eqref{eqn:thermodynamics CMV in terms of C} and \eqref{eqn:Piola and electric field in extended formulation} in \eqref{eqn:Wvarphi conservation of energy} yields
+%
+\begin{equation}\label{eqn:Wvarphi conservation of energy I}
+\begin{aligned}
+\dot{K} + \int_{\mathcal{B}_0}\dot{\widetilde{W}}\left(\vect{C},\vect{G},C,\theta\right)\,dV 
+%
++\int_{\mathcal{B}_0}\frac{d}{dt}\left(\theta\eta\right)\,dV -\dot{\Pi}_{\text{ext}}\left(\vect{\phi}\right) - \dot{\mathcal{Q}}_{\text{ext}} = 0.
+%
+\end{aligned}
+\end{equation}
+
+
+Making use of the Legendre transformation in \eqref{eqn:Legendre transform} it is possible to re-express \eqref{eqn:Wvarphi conservation of energy I} as
+%
+\begin{equation}\label{eqn:balance of energy final}
+\dot{K} + \int_{\mathcal{B}_0}\dot{\widetilde{U}}\left(\vect{C},\vect{G},C,\eta\right)\,dV-\dot{\Pi}_{\text{ext}}\left(\vect{\phi}\right) - \dot{\mathcal{Q}}_{\text{ext}} = 0.
+\end{equation}
+
+Therefore, for vanishing external mechanical and thermal power, the following condition holds,
+%
+\begin{equation}\label{eqn:Hamiltonian}
+\dot{\mathcal{H}}=0;\qquad
+%
+\mathcal{H} = K + \int_{\mathcal{B}_0}\widetilde{U}(\vect{C},\vect{G},C,\eta)\,dV,
+\end{equation}
+%
+and accordingly, the {Hamiltonian $\mathcal{H}$ or total energy is conserved} throughout the motion of the continuum. 
+
+
+
+

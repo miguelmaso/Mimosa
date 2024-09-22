@@ -1,0 +1,116 @@
+\newcommand{\be}{\begin{equation}}
+\newcommand{\ee}{\end{equation}}
+\newcommand{\ben}{\begin{equation*}}
+\newcommand{\een}{\end{equation*}}
+\newcommand{\bean}{\begin{eqnarray}}
+\newcommand{\eean}{\end{eqnarray}}
+\newcommand{\bea}{\begin{eqnarray*}}
+\newcommand{\eea}{\end{eqnarray*}}
+\newcommand{\bfig}{\begin{figure}}
+\newcommand{\efig}{\end{figure}}
+\newcommand{\ba}{\begin{array}}
+\newcommand{\ea}{\end{array}}
+
+\newcommand{\gap}[3]{\mbox{\hspace{#1 ex} #2 \hspace{#3 ex}}}
+%\newcommand{\nn}{\nonumber}
+\newcommand{\hs}{\hspace}
+\newcommand{\lb}{\label}
+\newcommand{\ds}{\displaystyle}
+\newcommand{\scst}{\scriptstyle}
+\newcommand{\scsi}{\scriptsize}
+\newcommand{\incg}{\includegraphics}
+
+\newcommand{\na}{\nabla}
+\newcommand{\pa}{\partial}
+\newcommand{\Ra}{\Rightarrow \mbox{\hspace{1ex}}}
+\newcommand{\ti}{\tilde}
+
+\newcommand{\si}{\sigma}
+\newcommand{\vsi}{\varsigma}
+\newcommand{\ov}{\overline}
+\newcommand{\ga}{\gamma}
+\newcommand{\Ga}{\Gamma}
+\newcommand{\eps}{\epsilon}
+\newcommand{\ups}{\upsilon}
+\newcommand{\Ups}{\Upsilon}
+\newcommand{\var}{\varepsilon}
+\newcommand{\ka}{\kappa}
+\newcommand{\al}{\alpha}
+\newcommand{\la}{\lambda}
+\newcommand{\La}{\Lambda}
+\newcommand{\de}{\delta}
+\newcommand{\De}{\Delta}
+\newcommand{\p}{\prime}
+\newcommand{\ra}{\rightarrow}
+\newcommand{\om}{\omega}
+\newcommand{\Om}{\Omega}
+\newcommand{\tha}{\theta}
+\newcommand{\ze}{\zeta}
+\newcommand{\bet}{\beta}
+\newcommand{\bs}{\boldsymbol}
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
+
+
+\DeclareSymbolFont{AMSb}{U}{msb}{m}{n}% or use amsfonts package
+\DeclareMathSymbol{\C}{\mathalpha}{AMSb}{"43}
+\DeclareMathSymbol{\R}{\mathalpha}{AMSb}{"52}
+\DeclareMathSymbol{\K}{\mathalpha}{AMSb}{"4B}
+\DeclareMathSymbol{\M}{\mathalpha}{AMSb}{"4D}
+\DeclareMathSymbol{\N}{\mathalpha}{AMSb}{"4E}
+\DeclareMathSymbol{\OO}{\mathalpha}{AMSb}{"4F}
+\DeclareMathSymbol{\Ss}{\mathalpha}{AMSb}{"53}
+\DeclareMathSymbol{\Q}{\mathalpha}{AMSb}{"51}
+\DeclareMathSymbol{\Z}{\mathalpha}{AMSb}{"5A}
+%\DeclareMathSymbol{\QM}{\mathalpha}{AMSb}{"3F}
+\DeclareMathOperator{\diag}{diag} \DeclareMathOperator{\Div}{Div}
+\DeclareMathOperator{\cof}{cof}
+\DeclareMathOperator{\diverg}{div}\DeclareMathOperator{\diam}{diam}
+\newcommand{\abs}[1]{\lvert#1\rvert}
+\newcommand{\norm}[1]{\lVert#1\rVert}
+\newcommand{\tverb}[1]{\text{\texttt{#1}}}
+\newcommand{\sfrac}[2]{\genfrac{}{}{0 pt}{}{#1}{#2}}
+\newcommand{\ud}{\mathrm{d}}
+\newcommand{\figfont}{\footnotesize}
+
+% Jump operator
+\newcommand{\jl}{[\![}
+\newcommand{\jr}{]\!]}
+
+%\newtheorem{lemma}{Lemma}[section]
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{cor}{Corollary}[section]
+%\newtheorem{proposition}{Proposition}[section]
+
+\theoremstyle{definition}
+\newtheorem{defi}{Definition}[section]
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+\newtheorem*{notation}{Notation}
+
+%\newtheorem{defi}{Definition}[section]
+%\newtheorem{lemma}{Lemma}[section]
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{cor}{Corollary}[section]
+%\newtheorem{remark}{Remark}[section]
+%\newtheorem{proposition}{Proposition}[section]
+
+\newcommand{\thmref}[1]{Theorem~\ref{#1}}
+\newcommand{\secref}[1]{\S\ref{#1}}
+\newcommand{\lemref}[1]{Lemma~\ref{#1}}
+
+\newcommand{\bysame}{\mbox{\rule{3em}{.4pt}}\,}
+
+\newcommand{\mnorm}[1]{%
+  \left\vert\kern-0.9pt\left\vert\kern-0.9pt\left\vert #1
+    \right\vert\kern-0.9pt\right\vert\kern-0.9pt\right\vert}
+
+%\renewcommand{\crest}{\beltcrest}
+
+\ifx\quick\undefined
+\else
+        \renewcommand{\incg}[2][]{\includegraphics[#1,draft=true]{#2}}       % Don't include anything in draft mode
+\fi 
