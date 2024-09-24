@@ -2,16 +2,20 @@
 
 % n_nodes = 10
 % n_experiments=4000
+% iter = 5000
 
 %n_nodes = 10 
 % n_experiments=2000
+% iter = 5000
 
 
 %n_nodes = 30 
 % n_experiments=4000
+% iter = 5000
 
 %n_nodes = 30 
 % n_experiments=2000
+% iter = 5000
 
 % Please add the following required packages to your document preamble:
 % \usepackage{multirow}
@@ -24,10 +28,10 @@
 \begin{tabular}{lllllllcc|ccc}
 \multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=10$\\ $n_{experiments}=4000$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
 \multicolumn{9}{c|}{}                                                                                                 & 10        & 20        & 40        \\ \hline
-        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 2        & a         & b         & c         \\
-        &         &         &         &         &         &         &                                      & 3        & a         & b         & c         \\
-        &         &         &         &         &         &         &                                      & 4        & a         & b         & c         \\
-        &         &         &         &         &         &         &                                      & 6        & a         & b         & c        
+        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 2        &  0.748        &  0.835        &  0.649        \\
+        &         &         &         &         &         &         &                                      & 3        &  0.831        &  0.609        &  0.806        \\
+        &         &         &         &         &         &         &                                      & 4        &  0.925        &  0.941        &  0.918        \\
+        &         &         &         &         &         &         &                                      & 6        &  0.881        & 0.930       &  0.785       
 \end{tabular}
 
 
@@ -38,10 +42,10 @@
 \begin{tabular}{lllllllcc|ccc}
 \multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=10$\\ $n_{experiments}=2000$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
 \multicolumn{9}{c|}{}                                                                                                 & 10        & 20        & 40        \\ \hline
-        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 2        & a         & b         & c         \\
-        &         &         &         &         &         &         &                                      & 3        & a         & b         & c         \\
-        &         &         &         &         &         &         &                                      & 4        & a         & b         & c         \\
-        &         &         &         &         &         &         &                                      & 6        & a         & b         & c        
+        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 2        &  0.409        & -0.300         &  -0.0098        \\
+        &         &         &         &         &         &         &                                      & 3        &  0.33        &  0.088        &  0.081        \\
+        &         &         &         &         &         &         &                                      & 4        &  -3.538        & 0.246         & 0.554         \\
+        &         &         &         &         &         &         &                                      & 6        & 0.197         & 0.656         &  0.621       
 \end{tabular}
 \end{minipage}
 
@@ -49,10 +53,10 @@
 \begin{tabular}{lllllllcc|ccc}
 \multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=30$\\ $n_{experiments}=4000$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
 \multicolumn{9}{c|}{}                                                                                                 & 10        & 20        & 40        \\ \hline
-        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 2        & a         & b         & c         \\
-        &         &         &         &         &         &         &                                      & 3        & a         & b         & c         \\
-        &         &         &         &         &         &         &                                      & 4        & a         & b         & c         \\
-        &         &         &         &         &         &         &                                      & 6        & a         & b         & c        
+        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 2        & 0.704         &   0.443       &  0.805        \\
+        &         &         &         &         &         &         &                                      & 3        &  0.869        & 0.739         &  0.847        \\
+        &         &         &         &         &         &         &                                      & 4        &  0.904        &  0.881        &  0.888        \\
+        &         &         &         &         &         &         &                                      & 6        &  0.760        &  0.816       &        0.699 
 \end{tabular}
 \end{minipage}
 
@@ -60,10 +64,10 @@
 \begin{tabular}{lllllllcc|ccc}
 \multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=30$\\ $n_{experiments}=2000$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
 \multicolumn{9}{c|}{}                                                                                                 & 10        & 20        & 40        \\ \hline
-        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 2        & a         & b         & c         \\
-        &         &         &         &         &         &         &                                      & 3        & a         & b         & c         \\
-        &         &         &         &         &         &         &                                      & 4        & a         & b         & c         \\
-        &         &         &         &         &         &         &                                      & 6        & a         & b         & c        
+        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 2        & -0.01         &  -1.689        &  -1.757        \\
+        &         &         &         &         &         &         &                                      & 3        &  -2.328        &  -1.425        &  -1.585        \\
+        &         &         &         &         &         &         &                                      & 4        &  -5.488        &  -0.418        & -0.188         \\
+        &         &         &         &         &         &         &                                      & 6        & -0.756         &  0.632        &  0.484       
 \end{tabular}
 \end{minipage}
 
