@@ -397,7 +397,7 @@ n_nodes_values = [10, 30, 40]
 epochs_values = [500,1000,5000,10000]
 # TODO Elegir los nodos (los indices),al principio antes de lanzar el experimento
 # TODO Forma de presentar los datos: para 4 combinaciones de datos (n de nodos y de experimentos), una tabla con el R2 en función de cada combinacion de layers y neuronas 
-# TODO Graficas de correlación: coger el mejor R2 (la mejor arquitectura) de las 4 tablas de las 4 configuraciones de datos (El TODO 2). Plotear los desplazamientos de la predicción y del test (debería salir una recta si el R2 es alto)
+# TODO Graficas de correlación: coger el mejor R2 (la mejor arquitectura) de las 4 tablas de las 4 configuraciones de datos (El TODO 2). Plotear los desplazamientos de la predicción y del test (debería salir una recta si el R2 es alto). 
 # TODO Plotear el logaritmo decimal de la loss para varios casos
 # TODO Coger 4 casos (4 configuraciones de potencial), y lanzo un FEM de ese potencial. De ese FEM, guardo cada load increment. Entonces me fijo en uno de los nodos de la cara donde estoy proyectando en la superficie, y comparo el desplazamiento del nodo FEM con el desplazamietno del nodo correspondiente que te daría la red. Estas serían las gráfica de trayectorias
 # TODO Pintar en Paraview el FEM y compararlo con la nube de puntos que te da la predicción de ML
