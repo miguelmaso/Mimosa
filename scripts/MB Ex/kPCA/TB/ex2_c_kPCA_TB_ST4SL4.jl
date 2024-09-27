@@ -3,9 +3,20 @@ conf_list_ = CSV.File("data/csv/EM_TB_ST4_SL4_ConfRand.csv") |> Tables.matrix
 conf_list = hcat(conf_list,conf_list_[:,[1:200...]])
 St = 4; Sl = 4; pot = 4000;
 X = [ReadData_i(St,Sl,conf,pot) for conf in eachcol(conf_list)]
+list = []
+for i in 1:lastindex(eachcol(conf_list))
+    conf = conf_list[:,i]
+    println(i)
+    try
+        ReadData_i(St,Sl,conf,pot) 
+    catch
+        push!(list,i)
+    end
+end
 X = reduce(hcat,X)
 # ------------- Optimize a beta for each voltage ----------
 β_list = []
+Err = []
 for pot in [1000,2000,3000,4000,5000]
     k = 3
     conf_list = CSV.File("data/csv/EM_TB_ST4_SL4_Conf0.csv") |> Tables.matrix
@@ -16,12 +27,41 @@ for pot in [1000,2000,3000,4000,5000]
     X = reduce(hcat,X)
     β_min = optimize(Objective, 0.0, 1500.0, GoldenSection(),f_tol=1.0e-6,iterations=50)
     push!(β_list,β_min.minimizer)
+    push!(Err,β_min.minimum)
 end
 println(β_list)
 β_list = [816.077739050131, 46.97993387012737, 5.5027923359124, 9.563901355786785e-7, 4.515461700136166e-7]
 
+
+# ---------------- Err for each potential --------------
+β_list = [816.077739050131, 46.97993387012737, 5.5027923359124, 9.563901355786785e-7, 4.515461700136166e-7]
+pot_list = [i*1000 for i in 1:5]
+Err_TS = []
+for i in 1:5
+    β = β_list[i]
+    pot = pot_list[i]
+    X = [ReadData_i(St,Sl,conf,pot) for conf in eachcol(conf_list)]
+    X = reduce(hcat,X)
+    k = 3
+    Κ(X1,X2) = exp(-β*(dot(X1-X2,X1-X2)))
+    Λ, U, U_, Ḡ, G = kPOD(Κ, X, k)
+    Z_ = real.(U_'*Ḡ)
+    neighbors = 25
+    Y_, D_G_sym = isomap1(neighbors,Z_)
+    VS_Conf_list = [1:64...]
+    Y_gen = []
+    for i in 1:lastindex(eachcol(conf_list))
+        conf = conf_list[:,i]
+        push!(Y_gen,VectorSearch(Y_,conf,VS_Conf_list))
+    end
+    Y_gen = reduce(hcat,Y_gen)
+    push!(Err_TS, norm(Y_gen-Y_)/norm(Y_))
+end
+plotlyjs()
+plot(pot_list,β_list,type=:bar,yscale=:log10,yticks=15,ylabel="β",xlabel="Potential",legend=false)
+
 # ----------------- kPCA ----------------------
-# k = 3
+k = 3
 # β = 47.09735445305706
 # β = 0.030211707819700367
 # β_min = optimize(Objective, 0.0, 1500.0, GoldenSection(),abs_tol=1.0e-8,iterations=25)
@@ -32,11 +72,11 @@ println(β_list)
 Z_ = real.(U_'*Ḡ)
 plotlyjs()
 gr()
-scatter(eachrow(Z_)...,xlabel="z1",ylabel="z2",zlabel="z3")
+scatter(eachrow(Z_)...,xlabel="z1",ylabel="z2",zlabel="z3",label="ϕ = $pot V",legend=:top)
 # ----------------------- isomap ---------------------
 neighbors = 25
 Y_, D_G_sym = isomap1(neighbors,Z_)
-s = scatter(eachrow(Y_)...,xlabel="y1",ylabel="y2",label="TS",legend=:outerbottom,legend_columns=2)
+s = scatter(eachrow(Y_)...,xlabel="y1",ylabel="y2",label="ϕ = $pot V",legend=:outerbottom,legend_columns=2)
 # ------------- VS TS generation -----------------
 VS_Conf_list = [1:64...]
 Y_gen = []
@@ -74,7 +114,7 @@ plot_x(x_test,"FOS TestID=$n_test conf=$conf")
 x_gen, w_ns, Z_ns = ReverseMap(X,Y_,y_gen,nh)
 plot_x!(x_gen,"FOS generated Simple ReverseMap")
 x_gen = ReverseMap2(y_gen,conf,Y_,X,conf_list,nh)
-plot_x!(x_gen,"FOS generated BCRM")
+plot_x!(x_gen,"FOS generated BCRM Error =  $Err")
 xlims!(-maximum(vcat(x_test,x_gen)),maximum(vcat(x_test,x_gen)))
 ylims!(-maximum(vcat(x_test,x_gen)),maximum(vcat(x_test,x_gen)))
 zlims!(-maximum(vcat(x_test,x_gen)),maximum(vcat(x_test,x_gen)))
@@ -184,23 +224,23 @@ for pot in [1000,2000,3000,4000,5000]
         x_gen = ReverseMap2(Y_complete[:,idxs[Indices[1]]], conf_complete[:,idxs[Indices[1]]],Y_,X,conf_list,nh)
         p[n_test,Int(pot/1000)] = plot_x!(x_gen,"FOSgen of ID test = $n_test")
         # -----------------  FOS via simulation   --------------------------------------------------------------------
-        # ph, chache = main(; get_parameters(2000.0, conf_complete[:,idxs[Indices[1]]], 4, 4)...)
-        # x_line = CenterLine(ph)
-        # x_line_list = [x_line]
-        # x_line_list = [getproperty.(x_line,:data) for x_line in x_line_list]
-        # x_line_list = [x_line_list[i][j][k] for i in 1:lastindex(x_line_list), j in 1:lastindex(x_line_list[1]), k in 1:lastindex(x_line_list[1][1])]
-        # df = DataFrame(vcat(x_line_list[:,:,1],x_line_list[:,:,2],x_line_list[:,:,3]), :auto)
-        # CSV.write("data/csv/EM_TB_St4_Sl4_test_$n_test.csv", df)
-        # _X_test = CSV.File("data/csv/EM_TB_St4_Sl4_test_$n_test.csv") |> Tables.matrix
-        # _X_test = _X_test'
-        # n = 1
-        # X_test_gen = []
-        # push!(X_test_gen,_X_test[:,[1:n...]])
-        # push!(X_test_gen,_X_test[:,[n+1:2*n...]])
-        # push!(X_test_gen,_X_test[:,[2*n+1:3*n...]])
-        # X_test_gen = reduce(vcat,X_test_gen)
-        # p[n_test] = plot_x!(X_test_gen,"FOS of found PP for ID test = $n_test")
-        # push!(E_,(norm(x_test-X_test_gen))/norm(x_test))
+        ph, chache = main(; get_parameters(Float64(pot), conf_complete[:,idxs[Indices[1]]], 4, 4,CenterLine_)...)
+        x_line = CenterLine(ph)
+        x_line_list = [x_line]
+        x_line_list = [getproperty.(x_line,:data) for x_line in x_line_list]
+        x_line_list = [x_line_list[i][j][k] for i in 1:lastindex(x_line_list), j in 1:lastindex(x_line_list[1]), k in 1:lastindex(x_line_list[1][1])]
+        df = DataFrame(vcat(x_line_list[:,:,1],x_line_list[:,:,2],x_line_list[:,:,3]), :auto)
+        CSV.write("data/csv/EM_TB_St4_Sl4_test_$n_test.csv", df)
+        _X_test = CSV.File("data/csv/EM_TB_St4_Sl4_test_$n_test.csv") |> Tables.matrix
+        _X_test = _X_test'
+        n = 1
+        X_test_gen = []
+        push!(X_test_gen,_X_test[:,[1:n...]])
+        push!(X_test_gen,_X_test[:,[n+1:2*n...]])
+        push!(X_test_gen,_X_test[:,[2*n+1:3*n...]])
+        X_test_gen = reduce(vcat,X_test_gen)
+        p[n_test] = plot_x!(X_test_gen,"FOS of found PP for ID test = $n_test")
+        push!(E_,(norm(x_test-X_test_gen))/norm(x_test))
         # -----------------------------------------------------------------------------------------
         id_conf = 0
         id_idx = 0
@@ -220,3 +260,6 @@ end
 plot(NH,type=:bar)
 plot(E_,type=:bar,xlabel="Test ID",ylabel="Error norm/norm",label=false)
 display(p[n_test,Int(pot/1000)])
+
+E = [E_[[(i-1)*10+1:i*10...]] for i in 1:5]
+plot(E,type=:bar,xlabel="Test ID",ylabel="Error norm/norm",label=false, xticks=20,xlims=(0,11))

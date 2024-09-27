@@ -20,13 +20,30 @@ function ReadData_i(St,Sl,sw,pot)
     return x
 end
 
+function ReadData(St,Sl,pot_list,N_rand)
+    conf_list = CSV.File("data/csv/EM_TB_ST$(St)_SL$(Sl)_Conf0.csv") |> Tables.matrix
+    conf_list_ = CSV.File("data/csv/EM_TB_ST$(St)_SL$(Sl)_ConfRand.csv") |> Tables.matrix
+    conf_list = hcat(conf_list,conf_list_[:,[1:N_rand...]])
+    pot = pot_list[1]
+    X = [ReadData_i(St,Sl,conf,pot) for conf in eachcol(conf_list)]
+    X = reduce(hcat,X)
+    for pot in pot_list[[2:end...]]
+        X_ = [ReadData_i(St,Sl,conf,pot) for conf in eachcol(conf_list)]
+        X_ = reduce(hcat,X_)
+        X = hcat(X,X_)
+    end
+    _, N = size(X)
+    return conf_list, X
+end
+
 function plot_x(x,L)
     n = length(x)
     x_ = x[[1:Int(n/3)...]]
     y_ = x[[Int(n/3)+1:Int(n/3)*2...]]
     z_ = x[[(Int(n/3)*2)+1:n...]]
     p = plot(x_,y_,z_,xlabel = "x", ylabel = "y", zlabel = "z",label=L)
-    display(p)
+    # display(p)
+    return p
 end
 
 function plot_x(x)
@@ -35,7 +52,8 @@ function plot_x(x)
     y_ = x[[Int(n/3)+1:Int(n/3)*2...]]
     z_ = x[[(Int(n/3)*2)+1:n...]]
     p = plot(x_,y_,z_,xlabel = "x", ylabel = "y", zlabel = "z")
-    display(p)
+    # display(p)
+    return p
 end
 
 function plot_x!(x,L)
@@ -44,7 +62,8 @@ function plot_x!(x,L)
     y_ = x[[Int(n/3)+1:Int(n/3)*2...]]
     z_ = x[[(Int(n/3)*2)+1:n...]]
     p = plot!(x_,y_,z_,xlabel = "x", ylabel = "y", zlabel = "z",label=L)
-    display(p)
+    # display(p)
+    return p
 end
 
 
@@ -54,7 +73,17 @@ function plot_x!(x)
     y_ = x[[Int(n/3)+1:Int(n/3)*2...]]
     z_ = x[[(Int(n/3)*2)+1:n...]]
     p = plot!(x_,y_,z_,xlabel = "x", ylabel = "y", zlabel = "z")
-    display(p)
+    # display(p)
+    return p
+end
+
+function group_pot(i,n,n_group)
+    group_size = n/n_group
+    for j in 1:n_group
+        if (j-1)*group_size<i && i<=j*group_size
+            return j
+        end
+    end
 end
 
 function kPOD(Κ,X,k)
@@ -164,6 +193,37 @@ function VectorSearch(Z_,conf,list)
         end
     end
     return z
+end
+
+function VectorSearch(Z_0,conf,pot,pot_list,list)
+    N_pot = lastindex(pot_list)
+    i_ = findfirst(==(pot),pot_list)
+    _, N = size(Y_)
+    N = Int(N/N_pot)
+    n = length(list)
+    Z_ = Z_0[:,[(i_-1)*N+1:i_*N...]]
+    z = Z_[:,list]
+    v = [z[:,i]-Z_[:,1] for i in 1:n]
+    z = Z_[:,1]
+    for i in 1:Int(lastindex(conf)/4)
+        for j in 1:16
+            if conf[[(((i-1)*4)+1):(((i-1)*4)+4)...]] == digits(j-1,base=2,pad=4)
+                z = z + v[((i-1)*16)+j]
+            else
+                z = z
+            end
+        end
+    end
+    return z
+end
+
+function VectorSearch2(Y_,conf,pot,pot_list,list)
+    N_pot = lastindex(pot_list)
+    _, N = size(Y_)
+    N = Int(N/N_pot)
+    Y_int = reduce(hcat,[_Interpolation(pot_list,Y_[:,[i+((j-1)*N) for j in 1:N_pot]],pot) for i in 1:N])
+    y_gen = VectorSearch(Y_int,conf,list)
+    return y_gen
 end
 
 function Objective(β)
@@ -436,6 +496,36 @@ function ReverseMap3(y_gen,conf_gen,Y_,X,conf,nh)
     return x_gen_
 end
 
+function ReverseMap4(y_gen,conf_gen,pot,Y_,X,conf,pot_list,nh)
+    N_pot = lastindex(pot_list)
+    i = findfirst(==(pot),pot_list)
+    _, N = size(Y_)
+    N = Int(N/N_pot)
+    return ReverseMap2(y_gen,conf_gen,Y_[:,[(i-1)*N+1:i*N...]],X[:,[(i-1)*N+1:i*N...]],conf,nh)
+end
+
+function ReverseMap5(conf_gen,pot,Y_,X,conf,pot_list,nh)
+    x_gen_pot_list = []
+    for pot in pot_list
+        y_gen1 = VectorSearch(Y_,conf_gen,pot,pot_list,VS_Conf_list)
+        x_gen1 = ReverseMap4(y_gen1,conf_gen,pot,Y_,X,conf,pot_list,nh)
+        push!(x_gen_pot_list,x_gen1)
+    end
+    x_gen_pot_list = reduce(hcat,x_gen_pot_list)
+    x_gen_interpol = _Interpolation(pot_list,x_gen_pot_list,pot)
+    return x_gen_interpol
+end
+
+function ReverseMap6(conf_gen,pot,Y_,X,conf,pot_list,nh)
+    N_pot = lastindex(pot_list)
+    _, N = size(Y_)
+    N = Int(N/N_pot)
+    X_int = reduce(hcat,[_Interpolation(pot_list,X[:,[i+((j-1)*N) for j in 1:N_pot]],pot) for i in 1:N])
+    Y_int = reduce(hcat,[_Interpolation(pot_list,Y_[:,[i+((j-1)*N) for j in 1:N_pot]],pot) for i in 1:N])
+    y_gen = VectorSearch(Y_int,conf_gen,VS_Conf_list)
+    return ReverseMap2(y_gen,conf_gen,Y_int,X_int,conf,nh)
+end
+
 function NewData(x_test,Κ,neighbors,G,Z_,D_G_sym)
     Κ_test(X) = Κ(x_test,X)
     g_i = Κ_test.(eachcol(X))
@@ -462,4 +552,140 @@ function NewData(x_test,Κ,neighbors,G,Z_,D_G_sym)
     X_iso_i = U_iso_m_i*Λ_iso_m_i
     X_iso_i = X_iso_i'
     return X_iso_i[:,Last]
+end
+
+function NewData2(x_test,Κ,neighbors,G,Z_,D_G_sym,Y_)
+    Κ_test(X) = Κ(x_test,X)
+    g_i = Κ_test.(eachcol(X))
+    n = length(g_i)
+    ḡ_i = g_i - (1/n)*G*ones(n,1) - (1/n)*ones(n,n)*g_i +
+    ((1/n^2)*ones(1,n)*G*ones(n,1))[1]*ones(n,1)
+    z_i = real.(U_'*ḡ_i)
+    # scatter!(eachrow(z_i)..., hover = [i for i in 1:lastindex(eachcol(Z_))])
+    Z_i = hcat(Z_,z_i)
+    Last = lastindex(eachcol(Z_i))
+    d_G_i, prev_ = Dijkstra(Z_i,Last,neighbors)
+    D_G = D_G_sym
+    D_G_sq = D_G.^2
+    d_G_sq = [(1/n)*sum(D_G_sq[:,i]) for i in 1:n]
+    d_G_sq_i = d_G_i.^2
+    Y_cent = [(1/n)*sum(Y) for Y in eachrow(Y_)]
+    Y_cent_ = reduce(hcat,[Y_cent for i in 1:n])
+    Y_ = Y_-Y_cent_
+    F = (1/2)*Y_*(d_G_sq-d_G_sq_i[[1:n...]])
+    C = Y_*Y_'
+    C_inv = inv(C)
+    y_new = C_inv*F
+    y_new = y_new+Y_cent
+    return y_new
+end
+
+function _Lagrange(xₛ,x)
+    n = length(xₛ)
+    L = Vector{Float64}(undef,0)
+    for j in 1:n
+        l = 1
+        for i in 1:n
+            if i≠j
+                l *= (x-xₛ[i])/(xₛ[j]-xₛ[i])
+            end
+        end
+        push!(L,l)
+    end
+    return L
+end
+
+function _Interpolation(xₛ,Ỹ,x)
+    L = _Lagrange(xₛ,x)
+    y = Ỹ*L
+    return y
+end
+
+function Voltage_Optimization(pots,X̃,Ỹ,pot,Κ,neighbors,G,Z_,D_G_sym)
+    y_gen = _Interpolation(pots,Ỹ,pot)
+    # println(y_gen)
+    function Obj_(L)
+        println("L = $L")
+        x_new = X̃*L 
+        # println(x_new)
+        y_new = NewData(x_new,Κ,neighbors,G,Z_,D_G_sym)
+        Err = norm(y_new-y_gen)
+        # println("Obj res")
+        println("Obj = $Err")
+        return Err
+    end
+    L₀ = _Lagrange(pots,pot)
+    # println(L₀)
+    # struct MySimplexer <: Optim.Simplexer end
+    # function _f(i,n)
+    #     z = zeros(n)
+    #     z[i] = 0.1
+    #     return z        
+    # end
+    # Optim.simplexer(S::MySimplexer, initial_x) = [initial_x+_f(i,length(initial_x)) for i = 1:length(initial_x)+1]
+    # println("Test 1 = $(Obj_(L₀))")
+    # L_opt = optimize(Obj_,L₀,NelderMead(initial_simplex = MySimplexer()))
+    L_opt = optimize(
+        Obj_,
+        L₀,
+        NelderMead(parameters = Optim.FixedParameters()),
+        # Optim.Options(show_trace=true,trace_simplex=true)
+        )
+    x_gen = X̃*L_opt.minimizer
+    return x_gen, L_opt
+end
+
+function _Lagrange(xₛ,x)
+    n = length(xₛ)
+    L = Vector{Float64}(undef,0)
+    for j in 1:n
+        l = 1
+        for i in 1:n
+            if i≠j
+                l *= (x-xₛ[i])/(xₛ[j]-xₛ[i])
+            end
+        end
+        push!(L,l)
+    end
+    return L
+end
+
+function _Interpolation(xₛ,Ỹ,x)
+    L = _Lagrange(xₛ,x)
+    y = Ỹ*L
+    return y
+end
+
+function Voltage_Optimization2(pots,X̃,Ỹ,pot,Κ,neighbors,G,Z_,D_G_sym,Y_)
+    y_gen = _Interpolation(pots,Ỹ,pot)
+    # println(y_gen)
+    function Obj_(L)
+        println("L = $L")
+        x_new = X̃*L 
+        # println(x_new)
+        y_new = NewData2(x_new,Κ,neighbors,G,Z_,D_G_sym,Y_)
+        Err = norm(y_new-y_gen)
+        # println("Obj res")
+        println("Obj = $Err")
+        return Err
+    end
+    L₀ = _Lagrange(pots,pot)
+    # println(L₀)
+    # struct MySimplexer <: Optim.Simplexer end
+    # function _f(i,n)
+    #     z = zeros(n)
+    #     z[i] = 0.1
+    #     return z        
+    # end
+    # Optim.simplexer(S::MySimplexer, initial_x) = [initial_x+_f(i,length(initial_x)) for i = 1:length(initial_x)+1]
+    # println("Test 1 = $(Obj_(L₀))")
+    # L_opt = optimize(Obj_,L₀,NelderMead(initial_simplex = MySimplexer()))
+    L_opt = optimize(
+        Obj_,
+        L₀,
+        NelderMead(parameters = Optim.FixedParameters()),
+        # Optim.Options(show_trace=true,trace_simplex=true)
+        )
+    x_gen = X̃*L_opt.minimizer
+    return x_gen, L_opt
 end

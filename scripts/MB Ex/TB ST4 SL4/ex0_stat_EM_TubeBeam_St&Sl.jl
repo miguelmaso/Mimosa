@@ -9,7 +9,7 @@ t0 = time()
 
 function get_parameters(pot, sw, St, Sl, csv_funct)
 
-    problemName = "TubeBeam" 
+    problemName = "Temp/TubeBeam" 
     problemName = problemName*"_ϕ$pot"*"_St$St"*"_St$Sl"
     for s in sw
         problemName = problemName*"_$s"
@@ -31,7 +31,8 @@ function get_parameters(pot, sw, St, Sl, csv_funct)
     dir_u_tags = ["fixed_surf_1", "fixed_surf_2", "fixed_surf_3", "fixed_surf_4"]
     dir_u_values = [[0.0,0.0,0.0] for i in dir_u_tags]
     dir_u_timesteps = [evolu for i in dir_u_tags]
-    Du = DirichletBC(dir_u_tags, dir_u_values, dir_u_timesteps)
+    masks = [(true,true,true) for i in dir_u_tags]
+    Du = DirichletBC(dir_u_tags, dir_u_values, dir_u_timesteps, masks)
 
     evolφ(Λ) = Λ
     ext_surf_list = ["ext_surf_1", "ext_surf_2", "ext_surf_3", "ext_surf_4", "ext_surf_5",
@@ -151,37 +152,31 @@ function CenterLine_(ph)
     return df
 end
 
-div = 10
-pots = [5000.0]
-conf_list = CSV.File("data/csv/EM_TB_ST4_SL4_ConfRand.csv") |> Tables.matrix
-St = 4
-Sl = 4
-ph_list = []
-x_line_list = []
-n = lastindex(eachcol(conf_list))
-start = (div-1)*(n/10) + 1
-finish =  div*(n/10)
-for i in 990:1000 # Int(start):Int(finish)
-    t0_ = time()
-    conf = conf_list[:,i]
-    println(" ")
-    println("!!!!!!!!    Configuration number $i / $(Int(finish))  (total = $n)   !!!!!!!")
-    println("!!!!!!!!        Configuration $conf        !!!!!!!")
-    println(" ")
-    ph, chache = main(; get_parameters(pots[1], conf, St, Sl,CenterLine_)...)
-    x_line = CenterLine(ph)
-    push!(ph_list,ph)
-    push!(x_line_list,x_line)
-    t_ = time() - t0_
-    T_ = time() - t0
-    println("Evaluation time = $t_ s = $(t_/60.0) min")
-    println("Total elapsed time = $T_ s = $(T_/60.0) min")
+function run(start, finish)
+    div = 10
+    pots = [5000.0]
+    conf_list = CSV.File("data/csv/EM_TB_ST4_SL4_ConfRand.csv") |> Tables.matrix
+    St = 4
+    Sl = 4
+    ph_list = []
+    x_line_list = []
+    n = lastindex(eachcol(conf_list))
+    # start = (div-1)*(n/10) + 1
+    # finish =  div*(n/10)
+    for i in Int(start):Int(finish)
+        t0_ = time()
+        conf = conf_list[:,i]
+        println(" ")
+        println("!!!!!!!!    Configuration number $i / $(Int(finish))  (total = $n)   !!!!!!!")
+        println("!!!!!!!!        Configuration $conf        !!!!!!!")
+        println(" ")
+        ph, chache = main(; get_parameters(pots[1], conf, St, Sl,CenterLine_)...)
+        x_line = CenterLine(ph)
+        push!(ph_list,ph)
+        push!(x_line_list,x_line)
+        t_ = time() - t0_
+        T_ = time() - t0
+        println("Evaluation time = $t_ s = $(t_/60.0) min")
+        println("Total elapsed time = $T_ s = $(T_/60.0) min")
+    end
 end
-
-# x_line_list = [getproperty.(x_line,:data) for x_line in x_line_list]
-# x_line_list = [x_line_list[i][j][k] for i in 1:lastindex(x_line_list), j in 1:lastindex(x_line_list[1]), k in 1:lastindex(x_line_list[1][1])]
-# df = DataFrame(vcat(x_line_list[:,:,1],x_line_list[:,:,2],x_line_list[:,:,3]), :auto)
-# CSV.write("data/csv/EM_TB_St4_Sl4_phi_$(pot[1])_$div.csv", df)
-# t1 = time()
-# Δt = t1-t0
-# test_read = CSV.File("data/csv/EM_TB_St4_Sl2_$div.csv") |> Tables.matrix

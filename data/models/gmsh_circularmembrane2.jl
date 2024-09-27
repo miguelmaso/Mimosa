@@ -87,7 +87,7 @@ function physicalG(L,D)
             points = gmsh.model.getBoundary(line)
             for point in points
                 pt1 = gmsh.model.getValue(point[1],point[2],[])
-                if pt1[1] == 0.0 && pt1[2] == 0.0 && pt1[3] == 0.0
+                if pt1[1] == 0.0 && pt1[2] == 0.0 && pt1[3] == -L
                     gmsh.model.addPhysicalGroup(point[1], [point[2]], -1,"point_xyz")
                     gmsh.model.addPhysicalGroup(point[1]+1, [], -1,"point_xyz")
                     gmsh.model.addPhysicalGroup(point[1]+2, [], -1,"point_xyz")
@@ -95,7 +95,7 @@ function physicalG(L,D)
                     gmsh.model.addPhysicalGroup(point[1], [point[2]], -1,"point_xy")
                     gmsh.model.addPhysicalGroup(point[1]+1, [], -1,"point_xy")
                     gmsh.model.addPhysicalGroup(point[1]+2, [], -1,"point_xy")
-                elseif pt1[3] == 0.0 && pt1[2] == 0.0 &&  (1-1e-3)*(D/2)<pt1[1] && pt1[1]<(D/2)*(1+1e-3)
+                elseif pt1[3] == 0.0 && -1e-3<pt1[1] && pt1[1]<1e-3 &&  (1-1e-3)*(D/2)<pt1[2] && pt1[2]<(D/2)*(1+1e-3)
                     gmsh.model.addPhysicalGroup(point[1], [point[2]], -1,"point_x")
                     gmsh.model.addPhysicalGroup(point[1]+1, [], -1,"point_x")
                     gmsh.model.addPhysicalGroup(point[1]+2, [], -1,"point_x")
@@ -181,7 +181,7 @@ function run()
     if !("-nopopup" in ARGS)
         gmsh.fltk.run()
     end
-    model_name = "CircularMembrane2"
+    model_name = "CircularMembrane3"
     output_file = joinpath(dirname(@__FILE__), model_name*".msh")
     gmsh.write(output_file)
     Gmsh.finalize() 

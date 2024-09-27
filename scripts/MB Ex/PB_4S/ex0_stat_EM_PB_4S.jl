@@ -7,7 +7,7 @@ using DataFrames
 
 function get_parameters(n_sec, sw, pot)
 
-  problemName = "NeoHookean_PB-S$n_sec-O2-PL" #PB = PlateBeam; S = # of sections; O2 = Order of elements; PL = Potential Location; ϕ = potential magnitude
+  problemName = "PB-S$n_sec-O2-/analytic/NeoHookean/PL" #PB = PlateBeam; S = # of sections; O2 = Order of elements; PL = Potential Location; ϕ = potential magnitude
   for s in sw
     problemName = problemName*"_$s"
   end
@@ -16,7 +16,7 @@ function get_parameters(n_sec, sw, pot)
   ptype = "ElectroMechanics"
   soltype = "monolithic"
   regtype = "statics"
-  # diffstrat = "analytic"
+  diffstrat = "analytic"
   diffstrat = "autodiff"
   # meshfile = "PlateBeam4SecSI.msh"
   meshfile = "PlateBeame4S_BC.msh"
@@ -114,32 +114,34 @@ function plt_cl(ph,sw)
   return pl_, z1
 end
 
-conf = []
-for i in 0:2, j in 0:2, k in 0:2, l in 0:2
-  push!(conf,[i,j,k,l])
-end
+function run()
+  conf = []
+  for i in 0:2, j in 0:2, k in 0:2, l in 0:2
+    push!(conf,[i,j,k,l])
+  end
 
-n_sec = 4
-pot = 4000.0
-#sw = [0, 1, 1, 0] #0 = bottomsurf_   ;  1 = topsurf_; else = no potential in that section
-uh_ = []
-pl = []
-z = []
-for i in 1:1
-  sw = conf[i]
-  ph, chache = main(; get_parameters(n_sec, sw, pot)...)
-  pl_, z_ = plt_cl(ph,sw)
-  push!(uh_,ph[1])
-  push!(pl,pl_)
-  push!(z,z_)
-end
-# plot(pl...,layout=(3,9)) # requires to setup plot parameter to get it right
-# df = DataFrame(z, :auto)
-# CSV.write("data/csv/EM_PB_4S_3.csv", df)
+  n_sec = 4
+  pot = 4000.0
+  #sw = [0, 1, 1, 0] #0 = bottomsurf_   ;  1 = topsurf_; else = no potential in that section
+  uh_ = []
+  pl = []
+  z = []
+  for i in 1:1
+    sw = conf[i]
+    ph, chache = main(; get_parameters(n_sec, sw, pot)...)
+    pl_, z_ = plt_cl(ph,sw)
+    push!(uh_,ph[1])
+    push!(pl,pl_)
+    push!(z,z_)
+  end
+  # plot(pl...,layout=(3,9)) # requires to setup plot parameter to get it right
+  # df = DataFrame(z, :auto)
+  # CSV.write("data/csv/EM_PB_4S_3.csv", df)
 
-# DirichletBC(["fixedup_1", "fixedup_1", "fixedup_1"], 
-# Function[
-#   Mimosa.BoundaryConditions.var"#u_bc#6"{Vector{Vector{Float64}}, Vector{var"#evolu#11"}, Int64}([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], [var"#evolu#11"(), var"#evolu#11"(), var"#evolu#11"()], 1), 
-#   Mimosa.BoundaryConditions.var"#u_bc#6"{Vector{Vector{Float64}}, Vector{var"#evolu#11"}, Int64}([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], [var"#evolu#11"(), var"#evolu#11"(), var"#evolu#11"()], 2), 
-#   Mimosa.BoundaryConditions.var"#u_bc#6"{Vector{Vector{Float64}}, Vector{var"#evolu#11"}, Int64}([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], [var"#evolu#11"(), var"#evolu#11"(), var"#evolu#11"()], 3)],
-#   Function[var"#evolu#11"(), var"#evolu#11"(), var"#evolu#11"()], Tuple{Bool, Bool, Bool}[(1, 0, 0), (0, 1, 0), (0, 0, 1)])
+  # DirichletBC(["fixedup_1", "fixedup_1", "fixedup_1"], 
+  # Function[
+  #   Mimosa.BoundaryConditions.var"#u_bc#6"{Vector{Vector{Float64}}, Vector{var"#evolu#11"}, Int64}([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], [var"#evolu#11"(), var"#evolu#11"(), var"#evolu#11"()], 1), 
+  #   Mimosa.BoundaryConditions.var"#u_bc#6"{Vector{Vector{Float64}}, Vector{var"#evolu#11"}, Int64}([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], [var"#evolu#11"(), var"#evolu#11"(), var"#evolu#11"()], 2), 
+  #   Mimosa.BoundaryConditions.var"#u_bc#6"{Vector{Vector{Float64}}, Vector{var"#evolu#11"}, Int64}([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]], [var"#evolu#11"(), var"#evolu#11"(), var"#evolu#11"()], 3)],
+  #   Function[var"#evolu#11"(), var"#evolu#11"(), var"#evolu#11"()], Tuple{Bool, Bool, Bool}[(1, 0, 0), (0, 1, 0), (0, 0, 1)])
+end

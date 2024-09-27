@@ -6,11 +6,12 @@ using CSV
 using DataFrames
 using Gridap.Visualization
 using Gridap.TensorValues
+using LineSearches: BackTracking
 
 
 function get_parameters(sw, pot)
 
-  problemName = "CM-O2-PL" #PB = PlateBeam; S = # of sections; O2 = Order of elements; PL = Potential Location; ϕ = potential magnitude
+  problemName = "4-CM-O2-PL" #PB = PlateBeam; S = # of sections; O2 = Order of elements; PL = Potential Location; ϕ = potential magnitude
   for s in sw
     problemName = problemName*"_$s"
   end
@@ -22,7 +23,7 @@ function get_parameters(sw, pot)
   diffstrat = "analytic"
   # diffstrat = "autodiff"
   # meshfile = "PlateBeam4SecSI.msh"
-  meshfile = "CircularMambrane.msh"
+  meshfile = "CircularMembrane3.msh"
 
 
   # modmec = MoneyRivlin3D(λ=10.0, μ1=1.0, μ2=0.0)
@@ -91,12 +92,12 @@ function get_parameters(sw, pot)
 
   # NewtonRaphson parameters
   nr_show_trace = true
-  nr_iter = 15
+  nr_iter = 10
   nr_ftol = 1e-12
 
   # Incremental solver
-  nsteps = 20
-  nbisec = 10
+  nsteps = 10
+  nbisec = 5
 
   solveropt = @dict nr_show_trace nr_iter nr_ftol nsteps nbisec
 
@@ -169,15 +170,15 @@ function run()
   count = 1
   t0 = time()
   err_conf = []
-  for i in 70:lastindex(conf_list)
+  for i in 75:75 #lastindex(conf_list)
     sw = conf_list[i]
     println("------------------ $count / $(length(conf_list)) ---------------")
     println("------------------ $i / $(length(conf_list)) ---------------")
-    try
+    #try
       main(; get_parameters(sw, pot)...)
-    catch
-      push!(err_conf,i)
-    end
+    #catch
+     # push!(err_conf,i)
+    #end
     
     println("")
     println("  -----   Total elapsed time $(time()-t0)")
