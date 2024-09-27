@@ -1,7 +1,8 @@
-
+using LineSearches: MoreThuente
 function get_FE_solver(solveropt::Dict{Symbol,Real})
     nls_ = NLSolver(show_trace=solveropt[:nr_show_trace],
         method=:newton,
+        # linesearch=MoreThuente(),
         iterations=solveropt[:nr_iter],
         ftol=solveropt[:nr_ftol])
     FESolver(nls_)
@@ -26,6 +27,7 @@ function IncrementalSolver(problem::Problem, ctype::CouplingStrategy{:monolithic
     nbisect = 0
     ph_view = get_free_dof_values(ph)
     Λ_ = 0
+    itr_under = 0
     while Λ < 1.0 - 1e-6
         Λ += Λ_inc
         Λ = min(1.0, Λ)
@@ -36,10 +38,19 @@ function IncrementalSolver(problem::Problem, ctype::CouplingStrategy{:monolithic
             ph, cache= ΔSolver!(problem, ctype, ph, Λ, Λ_inc, params, cache)
         end
         flag = (cache.result.f_converged || cache.result.x_converged)
-
+        
         #Check convergence
         if (flag == true)
             Λ_ += 1
+            println((cache.result.iterations,itr_under,nbisect))
+            if cache.result.iterations < 7
+                itr_under +=1
+            end
+            if itr_under>3 && nbisect >= 0
+                Λ_inc = Λ_inc * 2
+                nbisect -= 1
+                itr_under = 0
+            end
             # Write to PVD
             if is_P_F
                 pvd = computeOutputs!(problem, pvd, ph, P, Λ, Λ_, post_params)
