@@ -20,8 +20,8 @@ function get_FE_spaces(::ElectroMechProblem{:monolithic},
     Vφ = TestFESpace(model, reffeφ, dirichlet_tags=bconds.BoundaryCondition[2].tags, conformity=:H1)
 
     # Trial FE Spaces
-    # println(map(f -> f(1.0), bconds.BoundaryCondition[1].values))
-    Uu = TrialFESpace(Vu, [VectorValue(0.0, 0.0, 0.0),VectorValue(0.0, 0.0, 0.0),VectorValue(0.0, 0.0, 0.0)]) # map(f -> f(1.0), bconds.BoundaryCondition[1].values))
+    println(map(f -> f(1.0), bconds.BoundaryCondition[1].values))
+    Uu = TrialFESpace(Vu,  map(f -> f(1.0), bconds.BoundaryCondition[1].values)) #[VectorValue(0.0, 0.0, 0.0),VectorValue(0.0, 0.0, 0.0),VectorValue(0.0, 0.0, 0.0)]) # map(f -> f(1.0), bconds.BoundaryCondition[1].values))
     Uφ = TrialFESpace(Vφ, map(f -> f(1.0), bconds.BoundaryCondition[2].values))
 
     # Multifield FE Spaces
@@ -38,7 +38,7 @@ function get_FE_spaces!(::ElectroMechProblem{:monolithic},
     @unpack Vu, Vφ = fe_spaces
 
     # Trial FE Spaces
-    Uu = TrialFESpace(Vu, [VectorValue(0.0, 0.0, 0.0),VectorValue(0.0, 0.0, 0.0),VectorValue(0.0, 0.0, 0.0)])  # map(f -> f(1.0), bconds.BoundaryCondition[1].values))
+    Uu = TrialFESpace(Vu, map(f -> f(1.0), bconds.BoundaryCondition[1].values)) #[VectorValue(0.0, 0.0, 0.0),VectorValue(0.0, 0.0, 0.0),VectorValue(0.0, 0.0, 0.0)])  # map(f -> f(1.0), bconds.BoundaryCondition[1].values))
     Uφ = TrialFESpace(Vφ, map(f -> f(Λ), bconds.BoundaryCondition[2].values))
 
     # Multifield FE Spaces

@@ -116,6 +116,7 @@ function ΔSolver!(problem::ElectroMechProblem{:monolithic,:statics}, ctype::Cou
     op = FEOperator(res, jac, fe_spaces.U, fe_spaces.V)
     # println((ph, nlsolver, op, cache))
     ph, cache = solve!(ph, nlsolver, op, cache)
+    # println(cache.result)
 
 
     if is_P_F
