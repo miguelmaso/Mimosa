@@ -6,11 +6,11 @@ using Flux
 using JSON
 using DelimitedFiles
 
+
 #---------------------------------------------------------------------------
 # Read the JSON file and create a model with the trained weights and biases
 #---------------------------------------------------------------------------
-
-model_json = open("Layers:4 Neurons:20 Experiments:4000 Nodes:10Iter:5000.json", "r") do file
+model_json = open("Layers:2 Neurons:10 Experiments:200 Nodes:10Iter:500 Corrected.json", "r") do file
     read(file, String)
 end
 
@@ -19,6 +19,8 @@ model_data = JSON.parse(model_json)
 architecture = model_data["architecture"]
 weights = model_data["weights"]
 bias = model_data["bias"]
+nodes_indices = model_data["Node_Indices"]
+experiment_indices = model_data["Training_Indices"]
 
 # It is needed because JSON does not recognize Matrices, but only a vector of vectors of type Vector{Any}
 function to_mat(arrs) # for lists-of-lists parsed by JSON
@@ -72,7 +74,7 @@ function create_neural_network(input_size::Int, output_size::Int, hidden_layers:
 
     return model
 end
-model = create_neural_network(4,20,4,20,softplus)
+model = create_neural_network(4,20,2,10,softplus)
 # Function to assign weights to model
 function assign_weights!(model, weights)
     idx = 1
@@ -96,8 +98,41 @@ println("DONE creating the ML model")
 x_train::Matrix{Float64} = readdlm("filenames_parsed.txt")
 y_train::Matrix{Float64} = readdlm("contents_output.txt")
 
+n_nodes   =  size(y_train,1)
+y_train₁  =  y_train[1:3:n_nodes,:]
+y_train₂  =  y_train[2:3:n_nodes,:]
+y_train₃  =  y_train[3:3:n_nodes,:]
+
+x_train_whole= x_train'
+y_train₁_whole= y_train₁
+y_train₂_whole= y_train₂
+y_train₃_whole= y_train₃
+
+function normalise(row::Vector)
+    min = minimum(row)
+    max = maximum(row)
+    scaled = []
+    for i in range(1,size(row,1))
+        scaled  = append!(scaled,(row[i]-min)/(max-min))
+    end
+  return scaled
+end
+
+# Recheck, only for my own clarification, how the training is defined (im not clear about the epochs and iterations)
+x_train_norm = x_train_whole
+y_train₁_norm_old = reshape(normalise(y_train₁_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
+y_train₁_norm = map(x -> Float64(x), y_train₁_norm_old)
+y_train₃_norm_old = reshape(normalise(y_train₃_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
+y_train₃_norm = map(x -> Float64(x), y_train₃_norm_old)
+
+
+y_train₁_eval = y_train₁_norm[nodes_indices,:]
+y_train₃_eval = y_train₃_norm[nodes_indices,:]
+y_train_eval = vcat(y_train₁_eval,y_train₃_eval)
+
+# DOES NOT MAKE SENSE TO PLOT THE DISPLACEMENT OF BOTH COORD1 AND COORD2, IT WILL SHOW 2 SEPARATE REGIONS
 y_predicted = sort(model(x_train[1,:]))
-y_fromFE    = sort(y_train[:,1])
+y_fromFE    = y_train_eval
 
 
 
