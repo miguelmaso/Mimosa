@@ -5,12 +5,13 @@
 using Flux
 using JSON
 using DelimitedFiles
+using Plots
 
-
+cd("/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/NN_parametric_run")
 #---------------------------------------------------------------------------
 # Read the JSON file and create a model with the trained weights and biases
 #---------------------------------------------------------------------------
-model_json = open("Layers:2 Neurons:10 Experiments:200 Nodes:10Iter:500 Corrected.json", "r") do file
+model_json = open("Layers:4 Neurons:20 Experiments:2000 Nodes:10Iter:5000 Corrected.json", "r") do file
     read(file, String)
 end
 
@@ -74,7 +75,7 @@ function create_neural_network(input_size::Int, output_size::Int, hidden_layers:
 
     return model
 end
-model = create_neural_network(4,20,2,10,softplus)
+model = create_neural_network(4,20,4,20,softplus)
 # Function to assign weights to model
 function assign_weights!(model, weights)
     idx = 1
@@ -91,7 +92,7 @@ end
 
 assign_weights!(model, weights)
 println("DONE creating the ML model")
-
+cd("/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/ParsingScripts")
 #---------------------------------------
 # Import a load and results combination
 #---------------------------------------
@@ -131,8 +132,37 @@ y_train₃_eval = y_train₃_norm[nodes_indices,:]
 y_train_eval = vcat(y_train₁_eval,y_train₃_eval)
 
 # DOES NOT MAKE SENSE TO PLOT THE DISPLACEMENT OF BOTH COORD1 AND COORD2, IT WILL SHOW 2 SEPARATE REGIONS
-y_predicted = sort(model(x_train[1,:]))
-y_fromFE    = y_train_eval
+y_predicted = model(x_train[1,:])
+y_fromFE    = y_train_eval[:,1]
 
+function sort_and_apply_indices(original_arr, apply_arr)
+    # Create a copy of the original array
+    sorted_arr = copy(original_arr)
+    
+    # Sort the array in ascending order
+    sort!(sorted_arr)
+    
+    # Find the indices that were changed
+    indices_changed = sortperm(original_arr)
+    
+    # Apply the indices to another array
+    result_arr = similar(apply_arr, length(apply_arr))
+    for (i, idx) in enumerate(indices_changed)
+        result_arr[i] = apply_arr[idx]
+    end
+    
+    return sorted_arr, indices_changed, result_arr
+end
 
+Coord1_y_predicted = y_predicted[1:10]
+Coord2_y_predicted = y_predicted[11:20]
+Coord1_y_fromFE = y_fromFE[1:10]
+Coord2_y_fromFE = y_fromFE[11:20]
 
+sorted_Coord1_y_fromFE, indices_Coord1_y_fromFE, sorted_Coord1_y_predicted = sort_and_apply_indices(Coord1_y_fromFE, Coord1_y_predicted)
+sorted_Coord2_y_fromFE, indices_Coord2_y_fromFE, sorted_Coord2_y_predicted = sort_and_apply_indices(Coord2_y_fromFE, Coord2_y_predicted)
+# Coordinate 1 values
+# TODO these values are not creating a straight line. A bit weird. Double check this implementation and try with plotting the norm of the vector instead
+plot(sorted_Coord1_y_fromFE,sorted_Coord1_y_predicted,seriestype=:scatter)
+# Coordinate 2 values
+plot(sorted_Coord2_y_fromFE,sorted_Coord2_y_predicted,seriestype=:scatter)

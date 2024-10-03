@@ -30,7 +30,7 @@ def save_to_hdf5(filenames, contents, output_file):
             hdf.create_dataset(f'file_{i}', data=np.array(content, dtype='S'))
 
 def main():
-    base_directory = '/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/DataResults/'  # Change this to your target directory
+    base_directory = '/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/DataEngineering/'  # Change this to your target directory
     output_file = 'output.h5'  # Output HDF5 file
     
     filenames, contents = find_txt_files(base_directory)
