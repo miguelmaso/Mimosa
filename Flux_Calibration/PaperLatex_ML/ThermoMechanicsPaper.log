@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.19)  24 SEP 2024 21:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.19)  6 OCT 2024 14:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2139,16 +2139,6 @@ x 742.775pt>
 [55]
 
 [56] (./section/07_conclusion.tex) (./NeuralNetwork.tex
-Overfull \hbox (14.09758pt too wide) in paragraph at lines 42--50
-[][] |
- []
-
-
-Overfull \hbox (8.22401pt too wide) in paragraph at lines 64--72
-[][] |
- []
-
-
 Overfull \vbox (4.96428pt too high) detected at line 88
  []
 
@@ -2398,7 +2388,7 @@ xmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb></usr/local/texlive/2024/texm
 f-dist/fonts/type1/public/cm-super/sfti1000.pfb></usr/local/texlive/2024/texmf-
 dist/fonts/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2024/texmf-di
 st/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on ThermoMechanicsPaper.pdf (69 pages, 787257 bytes).
+Output written on ThermoMechanicsPaper.pdf (69 pages, 787468 bytes).
 PDF statistics:
  552 PDF objects out of 1000 (max. 8388607)
  284 compressed objects within 3 object streams

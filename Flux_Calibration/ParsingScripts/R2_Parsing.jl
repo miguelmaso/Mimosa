@@ -4,7 +4,7 @@ using Glob
 # Function to parse the filename
 function parse_filename(filename)
     # Extract numbers from the filename
-    regex = r"Layers:(\d+) Neurons:(\d+) Experiments:(\d+) Nodes:(\d+)Iter:(\d+)"
+    regex = r"Layers:(\d+) Neurons:(\d+) Experiments:(\d+) Nodes:(\d+)Iter:(\d+) Corrected"
     matching = match(regex, filename)
     
     if matching !== nothing

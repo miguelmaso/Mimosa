@@ -22,6 +22,7 @@ weights = model_data["weights"]
 bias = model_data["bias"]
 nodes_indices = model_data["Node_Indices"]
 experiment_indices = model_data["Training_Indices"]
+Losses = model_data["Losses"]
 
 # It is needed because JSON does not recognize Matrices, but only a vector of vectors of type Vector{Any}
 function to_mat(arrs) # for lists-of-lists parsed by JSON
@@ -131,9 +132,8 @@ y_train₁_eval = y_train₁_norm[nodes_indices,:]
 y_train₃_eval = y_train₃_norm[nodes_indices,:]
 y_train_eval = vcat(y_train₁_eval,y_train₃_eval)
 
-# DOES NOT MAKE SENSE TO PLOT THE DISPLACEMENT OF BOTH COORD1 AND COORD2, IT WILL SHOW 2 SEPARATE REGIONS
-y_predicted = model(x_train[1,:])
-y_fromFE    = y_train_eval[:,1]
+y_predicted = model(x_train[1558,:])
+y_fromFE    = y_train_eval[:,1558]
 
 function sort_and_apply_indices(original_arr, apply_arr)
     # Create a copy of the original array
@@ -162,7 +162,8 @@ Coord2_y_fromFE = y_fromFE[11:20]
 sorted_Coord1_y_fromFE, indices_Coord1_y_fromFE, sorted_Coord1_y_predicted = sort_and_apply_indices(Coord1_y_fromFE, Coord1_y_predicted)
 sorted_Coord2_y_fromFE, indices_Coord2_y_fromFE, sorted_Coord2_y_predicted = sort_and_apply_indices(Coord2_y_fromFE, Coord2_y_predicted)
 # Coordinate 1 values
-# TODO these values are not creating a straight line. A bit weird. Double check this implementation and try with plotting the norm of the vector instead
+# TODO So, it really depends on the experiment that you choose to evaluate against. IE: if we choose experiment 1558 (which was in the training), it gives a great result, obviously
+# TODO Compare the R2 of the others
 plot(sorted_Coord1_y_fromFE,sorted_Coord1_y_predicted,seriestype=:scatter)
 # Coordinate 2 values
 plot(sorted_Coord2_y_fromFE,sorted_Coord2_y_predicted,seriestype=:scatter)
