@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.19)  6 OCT 2024 14:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.19)  8 OCT 2024 23:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -990,9 +990,6 @@ LaTeX Warning: Label `fig:example 1 energy balance' multiply defined.
 
 
 LaTeX Warning: Label `fig:example 1 energy balance' multiply defined.
-
-
-LaTeX Warning: Label `table: results calibration strategy 1' multiply defined.
 
 
 LaTeX Warning: Label `eqn:heat capacity' multiply defined.
@@ -2139,37 +2136,23 @@ x 742.775pt>
 [55]
 
 [56] (./section/07_conclusion.tex) (./NeuralNetwork.tex
-Overfull \vbox (4.96428pt too high) detected at line 88
- []
+<Figures/NeuralNetworkStudy/R2_Coord1.pdf, id=336, 602.25pt x 401.5pt>
+<Figures/NeuralNetworkStudy/R2_Coord3.pdf, id=337, 602.25pt x 401.5pt>
 
-
-Overfull \vbox (15.10068pt too high) detected at line 92
- []
-
-
-Overfull \vbox (5.95016pt too high) detected at line 109
- []
-
-
-Overfull \hbox (49.17569pt too wide) in paragraph at lines 82--114
- [][] |
- []
-
-) (./acknowledgement.tex)
 
 [57
 
 ]
+<Figures/NeuralNetworkStudy/Loss_1.pdf, id=341, 602.25pt x 401.5pt>
+) (./acknowledgement.tex)
 
-[58]
-
-[59] (./section/12_Appendix_entropy_based_formulation.tex
+[58] (./section/12_Appendix_entropy_based_formulation.tex
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-60 undefined on input line 3.
+59 undefined on input line 3.
 
 
-LaTeX Warning: Reference `eqn:local form energy our format' on page 60 undefine
+LaTeX Warning: Reference `eqn:local form energy our format' on page 59 undefine
 d on input line 19.
 
 
@@ -2178,75 +2161,75 @@ Overfull \hbox (20.11949pt too wide) detected at line 31
  []
 
 
-LaTeX Warning: Reference `eqn:DDC' on page 60 undefined on input line 44.
+LaTeX Warning: Reference `eqn:DDC' on page 59 undefined on input line 44.
 
 
-LaTeX Warning: Reference `sec:discrete form linear momentum' on page 60 undefin
+LaTeX Warning: Reference `sec:discrete form linear momentum' on page 59 undefin
 ed on input line 45.
 
 
-LaTeX Warning: Reference `eqn:discrete form angular momentum' on page 60 undefi
+LaTeX Warning: Reference `eqn:discrete form angular momentum' on page 59 undefi
 ned on input line 45.
 
 
-LaTeX Warning: Reference `eqn:directionality property' on page 60 undefined on 
+LaTeX Warning: Reference `eqn:directionality property' on page 59 undefined on 
 input line 57.
 
 
-LaTeX Warning: Reference `conservation of energy discrete V' on page 60 undefin
+LaTeX Warning: Reference `conservation of energy discrete V' on page 59 undefin
 ed on input line 78.
 
 
-LaTeX Warning: Reference `sec:constitutive models' on page 60 undefined on inpu
+LaTeX Warning: Reference `sec:constitutive models' on page 59 undefined on inpu
 t line 78.
 
 
-LaTeX Warning: Reference `eqn:additive decomposition internal energy' on page 6
-0 undefined on input line 78.
+LaTeX Warning: Reference `eqn:additive decomposition internal energy' on page 5
+9 undefined on input line 78.
 
 
-LaTeX Warning: Reference `eqn:explicit internal energy' on page 60 undefined on
+LaTeX Warning: Reference `eqn:explicit internal energy' on page 59 undefined on
  input line 78.
 
 
 
-[60])
+[59])
 
-[61] (./section/10_Appendix_truncation.tex
+[60] (./section/10_Appendix_truncation.tex
 
 LaTeX Warning: Reference `eqn:approximated expression for DWdeltavarphi' on pag
-e 62 undefined on input line 5.
+e 61 undefined on input line 5.
 
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-62 undefined on input line 5.
+61 undefined on input line 5.
+
+
+
+[61]
+
+LaTeX Warning: Reference `eqn:MR' on page 62 undefined on input line 172.
+
+
+LaTeX Warning: Reference `eqn:MRv2' on page 62 undefined on input line 172.
+
+
+LaTeX Warning: Reference `eqn:directionality property' on page 62 undefined on 
+input line 183.
+
+
+LaTeX Warning: Reference `eqn:directionality property' on page 62 undefined on 
+input line 183.
 
 
 
 [62]
 
-LaTeX Warning: Reference `eqn:MR' on page 63 undefined on input line 172.
-
-
-LaTeX Warning: Reference `eqn:MRv2' on page 63 undefined on input line 172.
-
-
-LaTeX Warning: Reference `eqn:directionality property' on page 63 undefined on 
-input line 183.
-
-
-LaTeX Warning: Reference `eqn:directionality property' on page 63 undefined on 
-input line 183.
-
-
-
-[63]
-
 LaTeX Warning: Reference `eqn:definition of the discrete derivatives' on page 6
-4 undefined on input line 223.
+3 undefined on input line 223.
 
 
-LaTeX Warning: Reference `eqn:directional derivatives C' on page 64 undefined o
+LaTeX Warning: Reference `eqn:directional derivatives C' on page 63 undefined o
 n input line 308.
 
 
@@ -2256,77 +2239,77 @@ Overfull \hbox (0.31096pt too wide) detected at line 358
 
 
 
-[64])
+[63])
 
-[65] (./section/11_Appendix_Betsch_formulation.tex
+[64] (./section/11_Appendix_Betsch_formulation.tex
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-66 undefined on input line 3.
+65 undefined on input line 3.
 
 
-LaTeX Warning: Reference `eqn:DDC' on page 66 undefined on input line 28.
+LaTeX Warning: Reference `eqn:DDC' on page 65 undefined on input line 28.
 
 
-LaTeX Warning: Reference `eqn:Legendre transform' on page 66 undefined on input
+LaTeX Warning: Reference `eqn:Legendre transform' on page 65 undefined on input
  line 28.
 
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-66 undefined on input line 34.
+65 undefined on input line 34.
 
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-66 undefined on input line 42.
+65 undefined on input line 42.
 
 
-LaTeX Warning: Reference `eqn:local form energy our format' on page 66 undefine
+LaTeX Warning: Reference `eqn:local form energy our format' on page 65 undefine
 d on input line 42.
 
 
 LaTeX Warning: Reference `eqn:approximated expression for DWdeltavarphi' on pag
-e 66 undefined on input line 44.
+e 65 undefined on input line 44.
 
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-66 undefined on input line 44.
+65 undefined on input line 44.
 
 
 LaTeX Warning: Reference `eqn:approximated expression for DWdeltavarphi' on pag
-e 66 undefined on input line 44.
+e 65 undefined on input line 44.
 
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-66 undefined on input line 46.
+65 undefined on input line 46.
 
 
-LaTeX Warning: Reference `eqn:MRv2' on page 66 undefined on input line 48.
+LaTeX Warning: Reference `eqn:MRv2' on page 65 undefined on input line 48.
 
 
-LaTeX Warning: Reference `eqn:thermal contribution' on page 66 undefined on inp
+LaTeX Warning: Reference `eqn:thermal contribution' on page 65 undefined on inp
 ut line 48.
 
 
-LaTeX Warning: Reference `eqn:coupled contribution' on page 66 undefined on inp
+LaTeX Warning: Reference `eqn:coupled contribution' on page 65 undefined on inp
 ut line 48.
 
 )
 
-[66] (./section/13_Appendix_constitutive_model.tex
+[65] (./section/13_Appendix_constitutive_model.tex
 
-LaTeX Warning: Reference `sec:constitutive models' on page 67 undefined on inpu
+LaTeX Warning: Reference `sec:constitutive models' on page 66 undefined on inpu
 t line 1.
 
 )
 
-[67] (./ThermoMechanicsPaper.bbl
+[66] (./ThermoMechanicsPaper.bbl
 
-[68])
+[67])
 
 Package natbib Warning: There were undefined citations.
 
 
 
-[69] (./ThermoMechanicsPaper.aux)
+[68] (./ThermoMechanicsPaper.aux)
  ***********
 LaTeX2e <2024-06-01> patch level 2
 L3 programming layer <2024-08-30>
@@ -2340,10 +2323,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 26447 strings out of 473579
- 589897 string characters out of 5728234
- 994032 words of memory out of 5000000
- 48769 multiletter control sequences out of 15000+600000
+ 26468 strings out of 473579
+ 590864 string characters out of 5728234
+ 991047 words of memory out of 5000000
+ 48790 multiletter control sequences out of 15000+600000
  587959 words of font info for 124 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  89i,25n,96p,1836b,557s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -2388,10 +2371,10 @@ xmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb></usr/local/texlive/2024/texm
 f-dist/fonts/type1/public/cm-super/sfti1000.pfb></usr/local/texlive/2024/texmf-
 dist/fonts/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2024/texmf-di
 st/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on ThermoMechanicsPaper.pdf (69 pages, 787468 bytes).
+Output written on ThermoMechanicsPaper.pdf (68 pages, 786382 bytes).
 PDF statistics:
  552 PDF objects out of 1000 (max. 8388607)
- 284 compressed objects within 3 object streams
+ 282 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
- 563 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 578 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1,4 +1,9 @@
+Let's review the output of the parametric run that we carried out:
+
+
 % I will take 4 combinations of n_nodes and n_experiments
+
+
 
 % n_nodes = 10
 % n_experiments=4000
@@ -75,48 +80,26 @@
 \end{table}
 
 
+The best configuration is a combination of 4 layers, 20 neurons, 2000 experiments, 10 nodes and 5000 iterations with an R2 on the test cases of 0.9994
+
+Here is the output of the displacements predicted by the Neural Network compared against the FE outputs:
+
+\begin{figure}
+  \centering
+  \subfloat[Displacement in the first axis of the coordenate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1.pdf}}
+  \subfloat[Displacement in the third axis of the coordenate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3.pdf}}
+  \caption{R2 evaluation of the displacements. FE data vs ML predicted output}
+\end{figure}
 
 
 
+Then, we can plot the loss function during the training to visualize the downward tendency.
 
+\begin{figure}
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{Figures/NeuralNetworkStudy/Loss_1.pdf}
+  \end{center}
+  \caption{Loss function during the training for the best performant neural network configuration}\label{fig:}
+\end{figure}
 
-
-
-\begin{table}[hbtp!]
-	\centering
-	\begin{tabular}{c c c c c c c c c c c c}
-		\toprule
-		\rowcolor{gray!30}	\small{} & $n_L+1$ & 2 &  3& 4& 5& 6& 2& 3& 4& 5 & 6\\
-		\midrule 
-		\rowcolor{gray!30}	\small{} & $n_n$ & 8 & 8& 8& 8 &8 &16& 16& 16& 16 &  16\\
-		\midrule
-		\multirow{3}{*}{\rotatebox{90}{\textcolor{red}{\textbf{MR}}/\textcolor{blue}{\textbf{ID}}}}  &$R^2(\partial_{\vect{F}}\Psi)$ & 0.9994&  0.9999 & 0.9999 & 0.9998 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9997\\
-		&$R^2(\partial_{\vect{E}_0}\Psi)$ & 0.9999 &  0.9999 & 0.99999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
-		&$R^2(\partial_{\theta}\Psi)$ & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\	
-		\midrule
-		\multirow{3}{*}{\rotatebox{90}{\textcolor{red}{\textbf{QMR}}/\textcolor{blue}{\textbf{ID}}}} &$R^2(\partial_{\vect{F}}\Psi)$ & 0.9989 & 0.9989 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
-		&$R^2(\partial_{\vect{E}_0}\Psi)$ & 0.9995 & 0.9996 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
-		&$R^2(\partial_{\theta}\Psi)$ & 0.9999 &  0.9999 & 0.99999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
-		\\
-		\midrule
-		\multirow{3}{*}{\rotatebox{90}{\textcolor{red}{\textbf{Y}}/\textcolor{blue}{\textbf{ID}}}} &$R^2(\partial_{\vect{F}}\Psi)$ & 0.9992 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.99999 & 0.9999 & 0.9999  & 0.9999\\
-&$R^2(\partial_{\vect{E}_0}\Psi)$ & 0.9994 &  0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
-&$R^2(\partial_{\theta}\Psi)$ & 0.9999 &  0.9999 & 0.99999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\	
-\midrule
-		\multirow{3}{*}{\rotatebox{90}{\textcolor{red}{\textbf{G}}/\textcolor{blue}{\textbf{ID}}}} &$R^2(\partial_{\vect{F}}\Psi)$ & 0.9999  & 0.9998 & 0.9998 & 0.9998 & 0.9998 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
-&$R^2(\partial_{\vect{E}_0}\Psi)$ & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
-&$R^2(\partial_{\theta}\Psi)$ & 0.9999 &  0.9999 & 0.99999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\	
-\midrule
-		\multirow{3}{*}{\rotatebox{90}{\textcolor{red}{\textbf{TI}}/\textcolor{blue}{\textbf{ID}}}} &$R^2(\partial_{\vect{F}}\Psi)$ & 0.9996 & 0.9996 & 0.9999 & 0.9999&  0.9999&  0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
-&$R^2(\partial_{\vect{E}_0}\Psi)$ &  0.9994 & 0.9992 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\
-&$R^2(\partial_{\theta}\Psi)$ & 0.9999 &  0.9999 & 0.99999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\	
-\midrule
-		\multirow{3}{*}{\rotatebox{90}{\textcolor{red}{\textbf{MR}}/\textcolor{blue}{\textbf{ES}}}} &$R^2(\partial_{\vect{F}}\Psi)$ &  0.9996 &  0.9995 & 0.9995 & 0.9999 & 0.9998 & 0.9999 & 0.9996 & 0.9999 & 0.9999 & 0.9999\\
-&$R^2(\partial_{\vect{E}_0}\Psi)$ & 0.9998 & 0.9998 & 0.9998 & 0.9999 & 0.9998 & 0.9999 & 0.9998 & 0.9999 & 0.9999 & 0.9999\\
-&$R^2(\partial_{\theta}\Psi)$ & 0.9999 &  0.9999 & 0.99999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999 & 0.9999\\	
-\midrule
-	\end{tabular}
-	\caption{Values of the $R^2(\partial_{\vect{F}}\Psi)$, $R^2(\partial_{\vect{E}_0}\Psi)$ and $R^2(\partial_{\theta}\Psi)$ obtained in the calibration of $\Psi_{nn}$ (hence using the training dataset) using the purely mechanical (in red) and electro-mechanical (in blue) contributions of the ground truth Helmholtz strain energy model used for the calibration.}
-	\label{table: results calibration strategy 1}
-\end{table}
 
