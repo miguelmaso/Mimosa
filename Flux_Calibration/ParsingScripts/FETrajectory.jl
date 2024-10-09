@@ -1,7 +1,7 @@
-# We will take the best combination of nodes, experiments, layers and iterations (the one that gives the higher R2). We will import the weights and biases and create a ML model out of it. 
-# Then, we will use one load combination [potential 1, potential 2, potentia 3, potential 4] and its results. We will feed the ML model with that input and we will compare its output againts the FE results.
+# We will take one node of the FE and paint its trajectory through the loadsteps. Then, we will compare that against the ML prediction for each loadstep
 
-# Recreate the ML model out of the weights and biases in the JSON file. We will take the nodes=10, experiments=4000, neurons=20 and layers=4 with an R2=0.941
+# Let's take experiment 18673 as a reference (it was the one that we plotted the R2 on)
+
 using Flux
 using JSON
 using DelimitedFiles
@@ -141,45 +141,28 @@ end
 y_predicted = model(x_train[Test_point,:])
 y_fromFE    = y_train_eval[:,Test_point]
 
-function sort_and_apply_indices(original_arr, apply_arr)
-    # Create a copy of the original array
-    sorted_arr = copy(original_arr)
-    
-    # Sort the array in ascending order
-    sort!(sorted_arr)
-    
-    # Find the indices that were changed
-    indices_changed = sortperm(original_arr)
-    
-    # Apply the indices to another array
-    result_arr = similar(apply_arr, length(apply_arr))
-    for (i, idx) in enumerate(indices_changed)
-        result_arr[i] = apply_arr[idx]
-    end
-    
-    return sorted_arr, indices_changed, result_arr
+#---------------------
+# Trajectory plotting
+#---------------------
+
+# You already have 20k + runs, with a load combination and its corresponding load increments.
+# You just need to identify the load combination and its corresponding loadsteps and call them out of the 20k+ data available in the contents_output.txt file
+# Maybe create an array with that data
+
+Load_indices = []
+Load_inc = y_train[Load_indices] #An array of Load_steps from the FE analysis. just need to know the indices of the experiments corresponding to a load combination and its loadsteps
+Load_inc_norm₁, Load_inc_norm₃  # Divide the data into 1 and 3 coordinates and normalize it. Like you did with the test points before
+Load_inc_norm₁[node_indices[1]] # Select one point. This will be a vector of displacements in the 1 coordinate of that point, throughout every loadstep
+Load_inc_norm₃[node_indices[1]] # Select one point. This will be a vector of displacements in the 3 coordinate of that point, throughout every loadstep
+
+Load_combinations = x_train[Load_indices] # Select the load combination and its loadsteps. A 4 x nº of loadsteps array
+for loadinc in Load_ combinations
+    y_predict_loadstep = model(loadinc) # A 20 elem output (Coord1 and Coord3)
+    y_predict_LS₁ = hcat(y_predict_loadstep[1]) # A 1 x n of loadsteps vector
+    y_predict_LS₃ = hcat(y_predict_loadstep[11]) # A 1 x n of loadsteps vector
 end
 
-Coord1_y_predicted = y_predicted[1:10]
-Coord2_y_predicted = y_predicted[11:20]
-Coord1_y_fromFE = y_fromFE[1:10]
-Coord2_y_fromFE = y_fromFE[11:20]
-
-sorted_Coord1_y_fromFE, indices_Coord1_y_fromFE, sorted_Coord1_y_predicted = sort_and_apply_indices(Coord1_y_fromFE, Coord1_y_predicted)
-sorted_Coord2_y_fromFE, indices_Coord2_y_fromFE, sorted_Coord2_y_predicted = sort_and_apply_indices(Coord2_y_fromFE, Coord2_y_predicted)
-# Coordinate 1 values
-# TODO So, it really depends on the experiment that you choose to evaluate against. IE: if we choose experiment 1558 (which was in the training), it gives a great result, obviously
-# TODO Compare the R2 of the others
-
-plot([sorted_Coord1_y_fromFE[1],sorted_Coord1_y_fromFE[end]],[sorted_Coord1_y_predicted[1],sorted_Coord1_y_predicted[end]],label="R2",linestyle=:dash,linewidth=4)
-plot!(sorted_Coord1_y_fromFE,sorted_Coord1_y_predicted,seriestype=:scatter, markersize=6, markershape=:square,label="Displacement in Coord1",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
-savefig("R2_Coord1.pdf")
-# Coordinate 3 values
-plot([sorted_Coord2_y_fromFE[1],sorted_Coord2_y_fromFE[end]],[sorted_Coord2_y_predicted[1],sorted_Coord2_y_predicted[end]],label="R2",linestyle=:dash,linewidth=4)
-plot!(sorted_Coord2_y_fromFE,sorted_Coord2_y_predicted,seriestype=:scatter, markersize=6, markershape=:square,label="Displacement in Coord3",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
-savefig("R2_Coord3.pdf")
-plot(Losses, linewidth=3,label="", xlabel="Nº Iterations",ylabel="Loss values",legendfontsize=8,tickfontsize=9,guidefontsize=9)
-savefig("Loss.pdf")
-
-
+#  Compare the prediction against the displacement from FE in the Coord1 and Coord3
+y_predict_LS₁ | Load_inc_norm₁
+y_predict_LS₃ | Load_inc_norm₃
 
