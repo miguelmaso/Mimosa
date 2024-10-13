@@ -9,8 +9,12 @@ To measure the accuracy of the prediction made by the neural network, the R2 met
   \label{eq:R2_measurement}
 \end{equation}
 
+
+Where $y$ is the original data coming from an FE analysis, $y'$ is the predicted data from the neural network and $\hat{y}$ is the mean value of the FE data.
+
 \subsection{First test case: 4-electrode dielectric elastomer}
 
+\subsubsection{Data generation}
 
 The first ground-truth finite element example is a dielectric elastomer with 4 electrodes embedded: 2 electrodes at the top and 2 electrodes at the middle layer:
 
@@ -80,21 +84,19 @@ The first ground-truth finite element example is a dielectric elastomer with 4 e
 \draw [ fill={rgb,255:red,94; green,92; blue,100} ] (10,16.75) rectangle (10.25,16.5);
 \node [font=\normalsize] at (9,17.25) {Fixed face};
 \end{circuitikz}
-}%
-
-\label{fig:my_label}
+}
 \end{figure}
 
 Different combinations of potential in each electrode will cause an unique deformation shape. For example, when the potential in electrode 1 and 2 are equal and the potential in electrode 3 and 4 are 0, a bending will be induced in the dielectric. More exotic combinations of potentials will induce a combination of bending and torsion, which can cause severe displacements, depending on the overall thickness of the dielectric and magnitude of the potentials. 
 
-To study these types of varying deformations, a Design of Experiments (DoE) will be employed using a Latin Hypercube Sampling algorithm. The main idea behind this is that each of the electrodes can have a varying potential between 0 and 0.3 V. With a fixed potential in each of the electrodes, $n$ number of sampling points will be created by varying the potential in the rest of the electrodes. A finite number of combinations ($n\times n_{variables}\times 2$) will be created, so that no electrode has the same potential using the Latin Hypercube algorithm. This effect can be visualized using 2 variables in a 3D cube:
-
+To study these types of varying deformations, a Design of Experiments (DoE) will be employed using a Latin Hypercube Sampling algorithm. The main idea behind this is that each of the electrodes can have a varying potential between 0 and 0.3 V. With a fixed potential in each of the electrodes, $n$ number of sampling points will be created by varying the potential in the rest of the electrodes. A finite number of combinations ($n\times n_{variables}\times 2$) will be created, so that no electrode has the same potential using the Latin Hypercube algorithm. This effect can be visualized using 2 variables in a 3D cube, as seen in Figure \ref{fig: hypercube}
 
 
 
 
 \tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
-
+\begin{figure}
+  \centering
 \begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-1,xscale=1]
 %uncomment if require: \path (0,426); %set diagram left start at 0, and has height of 426
 
@@ -188,14 +190,145 @@ To study these types of varying deformations, a Design of Experiments (DoE) will
 % Text Node
 \draw (285.2,361) node [anchor=north west][inner sep=0.75pt]  [font=\small,color={rgb, 255:red, 234; green, 204; blue, 152 }  ,opacity=1 ] [align=left] {Min. Variable 2};
 
-
 \end{tikzpicture}
-
+\caption{Data sampling strategy following a Latin Hypercube approach. The minimum and maximum value for each variable is fixed and $n$ data points are chosen, which creates $n_{variables}\times n_{points}\times 2$ experiments}
+\label{fig: hypercube}
+\end{figure}
 
 
 
 By using $n$ number of design variables, this concept expands to an $n$-dimensional hypercube. This allows us to explore a broader design space, making sure that every point data is meaningful, as it represents a unique combination of potentials. In this paper, we utilized 25 sampling points, ie: there are 25 data points in each of the faces of the cube, creating $4\times 25 \times 2=200$ different combinations of potentials.
 
+These potentials will be used as an input for the finite element analysis, in the form of a 4-element vector (the potential at each electrode). Moreover, since 200 experiments will likely be unsufficient to capture the complex phenomena behind this dielectric elastomer using a machine learning model, we will enrich this data further. To do so, we will take advantage of the load-stepping scheme implemented in the finite element analysis. Load-stepping allows for an easier convergence of the Newton-Raphson algorithm. By applying a fraction of the total load at the beginning of the analysis, solving the Newton-Raphson and then increasing the load, we can better capture non-linearities, increasing convergence. 
+
+Utilizing these intermediate data, we can extend the initial 200 finite element samples, to over 20000, accounting for possible cutbacks and bisections during the load-stepping, which will further increase the data available. For each load (combination of potentials), we also needed to store the displacement output. For ease of access and convenience, we projected the displacement of all the nodes to one of the top surfaces of the dielectric elastomer, which contains 133 nodes. Hence, for each 4-element vector load, we will have a corresponding 399-element vector of displacement (coordinates 1, 2 and 3 of each of the 133 points). These will be our training and test samples.
+
+
+\subsubsection{Training strategy}
+
+The goal now is to train a neural network to accurately predict the displacement of the dielectric elastomer for a given input potential. Hence, the input for the neural network is a 4-element vector and the output is a 399-element vector. However, since the primary deformation mechanisms will be bending and torsion, the effect of shear deformation is negligible. This allows us to effectively remove one of the components of the displacements, namely the one that represents the movement in axial direction. As a result, the original 399-element data is reduced to 266-element data, which holds only displacements in the first and third coordinate directions. 
+
+Using this data, we can train a neural network that predicts the displacement for a given combination of potentials. However, the proper architecture to do this prediction is unknown at this stage. There is no clear direction in which the hyperparemeters of the neural network need to be changed in order to achieve reasonable prediction capabilities. For this reason, a parametric study was carried out in which neural network calibration is done by varying different hyperparameter values. Namely: the number of nodes ($n_{nodes}$), the number of neurons ($n_{neurons}$), the number of experiments ($n_{experiments}$) and the number of layers ($n_{layers}$). To study the convergence of the machine learning model, the number of epochs was also introduced in the parametric study.
+
+
+
+\tikzset{every picture/.style={line width=0.75pt}} %set default line width to 0.75pt        
+\begin{figure}
+\begin{tikzpicture}[x=0.75pt,y=0.75pt,yscale=-0.9,xscale=0.97]
+%uncomment if require: \path (0,444); %set diagram left start at 0, and has height of 444
+
+%Shape: Circle [id:dp7149132561338333] 
+\draw   (388.61,102.4) .. controls (388.61,85.1) and (402.64,71.07) .. (419.94,71.07) .. controls (437.25,71.07) and (451.28,85.1) .. (451.28,102.4) .. controls (451.28,119.7) and (437.25,133.73) .. (419.94,133.73) .. controls (402.64,133.73) and (388.61,119.7) .. (388.61,102.4) -- cycle ;
+%Shape: Circle [id:dp013523830492098043] 
+\draw   (389.94,175.73) .. controls (389.94,158.43) and (403.97,144.4) .. (421.28,144.4) .. controls (438.58,144.4) and (452.61,158.43) .. (452.61,175.73) .. controls (452.61,193.04) and (438.58,207.07) .. (421.28,207.07) .. controls (403.97,207.07) and (389.94,193.04) .. (389.94,175.73) -- cycle ;
+%Shape: Circle [id:dp6349374096098536] 
+\draw   (388.61,297.07) .. controls (388.61,279.76) and (402.64,265.73) .. (419.94,265.73) .. controls (437.25,265.73) and (451.28,279.76) .. (451.28,297.07) .. controls (451.28,314.37) and (437.25,328.4) .. (419.94,328.4) .. controls (402.64,328.4) and (388.61,314.37) .. (388.61,297.07) -- cycle ;
+%Flowchart: Magnetic Disk [id:dp2804160649676165] 
+\draw   (86.67,171.25) -- (86.67,216.75) .. controls (86.67,223.52) and (73.24,229) .. (56.67,229) .. controls (40.1,229) and (26.67,223.52) .. (26.67,216.75) -- (26.67,171.25)(86.67,171.25) .. controls (86.67,178.02) and (73.24,183.5) .. (56.67,183.5) .. controls (40.1,183.5) and (26.67,178.02) .. (26.67,171.25) .. controls (26.67,164.48) and (40.1,159) .. (56.67,159) .. controls (73.24,159) and (86.67,164.48) .. (86.67,171.25) -- cycle ;
+%Flowchart: Magnetic Disk [id:dp6592793249759878] 
+\draw   (328.67,174.58) -- (328.67,220.08) .. controls (328.67,226.85) and (315.24,232.33) .. (298.67,232.33) .. controls (282.1,232.33) and (268.67,226.85) .. (268.67,220.08) -- (268.67,174.58)(328.67,174.58) .. controls (328.67,181.35) and (315.24,186.83) .. (298.67,186.83) .. controls (282.1,186.83) and (268.67,181.35) .. (268.67,174.58) .. controls (268.67,167.82) and (282.1,162.33) .. (298.67,162.33) .. controls (315.24,162.33) and (328.67,167.82) .. (328.67,174.58) -- cycle ;
+%Straight Lines [id:da35532704073807175] 
+\draw    (387.53,104.09) -- (329.17,195.39) ;
+\draw [shift={(388.61,102.4)}, rotate = 122.59] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da4511032574004499] 
+\draw    (388.04,176.35) -- (329.17,195.39) ;
+\draw [shift={(389.94,175.73)}, rotate = 162.08] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da19079915385094404] 
+\draw    (387.6,295.34) -- (329.17,195.39) ;
+\draw [shift={(388.61,297.07)}, rotate = 239.69] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Shape: Circle [id:dp7482248959951554] 
+\draw   (477.33,102.33) .. controls (477.33,85.03) and (491.36,71) .. (508.67,71) .. controls (525.97,71) and (540,85.03) .. (540,102.33) .. controls (540,119.64) and (525.97,133.67) .. (508.67,133.67) .. controls (491.36,133.67) and (477.33,119.64) .. (477.33,102.33) -- cycle ;
+%Shape: Circle [id:dp5965819972858774] 
+\draw   (477.33,175.67) .. controls (477.33,158.36) and (491.36,144.33) .. (508.67,144.33) .. controls (525.97,144.33) and (540,158.36) .. (540,175.67) .. controls (540,192.97) and (525.97,207) .. (508.67,207) .. controls (491.36,207) and (477.33,192.97) .. (477.33,175.67) -- cycle ;
+%Shape: Circle [id:dp5648862567333319] 
+\draw   (475.28,296.73) .. controls (475.28,279.43) and (489.31,265.4) .. (506.61,265.4) .. controls (523.92,265.4) and (537.94,279.43) .. (537.94,296.73) .. controls (537.94,314.04) and (523.92,328.07) .. (506.61,328.07) .. controls (489.31,328.07) and (475.28,314.04) .. (475.28,296.73) -- cycle ;
+%Straight Lines [id:da8586261828242774] 
+\draw    (451.28,102.4) -- (475.33,102.34) ;
+\draw [shift={(477.33,102.33)}, rotate = 179.85] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da7717426599628258] 
+\draw    (452.61,175.73) -- (475.33,175.67) ;
+\draw [shift={(477.33,175.67)}, rotate = 179.85] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da3046916071479544] 
+\draw    (451.28,297.07) -- (473.28,296.76) ;
+\draw [shift={(475.28,296.73)}, rotate = 179.2] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da6640975488428904] 
+\draw    (90,200) -- (138,200) ;
+\draw [shift={(140,200)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da6892392743456469] 
+\draw    (243,200) -- (268,200) ;
+\draw [shift={(270,200)}, rotate = 180] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Flowchart: Magnetic Disk [id:dp35749579079078997] 
+\draw   (650,172.25) -- (650,217.75) .. controls (650,224.52) and (632.09,230) .. (610,230) .. controls (587.91,230) and (570,224.52) .. (570,217.75) -- (570,172.25)(650,172.25) .. controls (650,179.02) and (632.09,184.5) .. (610,184.5) .. controls (587.91,184.5) and (570,179.02) .. (570,172.25) .. controls (570,165.48) and (587.91,160) .. (610,160) .. controls (632.09,160) and (650,165.48) .. (650,172.25) -- cycle ;
+%Straight Lines [id:da5896782313243266] 
+\draw    (540,102.33) -- (569.35,188.11) ;
+\draw [shift={(570,190)}, rotate = 251.11] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da28421655439140037] 
+\draw    (540,175.67) -- (568.2,189.14) ;
+\draw [shift={(570,190)}, rotate = 205.54] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+%Straight Lines [id:da846956632663103] 
+\draw    (537.94,296.73) -- (569.42,191.92) ;
+\draw [shift={(570,190)}, rotate = 106.72] [color={rgb, 255:red, 0; green, 0; blue, 0 }  ][line width=0.75]    (10.93,-3.29) .. controls (6.95,-1.4) and (3.31,-0.3) .. (0,0) .. controls (3.31,0.3) and (6.95,1.4) .. (10.93,3.29)   ;
+
+% Text Node
+\draw (422.79,175.12) node  [font=\small] [align=left] {Neuron 2};
+% Text Node
+\draw (421.94,296.94) node  [font=\small] [align=left] {Neuron n};
+% Text Node
+\draw (418,203.67) node [anchor=north west][inner sep=0.75pt]   [align=left] {.\\.\\.};
+% Text Node
+\draw (28.67,191.33) node [anchor=north west][inner sep=0.75pt]   [align=left] {FE Data};
+% Text Node
+\draw    (143,178) -- (242,178) -- (242,220) -- (143,220) -- cycle  ;
+\draw (146,182) node [anchor=north west][inner sep=0.75pt]  [font=\small,color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ] [align=left] {nº Nodes\\nº Experiments};
+% Text Node
+\draw (15.33,126) node [anchor=north west][inner sep=0.75pt]  [font=\small,color={rgb, 255:red, 0; green, 0; blue, 0 }  ,opacity=1 ] [align=left] {133 nodes};
+% Text Node
+\draw (8.67,242) node [anchor=north west][inner sep=0.75pt]  [font=\small] [align=left] {+20k Experiments};
+% Text Node
+\draw (281.33,189.33) node [anchor=north west][inner sep=0.75pt]   [align=left] {Input \\Data};
+% Text Node
+\draw (509.46,175.78) node  [font=\small] [align=left] {Neuron 2};
+% Text Node
+\draw (509.28,296.94) node  [font=\small] [align=left] {Neuron n};
+% Text Node
+\draw (504.67,206.33) node [anchor=north west][inner sep=0.75pt]   [align=left] {.\\.\\.};
+% Text Node
+\draw (421.46,101.78) node  [font=\small] [align=left] {Neuron 1};
+% Text Node
+\draw (509.79,100.45) node  [font=\small] [align=left] {Neuron 1};
+% Text Node
+\draw (397,41) node [anchor=north west][inner sep=0.75pt]   [align=left] {Layer 1};
+% Text Node
+\draw (484,41) node [anchor=north west][inner sep=0.75pt]   [align=left] {Layer 2};
+% Text Node
+\draw (580,185) node [anchor=north west][inner sep=0.75pt]   [align=left] {Predicted \\data\\};
+% Text Node
+\draw (430,12) node [anchor=north west][inner sep=0.75pt]  [font=\small,color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ] [align=left] {nº of Layers};
+% Text Node
+\draw (381,343) node [anchor=north west][inner sep=0.75pt]  [font=\small,color={rgb, 255:red, 74; green, 144; blue, 226 }  ,opacity=1 ] [align=left] {nº of \ neurons};
+
+
+\end{tikzpicture}
+\caption{Training process schematic. The number of variables modified during the parametric study can be seen in blue.}
+\end{figure}
+Alongside architecture-specific parameters, like the number of neurons, the number of layers and the number of epochs, we also studied the effect of the number of nodes and experiments. From the available 133 nodes, we took only a subset of them and used them to train the neural network, leaving the remaining nodes as test data to compare against. The same concept is used by selecting only a subset of experiments out of the ones available. The purpose of this subset selection is calibrating a neural network that is able to predict the complete response, reducing the computational expense without losing accuracy by reducing the number of nodes and experiments used. 
+
+For each of the hyperparameters specified, the values studied were the following:
+
+\begin{table}[!hb]
+  \centering
+\begin{tabular}{l|cccc}
+\textbf{Parameters} & \multicolumn{4}{c}{\textbf{Value}} \\ \hline
+Layers              & 2      & 3       & 4      & 6      \\
+Neurons             & 10     & 20      & 40     & -      \\
+Experiments         & 200    & 1000    & 2000   & 4000   \\
+Nodes               & 10     & 30      & 40     & -      \\
+Epochs              & 500    & 1000    & 5000   & -      
+\end{tabular}
+  \caption{Values used in the parametric study during the training phase. Every combination of these parameters was analysed and parsed to obtain the best performing architecture.}
+\end{table}
+
+Every possible combination of these parameters was studied, totalling 200 different architectures that were run and analysed. To measure the performance of these architecture, the R2 measurement (\ref{eq:R2_measurement}), was used. This metric allows us to compare the displacements predicted by the neural network against the test data (the remaining data that was not taken into the training process). To provide a clearer outlook on the results of the parametric hyperparameter study, we compiled the output of R2 measurements on every combination of 10 and 30 nodes using 2000 and 4000 experiments with 5000 epochs. These results can be visualized in Table \ref{tab: R2_measurement}
 
 
 % I will take 4 combinations of n_nodes and n_experiments
@@ -224,7 +357,7 @@ By using $n$ number of design variables, this concept expands to an $n$-dimensio
 % Please add the following required packages to your document preamble:
 % \usepackage{multirow}
 \begin{table}[!hb]
-
+\centering
 \begin{minipage}{.49\textwidth}
 
 \begin{tabular}{lllllllcc|ccc}
@@ -273,30 +406,32 @@ By using $n$ number of design variables, this concept expands to an $n$-dimensio
 \end{tabular}
 \end{minipage}
 
-
+  \caption{R2 measurement for every combination of neurons and layers for 10 and 20 nodes and 2000 and 4000 experiments. These results were obtained using 5000 epochs.}
+  \label{tab: R2_values}
 \end{table}
 
 
-The best configuration is a combination of 4 layers, 20 neurons, 2000 experiments, 10 nodes and 5000 iterations with an R2 on the test cases of 0.9994
-
-Here is the output of the displacements predicted by the Neural Network compared against the FE outputs:
+Out of the analysed architectures in Table \ref{tab: R2_values}, the best configuration is a combination of 4 layers, 20 neurons, 2000 experiments, 10 nodes and 5000 iterations with an R2 on the test cases of 0.9994. To further visualize this result, we plotted the output displacement from the FE analysis against the displacement predicted by the best performing architecture. Since the displacement data is given per axis in the global coordinate system, we compared the displacement per axis; namely the first and third axis. The output of this analysis is displayed in Figure \ref{fig: R2_plot}
 
 \begin{figure}
   \centering
   \subfloat[Displacement in the first axis of the coordenate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1.pdf}}
   \subfloat[Displacement in the third axis of the coordenate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3.pdf}}
-  \caption{R2 evaluation of the displacements. FE data vs ML predicted output}
+  \caption{R2 evaluation of the displacements. FE data vs ML predicted output for the better performing neural network architecture at sampling point 18673. A clear linear distribution can be seen between the predicted and FE displacements, indicating a high R2 and correlation between the data}
+  \label{fig: R2_plot}
 \end{figure}
 
+As can be seen from Figure \ref{fig: R2_plot}, there is a high correlation between the predicted data from the neural network and the data coming from the FE analysis, which was also indicated by a high R2 value.
 
+To further analyse the performance of the machine learning architecture, we can plot the loss function during the training process, which exhibits a downward tendency as the training progresses. This result can be seen in Figure \ref{fig: losses}. Furthermore, we can see that the training is fully converged, as there is no significant variation in the lost function after 2000 epochs.
 
-Then, we can plot the loss function during the training to visualize the downward tendency.
 
 \begin{figure}
   \begin{center}
     \includegraphics[width=0.6\textwidth]{Figures/NeuralNetworkStudy/Loss_1.pdf}
   \end{center}
-  \caption{Loss function during the training for the best performant neural network configuration}\label{fig:}
+  \caption{Loss function during the training for the best performant neural network configuration. Convergence is achieved after aproximately 2000 training epochs.}
+  \label{fig: losses}
 \end{figure}
 
-
+\newpage

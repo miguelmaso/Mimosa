@@ -69,18 +69,6 @@ J.~Bonet, C.~H. Lee, A.~J. Gil, and A.~Ghavamian.
 \newblock {\em Computer Methods in Applied Mechanics and Engineering}.
 \newblock Under review.
 
-\bibitem{Christoforou_Symmetrisation_polyconvex_thermoelasticity}
-C.~Christoforou, M.~Galanopoulou, and A.~E. Tzavaras.
-\newblock A symmetrizable extension of polyconvex thermoelasticity and
-  applications to zero-viscosity limits and weak-strong uniqueness.
-\newblock {\em Communications in Partial Differential Equations}, 0(0):1--32,
-  2018.
-
-\bibitem{Dafermos_book}
-C.~M. Dafermos.
-\newblock {\em Hyperbolic conservation laws in continuum physics}.
-\newblock Springer, 2010.
-
 \bibitem{deBoer_book}
 R.~de~Boer.
 \newblock {\em Vektor- und Tensorrechnung f\"{u}r Ingenieure}.
@@ -136,25 +124,12 @@ D.~Kuhl and M.~A. Crisfield.
 \newblock {\em International Journal for Numerical Methods in Engineering},
   45:565--599, 1999.
 
-\bibitem{Marsden_book}
-J.~E. Marsden and T.~J.~R. Hughes.
-\newblock {\em Mathematical foundations of elasticity}.
-\newblock 1994.
-
 \bibitem{Conde2017}
 S.~C. Mart\'{i}n and J.~C.~Garc\'{i}a Orden.
 \newblock On energy-entropy-momentum integration methods for discrete
   thermo-visco-elastodynamics.
 \newblock {\em Computers \& Structures}, 181:3--20, 2017.
 \newblock UK Association of Computational Mechanics.
-
-\bibitem{Miehe_material_stability_electro}
-C.~Miehe, D.~Vallicotti, and D.~Z\"{a}h.
-\newblock Computational structural and material stability analysis in finite
-  electro-elasto-statics of electro-active materials.
-\newblock {\em International Journal for Numerical Methods in Engineering},
-  102(10):1605--1637, 2015.
-\newblock nme.4855.
 
 \bibitem{EM_Electro_1}
 R.~Ortigosa, M.~Franke, A.~Janz, A.J. Gil, and P.~Betsch.

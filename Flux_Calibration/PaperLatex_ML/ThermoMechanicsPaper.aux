@@ -241,58 +241,66 @@
 \citation{Betsch2018Thermo}
 \@writefile{toc}{\contentsline {section}{\numberline {7}Conclusions}{57}{}\protected@file@percent }
 \newlabel{sec:conclusions}{{7}{57}{}{}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {8}Neural Network postprocessing}{57}{}\protected@file@percent }
-\newlabel{eq:R2_measurement}{{92}{57}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}First test case: 4-electrode dielectric elastomer}{57}{}\protected@file@percent }
-\newlabel{fig:my_label}{{\caption@xref {fig:my_label}{ on input line 85}}{58}{}{}{}}
-\newlabel{sec:NN_cal}{{8.1}{58}{}{}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {9}Acknowledgements}{58}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {29}{\ignorespaces R2 evaluation of the displacements. FE data vs ML predicted output}}{59}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Displacement in the first axis of the coordenate system}}}{59}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Displacement in the third axis of the coordenate system}}}{59}{}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {30}{\ignorespaces Loss function during the training for the best performant neural network configuration}}{59}{}\protected@file@percent }
-\newlabel{fig:}{{30}{59}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Neural Network postprocessing}{58}{}\protected@file@percent }
+\newlabel{eq:R2_measurement}{{92}{58}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}First test case: 4-electrode dielectric elastomer}{58}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.1.1}Data generation}{58}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {29}{\ignorespaces Data sampling strategy following a Latin Hypercube approach. The minimum and maximum value for each variable is fixed and $n$ data points are chosen, which creates $n_{variables}\times n_{points}\times 2$ experiments}}{59}{}\protected@file@percent }
+\newlabel{fig: hypercube}{{29}{59}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {8.1.2}Training strategy}{59}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {30}{\ignorespaces Training process schematic. The number of variables modified during the parametric study can be seen in blue.}}{60}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {12}{\ignorespaces Values used in the parametric study during the training phase. Every combination of these parameters was analysed and parsed to obtain the best performing architecture.}}{60}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {13}{\ignorespaces R2 measurement for every combination of neurons and layers for 10 and 20 nodes and 2000 and 4000 experiments. These results were obtained using 5000 epochs.}}{61}{}\protected@file@percent }
+\newlabel{tab: R2_values}{{13}{61}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {31}{\ignorespaces R2 evaluation of the displacements. FE data vs ML predicted output for the better performing neural network architecture at sampling point 18673. A clear linear distribution can be seen between the predicted and FE displacements, indicating a high R2 and correlation between the data}}{62}{}\protected@file@percent }
+\newlabel{fig: R2_plot}{{31}{62}{}{}{}}
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(a)}{\ignorespaces {Displacement in the first axis of the coordenate system}}}{62}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {subfigure}{\numberline{(b)}{\ignorespaces {Displacement in the third axis of the coordenate system}}}{62}{}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {32}{\ignorespaces Loss function during the training for the best performant neural network configuration. Convergence is achieved after aproximately 2000 training epochs.}}{62}{}\protected@file@percent }
+\newlabel{fig: losses}{{32}{62}{}{}{}}
+\newlabel{sec:NN_cal}{{8.1.2}{63}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {9}Acknowledgements}{63}{}\protected@file@percent }
 \citation{Betsch2018Thermo}
 \@writefile{toc}{\let\numberline\tmptocnumberline}
-\@writefile{toc}{\contentsline {section}{\numberline {Appendix~A}Entropy-based EM scheme}{61}{}\protected@file@percent }
-\newlabel{sec:entropy-based formulation}{{Appendix~A}{61}{}{}{}}
-\newlabel{eqn:weak forms for the dynamic formulation. Entropy based}{{A.1}{61}{}{}{}}
-\newlabel{eqn:weak forms for proposed time integrator. Entropy based 1}{{A.2}{61}{}{}{}}
-\newlabel{eqn:approximated expression for DWdeltavarphi entropy-based}{{A.3}{61}{}{}{}}
-\newlabel{conservation of energy discrete III entropy based}{{A.4}{61}{}{}{}}
-\newlabel{eqn:directionality property entropy based}{{A.5}{61}{}{}{}}
-\newlabel{conservation of energy discrete V entropy based}{{A.6}{61}{}{}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {Appendix~B}Discrete derivatives of the internal energy}{63}{}\protected@file@percent }
-\newlabel{sec:properties directionality}{{Appendix~B}{63}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {Appendix~B.1}Definition of the discrete derivatives}{63}{}\protected@file@percent }
-\newlabel{eqn:definition of partitioned discrete gradient}{{B.1}{63}{}{}{}}
-\newlabel{eqn:definition of partitioned discrete gradient I}{{B.2}{63}{}{}{}}
-\newlabel{eqn:DC}{{B.3}{63}{}{}{}}
-\newlabel{eqn:DC1}{{B.4}{63}{}{}{}}
-\newlabel{eqn:discrete expression for remaining variables}{{B.6}{64}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {Appendix~B.2}Proof of directionality property}{64}{}\protected@file@percent }
-\newlabel{eqn:directionality property X}{{B.9}{64}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {Appendix~B.3}Definition of the discrete derivatives in the limit}{65}{}\protected@file@percent }
-\newlabel{eqn:desired property convergence discrete gradient}{{B.11}{65}{}{}{}}
-\newlabel{eqn:Taylor series for W}{{B.12}{65}{}{}{}}
-\newlabel{eqn:four terms}{{B.13}{65}{}{}{}}
-\newlabel{eqn:DC II}{{B.14}{65}{}{}{}}
-\newlabel{eqn:Taylor expansion around SiamgC}{{B.15}{66}{}{}{}}
-\newlabel{eqn:DCW proof Taylor series expansion}{{B.16}{66}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {Appendix~A}Entropy-based EM scheme}{64}{}\protected@file@percent }
+\newlabel{sec:entropy-based formulation}{{Appendix~A}{64}{}{}{}}
+\newlabel{eqn:weak forms for the dynamic formulation. Entropy based}{{A.1}{64}{}{}{}}
+\newlabel{eqn:weak forms for proposed time integrator. Entropy based 1}{{A.2}{64}{}{}{}}
+\newlabel{eqn:approximated expression for DWdeltavarphi entropy-based}{{A.3}{64}{}{}{}}
+\newlabel{conservation of energy discrete III entropy based}{{A.4}{64}{}{}{}}
+\newlabel{eqn:directionality property entropy based}{{A.5}{64}{}{}{}}
+\newlabel{conservation of energy discrete V entropy based}{{A.6}{64}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {Appendix~B}Discrete derivatives of the internal energy}{66}{}\protected@file@percent }
+\newlabel{sec:properties directionality}{{Appendix~B}{66}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {Appendix~B.1}Definition of the discrete derivatives}{66}{}\protected@file@percent }
+\newlabel{eqn:definition of partitioned discrete gradient}{{B.1}{66}{}{}{}}
+\newlabel{eqn:definition of partitioned discrete gradient I}{{B.2}{66}{}{}{}}
+\newlabel{eqn:DC}{{B.3}{66}{}{}{}}
+\newlabel{eqn:DC1}{{B.4}{66}{}{}{}}
+\newlabel{eqn:discrete expression for remaining variables}{{B.6}{67}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {Appendix~B.2}Proof of directionality property}{67}{}\protected@file@percent }
+\newlabel{eqn:directionality property X}{{B.9}{67}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {Appendix~B.3}Definition of the discrete derivatives in the limit}{68}{}\protected@file@percent }
+\newlabel{eqn:desired property convergence discrete gradient}{{B.11}{68}{}{}{}}
+\newlabel{eqn:Taylor series for W}{{B.12}{68}{}{}{}}
+\newlabel{eqn:four terms}{{B.13}{68}{}{}{}}
+\newlabel{eqn:DC II}{{B.14}{68}{}{}{}}
+\newlabel{eqn:Taylor expansion around SiamgC}{{B.15}{69}{}{}{}}
+\newlabel{eqn:DCW proof Taylor series expansion}{{B.16}{69}{}{}{}}
 \citation{Betsch2018Thermo}
 \citation{Betsch2018Thermo}
-\@writefile{toc}{\contentsline {section}{\numberline {Appendix~C}EM scheme in Reference \cite  {Betsch2018Thermo}}{67}{}\protected@file@percent }
-\newlabel{sec:Betsch formulation}{{Appendix~C}{67}{}{}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {Appendix~C.1}EM scheme}{67}{}\protected@file@percent }
-\newlabel{sec:EM scheme Betsch}{{Appendix~C.1}{67}{}{}{}}
-\newlabel{eqn:weak forms for proposed time integrator Hesch approach}{{C.1}{67}{}{}{}}
-\newlabel{eqn:approximated expression for DWdeltavarphi Betsch}{{C.2}{67}{}{}{}}
-\newlabel{eqn:pseudo-internal energy}{{C.3}{67}{}{}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {Appendix~D}Thermo-elastic constitutive model}{68}{}\protected@file@percent }
-\newlabel{sec:constitutive model appendix}{{Appendix~D}{68}{}{}{}}
-\newlabel{eqn:heat capacity}{{D.2}{68}{}{}{}}
-\newlabel{eqn:thermo model I}{{D.3}{68}{}{}{}}
-\newlabel{eqn:thermo model II}{{D.4}{68}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {Appendix~C}EM scheme in Reference \cite  {Betsch2018Thermo}}{70}{}\protected@file@percent }
+\newlabel{sec:Betsch formulation}{{Appendix~C}{70}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {Appendix~C.1}EM scheme}{70}{}\protected@file@percent }
+\newlabel{sec:EM scheme Betsch}{{Appendix~C.1}{70}{}{}{}}
+\newlabel{eqn:weak forms for proposed time integrator Hesch approach}{{C.1}{70}{}{}{}}
+\newlabel{eqn:approximated expression for DWdeltavarphi Betsch}{{C.2}{70}{}{}{}}
+\newlabel{eqn:pseudo-internal energy}{{C.3}{70}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {Appendix~D}Thermo-elastic constitutive model}{71}{}\protected@file@percent }
+\newlabel{sec:constitutive model appendix}{{Appendix~D}{71}{}{}{}}
+\newlabel{eqn:heat capacity}{{D.2}{71}{}{}{}}
+\newlabel{eqn:thermo model I}{{D.3}{71}{}{}{}}
+\newlabel{eqn:thermo model II}{{D.4}{71}{}{}{}}
 \bibstyle{plain}
 \bibdata{biblio}
 \bibcite{Ball_1976}{{1}{}{{}}{{}}}
@@ -306,23 +314,19 @@
 \bibcite{Bonet_cross_product_2016}{{9}{}{{}}{{}}}
 \bibcite{Bonet_book_statics}{{10}{}{{}}{{}}}
 \bibcite{Bonet_hyperbolicity_partIII_2019}{{11}{}{{}}{{}}}
-\bibcite{Christoforou_Symmetrisation_polyconvex_thermoelasticity}{{12}{}{{}}{{}}}
-\bibcite{Dafermos_book}{{13}{}{{}}{{}}}
-\bibcite{deBoer_book}{{14}{}{{}}{{}}}
-\bibcite{deSouza_book}{{15}{}{{}}{{}}}
-\bibcite{Betsch2018Thermo}{{16}{}{{}}{{}}}
-\bibcite{Gonzalez_EM_2000}{{17}{}{{}}{{}}}
-\bibcite{Gonzalez_book}{{18}{}{{}}{{}}}
-\bibcite{Betsch_EM_viscoelasticity_2010}{{19}{}{{}}{{}}}
-\bibcite{Hesch_Betsch_EM_thermo_2011}{{20}{}{{}}{{}}}
-\bibcite{Kuhl_Crisfield_1996}{{21}{}{{}}{{}}}
-\bibcite{Kuhl_Crisfield_1999}{{22}{}{{}}{{}}}
-\bibcite{Marsden_book}{{23}{}{{}}{{}}}
-\bibcite{Conde2017}{{24}{}{{}}{{}}}
-\bibcite{Miehe_material_stability_electro}{{25}{}{{}}{{}}}
-\bibcite{EM_Electro_1}{{26}{}{{}}{{}}}
-\bibcite{Romero2010}{{27}{}{{}}{{}}}
-\bibcite{Schroderbook}{{28}{}{{}}{{}}}
-\bibcite{Simo_EM_1992}{{29}{}{{}}{{}}}
+\bibcite{deBoer_book}{{12}{}{{}}{{}}}
+\bibcite{deSouza_book}{{13}{}{{}}{{}}}
+\bibcite{Betsch2018Thermo}{{14}{}{{}}{{}}}
+\bibcite{Gonzalez_EM_2000}{{15}{}{{}}{{}}}
+\bibcite{Gonzalez_book}{{16}{}{{}}{{}}}
+\bibcite{Betsch_EM_viscoelasticity_2010}{{17}{}{{}}{{}}}
+\bibcite{Hesch_Betsch_EM_thermo_2011}{{18}{}{{}}{{}}}
+\bibcite{Kuhl_Crisfield_1996}{{19}{}{{}}{{}}}
+\bibcite{Kuhl_Crisfield_1999}{{20}{}{{}}{{}}}
+\bibcite{Conde2017}{{21}{}{{}}{{}}}
+\bibcite{EM_Electro_1}{{22}{}{{}}{{}}}
+\bibcite{Romero2010}{{23}{}{{}}{{}}}
+\bibcite{Schroderbook}{{24}{}{{}}{{}}}
+\bibcite{Simo_EM_1992}{{25}{}{{}}{{}}}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
-\gdef \@abspage@last{70}
+\gdef \@abspage@last{73}
