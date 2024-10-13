@@ -98,8 +98,8 @@ cd("/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/ParsingScripts")
 #---------------------------------------
 # Import a load and results combination
 #---------------------------------------
-x_train::Matrix{Float64} = readdlm("filenames_parsed.txt")
-y_train::Matrix{Float64} = readdlm("contents_output.txt")
+x_train::Matrix{Float64} = readdlm("filenames_parsed_FE_Trajectory.txt")
+y_train::Matrix{Float64} = readdlm("contents_output_FE_Trajectory.txt")
 
 n_nodes   =  size(y_train,1)
 y_train₁  =  y_train[1:3:n_nodes,:]
@@ -133,36 +133,30 @@ y_train₁_eval = y_train₁_norm[nodes_indices,:]
 y_train₃_eval = y_train₃_norm[nodes_indices,:]
 y_train_eval = vcat(y_train₁_eval,y_train₃_eval)
 
-Test_point = 18673
-validate = Test_point ∈ experiment_indices
-if validate == true
-    error("The test point belongs to the training")
-end
-y_predicted = model(x_train[Test_point,:])
-y_fromFE    = y_train_eval[:,Test_point]
+
+# Let's take one point to plot its trajectory. First, we need to order the data in asceding order on the potential (x_train) and apply that to the results. It is not like that by default
+# The distance that we plot should be either the norm, or Coord1 and Coord3 separately.
+y_predicted = model(x_train')
+y_fromFE    = y_train_eval
 
 #---------------------
 # Trajectory plotting
 #---------------------
 
-# You already have 20k + runs, with a load combination and its corresponding load increments.
-# You just need to identify the load combination and its corresponding loadsteps and call them out of the 20k+ data available in the contents_output.txt file
-# Maybe create an array with that data
+# Sort x_train in ascending order and apply that to the displacements from FE and predicted
+sorted_indices = sortperm(eachrow(x_train))
 
-Load_indices = []
-Load_inc = y_train[Load_indices] #An array of Load_steps from the FE analysis. just need to know the indices of the experiments corresponding to a load combination and its loadsteps
-Load_inc_norm₁, Load_inc_norm₃  # Divide the data into 1 and 3 coordinates and normalize it. Like you did with the test points before
-Load_inc_norm₁[node_indices[1]] # Select one point. This will be a vector of displacements in the 1 coordinate of that point, throughout every loadstep
-Load_inc_norm₃[node_indices[1]] # Select one point. This will be a vector of displacements in the 3 coordinate of that point, throughout every loadstep
+y_fromFE_sorted = y_fromFE[:,sorted_indices]
+y_predicted_sorted = y_predicted[:,sorted_indices]
 
-Load_combinations = x_train[Load_indices] # Select the load combination and its loadsteps. A 4 x nº of loadsteps array
-for loadinc in Load_ combinations
-    y_predict_loadstep = model(loadinc) # A 20 elem output (Coord1 and Coord3)
-    y_predict_LS₁ = hcat(y_predict_loadstep[1]) # A 1 x n of loadsteps vector
-    y_predict_LS₃ = hcat(y_predict_loadstep[11]) # A 1 x n of loadsteps vector
-end
 
-#  Compare the prediction against the displacement from FE in the Coord1 and Coord3
-y_predict_LS₁ | Load_inc_norm₁
-y_predict_LS₃ | Load_inc_norm₃
+# We need to take one point; ie: the 5 point. And we need to take Coord1 and Coord3 of that point 
+Chosen_Point = 2 
 
+Coord1_y_from_FE_sorted_point = y_fromFE_sorted[Chosen_Point,:]
+Coord3_y_from_FE_sorted_point = y_fromFE_sorted[Chosen_Point+10,:]
+Coord1_y_predicted_sorted_point = y_predicted_sorted[Chosen_Point,:]
+Coord3_y_predicted_sorted_point = y_predicted_sorted[Chosen_Point+10,:]
+
+plot(Coord3_y_from_FE_sorted_point)
+plot!(Coord3_y_predicted_sorted_point)

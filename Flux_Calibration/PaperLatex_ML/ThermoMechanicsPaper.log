@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.19)  8 OCT 2024 23:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.9.19)  13 OCT 2024 02:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -865,6 +865,85 @@ Package: colortbl 2024/07/06 v1.0i Color table columns (DPC)
 \minrowclearance=\skip74
 \rownum=\count374
 )
+(/usr/local/texlive/2024/texmf-dist/tex/latex/circuitikz/circuitikz.sty
+Package: circuitikz 2024/08/03{} The CircuiTikz circuit drawing package version
+ 1.7.0
+
+(/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/frontendlayer/tikz/librarie
+s/tikzlibrarycalc.code.tex
+File: tikzlibrarycalc.code.tex 2023-01-15 v3.1.10 (3.1.10)
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.
+meta.code.tex
+File: pgflibraryarrows.meta.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgfarrowinset=\dimen326
+\pgfarrowlength=\dimen327
+\pgfarrowwidth=\dimen328
+\pgfarrowlinewidth=\dimen329
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/frontendlayer/tikz/librarie
+s/tikzlibrarybending.code.tex
+File: tikzlibrarybending.code.tex 2023-01-15 v3.1.10 (3.1.10)
+
+(/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/modules/pgfmodulebending.co
+de.tex
+File: pgfmodulebending.code.tex 2023-01-15 v3.1.10 (3.1.10)
+
+(/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/modules/pgfmodulenonlineart
+ransformations.code.tex
+File: pgfmodulenonlineartransformations.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgftransformnonlinearflatness=\dimen330
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/libraries/pgflibrarycurvili
+near.code.tex
+File: pgflibrarycurvilinear.code.tex 2023-01-15 v3.1.10 (3.1.10)
+\pgf@curvilinear@time@a=\dimen331
+\pgf@curvilinear@length@a=\dimen332
+\pgf@curvilinear@length@b=\dimen333
+\pgf@curvilinear@length@c=\dimen334
+\pgf@curvilinear@length@d=\dimen335
+)
+\pgf@arrows@the@rigidity=\dimen336
+))
+(/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/frontendlayer/tikz/librarie
+s/tikzlibraryfpu.code.tex
+(/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/libraries/pgflibraryfpu.cod
+e.tex))
+(/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcirc.defines.tex
+\pgf@circ@count@a=\count375
+\pgf@circ@count@b=\count376
+\pgf@circ@count@c=\count377
+\pgf@circ@res@up=\dimen337
+\pgf@circ@res@down=\dimen338
+\pgf@circ@res@zero=\dimen339
+\pgf@circ@res@left=\dimen340
+\pgf@circ@res@right=\dimen341
+\pgf@circ@res@other=\dimen342
+\pgf@circ@res@step=\dimen343
+\pgf@circ@res@temp=\dimen344
+\pgf@circ@Rlen=\dimen345
+\pgf@circ@scaled@Rlen=\dimen346
+\pgfstartlinewidth=\dimen347
+) (/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcircutils.tex
+\ctikz@scratchbox=\box89
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcircpath.tex)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcircshapes.tex)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcircmonopoles.tex
+) (/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcircbipoles.tex
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcirctripoles.tex
+\pgf@circ@res@count=\count378
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcircquadpoles.tex
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcircmultipoles.te
+x) (/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcirclabel.tex)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcircvoltage.tex
+\pgfcirc@labelshift=\dimen348
+)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcirccurrent.tex)
+(/usr/local/texlive/2024/texmf-dist/tex/generic/circuitikz/pgfcircflow.tex))
 (/usr/local/texlive/2024/texmf-dist/tex/latex/tcolorbox/tcbskins.code.tex
 Library (tcolorbox): 'tcbskins.code.tex' version '6.3.0'
 (/usr/local/texlive/2024/texmf-dist/tex/latex/tikzfill/tikzfill.image.sty
@@ -876,7 +955,7 @@ Package: tikzfill-common 2023/08/08 v1.0.1 Auxiliary code for tikzfill
 (/usr/local/texlive/2024/texmf-dist/tex/latex/tikzfill/tikzlibraryfill.image.co
 de.tex
 File: tikzlibraryfill.image.code.tex 2023/08/08 v1.0.1 Image filling library
-\l__tikzfill_img_box=\box89
+\l__tikzfill_img_box=\box90
 ))
 (/usr/local/texlive/2024/texmf-dist/tex/latex/tcolorbox/tcbskinsjigsaw.code.tex
 Library (tcolorbox): 'tcbskinsjigsaw.code.tex' version '6.3.0'
@@ -928,26 +1007,26 @@ File: tikzlibraryshapes.multipart.code.tex 2023-01-15 v3.1.10 (3.1.10)
 (/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/libraries/shapes/pgflibrary
 shapes.multipart.code.tex
 File: pgflibraryshapes.multipart.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfnodepartlowerbox=\box90
-\pgfnodeparttwobox=\box91
-\pgfnodepartthreebox=\box92
-\pgfnodepartfourbox=\box93
-\pgfnodeparttwentybox=\box94
-\pgfnodepartnineteenbox=\box95
-\pgfnodeparteighteenbox=\box96
-\pgfnodepartseventeenbox=\box97
-\pgfnodepartsixteenbox=\box98
-\pgfnodepartfifteenbox=\box99
-\pgfnodepartfourteenbox=\box100
-\pgfnodepartthirteenbox=\box101
-\pgfnodeparttwelvebox=\box102
-\pgfnodepartelevenbox=\box103
-\pgfnodeparttenbox=\box104
-\pgfnodepartninebox=\box105
-\pgfnodeparteightbox=\box106
-\pgfnodepartsevenbox=\box107
-\pgfnodepartsixbox=\box108
-\pgfnodepartfivebox=\box109
+\pgfnodepartlowerbox=\box91
+\pgfnodeparttwobox=\box92
+\pgfnodepartthreebox=\box93
+\pgfnodepartfourbox=\box94
+\pgfnodeparttwentybox=\box95
+\pgfnodepartnineteenbox=\box96
+\pgfnodeparteighteenbox=\box97
+\pgfnodepartseventeenbox=\box98
+\pgfnodepartsixteenbox=\box99
+\pgfnodepartfifteenbox=\box100
+\pgfnodepartfourteenbox=\box101
+\pgfnodepartthirteenbox=\box102
+\pgfnodeparttwelvebox=\box103
+\pgfnodepartelevenbox=\box104
+\pgfnodeparttenbox=\box105
+\pgfnodepartninebox=\box106
+\pgfnodeparteightbox=\box107
+\pgfnodepartsevenbox=\box108
+\pgfnodepartsixbox=\box109
+\pgfnodepartfivebox=\box110
 )))
 (/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/frontendlayer/tikz/librarie
 s/tikzlibraryarrows.code.tex
@@ -956,7 +1035,7 @@ File: tikzlibraryarrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
 (/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.
 code.tex
 File: pgflibraryarrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\arrowsize=\dimen326
+\arrowsize=\dimen349
 ))
 (/usr/local/texlive/2024/texmf-dist/tex/generic/pgf/frontendlayer/tikz/librarie
 s/tikzlibrarymatrix.code.tex
@@ -968,8 +1047,8 @@ File: tikzlibrarypositioning.code.tex 2023-01-15 v3.1.10 (3.1.10)
 )
 (/usr/local/texlive/2024/texmf-dist/tex/latex/makecell/makecell.sty
 Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
-\rotheadsize=\dimen327
-\c@nlinenum=\count375
+\rotheadsize=\dimen350
+\c@nlinenum=\count379
 \TeXr@lab=\toks53
 ))
 (./ThermoMechanicsPaper.aux
@@ -1013,16 +1092,16 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 5.
 LaTeX Font Info:    ... okay on input line 5.
  (/usr/local/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count376
-\scratchdimen=\dimen328
-\scratchbox=\box110
-\nofMPsegments=\count377
-\nofMParguments=\count378
+\scratchcounter=\count380
+\scratchdimen=\dimen351
+\scratchbox=\box111
+\nofMPsegments=\count381
+\nofMParguments=\count382
 \everyMPshowfont=\toks54
-\MPscratchCnt=\count379
-\MPscratchDim=\dimen329
-\MPnumerator=\count380
-\makeMPintoPDFobject=\count381
+\MPscratchCnt=\count383
+\MPscratchDim=\dimen352
+\MPnumerator=\count384
+\makeMPintoPDFobject=\count385
 \everyMPtoPDFconversion=\toks55
 )
 *geometry* driver: auto-detecting
@@ -2136,23 +2215,26 @@ x 742.775pt>
 [55]
 
 [56] (./section/07_conclusion.tex) (./NeuralNetwork.tex
-<Figures/NeuralNetworkStudy/R2_Coord1.pdf, id=336, 602.25pt x 401.5pt>
-<Figures/NeuralNetworkStudy/R2_Coord3.pdf, id=337, 602.25pt x 401.5pt>
-
 
 [57
 
 ]
+<Figures/NeuralNetworkStudy/R2_Coord1.pdf, id=339, 602.25pt x 401.5pt>
+<Figures/NeuralNetworkStudy/R2_Coord3.pdf, id=340, 602.25pt x 401.5pt>
 <Figures/NeuralNetworkStudy/Loss_1.pdf, id=341, 602.25pt x 401.5pt>
 ) (./acknowledgement.tex)
 
-[58] (./section/12_Appendix_entropy_based_formulation.tex
+[58]
+
+[59]
+
+[60] (./section/12_Appendix_entropy_based_formulation.tex
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-59 undefined on input line 3.
+61 undefined on input line 3.
 
 
-LaTeX Warning: Reference `eqn:local form energy our format' on page 59 undefine
+LaTeX Warning: Reference `eqn:local form energy our format' on page 61 undefine
 d on input line 19.
 
 
@@ -2161,75 +2243,75 @@ Overfull \hbox (20.11949pt too wide) detected at line 31
  []
 
 
-LaTeX Warning: Reference `eqn:DDC' on page 59 undefined on input line 44.
+LaTeX Warning: Reference `eqn:DDC' on page 61 undefined on input line 44.
 
 
-LaTeX Warning: Reference `sec:discrete form linear momentum' on page 59 undefin
+LaTeX Warning: Reference `sec:discrete form linear momentum' on page 61 undefin
 ed on input line 45.
 
 
-LaTeX Warning: Reference `eqn:discrete form angular momentum' on page 59 undefi
+LaTeX Warning: Reference `eqn:discrete form angular momentum' on page 61 undefi
 ned on input line 45.
 
 
-LaTeX Warning: Reference `eqn:directionality property' on page 59 undefined on 
+LaTeX Warning: Reference `eqn:directionality property' on page 61 undefined on 
 input line 57.
 
 
-LaTeX Warning: Reference `conservation of energy discrete V' on page 59 undefin
+LaTeX Warning: Reference `conservation of energy discrete V' on page 61 undefin
 ed on input line 78.
 
 
-LaTeX Warning: Reference `sec:constitutive models' on page 59 undefined on inpu
+LaTeX Warning: Reference `sec:constitutive models' on page 61 undefined on inpu
 t line 78.
 
 
-LaTeX Warning: Reference `eqn:additive decomposition internal energy' on page 5
-9 undefined on input line 78.
+LaTeX Warning: Reference `eqn:additive decomposition internal energy' on page 6
+1 undefined on input line 78.
 
 
-LaTeX Warning: Reference `eqn:explicit internal energy' on page 59 undefined on
+LaTeX Warning: Reference `eqn:explicit internal energy' on page 61 undefined on
  input line 78.
 
 
 
-[59])
+[61])
 
-[60] (./section/10_Appendix_truncation.tex
+[62] (./section/10_Appendix_truncation.tex
 
 LaTeX Warning: Reference `eqn:approximated expression for DWdeltavarphi' on pag
-e 61 undefined on input line 5.
+e 63 undefined on input line 5.
 
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-61 undefined on input line 5.
+63 undefined on input line 5.
 
 
 
-[61]
+[63]
 
-LaTeX Warning: Reference `eqn:MR' on page 62 undefined on input line 172.
-
-
-LaTeX Warning: Reference `eqn:MRv2' on page 62 undefined on input line 172.
+LaTeX Warning: Reference `eqn:MR' on page 64 undefined on input line 172.
 
 
-LaTeX Warning: Reference `eqn:directionality property' on page 62 undefined on 
+LaTeX Warning: Reference `eqn:MRv2' on page 64 undefined on input line 172.
+
+
+LaTeX Warning: Reference `eqn:directionality property' on page 64 undefined on 
 input line 183.
 
 
-LaTeX Warning: Reference `eqn:directionality property' on page 62 undefined on 
+LaTeX Warning: Reference `eqn:directionality property' on page 64 undefined on 
 input line 183.
 
 
 
-[62]
+[64]
 
 LaTeX Warning: Reference `eqn:definition of the discrete derivatives' on page 6
-3 undefined on input line 223.
+5 undefined on input line 223.
 
 
-LaTeX Warning: Reference `eqn:directional derivatives C' on page 63 undefined o
+LaTeX Warning: Reference `eqn:directional derivatives C' on page 65 undefined o
 n input line 308.
 
 
@@ -2239,77 +2321,77 @@ Overfull \hbox (0.31096pt too wide) detected at line 358
 
 
 
-[63])
+[65])
 
-[64] (./section/11_Appendix_Betsch_formulation.tex
+[66] (./section/11_Appendix_Betsch_formulation.tex
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-65 undefined on input line 3.
+67 undefined on input line 3.
 
 
-LaTeX Warning: Reference `eqn:DDC' on page 65 undefined on input line 28.
+LaTeX Warning: Reference `eqn:DDC' on page 67 undefined on input line 28.
 
 
-LaTeX Warning: Reference `eqn:Legendre transform' on page 65 undefined on input
+LaTeX Warning: Reference `eqn:Legendre transform' on page 67 undefined on input
  line 28.
 
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-65 undefined on input line 34.
+67 undefined on input line 34.
 
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-65 undefined on input line 42.
+67 undefined on input line 42.
 
 
-LaTeX Warning: Reference `eqn:local form energy our format' on page 65 undefine
+LaTeX Warning: Reference `eqn:local form energy our format' on page 67 undefine
 d on input line 42.
 
 
 LaTeX Warning: Reference `eqn:approximated expression for DWdeltavarphi' on pag
-e 65 undefined on input line 44.
+e 67 undefined on input line 44.
 
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-65 undefined on input line 44.
+67 undefined on input line 44.
 
 
 LaTeX Warning: Reference `eqn:approximated expression for DWdeltavarphi' on pag
-e 65 undefined on input line 44.
+e 67 undefined on input line 44.
 
 
 LaTeX Warning: Reference `eqn:weak forms for proposed time integrator' on page 
-65 undefined on input line 46.
+67 undefined on input line 46.
 
 
-LaTeX Warning: Reference `eqn:MRv2' on page 65 undefined on input line 48.
+LaTeX Warning: Reference `eqn:MRv2' on page 67 undefined on input line 48.
 
 
-LaTeX Warning: Reference `eqn:thermal contribution' on page 65 undefined on inp
+LaTeX Warning: Reference `eqn:thermal contribution' on page 67 undefined on inp
 ut line 48.
 
 
-LaTeX Warning: Reference `eqn:coupled contribution' on page 65 undefined on inp
+LaTeX Warning: Reference `eqn:coupled contribution' on page 67 undefined on inp
 ut line 48.
 
 )
 
-[65] (./section/13_Appendix_constitutive_model.tex
+[67] (./section/13_Appendix_constitutive_model.tex
 
-LaTeX Warning: Reference `sec:constitutive models' on page 66 undefined on inpu
+LaTeX Warning: Reference `sec:constitutive models' on page 68 undefined on inpu
 t line 1.
 
 )
 
-[66] (./ThermoMechanicsPaper.bbl
+[68] (./ThermoMechanicsPaper.bbl
 
-[67])
+[69])
 
 Package natbib Warning: There were undefined citations.
 
 
 
-[68] (./ThermoMechanicsPaper.aux)
+[70] (./ThermoMechanicsPaper.aux)
  ***********
 LaTeX2e <2024-06-01> patch level 2
 L3 programming layer <2024-08-30>
@@ -2323,13 +2405,13 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 26468 strings out of 473579
- 590864 string characters out of 5728234
- 991047 words of memory out of 5000000
- 48790 multiletter control sequences out of 15000+600000
+ 44909 strings out of 473579
+ 1146774 string characters out of 5728234
+ 1800992 words of memory out of 5000000
+ 67162 multiletter control sequences out of 15000+600000
  587959 words of font info for 124 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 89i,25n,96p,1836b,557s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 89i,25n,96p,1836b,815s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbsy10.pf
 b></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmbsy
 8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10
@@ -2366,15 +2448,16 @@ ve/2024/texmf-dist/fonts/type1/public/cm-super/sfrm0600.pfb></usr/local/texlive
 /2024/texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb></usr/local/texlive/2
 024/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb></usr/local/texlive/202
 4/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb></usr/local/texlive/2024/
-texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2024/te
-xmf-dist/fonts/type1/public/cm-super/sfrm1728.pfb></usr/local/texlive/2024/texm
-f-dist/fonts/type1/public/cm-super/sfti1000.pfb></usr/local/texlive/2024/texmf-
-dist/fonts/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2024/texmf-di
-st/fonts/type1/public/cm-super/sftt1200.pfb>
-Output written on ThermoMechanicsPaper.pdf (68 pages, 786382 bytes).
+texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/2024/te
+xmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb></usr/local/texlive/2024/texm
+f-dist/fonts/type1/public/cm-super/sfrm1728.pfb></usr/local/texlive/2024/texmf-
+dist/fonts/type1/public/cm-super/sfti1000.pfb></usr/local/texlive/2024/texmf-di
+st/fonts/type1/public/cm-super/sfti1200.pfb></usr/local/texlive/2024/texmf-dist
+/fonts/type1/public/cm-super/sftt1200.pfb>
+Output written on ThermoMechanicsPaper.pdf (70 pages, 809661 bytes).
 PDF statistics:
- 552 PDF objects out of 1000 (max. 8388607)
- 282 compressed objects within 3 object streams
+ 563 PDF objects out of 1000 (max. 8388607)
+ 289 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
  578 words of extra memory for PDF output out of 10000 (max. 10000000)
 

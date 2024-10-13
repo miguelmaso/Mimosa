@@ -34,9 +34,9 @@ def write_contents_to_file(contents, output_file):
             outfile.write("\t".join(row) + "\n")
 
 def main():
-    base_directory = '/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/DataEngineering/Complex_Potential ["0.3", "0.042", "0.222", "0.282", "0.246", "0.09", "0.198", "0.126", "0.294", "0.162", "0.018", "0.078", "0.066", "0.114", "0.138", "0.114", "0.294", "0.006", "0.114", "0.21"]'  # Change this to your target directory
-    filenames_output_file = 'filenames_output.txt'  # Output file for filenames without extensions
-    contents_output_file = 'contents_output.txt'  # Output file for contents array
+    base_directory = '/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/DataEngineering/DataForFETrajectory/Potential ["0.258", "0.234", "0.3", "0.018"]'
+    filenames_output_file = 'filenames_output_FE_Trajectory.txt'  # Output file for filenames without extensions
+    contents_output_file = 'contents_output_FE_Trajectory.txt'  # Output file for contents array
     
     filenames, contents = find_txt_files(base_directory)
     
