@@ -4,8 +4,15 @@
 
 using Flux
 using JSON
-using DelimitedFiles
+using Flux: train!
+using Statistics
 using Plots
+using Zygote
+using DelimitedFiles
+using LinearAlgebra
+using Random
+using IterTools
+
 theme(:wong2,fontfamily="Courier")
 
 cd("/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/NN_parametric_run")
@@ -98,13 +105,43 @@ cd("/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/ParsingScripts")
 #---------------------------------------
 # Import a load and results combination
 #---------------------------------------
-x_train::Matrix{Float64} = readdlm("filenames_parsed_FE_Trajectory.txt")
-y_train::Matrix{Float64} = readdlm("contents_output_FE_Trajectory.txt")
-
+x_train_subset::Matrix{Float64} = readdlm("filenames_parsed_FE_Trajectory.txt")
+x_train::Matrix{Float64} = readdlm("filenames_parsed.txt")
+y_train_subset::Matrix{Float64} = readdlm("contents_output_FE_Trajectory.txt")
+y_train::Matrix{Float64} = readdlm("contents_output.txt")
 n_nodes   =  size(y_train,1)
 y_train₁  =  y_train[1:3:n_nodes,:]
 y_train₂  =  y_train[2:3:n_nodes,:]
 y_train₃  =  y_train[3:3:n_nodes,:]
+
+
+# I will use the whole training available for the normalization. However, I will select only a subset of those, which correspond to a potential and its loadsteps
+# for the trajectory plotting. To select a subset of the available training data, I will retrieve the indices of the whole training that match to those of the potential and its loadsteps that I chose
+function find_matching_rows(small_matrix, big_matrix)
+    # Ensure both matrices have the same number of columns
+    if size(small_matrix, 2) != size(big_matrix, 2)
+        error("Both matrices must have the same number of columns.")
+    end
+    
+    # Initialize an empty array to store matching row indices
+    matching_indices = []
+
+    # Iterate over rows of the big matrix
+    for i in 1:size(big_matrix, 1)
+        # Check if the current row of the big matrix matches any row in the small matrix
+        for j in 1:size(small_matrix, 1)
+            if big_matrix[i, :] == small_matrix[j, :]
+                push!(matching_indices, i)  # Save the index of the matching row
+            end
+        end
+    end
+
+    return matching_indices
+end
+
+
+comparing_index = find_matching_rows(x_train_subset,x_train)
+
 
 x_train_whole= x_train'
 y_train₁_whole= y_train₁
@@ -120,7 +157,7 @@ function normalise(row::Vector)
     end
   return scaled
 end
-
+#TODO Hacer la funcion desescalada; o sea, desescalar la funcion normalise
 # Recheck, only for my own clarification, how the training is defined (im not clear about the epochs and iterations)
 x_train_norm = x_train_whole
 y_train₁_norm_old = reshape(normalise(y_train₁_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
@@ -129,34 +166,69 @@ y_train₃_norm_old = reshape(normalise(y_train₃_whole[:]),size(y_train₁_who
 y_train₃_norm = map(x -> Float64(x), y_train₃_norm_old)
 
 
-y_train₁_eval = y_train₁_norm[nodes_indices,:]
-y_train₃_eval = y_train₃_norm[nodes_indices,:]
+y_train₁_eval = y_train₁_norm[nodes_indices,comparing_index]
+y_train₃_eval = y_train₃_norm[nodes_indices,comparing_index]
 y_train_eval = vcat(y_train₁_eval,y_train₃_eval)
+x_train_subset = x_train[comparing_index,:]
 
 
 # Let's take one point to plot its trajectory. First, we need to order the data in asceding order on the potential (x_train) and apply that to the results. It is not like that by default
 # The distance that we plot should be either the norm, or Coord1 and Coord3 separately.
-y_predicted = model(x_train')
+y_predicted = model(x_train_subset')
 y_fromFE    = y_train_eval
 
+function R2Function(actual_values, predicted_values) 
+    dims           =  ndims(actual_values)
+
+        
+    if dims==1
+       mean_actual    =  mean(actual_values, dims=dims)
+       SS_res         =  sum((actual_values[:] - predicted_values[:]).^2)
+       SS_tot         = sum(((actual_values[:] .- mean_actual).^2))
+    else
+        mean_actual    =  mean(actual_values, dims=dims)
+        matrix         =  (actual_values .- predicted_values).^2
+
+        SS_res         =  sum([norm(matrix[:, i]) for i in 1:size(matrix, 2)])
+        matrix         =  (actual_values .- mean_actual).^2
+        SS_tot         = sum([norm(matrix[:, i]) for i in 1:size(matrix, 2)])
+     end
+    R2             = 1   - SS_res / SS_tot
+    return R2
+end
+
+R2_test = R2Function(vec(y_fromFE),vec(y_predicted))
 #---------------------
 # Trajectory plotting
 #---------------------
 
 # Sort x_train in ascending order and apply that to the displacements from FE and predicted
-sorted_indices = sortperm(eachrow(x_train))
+sorted_indices = sortperm(eachrow(x_train_subset))
 
 y_fromFE_sorted = y_fromFE[:,sorted_indices]
 y_predicted_sorted = y_predicted[:,sorted_indices]
 
+#y_fromFE_sorted = y_fromFE
+#y_predicted_sorted = y_predicted
 
 # We need to take one point; ie: the 5 point. And we need to take Coord1 and Coord3 of that point 
 Chosen_Point = 2 
-
+# TODO Verify the sorting. It looks weird even though the R2 and the unsorted output looks great 
+# TODO Plot the R2 as defined with Rogelio: Separo el desplazameiento en 2 matrices de 10x20k, para la prediccion y el FEM. Ahora coges esas matrices y las deshaces en un solo vector de 4800 componentes.
+# TODO A ese vector le haces el sorting como estabas haciendo en CurveGeneration.jl y lo ploteas
 Coord1_y_from_FE_sorted_point = y_fromFE_sorted[Chosen_Point,:]
-Coord3_y_from_FE_sorted_point = y_fromFE_sorted[Chosen_Point+10,:]
+Coord1_y_from_FE_sorted_point = y_fromFE_sorted[1:10,:]
+Coord3_y_from_FE_sorted_point = y_fromFE_sorted[Chosen_Point.+10,:]
+Coord3_y_from_FE_sorted_point = y_fromFE_sorted[11:20,:]
+Coord1_y_predicted_sorted_point = y_predicted_sorted[1:10,:]
 Coord1_y_predicted_sorted_point = y_predicted_sorted[Chosen_Point,:]
+Coord3_y_predicted_sorted_point = y_predicted_sorted[11:20,:]
 Coord3_y_predicted_sorted_point = y_predicted_sorted[Chosen_Point+10,:]
 
-plot(Coord3_y_from_FE_sorted_point)
-plot!(Coord3_y_predicted_sorted_point)
+plot(Coord3_y_from_FE_sorted_point[1:100])
+plot!(Coord3_y_predicted_sorted_point[1:100])
+
+
+
+plot(Coord1_y_from_FE_sorted_point)
+plot!(Coord1_y_predicted_sorted_point)

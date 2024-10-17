@@ -133,7 +133,8 @@ y_train₁_eval = y_train₁_norm[nodes_indices,:]
 y_train₃_eval = y_train₃_norm[nodes_indices,:]
 y_train_eval = vcat(y_train₁_eval,y_train₃_eval)
 
-Test_point = 18673
+#Test_point = 18673
+Test_point = 15
 validate = Test_point ∈ experiment_indices
 if validate == true
     error("The test point belongs to the training")
