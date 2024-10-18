@@ -139,8 +139,10 @@ validate = Test_point ∈ experiment_indices
 if validate == true
     error("The test point belongs to the training")
 end
-y_predicted = model(x_train[Test_point,:])
-y_fromFE    = y_train_eval[:,Test_point]
+#y_predicted = model(x_train[Test_point,:])
+y_predicted = model(x_train')
+#y_fromFE    = y_train_eval[:,Test_point]
+y_fromFE    = y_train_eval
 
 function sort_and_apply_indices(original_arr, apply_arr)
     # Create a copy of the original array
@@ -161,23 +163,25 @@ function sort_and_apply_indices(original_arr, apply_arr)
     return sorted_arr, indices_changed, result_arr
 end
 
-Coord1_y_predicted = y_predicted[1:10]
-Coord2_y_predicted = y_predicted[11:20]
-Coord1_y_fromFE = y_fromFE[1:10]
-Coord2_y_fromFE = y_fromFE[11:20]
+# TODO Unravel the whole vector and use that to plot the R2
+#Coord1_y_predicted = vec(y_predicted[1:10,:])
+Coord1_y_predicted = vec(y_predicted)
+Coord2_y_predicted = vec(y_predicted[11:20,:])
+#Coord1_y_fromFE = vec(y_fromFE[1:10,:])
+Coord1_y_fromFE = vec(y_fromFE)
+Coord2_y_fromFE = vec(y_fromFE[11:20,:])
 
 sorted_Coord1_y_fromFE, indices_Coord1_y_fromFE, sorted_Coord1_y_predicted = sort_and_apply_indices(Coord1_y_fromFE, Coord1_y_predicted)
 sorted_Coord2_y_fromFE, indices_Coord2_y_fromFE, sorted_Coord2_y_predicted = sort_and_apply_indices(Coord2_y_fromFE, Coord2_y_predicted)
 # Coordinate 1 values
-# TODO So, it really depends on the experiment that you choose to evaluate against. IE: if we choose experiment 1558 (which was in the training), it gives a great result, obviously
-# TODO Compare the R2 of the others
 
-plot([sorted_Coord1_y_fromFE[1],sorted_Coord1_y_fromFE[end]],[sorted_Coord1_y_predicted[1],sorted_Coord1_y_predicted[end]],label="R2",linestyle=:dash,linewidth=4)
-plot!(sorted_Coord1_y_fromFE,sorted_Coord1_y_predicted,seriestype=:scatter, markersize=6, markershape=:square,label="Displacement in Coord1",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
-savefig("R2_Coord1.pdf")
+
+plot!([sorted_Coord1_y_fromFE[1],sorted_Coord1_y_fromFE[end]],[sorted_Coord1_y_predicted[1],sorted_Coord1_y_predicted[end]],label="R2",linestyle=:dash,linewidth=4)
+plot(sorted_Coord1_y_fromFE,sorted_Coord1_y_predicted,seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord1",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
+savefig("R2_Coord1_test.pdf")
 # Coordinate 3 values
-plot([sorted_Coord2_y_fromFE[1],sorted_Coord2_y_fromFE[end]],[sorted_Coord2_y_predicted[1],sorted_Coord2_y_predicted[end]],label="R2",linestyle=:dash,linewidth=4)
-plot!(sorted_Coord2_y_fromFE,sorted_Coord2_y_predicted,seriestype=:scatter, markersize=6, markershape=:square,label="Displacement in Coord3",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
+plot!([sorted_Coord2_y_fromFE[1],sorted_Coord2_y_fromFE[end]],[sorted_Coord2_y_predicted[1],sorted_Coord2_y_predicted[end]],label="R2",linestyle=:dash,linewidth=4)
+plot(sorted_Coord2_y_fromFE,sorted_Coord2_y_predicted,seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord3",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
 savefig("R2_Coord3.pdf")
 plot(Losses, linewidth=3,label="", xlabel="Nº Iterations",ylabel="Loss values",legendfontsize=8,tickfontsize=9,guidefontsize=9)
 savefig("Loss.pdf")

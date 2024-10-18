@@ -197,7 +197,7 @@ function R2Function(actual_values, predicted_values)
     return R2
 end
 
-R2_test = R2Function(vec(y_fromFE),vec(y_predicted))
+R2_test = R2Function(vec(y_fromFE),vec(y_predicted))# Just to check that we are importing and treating the data properly. Since the point is from the training, the R2 should be high
 #---------------------
 # Trajectory plotting
 #---------------------
@@ -225,9 +225,11 @@ Coord1_y_predicted_sorted_point = y_predicted_sorted[Chosen_Point,:]
 Coord3_y_predicted_sorted_point = y_predicted_sorted[11:20,:]
 Coord3_y_predicted_sorted_point = y_predicted_sorted[Chosen_Point+10,:]
 
-plot(Coord3_y_from_FE_sorted_point[1:100])
-plot!(Coord3_y_predicted_sorted_point[1:100])
+plot(Coord1_y_from_FE_sorted_point[1:end],seriestype=:scatter,markersize=2)
+plot!(Coord1_y_predicted_sorted_point[1:end],seriestype=:scatter,markersize=2)
 
+plot(y_fromFE_sorted[1:end],seriestype=:scatter,markersize=2)
+plot!(y_predicted_sorted[1:end],seriestype=:scatter,markersize=2)
 
 
 plot(Coord1_y_from_FE_sorted_point)
