@@ -16,7 +16,7 @@ using Base.Threads
 #mesh_file = "../examples/ex6/parametrize_plate_elec.msh"
 mesh_file = joinpath(dirname(@__FILE__), "parametrize_plate_elec.msh")
 
-result_folder = "./results/Data_Results/"
+result_folder = "./results/FE_Results/"
 setupfolder(result_folder)
 # Material parameters
 const λ = 10.0
@@ -168,9 +168,9 @@ function CompactCall(input_potential::Vector, folder_name)
         if (flag == true)
             #writevtk(Ωₕ, "results/ex10/results_$(loadinc)", cellfields=["uh" => ph[1], "phi" => ph[2]])
             if (target_gen == 1)
-            #pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Target_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
+            pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Target_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
             else
-            #pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Opti_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
+            pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Opti_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
             end
             return get_free_dof_values(ph), cache, flag
         else
@@ -252,17 +252,13 @@ end
 #     CompactCall(vec[1],vec[2])
 # end
 
-
-# Just choose one potential to evaluate
-CompactCall([0.3,0.006,0.042,0.174],"FETrajectory")
-# for column in range(1,size(input)[2])
-#     vector = input[:,column]
-#     print(vector)
-#     folder_name = string.(vector)
-#     mkdir("Potential $folder_name")
-#     CompactCall(vector, folder_name); # Running in 20 steps. If there are no cutbacks, we should end up with 4000 results
-
-# end
+mkdir("Results FE Trajectory Paraview")
+input =[0.258,0.234,0.3,0.018]
+    vector = input
+    print(vector)
+    folder_name = string.(vector)
+    mkdir("Potential $folder_name")
+    CompactCall(vector, folder_name); # Running in 20 steps. If there are no cutbacks, we should end up with 4000 results
 
 
 # for column in range(1,size(input)[2])

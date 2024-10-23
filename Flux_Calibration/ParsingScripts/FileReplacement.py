@@ -1,7 +1,7 @@
-with open('filenames_output_FE_Trajectory.txt', 'r') as file:
+with open('filenames_output_FE_Trajectory_New.txt', 'r') as file:
     lines = file.readlines()
 
-with open('filenames_parsed_FE_Trajectory.txt', 'w') as file:
+with open('filenames_parsed_FE_Trajectory_New.txt', 'w') as file:
     for line in lines:
         line = line.strip()  # Remove leading/trailing whitespaces
         line = line.replace('[', '')  # Remove opening square bracket

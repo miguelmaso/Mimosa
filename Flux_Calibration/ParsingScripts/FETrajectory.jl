@@ -105,9 +105,11 @@ cd("/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/ParsingScripts")
 #---------------------------------------
 # Import a load and results combination
 #---------------------------------------
-x_train_subset::Matrix{Float64} = readdlm("filenames_parsed_FE_Trajectory.txt")
+x_train_subset::Matrix{Float64} = readdlm("filenames_parsed_FE_Trajectory_New.txt")
+#x_train_subset::Matrix{Float64} = readdlm("filenames_parsed_FE_Trajectory.txt")
 x_train::Matrix{Float64} = readdlm("filenames_parsed.txt")
-y_train_subset::Matrix{Float64} = readdlm("contents_output_FE_Trajectory.txt")
+y_train_subset::Matrix{Float64} = readdlm("contents_output_FE_Trajectory_New.txt")
+#y_train_subset::Matrix{Float64} = readdlm("contents_output_FE_Trajectory.txt")
 y_train::Matrix{Float64} = readdlm("contents_output.txt")
 n_nodes   =  size(y_train,1)
 y_train₁  =  y_train[1:3:n_nodes,:]
@@ -213,9 +215,6 @@ y_predicted_sorted = y_predicted[:,sorted_indices]
 
 # We need to take one point; ie: the 5 point. And we need to take Coord1 and Coord3 of that point 
 Chosen_Point = 2 
-# TODO Verify the sorting. It looks weird even though the R2 and the unsorted output looks great 
-# TODO Plot the R2 as defined with Rogelio: Separo el desplazameiento en 2 matrices de 10x20k, para la prediccion y el FEM. Ahora coges esas matrices y las deshaces en un solo vector de 4800 componentes.
-# TODO A ese vector le haces el sorting como estabas haciendo en CurveGeneration.jl y lo ploteas
 Coord1_y_from_FE_sorted_point = y_fromFE_sorted[Chosen_Point,:]
 Coord1_y_from_FE_sorted_point = y_fromFE_sorted[1:10,:]
 Coord3_y_from_FE_sorted_point = y_fromFE_sorted[Chosen_Point.+10,:]
