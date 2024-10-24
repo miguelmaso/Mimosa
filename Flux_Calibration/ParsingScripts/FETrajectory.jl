@@ -214,22 +214,35 @@ y_predicted_sorted = y_predicted[:,sorted_indices]
 #y_predicted_sorted = y_predicted
 
 # We need to take one point; ie: the 5 point. And we need to take Coord1 and Coord3 of that point 
-Chosen_Point = 2 
-Coord1_y_from_FE_sorted_point = y_fromFE_sorted[Chosen_Point,:]
 Coord1_y_from_FE_sorted_point = y_fromFE_sorted[1:10,:]
-Coord3_y_from_FE_sorted_point = y_fromFE_sorted[Chosen_Point.+10,:]
 Coord3_y_from_FE_sorted_point = y_fromFE_sorted[11:20,:]
 Coord1_y_predicted_sorted_point = y_predicted_sorted[1:10,:]
-Coord1_y_predicted_sorted_point = y_predicted_sorted[Chosen_Point,:]
 Coord3_y_predicted_sorted_point = y_predicted_sorted[11:20,:]
-Coord3_y_predicted_sorted_point = y_predicted_sorted[Chosen_Point+10,:]
 
-plot(Coord1_y_from_FE_sorted_point[1:end],seriestype=:scatter,markersize=2)
-plot!(Coord1_y_predicted_sorted_point[1:end],seriestype=:scatter,markersize=2)
-
+# Plot per coordinate
+plot(Coord3_y_from_FE_sorted_point[1:end],seriestype=:scatter,markersize=2)
+plot!(Coord3_y_predicted_sorted_point[1:end],seriestype=:scatter,markersize=2)
+# Plot everything together
 plot(y_fromFE_sorted[1:end],seriestype=:scatter,markersize=2)
 plot!(y_predicted_sorted[1:end],seriestype=:scatter,markersize=2)
 
+# Data to Paraview CSV plotting
+# We need to de-scale the data back
 
-plot(Coord1_y_from_FE_sorted_point)
-plot!(Coord1_y_predicted_sorted_point)
+function denormalise(row::Vector,original_array)
+    min = minimum(original_array)
+    max = maximum(original_array)
+    scaled = []
+    for i in range(1,size(row,1))
+        scaled  = append!(scaled,min + (max-min)*row[i])
+    end
+  return scaled
+end
+
+# We are selecting only 1 point, the first one
+Coord1_y_predicted_sorted_point_descaled = denormalise(Coord1_y_predicted_sorted_point[1,:],y_train₁_whole[:])
+Coord3_y_predicted_sorted_point_descaled = denormalise(Coord3_y_predicted_sorted_point[1,:],y_train₃_whole[:])
+
+# Make sure that, when plotting,the point coordinates start from point 41 (you have to shift 22.2mm the X values)
+# TODO Something is wrong with the points in the csv
+writedlm("PlottingTrajectoryParaview.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+22.2,Coord3_y_predicted_sorted_point_descaled),",")
