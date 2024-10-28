@@ -243,6 +243,10 @@ end
 Coord1_y_predicted_sorted_point_descaled = denormalise(Coord1_y_predicted_sorted_point[1,:],y_train₁_whole[:])
 Coord3_y_predicted_sorted_point_descaled = denormalise(Coord3_y_predicted_sorted_point[1,:],y_train₃_whole[:])
 
-# Make sure that, when plotting,the point coordinates start from point 41 (you have to shift 22.2mm the X values)
-# TODO Something is wrong with the points in the csv
-writedlm("PlottingTrajectoryParaview.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+22.2,Coord3_y_predicted_sorted_point_descaled),",")
+# TODO There is an error in the descaling. Instead of using y_train₁_whole or y_train₃_whole, use the y_train₁_subset; otherwise there is a huge negative number that basically nullifies the scaling
+# We have to add the material coordinates to the result values that we get from the ML
+# It is stored in the mat_coords.txt file, which holds the material coordinates for every point in the surface
+mat_coords = readdlm("mat_coords.txt")
+mat_coords_reshape = reshape(mat_coords,3,133)
+Point_41_MatCoords = mat_coords_reshape[:,41]
+writedlm("PlottingTrajectoryParaview.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_41_MatCoords[1],zeros(480).+Point_41_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_41_MatCoords[3]),",")
