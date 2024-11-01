@@ -159,7 +159,6 @@ function normalise(row::Vector)
     end
   return scaled
 end
-#TODO Hacer la funcion desescalada; o sea, desescalar la funcion normalise
 # Recheck, only for my own clarification, how the training is defined (im not clear about the epochs and iterations)
 x_train_norm = x_train_whole
 y_train₁_norm_old = reshape(normalise(y_train₁_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
@@ -243,9 +242,11 @@ end
 Coord1_y_predicted_sorted_point_descaled = denormalise(Coord1_y_predicted_sorted_point[1,:],y_train₁_whole[:])
 Coord3_y_predicted_sorted_point_descaled = denormalise(Coord3_y_predicted_sorted_point[1,:],y_train₃_whole[:])
 
-# TODO There is an error in the descaling. Instead of using y_train₁_whole or y_train₃_whole, use the y_train₁_subset; otherwise there is a huge negative number that basically nullifies the scaling
 # We have to add the material coordinates to the result values that we get from the ML
 # It is stored in the mat_coords.txt file, which holds the material coordinates for every point in the surface
+
+# TODO The scaling works great. There is a mistake in the FE generation. The maximum in Paraview is not the same as the maximum that is stored in the contents_output_FE_Trajectory.txt
+# TODO plus, there number of files generated during the FE generation (480) is NOT the same as the number of VTUs generated (531)
 mat_coords = readdlm("mat_coords.txt")
 mat_coords_reshape = reshape(mat_coords,3,133)
 Point_41_MatCoords = mat_coords_reshape[:,41]
