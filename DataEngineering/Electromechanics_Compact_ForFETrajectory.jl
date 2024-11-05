@@ -16,7 +16,7 @@ using Base.Threads
 #mesh_file = "../examples/ex6/parametrize_plate_elec.msh"
 mesh_file = joinpath(dirname(@__FILE__), "parametrize_plate_elec.msh")
 
-result_folder = "./results/FE_Results/"
+result_folder = "./results/FE_Results_V2/"
 setupfolder(result_folder)
 # Material parameters
 const λ = 10.0
@@ -137,7 +137,7 @@ function CompactCall(input_potential::Vector, folder_name)
                 ∇(vφ)' ⋅ ((∂Ψφφ ∘ (∇(u)', ∇(φ))) ⋅ ∇(dφ))) * dΩ
     end
 
-    function StateEquationIter(target_gen, x0, ϕ_app, loadinc, ndofm, cache)
+    function StateEquationIter(target_gen, x0, ϕ_app, loadinc, ndofm, cache,filename_paraview)
         #----------------------------------------------
         #Define trial FESpaces from Dirichlet values
         #----------------------------------------------
@@ -168,7 +168,7 @@ function CompactCall(input_potential::Vector, folder_name)
         if (flag == true)
             #writevtk(Ωₕ, "results/ex10/results_$(loadinc)", cellfields=["uh" => ph[1], "phi" => ph[2]])
             if (target_gen == 1)
-            pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Target_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
+            pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Target_$filename_paraview.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
             else
             pvd_results[loadinc] = createvtk(Ωₕ,result_folder * "Opti_0$loadinc.vtu", cellfields=["uh" => ph[1], "phi" => ph[2]],order=2)
             end
@@ -189,7 +189,8 @@ function CompactCall(input_potential::Vector, folder_name)
         while Λ < 1.0 - 1e-6
             Λ += Λ_inc
             Λ = min(1.0, Λ)
-            x0, cache, flag  = StateEquationIter(target_gen, x0,Λ*ϕ_app, loadinc, fem_params.ndofm, cache)
+            filename_paraview = string.(round.(Λ*ϕ_app,digits=4))
+            x0, cache, flag  = StateEquationIter(target_gen, x0,Λ*ϕ_app, loadinc, fem_params.ndofm, cache,filename_paraview)
             if (flag == true)
                 u_Fe_Function = FEFunction(fem_params.Uuv, x0[1:fem_params.ndofm]) # Convierte a una FE
                 u_Projected = interpolate_everywhere(u_Fe_Function, fem_params.Uuˢt1) #Interpola en una superficie la FE
@@ -257,7 +258,7 @@ input =[0.258,0.234,0.3,0.018]
     vector = input
     print(vector)
     folder_name = string.(vector)
-    mkdir("Potential $folder_name")
+    mkdir("V2_Potential $folder_name")
     CompactCall(vector, folder_name); # Running in 20 steps. If there are no cutbacks, we should end up with 4000 results
 
 

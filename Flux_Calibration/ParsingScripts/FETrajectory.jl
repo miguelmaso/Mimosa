@@ -238,16 +238,28 @@ function denormalise(row::Vector,original_array)
   return scaled
 end
 
-# We are selecting only 1 point, the first one
+
+#TODO The descaling and plotting looks good, but there is a problem when positioning this in Paraview (material coordinates might be the issue)
+#TODO plus, if we plot the raw FE data, it fits great, if we translate the data 40mm to the left, which is weird
+#TODO It's weird that the results are projected to 133 nodes, which supposedly are the nodes of one of the top faces (tag 5), but...it doesn thave 133 nodes?
+# We are selecting only 1 point, the first one, which corresponds to Node 41 out of 133 of the face
 Coord1_y_predicted_sorted_point_descaled = denormalise(Coord1_y_predicted_sorted_point[1,:],y_train₁_whole[:])
 Coord3_y_predicted_sorted_point_descaled = denormalise(Coord3_y_predicted_sorted_point[1,:],y_train₃_whole[:])
+Coord1_y_fromFE_sorted_point_descaled = denormalise(Coord1_y_from_FE_sorted_point[1,:],y_train₁_whole[:])
+Coord3_y_fromFE_sorted_point_descaled = denormalise(Coord3_y_from_FE_sorted_point[1,:],y_train₃_whole[:])
 
 # We have to add the material coordinates to the result values that we get from the ML
 # It is stored in the mat_coords.txt file, which holds the material coordinates for every point in the surface
 
-# TODO The scaling works great. There is a mistake in the FE generation. The maximum in Paraview is not the same as the maximum that is stored in the contents_output_FE_Trajectory.txt
-# TODO plus, there number of files generated during the FE generation (480) is NOT the same as the number of VTUs generated (531)
 mat_coords = readdlm("mat_coords.txt")
 mat_coords_reshape = reshape(mat_coords,3,133)
-Point_41_MatCoords = mat_coords_reshape[:,41]
-writedlm("PlottingTrajectoryParaview.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_41_MatCoords[1],zeros(480).+Point_41_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_41_MatCoords[3]),",")
+Point_41_MatCoords = mat_coords_reshape[:,41] # The node 41 corresponds to the first node in the nodes_indices
+writedlm("PlottingTrajectoryParaview.csv", hcat(Coord1_y_fromFE_sorted_point_descaled.+Point_41_MatCoords[1],zeros(480).+Point_41_MatCoords[2],Coord3_y_fromFE_sorted_point_descaled.+Point_41_MatCoords[3]),",")
+
+
+# Lets check by plotting the trajectory of the FE imported to see how it goes against the Paraview
+
+y_train_subset₁  =  y_train_subset[1:3:n_nodes,:]
+y_train_subset₂  =  y_train_subset[2:3:n_nodes,:]
+y_train_subset₃  =  y_train_subset[3:3:n_nodes,:]
+writedlm("PlottingTrajectoryParaview_RawFE.csv", hcat(y_train_subset₁[1,:].+20.0,y_train_subset₂[1,:].+0.0,y_train_subset₃[1,:].+0.8),",")
