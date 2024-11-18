@@ -6,6 +6,7 @@ using Flux
 using JSON
 using DelimitedFiles
 using Plots
+using Statistics
 theme(:wong2,fontfamily="Courier")
 
 cd("/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/NN_parametric_run_corrected_V2")
@@ -98,8 +99,30 @@ cd("/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/ParsingScripts")
 #---------------------------------------
 # Import a load and results combination
 #---------------------------------------
-x_train::Matrix{Float64} = readdlm("filenames_parsed.txt")
-y_train::Matrix{Float64} = readdlm("contents_output.txt")
+
+function remove_data(matrix1,matrix2)
+    failed_rows = []
+    for i in 1:size(matrix1,1)
+        row = matrix1[i,:]
+        if row[1] isa SubString
+            append!(failed_rows,i)
+        end
+    end
+    rows_to_keep = setdiff(1:size(matrix1,1),failed_rows)
+    columns_to_keep = setdiff(1:size(matrix2,2),failed_rows)
+    new_matrix1 = matrix1[rows_to_keep,:]
+    new_matrix2 = matrix2[:,columns_to_keep]
+    return failed_rows, new_matrix1, new_matrix2
+end
+
+input_x_train = readdlm("filenames_parsed_corrected_Rogelio.txt")
+input_y_train = readdlm("contents_output_corrected_Rogelio.txt")
+
+failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
+
+
+#x_train::Matrix{Float64} = readdlm("filenames_parsed.txt")
+#y_train::Matrix{Float64} = readdlm("contents_output.txt")
 
 n_nodes   =  size(y_train,1)
 y_train₁  =  y_train[1:3:n_nodes,:]
@@ -134,11 +157,11 @@ y_train₃_eval = y_train₃_norm[nodes_indices,:]
 y_train_eval = vcat(y_train₁_eval,y_train₃_eval)
 
 #Test_point = 18673
-Test_point = 15
-validate = Test_point ∈ experiment_indices
-if validate == true
-    error("The test point belongs to the training")
-end
+# Test_point = 15
+# validate = Test_point ∈ experiment_indices
+# if validate == true
+#     error("The test point belongs to the training")
+# end
 #y_predicted = model(x_train[Test_point,:])
 y_predicted = model(x_train')
 #y_fromFE    = y_train_eval[:,Test_point]
@@ -163,7 +186,6 @@ function sort_and_apply_indices(original_arr, apply_arr)
     return sorted_arr, indices_changed, result_arr
 end
 
-# TODO Unravel the whole vector and use that to plot the R2
 #Coord1_y_predicted = vec(y_predicted[1:10,:])
 Coord1_y_predicted = vec(y_predicted)
 Coord2_y_predicted = vec(y_predicted[11:20,:])
@@ -174,17 +196,78 @@ Coord2_y_fromFE = vec(y_fromFE[11:20,:])
 sorted_Coord1_y_fromFE, indices_Coord1_y_fromFE, sorted_Coord1_y_predicted = sort_and_apply_indices(Coord1_y_fromFE, Coord1_y_predicted)
 sorted_Coord2_y_fromFE, indices_Coord2_y_fromFE, sorted_Coord2_y_predicted = sort_and_apply_indices(Coord2_y_fromFE, Coord2_y_predicted)
 # Coordinate 1 values
-
+random_indices = rand(1:8000000,400000)
 
 plot!([sorted_Coord1_y_fromFE[1],sorted_Coord1_y_fromFE[end]],[sorted_Coord1_y_predicted[1],sorted_Coord1_y_predicted[end]],label="R2",linestyle=:dash,linewidth=4)
+plot(sorted_Coord1_y_fromFE[random_indices],sorted_Coord1_y_predicted[random_indices],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord1",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
 plot(sorted_Coord1_y_fromFE,sorted_Coord1_y_predicted,seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord1",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
-savefig("R2_Coord1_test.pdf")
+savefig("R2_Coord1_corrected_V2.pdf")
 # Coordinate 3 values
 plot!([sorted_Coord2_y_fromFE[1],sorted_Coord2_y_fromFE[end]],[sorted_Coord2_y_predicted[1],sorted_Coord2_y_predicted[end]],label="R2",linestyle=:dash,linewidth=4)
-plot(sorted_Coord2_y_fromFE,sorted_Coord2_y_predicted,seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord3",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
-savefig("R2_Coord3.pdf")
-plot(Losses, linewidth=3,label="", xlabel="Nº Iterations",ylabel="Loss values",legendfontsize=8,tickfontsize=9,guidefontsize=9)
-savefig("Loss.pdf")
+plot(sorted_Coord2_y_fromFE[random_indices],sorted_Coord2_y_predicted[random_indices],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord3",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
+savefig("R2_Coord3_corrected_V2.pdf")
+plot(log10.(Losses), linewidth=3,label="", xlabel="Nº Iterations",ylabel="Loss values",legendfontsize=8,tickfontsize=9,guidefontsize=9)
+savefig("Loss_corrected_V2.pdf")
 
 
 
+# -------------------------------------
+# Let's plot the trajectory of a point
+# -------------------------------------
+
+function denormalise(row::Vector,original_array)
+    min = minimum(original_array)
+    max = maximum(original_array)
+    scaled = []
+    for i in range(1,size(row,1))
+        scaled  = append!(scaled,min + (max-min)*row[i])
+    end
+  return scaled
+end
+
+function R2Function(actual_values, predicted_values) 
+    dims           =  ndims(actual_values)
+
+        
+    if dims==1
+       mean_actual    =  mean(actual_values, dims=dims)
+       SS_res         =  sum((actual_values[:] - predicted_values[:]).^2)
+       SS_tot         = sum(((actual_values[:] .- mean_actual).^2))
+    else
+        mean_actual    =  mean(actual_values, dims=dims)
+        matrix         =  (actual_values .- predicted_values).^2
+
+        SS_res         =  sum([norm(matrix[:, i]) for i in 1:size(matrix, 2)])
+        matrix         =  (actual_values .- mean_actual).^2
+        SS_tot         = sum([norm(matrix[:, i]) for i in 1:size(matrix, 2)])
+     end
+    R2             = 1   - SS_res / SS_tot
+    return R2
+end
+
+
+R2_test = R2Function(vec(y_fromFE),vec(y_predicted))# Just to check that we are importing and treating the data properly. Since the point is from the training, the R2 should be high
+
+sorted_indices = sortperm(eachrow(x_train))
+
+y_fromFE_sorted = y_fromFE[:,sorted_indices]
+y_predicted_sorted = y_predicted[:,sorted_indices]
+
+
+Coord1_y_from_FE_sorted_point = vec(y_fromFE_sorted[1:200,1:50])
+Coord3_y_from_FE_sorted_point = vec(y_fromFE_sorted[201:400,1:50])
+Coord1_y_predicted_sorted_point = vec(y_predicted_sorted[1:200,1:50])
+Coord3_y_predicted_sorted_point = vec(y_predicted_sorted[201:400,1:50])
+
+# Plot per coordinate
+plot(Coord3_y_from_FE_sorted_point[1:end],seriestype=:scatter,markersize=2)
+plot!(Coord3_y_predicted_sorted_point[1:end],seriestype=:scatter,markersize=2)
+function denormalise(row::Vector,original_array)
+    min = minimum(original_array)
+    max = maximum(original_array)
+    scaled = []
+    for i in range(1,size(row,1))
+        scaled  = append!(scaled,min + (max-min)*row[i])
+    end
+  return scaled
+end
