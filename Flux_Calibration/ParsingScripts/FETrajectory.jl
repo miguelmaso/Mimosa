@@ -254,7 +254,8 @@ Coord3_y_fromFE_sorted_point_descaled = denormalise(Coord3_y_from_FE_sorted_poin
 mat_coords = readdlm("mat_coords.txt")
 mat_coords_reshape = reshape(mat_coords,3,133)
 Point_41_MatCoords = mat_coords_reshape[:,41] # The node 41 corresponds to the first node in the nodes_indices
-writedlm("PlottingTrajectoryParaview.csv", hcat(Coord1_y_fromFE_sorted_point_descaled.+Point_41_MatCoords[1],zeros(480).+Point_41_MatCoords[2],Coord3_y_fromFE_sorted_point_descaled.+Point_41_MatCoords[3]),",")
+writedlm("PlottingTrajectoryParaview_Mat.csv", hcat(Coord1_y_fromFE_sorted_point_descaled.+Point_41_MatCoords[1],zeros(480).+Point_41_MatCoords[2],Coord3_y_fromFE_sorted_point_descaled.+Point_41_MatCoords[3]),",")
+writedlm("PlottingTrajectoryParaview.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_41_MatCoords[1],zeros(480).+Point_41_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_41_MatCoords[3]),",")
 
 
 # Lets check by plotting the trajectory of the FE imported to see how it goes against the Paraview
