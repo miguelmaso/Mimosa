@@ -119,8 +119,32 @@ input_x_train = readdlm("filenames_parsed_corrected_Rogelio.txt")
 input_y_train = readdlm("contents_output_corrected_Rogelio.txt")
 
 failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
+x_train_subset::Matrix{Float64} = readdlm("filenames_parsed_FE_Trajectory_New.txt")
+
+function find_matching_rows(small_matrix, big_matrix)
+    # Ensure both matrices have the same number of columns
+    if size(small_matrix, 2) != size(big_matrix, 2)
+        error("Both matrices must have the same number of columns.")
+    end
+    
+    # Initialize an empty array to store matching row indices
+    matching_indices = []
+
+    # Iterate over rows of the big matrix
+    for i in 1:size(big_matrix, 1)
+        # Check if the current row of the big matrix matches any row in the small matrix
+        for j in 1:size(small_matrix, 1)
+            if big_matrix[i, :] == small_matrix[j, :]
+                push!(matching_indices, i)  # Save the index of the matching row
+            end
+        end
+    end
+
+    return matching_indices
+end
 
 
+comparing_index = find_matching_rows(x_train_subset,x_train)
 #x_train::Matrix{Float64} = readdlm("filenames_parsed.txt")
 #y_train::Matrix{Float64} = readdlm("contents_output.txt")
 
@@ -152,9 +176,10 @@ y_train₃_norm_old = reshape(normalise(y_train₃_whole[:]),size(y_train₁_who
 y_train₃_norm = map(x -> Float64(x), y_train₃_norm_old)
 
 
-y_train₁_eval = y_train₁_norm[nodes_indices,:]
-y_train₃_eval = y_train₃_norm[nodes_indices,:]
+y_train₁_eval = y_train₁_norm[nodes_indices,comparing_index]
+y_train₃_eval = y_train₃_norm[nodes_indices,comparing_index]
 y_train_eval = vcat(y_train₁_eval,y_train₃_eval)
+x_train_subset = x_train[comparing_index,:]
 
 #Test_point = 18673
 # Test_point = 15
@@ -163,7 +188,7 @@ y_train_eval = vcat(y_train₁_eval,y_train₃_eval)
 #     error("The test point belongs to the training")
 # end
 #y_predicted = model(x_train[Test_point,:])
-y_predicted = model(x_train')
+y_predicted = model(x_train_subset')
 #y_fromFE    = y_train_eval[:,Test_point]
 y_fromFE    = y_train_eval
 
@@ -248,16 +273,16 @@ end
 
 R2_test = R2Function(vec(y_fromFE),vec(y_predicted))# Just to check that we are importing and treating the data properly. Since the point is from the training, the R2 should be high
 
-sorted_indices = sortperm(eachrow(x_train))
+sorted_indices = sortperm(eachrow(x_train_subset))
 
 y_fromFE_sorted = y_fromFE[:,sorted_indices]
 y_predicted_sorted = y_predicted[:,sorted_indices]
 
 
-Coord1_y_from_FE_sorted_point = vec(y_fromFE_sorted[1:200,1:50])
-Coord3_y_from_FE_sorted_point = vec(y_fromFE_sorted[201:400,1:50])
-Coord1_y_predicted_sorted_point = vec(y_predicted_sorted[1:200,1:50])
-Coord3_y_predicted_sorted_point = vec(y_predicted_sorted[201:400,1:50])
+Coord1_y_from_FE_sorted_point = y_fromFE_sorted[1:200,:]
+Coord3_y_from_FE_sorted_point = y_fromFE_sorted[201:400,:]
+Coord1_y_predicted_sorted_point = y_predicted_sorted[1:200,:]
+Coord3_y_predicted_sorted_point = y_predicted_sorted[201:400,:]
 
 # Plot per coordinate
 plot(Coord3_y_from_FE_sorted_point[1:end],seriestype=:scatter,markersize=2)
@@ -271,3 +296,16 @@ function denormalise(row::Vector,original_array)
     end
   return scaled
 end
+
+# We are selecting only 1 point, the first one, which corresponds to Node 41 out of 133 of the face
+Coord1_y_predicted_sorted_point_descaled = denormalise(Coord1_y_predicted_sorted_point[1,:],y_train₁_whole[:])
+Coord3_y_predicted_sorted_point_descaled = denormalise(Coord3_y_predicted_sorted_point[1,:],y_train₃_whole[:])
+Coord1_y_fromFE_sorted_point_descaled = denormalise(Coord1_y_from_FE_sorted_point[1,:],y_train₁_whole[:])
+Coord3_y_fromFE_sorted_point_descaled = denormalise(Coord3_y_from_FE_sorted_point[1,:],y_train₃_whole[:])
+
+mat_coords = readdlm("simple_mat_coords.txt")
+mat_coords_reshape = reshape(mat_coords,3,266)
+Point_253_MatCoords = mat_coords_reshape[:,253] # The node 253 corresponds to the first node in the nodes_indices
+
+writedlm("PlottingTrajectoryParaview_corrected_Rog.csv", hcat(Coord1_y_fromFE_sorted_point_descaled.+Point_253_MatCoords[1],zeros(480).+Point_253_MatCoords[2],Coord3_y_fromFE_sorted_point_descaled.+Point_253_MatCoords[3]),",")
+writedlm("PlottingTrajectoryParaview_PRED_corrected_Rog.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_253_MatCoords[1],zeros(480).+Point_253_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_253_MatCoords[3]),",")
