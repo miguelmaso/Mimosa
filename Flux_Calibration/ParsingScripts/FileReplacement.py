@@ -1,7 +1,7 @@
-with open('filenames_output_corrected_Rogelio.txt', 'r') as file:
+with open('filenames_output_complex_potential.txt', 'r') as file:
     lines = file.readlines()
 
-with open('filenames_parsed_corrected_Rogelio.txt', 'w') as file:
+with open('filenames_parsed_complex_potential.txt', 'w') as file:
     for line in lines:
         line = line.strip()  # Remove leading/trailing whitespaces
         line = line.replace('[', '')  # Remove opening square bracket

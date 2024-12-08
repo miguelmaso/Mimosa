@@ -27,10 +27,10 @@ function remove_data(matrix1,matrix2)
     return failed_rows, new_matrix1, new_matrix2
 end
 cd("ParsingScripts/")
-input_x_train = readdlm("filenames_parsed_corrected_Rogelio.txt")
-input_y_train = readdlm("contents_output_corrected_Rogelio.txt")
+input_x_train = readdlm("filenames_parsed_complex_potential.txt")
+input_y_train = readdlm("contents_output_complex_potential.txt")
 cd("..")
-failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
+failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train')
 
 #x_train::Matrix{Float64} = readdlm("filenames_parsed_corrected_Rogelio.txt")
 #y_train::Matrix{Float64} = readdlm("contents_output_corrected_Rogelio.txt")
@@ -162,7 +162,7 @@ function create_neural_network(input_size::Int, output_size::Int, hidden_layers:
 end
 
 
-model = create_neural_network(4,n_nodes_training*n_components,n_layers,n_neurons,softplus)
+model = create_neural_network(20,n_nodes_training*n_components,n_layers,n_neurons,softplus)
 
 #---------------------------------------------------------------------------------
 # We need a way to store the structure and the trained model (weights and biases)
@@ -416,9 +416,9 @@ end
 # Define the parameter values
 n_layers_values = [4,8,10]
 n_neurons_values = [10,20,40]
-n_experiments_values = [2077,10389,16622]
-n_nodes_values = [100,200,250]
-epochs_values = [2e4]
+n_experiments_values = [2077,7000,10000]
+n_nodes_values = [50,100,200]
+epochs_values = [1e4]
 # TODO Elegir los nodos (los indices),al principio antes de lanzar el experimento
 # TODO Forma de presentar los datos: para 4 combinaciones de datos (n de nodos y de experimentos), una tabla con el R2 en función de cada combinacion de layers y neuronas 
 # TODO Graficas de correlación: coger el mejor R2 (la mejor arquitectura) de las 4 tablas de las 4 configuraciones de datos (El TODO 2). Plotear los desplazamientos de la predicción y del test (debería salir una recta si el R2 es alto). 
@@ -430,7 +430,7 @@ epochs_values = [2e4]
 combinations = IterTools.product(n_layers_values, n_neurons_values, n_experiments_values, n_nodes_values, epochs_values)
 
 
-cd("NN_parametric_run_corrected_V2")
+cd("NN_parametric_run_complex")
 
 # Iterate through the combinations and call the parametric_run function
 for combo in combinations
