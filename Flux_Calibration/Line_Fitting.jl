@@ -33,7 +33,7 @@ function evaluation(flux_model, x ) # Alternative definition using Flux's versio
 end;
 initial_loss = loss(model, x_train, y_train)
 printstyled("The initial loss is $initial_loss \n"; color = :red)
-opt = Descent() # Define an optimisation strategy. In this case, just the gradient descent. But could de Adams, etc. 
+opt = Descent() # Define an optimisation strategy. In this case, just the gradient descent. But could de Adams, etc.
 printstyled("The learning rate of the gradient descent is $opt \n"; color = :green)
 
 data = [(x_train,y_train)]
@@ -42,7 +42,7 @@ function iterative_training(model, x_train, y_train, tol)
 epoch = 1
 iter = 1
 Weights = zeros(0)
-Biases = zeros(0) 
+Biases = zeros(0)
 GradientX = zeros(0)
     while loss(model, x_train, y_train) > tol && iter<500
      train!(loss, model, data, opt)
@@ -61,7 +61,6 @@ GradientX = zeros(0)
 return Weights, Biases, GradientX
 end
 Weights , Biases, GradientX= iterative_training(model, x_train, y_train, 1e-6)
-
 
 #-------------------------------------------------------------------------------
 # Predict the model
