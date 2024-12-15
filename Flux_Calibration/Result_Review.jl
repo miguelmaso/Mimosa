@@ -26,7 +26,7 @@ function list_files_in_directory(directory::String)
 end
 
 # Example usage
-directory_path = "NN_parametric_run"
+directory_path = "NN_parametric_run_corrected_V3/"
 file_names, R2, File = list_files_in_directory(directory_path)
 
 

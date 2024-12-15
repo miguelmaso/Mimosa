@@ -9,11 +9,11 @@ using Plots
 using Statistics
 theme(:wong2,fontfamily="Courier")
 
-cd("/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/NN_parametric_run_corrected_V2")
+cd("/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/NN_parametric_run_corrected_V3_copy/")
 #---------------------------------------------------------------------------
 # Read the JSON file and create a model with the trained weights and biases
 #---------------------------------------------------------------------------
-model_json = open("Layers:4 Neurons:20 Experiments:16000 Nodes:200Iter:100000.0 Corrected.json", "r") do file
+model_json = open("Layers:8 Neurons:40 Experiments:10000 Nodes:200Iter:10000 Corrected.json", "r") do file
     read(file, String)
 end
 
@@ -78,7 +78,7 @@ function create_neural_network(input_size::Int, output_size::Int, hidden_layers:
 
     return model
 end
-model = create_neural_network(4,400,4,20,softplus)
+model = create_neural_network(4,400,8,40,softplus)
 # Function to assign weights to model
 function assign_weights!(model, weights)
     idx = 1
@@ -168,7 +168,6 @@ function normalise(row::Vector)
   return scaled
 end
 
-# Recheck, only for my own clarification, how the training is defined (im not clear about the epochs and iterations)
 x_train_norm = x_train_whole
 y_train₁_norm_old = reshape(normalise(y_train₁_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
 y_train₁_norm = map(x -> Float64(x), y_train₁_norm_old)
@@ -192,47 +191,64 @@ y_predicted = model(x_train_subset')
 #y_fromFE    = y_train_eval[:,Test_point]
 y_fromFE    = y_train_eval
 
-function sort_and_apply_indices(original_arr, apply_arr)
-    # Create a copy of the original array
-    sorted_arr = copy(original_arr)
-    
-    # Sort the array in ascending order
-    sort!(sorted_arr)
-    
-    # Find the indices that were changed
-    indices_changed = sortperm(original_arr)
-    
-    # Apply the indices to another array
-    result_arr = similar(apply_arr, length(apply_arr))
-    for (i, idx) in enumerate(indices_changed)
-        result_arr[i] = apply_arr[idx]
-    end
-    
-    return sorted_arr, indices_changed, result_arr
-end
+# --------------------------------
+# Let's plot the R2
+# --------------------------------
 
-#Coord1_y_predicted = vec(y_predicted[1:10,:])
-Coord1_y_predicted = vec(y_predicted)
-Coord2_y_predicted = vec(y_predicted[11:20,:])
-#Coord1_y_fromFE = vec(y_fromFE[1:10,:])
-Coord1_y_fromFE = vec(y_fromFE)
-Coord2_y_fromFE = vec(y_fromFE[11:20,:])
-
-sorted_Coord1_y_fromFE, indices_Coord1_y_fromFE, sorted_Coord1_y_predicted = sort_and_apply_indices(Coord1_y_fromFE, Coord1_y_predicted)
-sorted_Coord2_y_fromFE, indices_Coord2_y_fromFE, sorted_Coord2_y_predicted = sort_and_apply_indices(Coord2_y_fromFE, Coord2_y_predicted)
-# Coordinate 1 values
-random_indices = rand(1:8000000,400000)
-
-plot!([sorted_Coord1_y_fromFE[1],sorted_Coord1_y_fromFE[end]],[sorted_Coord1_y_predicted[1],sorted_Coord1_y_predicted[end]],label="R2",linestyle=:dash,linewidth=4)
-plot(sorted_Coord1_y_fromFE[random_indices],sorted_Coord1_y_predicted[random_indices],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord1",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
-plot(sorted_Coord1_y_fromFE,sorted_Coord1_y_predicted,seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord1",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
-savefig("R2_Coord1_corrected_V2.pdf")
-# Coordinate 3 values
-plot!([sorted_Coord2_y_fromFE[1],sorted_Coord2_y_fromFE[end]],[sorted_Coord2_y_predicted[1],sorted_Coord2_y_predicted[end]],label="R2",linestyle=:dash,linewidth=4)
-plot(sorted_Coord2_y_fromFE[random_indices],sorted_Coord2_y_predicted[random_indices],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord3",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
-savefig("R2_Coord3_corrected_V2.pdf")
+random_indices = rand(1:20577,2000)
+y_pred_whole = model(x_train')
+y_fromFE₁_whole = y_train₁_norm[nodes_indices,random_indices]
+y_fromFE₃_whole = y_train₃_norm[nodes_indices,random_indices]
+y_pred₁ = y_pred_whole[1:200,random_indices]
+y_pred₃ = y_pred_whole[201:400,random_indices]
+plot(y_pred₁[:],y_fromFE₁_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 1 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
+savefig("R2_Coord1_corrected_V3.pdf")
+plot(y_pred₃[:],y_fromFE₃_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 3 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
+savefig("R2_Coord3_corrected_V3.pdf")
 plot(log10.(Losses), linewidth=3,label="", xlabel="Nº Iterations",ylabel="Loss values",legendfontsize=8,tickfontsize=9,guidefontsize=9)
-savefig("Loss_corrected_V2.pdf")
+savefig("Loss_corrected_V3.pdf")
+
+# function sort_and_apply_indices(original_arr, apply_arr)
+#     # Create a copy of the original array
+#     sorted_arr = copy(original_arr)
+    
+#     # Sort the array in ascending order
+#     sort!(sorted_arr)
+    
+#     # Find the indices that were changed
+#     indices_changed = sortperm(original_arr)
+    
+#     # Apply the indices to another array
+#     result_arr = similar(apply_arr, length(apply_arr))
+#     for (i, idx) in enumerate(indices_changed)
+#         result_arr[i] = apply_arr[idx]
+#     end
+    
+#     return sorted_arr, indices_changed, result_arr
+# end
+
+# #Coord1_y_predicted = vec(y_predicted[1:10,:])
+# Coord1_y_predicted = vec(y_predicted)
+# Coord2_y_predicted = vec(y_predicted[11:20,:])
+# #Coord1_y_fromFE = vec(y_fromFE[1:10,:])
+# Coord1_y_fromFE = vec(y_fromFE)
+# Coord2_y_fromFE = vec(y_fromFE[11:20,:])
+
+# sorted_Coord1_y_fromFE, indices_Coord1_y_fromFE, sorted_Coord1_y_predicted = sort_and_apply_indices(Coord1_y_fromFE, Coord1_y_predicted)
+# sorted_Coord2_y_fromFE, indices_Coord2_y_fromFE, sorted_Coord2_y_predicted = sort_and_apply_indices(Coord2_y_fromFE, Coord2_y_predicted)
+# # Coordinate 1 values
+# random_indices = rand(1:8000000,400000)
+
+# plot!([sorted_Coord1_y_fromFE[1],sorted_Coord1_y_fromFE[end]],[sorted_Coord1_y_predicted[1],sorted_Coord1_y_predicted[end]],label="R2",linestyle=:dash,linewidth=4)
+# plot(sorted_Coord1_y_fromFE[random_indices],sorted_Coord1_y_predicted[random_indices],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord1",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
+# plot(sorted_Coord1_y_fromFE,sorted_Coord1_y_predicted,seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord1",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
+# savefig("R2_Coord1_corrected_V2.pdf")
+# # Coordinate 3 values
+# plot!([sorted_Coord2_y_fromFE[1],sorted_Coord2_y_fromFE[end]],[sorted_Coord2_y_predicted[1],sorted_Coord2_y_predicted[end]],label="R2",linestyle=:dash,linewidth=4)
+# plot(sorted_Coord2_y_fromFE[random_indices],sorted_Coord2_y_predicted[random_indices],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord3",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from FE",ylabel="Displacement from ML prediction")
+# savefig("R2_Coord3_corrected_V2.pdf")
+# plot(log10.(Losses), linewidth=3,label="", xlabel="Nº Iterations",ylabel="Loss values",legendfontsize=8,tickfontsize=9,guidefontsize=9)
+# savefig("Loss_corrected_V2.pdf")
 
 
 
@@ -306,7 +322,7 @@ Coord3_y_fromFE_sorted_point_descaled = denormalise(Coord3_y_from_FE_sorted_poin
 
 mat_coords = readdlm("simple_mat_coords.txt")
 mat_coords_reshape = reshape(mat_coords,3,266)
-Point_253_MatCoords = mat_coords_reshape[:,253] # The node 253 corresponds to the first node in the nodes_indices
+Point_211_MatCoords = mat_coords_reshape[:,211] # The node 211 corresponds to the first node in the nodes_indices
 
-writedlm("PlottingTrajectoryParaview_corrected_Rog.csv", hcat(Coord1_y_fromFE_sorted_point_descaled.+Point_253_MatCoords[1],zeros(480).+Point_253_MatCoords[2],Coord3_y_fromFE_sorted_point_descaled.+Point_253_MatCoords[3]),",")
-writedlm("PlottingTrajectoryParaview_PRED_corrected_Rog.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_253_MatCoords[1],zeros(480).+Point_253_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_253_MatCoords[3]),",")
+writedlm("PlottingTrajectoryParaview_corrected_Rog_V3.csv", hcat(Coord1_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[1],zeros(480).+Point_211_MatCoords[2],Coord3_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[3]),",")
+writedlm("PlottingTrajectoryParaview_PRED_corrected_Rog_V3.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_211_MatCoords[1],zeros(480).+Point_211_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_211_MatCoords[3]),",")
