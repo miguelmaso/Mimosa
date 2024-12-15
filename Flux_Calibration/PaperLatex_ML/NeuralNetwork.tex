@@ -438,4 +438,22 @@ To further analyse the performance of the machine learning architecture, we can 
   \label{fig: losses}
 \end{figure}
 
+
+ To validate the effectiveness in predicting the displacement, we plotted the trajectory of several points, related to a specific potential. Essentially, we are tracking the displacement of random points in the mesha nd comparing it against the displacement from FE.
+
+\begin{figure}
+ \centering 
+  \subfloat[X Trajectory of point 50]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_P50_Coord1.pdf}}
+  \subfloat[Z Trajectory of point 50]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_P50_Coord3.pdf}} \\
+  \subfloat[X Trajectory of point 100]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_P100_Coord1.pdf}}
+  \subfloat[Z Trajectory of point 100]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_P100_Coord3.pdf}} \\
+  \subfloat[X Trajectory of point 200]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_P200_Coord1.pdf}} 
+  \subfloat[Z Trajectory of point 200]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_P200_Coord3.pdf}} 
+
+\caption{Trajectory plot of points 50, 100 and 200 for displacements in X and Z. Comparison of the computed trajectory using the traditional FE implementation against the best-performing Machine Learning model. It can be seen that the trajectories are similar across different points, which is in accordance with the high R2 predicted. There is a slight discrepancy in the prediction of the displacement in Z direction, which becomes more evident towards the end of the trajectory.}
+\label{fig: Trajectories_2D}
+\end{figure} 
+
+
+
 \newpage

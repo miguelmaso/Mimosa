@@ -82,4 +82,4 @@ function get_R2_values_for_conditions(experiments::Int, nodes::Int, iterations::
 end
 
 # Example usage: input the desired experiments, nodes, and iterations
-get_R2_values_for_conditions(2000, 30, 5000)
+get_R2_values_for_conditions(10000, 200, 10000)

@@ -301,8 +301,10 @@ Coord1_y_predicted_sorted_point = y_predicted_sorted[1:200,:]
 Coord3_y_predicted_sorted_point = y_predicted_sorted[201:400,:]
 
 # Plot per coordinate
-plot(Coord3_y_from_FE_sorted_point[1:end],seriestype=:scatter,markersize=2)
-plot!(Coord3_y_predicted_sorted_point[1:end],seriestype=:scatter,markersize=2)
+#plot(y_pred₁[:],y_fromFE₁_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 1 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
+plot(Coord3_y_from_FE_sorted_point[50,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
+plot!(Coord3_y_predicted_sorted_point[50,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
+savefig("Trajectory_P50_Coord3.pdf")
 
 function denormalise(row::Vector,original_array)
     min = minimum(original_array)
