@@ -8,7 +8,7 @@ using GridapGmsh
 
 function get_parameters(n_sec, sw, pot)
 
-  problemName = "PB-S$n_sec-O2-PL" #PB = PlateBeam; S = # of sections; O2 = Order of elements; PL = Potential Location; ϕ = potential magnitude
+  problemName = "Temp/PB-S$n_sec-O2-PL" #PB = PlateBeam; S = # of sections; O2 = Order of elements; PL = Potential Location; ϕ = potential magnitude
   for s in sw
     problemName = problemName*"_$s"
   end
@@ -31,7 +31,8 @@ function get_parameters(n_sec, sw, pot)
   dir_u_tags = ["fixedup_1"]
   dir_u_values = [[0.0, 0.0, 0.0]]
   dir_u_timesteps = [evolu]
-  Du = DirichletBC(dir_u_tags, dir_u_values, dir_u_timesteps)
+  masks = [(true,true,true) for i in dir_u_tags]
+  Du = DirichletBC(dir_u_tags, dir_u_values, dir_u_timesteps, masks)
 
   evolφ(Λ) = Λ
   earth_loc = Vector{String}()
@@ -71,8 +72,8 @@ function get_parameters(n_sec, sw, pot)
   order = 2
 
   # NewtonRaphson parameters
-  nr_show_trace = true
-  nr_iter = 20
+  nr_show_trace = false
+  nr_iter = 10
   nr_ftol = 1e-12
 
   # Incremental solver
@@ -82,12 +83,15 @@ function get_parameters(n_sec, sw, pot)
   solveropt = @dict nr_show_trace nr_iter nr_ftol nsteps nbisec
 
   # Postprocessing
-  is_vtk = true
-  is_P_F = true
+  is_vtk = false
+  is_P_F = false
 
   init_sol_bool, U_ap, X_ap = false, nothing, nothing
 
-  return @dict problemName ptype soltype regtype meshfile consmodel dirichletbc order solveropt is_vtk is_P_F init_sol_bool U_ap X_ap
+  csv_bool = false
+  csv_funct_ = nothing
+
+  return @dict problemName ptype soltype regtype meshfile consmodel dirichletbc order solveropt is_vtk is_P_F init_sol_bool U_ap X_ap csv_bool csv_funct_
 end
 
 function get_parameters(n_sec, sw, pot,init_sol_bool,init_sol_FOS)
