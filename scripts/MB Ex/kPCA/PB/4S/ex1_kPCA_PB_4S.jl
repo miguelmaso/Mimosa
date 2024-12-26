@@ -348,9 +348,17 @@ norm(Z_-z_)/norm(Z_)
 
 #ReverseMap calculation of configurations not in the TS
 x, w_ns, Z_ns = ReverseMap(Z_,z_[:,6],d)
-plot(x)
-plot!(x6)
-savefig("data/Figs/kPCA_PB_S4_Phi2000/X6_ReverseMapLeastSquares_8Vecinos_WO9.png")
+plotlyjs(size=(1000,1000))
+plot(1000.0*x,linewidth=4,tickfontsize=12,
+    xlabel="x (mm)",
+    ylabel = "y (mm)",
+    guidefontsize = 18, legend= :topleft,
+    label = "FE Simulation", legend_font_pointsize=16,
+    size=(1000,1000))
+plot!(1000.0*x6,linewidth=4, labelfontsize=12,
+    label = "ROM Simulation", legend_font_pointsize=16,
+    size=(1000,1000))
+savefig("data/Figs/kPCA_PB_S4_Phi2000/X6_ReverseMapLeastSquares_8Vecinos_WO9.svg")
 norm(x-x6)/norm(x6)
 plot(x6)
 
