@@ -24,7 +24,7 @@ conf_list = reduce(hcat,conf_list)
 k = 3
 β = β_min.minimizer # 1000
 β = 25.477396507076456
-β = 0.01
+β = 5
 Κ(X1,X2) = exp(-β*(dot(X1-X2,X1-X2)))
 Κ(X1,X2) = (X1'*X2 + β)^2
 Λ, U, U_, Ḡ, G = kPOD(Κ, X, k)
@@ -32,11 +32,11 @@ Z_ = real.(U_'*Ḡ)
 
 
 # ----------- kPCA RS scatter coloring a single PP ----------------------------------
-param = 8
+param = 4  
 plotlyjs()
 gr()
 s = scatter(eachrow(Z_)..., hover = [i for i in 1:lastindex(eachcol(Z_))],
-xlabel="z1",ylabel="z2",zlabel="z3", color = [c[param] for c in conf_list])
+xlabel="z1",ylabel="z2",zlabel="z3") #, color = [c[param] for c in conf_list])
 display(s)
 savefig("data/Figs/kPCA_TBST4SL2/256_kPCAGaussBeta$β-ColorParam$param.png")
 
@@ -44,7 +44,7 @@ savefig("data/Figs/kPCA_TBST4SL2/256_kPCAGaussBeta$β-ColorParam$param.png")
 s = scatter(eachrow(Z_)..., hover = [i for i in 1:lastindex(eachcol(Z_))],
 xlabel="z1",ylabel="z2",zlabel="z3", xlims=(minimum(Z_[1,:]),maximum(Z_[1,:])), 
 ylims=(minimum(Z_[1,:]),maximum(Z_[1,:])), zlims=(minimum(Z_[1,:]),maximum(Z_[1,:])),
-camera = (30 , 55))
+camera = (30 , 55),size=(1000,1000))
 
 # ----------------- kPCA eigen value analysis -----------------------------------
 Λ = real.(Λ)

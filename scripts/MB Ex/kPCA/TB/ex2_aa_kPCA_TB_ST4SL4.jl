@@ -20,6 +20,21 @@ function ReadData_i(St,Sl,sw,pot)
     return x
 end
 
+function ReadData_i_test_last(St,Sl,sw,pot)
+    Λ = pot/pot
+    Λstring = replace(string(round(Λ, digits=2)), "." => "_")
+    problemName = "TubeBeam"
+    problemName = problemName*"_ϕ$pot"*"_St$St"*"_St$Sl"
+    for s in sw
+        problemName = problemName*"_$s"
+    end
+    file_name = "data/csv/" * problemName * "/_Λ_" * Λstring * ".csv"
+    _X = CSV.File(file_name) |> Tables.matrix
+    x = [x_ for x_ in eachrow(_X)]
+    x = reduce(vcat,x)
+    return x
+end
+
 function ReadData(St,Sl,pot_list,N_rand)
     conf_list = CSV.File("data/csv/EM_TB_ST$(St)_SL$(Sl)_Conf0.csv") |> Tables.matrix
     conf_list_ = CSV.File("data/csv/EM_TB_ST$(St)_SL$(Sl)_ConfRand.csv") |> Tables.matrix
@@ -123,15 +138,12 @@ function isomap1(neighbors,Z_)
     D_G = [[] for i in 1:n]
     count = []
     count2 = []
+    list = [1:n...]
     Threads.@threads for i in 1:n
         d_G, prev_ = Dijkstra(Z_,i,neighbors)
         D_G[i] = d_G
-        push!(count,i)
-        ma = maximum(count)
-        push!(count2,ma)
-        mi = minimum(count2)
-        per = round(100*((ma-mi)/(n-mi)))
-        print("\r$ma - $mi - %$per")
+        deleteat!(list, findall(x->x==i,list))
+        print("\r$((100-round(length(list)/n,digits=2)*100)) %             ")
     end
     print("\n")
     D_G = reduce(hcat,D_G)
@@ -525,6 +537,18 @@ function ReverseMap6(conf_gen,pot,Y_,X,conf,pot_list,nh)
     y_gen = VectorSearch(Y_int,conf_gen,VS_Conf_list)
     return ReverseMap2(y_gen,conf_gen,Y_int,X_int,conf,nh)
 end
+
+
+function ReverseMap6(conf_gen,pot,Y_,X,conf,pot_list,nh,VS_Conf_list)
+    N_pot = lastindex(pot_list)
+    _, N = size(Y_)
+    N = Int(N/N_pot)
+    X_int = reduce(hcat,[_Interpolation(pot_list,X[:,[i+((j-1)*N) for j in 1:N_pot]],pot) for i in 1:N])
+    Y_int = reduce(hcat,[_Interpolation(pot_list,Y_[:,[i+((j-1)*N) for j in 1:N_pot]],pot) for i in 1:N])
+    y_gen = VectorSearch(Y_int,conf_gen,VS_Conf_list)
+    return ReverseMap2(y_gen,conf_gen,Y_int,X_int,conf,nh)
+end
+
 
 function NewData(x_test,Κ,neighbors,G,Z_,D_G_sym)
     Κ_test(X) = Κ(x_test,X)

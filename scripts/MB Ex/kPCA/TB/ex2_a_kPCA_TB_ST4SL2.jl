@@ -69,9 +69,9 @@ function plotSet(idxs,conf_list,X_)
     conf = idxs_[1]
     Cc = conf_list[conf]
     p = plot(X_[1][:,conf],X_[2][:,conf],X_[3][:,conf], xlims =(0.0,0.11),
-    ylims=(y_min,y_max), zlims=(z_min,z_max),size=(600,800),
+    ylims=(y_min,y_max), zlims=(z_min,z_max),size=(1000,1000),
     label="Conf:$conf : $Cc", linewidth=6, xlabel="x", ylabel="y",
-    zlabel="z", camera = (45, 45), legend=:outerbottom, legend_columns=2)
+    zlabel="z", camera = (45, 45), legend_columns=2)
     popfirst!(idxs_)
     for idx in idxs_
         conf = idx

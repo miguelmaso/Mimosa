@@ -17,12 +17,12 @@ k = 3
 Z_ = real.(U_'*Ḡ)
 plotlyjs()
 gr()
-scatter(eachrow(Z_)...,xlabel="z1",ylabel="z2",zlabel="z3")
+scatter(eachrow(Z_)...,xlabel="z1",ylabel="z2",zlabel="z3",size=(1000,1000))
 
 # ----------------------- isomap ---------------------
 neighbors = 25
 Y_, D_G_sym = isomap1(neighbors,Z_)
-s = scatter(eachrow(Y_)...,xlabel="y1",ylabel="y2",label="TS",legend=:outerbottom,legend_columns=2)
+s = scatter(eachrow(Y_)...,xlabel="y1",ylabel="y2",label="TS",legend=:outerbottom,legend_columns=2,size=(1000,1000))
 
 # ------------- VS TS generation -----------------
 VS_Conf_list = [1:64...]
@@ -111,8 +111,8 @@ conf_list_test = conf_list_test[:,[1000-9:1000...]]
 
 
 # ------------ BCRM for single shape and err for test shapes ----------------
-nh = 3
-n_test = 3
+nh = 1
+n_test = 4
 conf = conf_list_test[:,n_test] # rand(eachcol(conf_complete))
 y_gen = VectorSearch(Y_,conf,VS_Conf_list)
 plot_x(X_test[:,n_test],"FOS TestID=$n_test conf=$conf")
@@ -133,7 +133,7 @@ for nh in 3:3, n_test in 1:10
     Err = norm(x_gen-X_test[:,n_test])/norm(X_test[:,n_test])
     push!(Err_test,Err)
 end
-plot(Err_test,type=:bar,xlabel="Test ID",ylabel="Error",label=false)
+plot(Err_test,type=:bar,xlabel="Test ID",ylabel="Error",label=false,xticks=[1:10...])
 
 # ------------------ PP Search --------------------------------
 n_test = 1
