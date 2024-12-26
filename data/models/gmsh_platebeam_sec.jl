@@ -133,14 +133,14 @@ T=0.4e-3;     # beam thickness
 # const nt=4; # Z element size
 
 
-nl=20; # X element size: 20 for 4s and 8 for 10S
+nl=9; # X element size: 20 for 4s and 8 for 10S
 nw=8; # Y element size
 nt=2; # Z element size
 
-# fract = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]
-fract = [0.25,0.25,0.25]
+fract = [0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]
+# fract = [0.25,0.25,0.25]
 
-model_name = "PlateBeame4S_BC"
+model_name = "PlateBeame10S_BC"
 
 lc = 1.0; # characteristic length for meshing
 function generateBeam(L,W,T,nl,nw,nt,lc,fract,model_name)
