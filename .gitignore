@@ -18,3 +18,10 @@ data/csv/TubeBeam_ϕ2000.0_St4_St4_0_0_0_0_1_1_1_0_0_0_0_0_0_0_0_0/_Λ_0_2_TIME_
 /data/csv/TubeBeam_ϕ5000.0_St4_St4_0_0_0_0_1_1_1_0_0_0_0_0_0_0_0_0
 /data/csv
 /Mimosa_TestRunApp_0
+data/Sensitibity_to_TSsize.jdl2
+data/Sensitibity_to_TSsize_200+64.jdl2
+data/Sensitibity_to_TSsize_200.jdl2
+data/Sensitibity_to_TSsize_300+64.jdl2
+data/Sensitibity_to_TSsize_400+64.jdl2
+data/Sensitibity_to_TSsize_500+64.jdl2
+data/Sensitibity_to_TSsize_600+64.jdl2
