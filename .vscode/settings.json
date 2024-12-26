@@ -1,4 +1,4 @@
 {
-    "julia.numTestProcesses": 20,
-    "julia.NumThreads": 20
+    "julia.numTestProcesses": 18,
+    "julia.NumThreads": 18
 }
