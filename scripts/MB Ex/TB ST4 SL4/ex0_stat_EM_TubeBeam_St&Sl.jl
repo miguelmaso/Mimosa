@@ -9,7 +9,7 @@ t0 = time()
 
 function get_parameters(pot, sw, St, Sl, csv_funct)
 
-    problemName = "Temp/TubeBeam" 
+    problemName = "TubeBeam" 
     problemName = problemName*"_ϕ$pot"*"_St$St"*"_St$Sl"
     for s in sw
         problemName = problemName*"_$s"
@@ -68,7 +68,7 @@ function get_parameters(pot, sw, St, Sl, csv_funct)
 
     # NewtonRaphson parameters
     nr_show_trace = true
-    nr_iter = 20
+    nr_iter = 15
     nr_ftol = 1e-12
 
     # Incremental solver
@@ -85,6 +85,7 @@ function get_parameters(pot, sw, St, Sl, csv_funct)
 
     csv_bool = true
     csv_funct_ = csv_funct
+
 
     return @dict problemName ptype soltype regtype meshfile consmodel dirichletbc order solveropt is_vtk is_P_F init_sol_bool U_ap X_ap csv_bool csv_funct_
 end
@@ -180,3 +181,34 @@ function run(start, finish)
         println("Total elapsed time = $T_ s = $(T_/60.0) min")
     end
 end
+
+function run_candidates(start, finish)
+    div = 10
+    pots = [5000.0]
+    conf_list = CSV.File("data/csv/EM_TB_ST4_SL4_CandidateConf.csv") |> Tables.matrix
+    St = 4
+    Sl = 4
+    ph_list = []
+    x_line_list = []
+    n = lastindex(eachcol(conf_list))
+    # start = (div-1)*(n/10) + 1
+    # finish =  div*(n/10)
+    for i in Int(start):Int(finish)
+        t0_ = time()
+        conf = conf_list[:,i]
+        println(" ")
+        println("!!!!!!!!    Configuration number $i / $(Int(finish))  (total = $n)   !!!!!!!")
+        println("!!!!!!!!        Configuration $conf        !!!!!!!")
+        println(" ")
+        ph, chache = main(; get_parameters(pots[1], conf, St, Sl,CenterLine_)...)
+        x_line = CenterLine(ph)
+        push!(ph_list,ph)
+        push!(x_line_list,x_line)
+        t_ = time() - t0_
+        T_ = time() - t0
+        println("Evaluation time = $t_ s = $(t_/60.0) min")
+        println("Total elapsed time = $T_ s = $(T_/60.0) min")
+    end
+end
+
+# main(; get_parameters(5000.0, [0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 1, 0], 4, 4,CenterLine_)...)
