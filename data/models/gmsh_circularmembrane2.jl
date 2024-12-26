@@ -143,7 +143,9 @@ end
 
 function run()
     gmsh.initialize()
-    ct_pt,nt,nr,ntan,lc = [0.0,0.0,0.0],1,5,7,2.0e-4
+    # ct_pt,nt,nr,ntan,lc = [0.0,0.0,0.0],1,5,7,2.0e-4 # "CircularMembrane3"
+    # ct_pt,nt,nr,ntan,lc = [0.0,0.0,0.0],1,10,21,2.0e-4 # "CircularMembrane4"
+    ct_pt,nt,nr,ntan,lc = [0.0,0.0,0.0],1,5,21,2.0e-4 # "CircularMembrane5"
     T = 0.4e-3
     surf_list = []
     n_sec_t = 4
@@ -181,7 +183,7 @@ function run()
     if !("-nopopup" in ARGS)
         gmsh.fltk.run()
     end
-    model_name = "CircularMembrane3"
+    model_name = "CircularMembrane5"
     output_file = joinpath(dirname(@__FILE__), model_name*".msh")
     gmsh.write(output_file)
     Gmsh.finalize() 
