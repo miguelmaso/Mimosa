@@ -22,14 +22,23 @@ function IncrementalSolver(problem::Problem, ctype::CouplingStrategy{:monolithic
 
     Λ = 0.0
     Λ_inc = 1.0 / nsteps
-
+    Λ_inc_esp = 1.0 / nsteps
+    Λ_esp = 1.0 / nsteps
     cache = nothing
     nbisect = 0
     ph_view = get_free_dof_values(ph)
     Λ_ = 0
     itr_under = 0
     while Λ < 1.0 - 1e-6
-        Λ += Λ_inc
+        if Λ+Λ_inc<Λ_esp
+            Λ += Λ_inc
+        elseif Λ+Λ_inc>Λ_esp+1e-10
+            Λ = Λ_esp
+            Λ_esp += Λ_inc_esp
+        else
+            Λ += Λ_inc
+            Λ_esp += Λ_inc_esp
+        end
         Λ = min(1.0, Λ)
         ph_ = copy(get_free_dof_values(ph))
         if is_P_F
@@ -46,7 +55,7 @@ function IncrementalSolver(problem::Problem, ctype::CouplingStrategy{:monolithic
             if cache.result.iterations < 7
                 itr_under +=1
             end
-            if itr_under>3 && nbisect >= 0
+            if itr_under>3 && nbisect > 0
                 Λ_inc = Λ_inc * 2
                 nbisect -= 1
                 itr_under = 0
