@@ -126,18 +126,16 @@ end
 function isomap1(neighbors,Z_)
     n = length(eachcol(Z_))
     D_G = [[] for i in 1:n]
-    # count = []
-    # count2 = []
+    count = []
+    count2 = []
+    list = [1:n...]
     Threads.@threads for i in 1:n
         d_G, prev_ = Dijkstra(Z_,i,neighbors)
         D_G[i] = d_G
-        # push!(count,i)
-        # ma = maximum(count)
-        # push!(count2,ma)
-        # mi = minimum(count2)
-        # per = round(100*((ma-mi)/(n-mi)))
-        # print("\r$ma - $mi - %$per")
+        deleteat!(list, findall(x->x==i,list))
+        print("\r$((100-round(length(list)/n,digits=2)*100)) %             ")
     end
+    print("\n")
     D_G = reduce(hcat,D_G)
     D_G_sym = 0.5*(D_G+D_G')
     D_G_sq = D_G_sym.^2
