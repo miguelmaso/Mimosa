@@ -246,7 +246,7 @@ end
 
 function (obj::Yeoh)(::DerivativeStrategy{:autodiff})
   F, _, J = _getKinematic(obj)
-  𝛪(∇u) = ((J(F(∇u)^2))^(-1/3)) * tr((F(∇u))' * F(∇u))
+  𝛪(∇u) = real((complex(J(F(∇u))^2))^(-1/3)) * tr((F(∇u))' * F(∇u))
   Ψ(∇u) = obj.C₁ * (𝛪(∇u) - 3.0) + obj.C₂ * (𝛪(∇u) - 3.0)^2 + obj.C₃ * (𝛪(∇u) - 3.0)^3 + (obj.κ / 2) * (J(F(∇u)) - 1)^2
   ∂Ψ_∂∇u(∇u) = ForwardDiff.gradient(∇u -> Ψ(∇u), get_array(∇u))
   ∂2Ψ_∂2∇u(∇u) = ForwardDiff.jacobian(∇u -> ∂Ψ_∂∇u(∇u), get_array(∇u))
