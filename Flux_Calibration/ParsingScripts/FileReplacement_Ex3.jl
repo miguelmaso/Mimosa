@@ -57,7 +57,14 @@ end
 
 # Output the matrices
 println("Scaled Vectors Matrix (5x$n_files):")
-println(Scaled_Vectors)
+#println(Scaled_Vectors)
 
 println("File Contents Matrix (1755x$n_files):")
-println(File_Contents)
+#println(File_Contents)
+
+open("filenames_ex3.txt","w") do io
+    writedlm(io,Scaled_Vectors)
+end
+open("contents_ex3.txt","w") do io
+    writedlm(io,File_Contents)
+end
