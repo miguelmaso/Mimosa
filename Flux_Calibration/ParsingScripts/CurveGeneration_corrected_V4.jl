@@ -119,7 +119,7 @@ input_x_train = readdlm("filenames_parsed_corrected_Rogelio.txt")
 input_y_train = readdlm("contents_output_corrected_Rogelio.txt")
 
 failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
-x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.0\", \"0.114\", \"0.078\", \"0.102\"].txt") #If using quotes, you need to escape them
+x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.3\", \"0.09\", \"0.162\", \"0.066\"].txt") #If using quotes, you need to escape them
 
 function find_matching_rows(small_matrix, big_matrix)
     # Ensure both matrices have the same number of columns
@@ -302,9 +302,9 @@ Coord3_y_predicted_sorted_point = y_predicted_sorted[201:400,:]
 
 # Plot per coordinate
 #plot(y_pred₁[:],y_fromFE₁_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 1 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
-plot(Coord3_y_from_FE_sorted_point[50,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
-plot!(Coord3_y_predicted_sorted_point[50,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
-savefig("Trajectory_P50_Coord3.pdf")
+plot(Coord1_y_from_FE_sorted_point[150,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
+plot!(Coord1_y_predicted_sorted_point[150,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
+savefig("Trajectory_03_009_0162_0066_P150_Coord1.pdf")
 
 function denormalise(row::Vector,original_array)
     min = minimum(original_array)
@@ -324,7 +324,7 @@ Coord3_y_fromFE_sorted_point_descaled = denormalise(Coord3_y_from_FE_sorted_poin
 
 mat_coords = readdlm("simple_mat_coords.txt")
 mat_coords_reshape = reshape(mat_coords,3,266)
-Point_211_MatCoords = mat_coords_reshape[:,211] # The node 211 corresponds to the first node in the nodes_indices
+First_Point_MatCoords = mat_coords_reshape[:,211] # The node 211 corresponds to the first node in the nodes_indices
 
-writedlm("PlottingTrajectoryParaview_corrected_Rog_V3.csv", hcat(Coord1_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[1],zeros(480).+Point_211_MatCoords[2],Coord3_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[3]),",")
-writedlm("PlottingTrajectoryParaview_PRED_corrected_Rog_V3.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_211_MatCoords[1],zeros(480).+Point_211_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_211_MatCoords[3]),",")
+#writedlm("Trajectory_00_0114_0078_0102.csv", hcat(Coord1_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[1],zeros(480).+Point_211_MatCoords[2],Coord3_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[3]),",")
+writedlm("Trajectory_03_009_0162_0066.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+First_Point_MatCoords[1],zeros(119).+First_Point_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+First_Point_MatCoords[3]),",")

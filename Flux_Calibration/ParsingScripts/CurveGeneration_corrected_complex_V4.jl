@@ -115,11 +115,11 @@ function remove_data(matrix1,matrix2)
     return failed_rows, new_matrix1, new_matrix2
 end
 
-input_x_train = readdlm("filenames_parsed_corrected_Rogelio.txt")
-input_y_train = readdlm("contents_output_corrected_Rogelio.txt")
+input_x_train = readdlm("filenames_parsed_complex_potential.txt")
+input_y_train' = readdlm("contents_output_complex_potential.txt")
 
 failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
-x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.0\", \"0.114\", \"0.078\", \"0.102\"].txt") #If using quotes, you need to escape them
+x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.246\", \"0.222\", \"0.186\", \"0.042\", \"0.126\", \"0.03\", \"0.234\", \"0.102\", \"0.006\", \"0.006\", \"0.09\", \"0.27\", \"0.162\", \"0.294\", \"0.3\", \"0.186\", \"0.138\", \"0.102\", \"0.126\", \"0.138\"].txt") #If using quotes, you need to escape them
 
 function find_matching_rows(small_matrix, big_matrix)
     # Ensure both matrices have the same number of columns
@@ -147,6 +147,8 @@ end
 comparing_index = find_matching_rows(x_train_subset,x_train)
 #x_train::Matrix{Float64} = readdlm("filenames_parsed.txt")
 #y_train::Matrix{Float64} = readdlm("contents_output.txt")
+
+#TODO CHECK!! Are the rows and columns correct? Maybe when you import you should transpose y_train
 
 n_nodes   =  size(y_train,1)
 y_train₁  =  y_train[1:3:n_nodes,:]
