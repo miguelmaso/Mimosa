@@ -125,7 +125,7 @@ input_x_train = readdlm("filenames_parsed_corrected_Rogelio.txt")
 input_y_train = readdlm("contents_output_corrected_Rogelio.txt")
 
 failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
-x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.3\", \"0.09\", \"0.162\", \"0.066\"].txt") #If using quotes, you need to escape them
+x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.078\", \"0.198\", \"0.006\", \"0.0\"].txt") #If using quotes, you need to escape them
 
 function find_matching_rows(small_matrix, big_matrix)
     # Ensure both matrices have the same number of columns
@@ -334,4 +334,4 @@ mat_coords_reshape = reshape(mat_coords,3,266)
 First_Point_MatCoords = mat_coords_reshape[:,211] # The node 211 corresponds to the first node in the nodes_indices
 
 #writedlm("Trajectory_00_0114_0078_0102.csv", hcat(Coord1_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[1],zeros(480).+Point_211_MatCoords[2],Coord3_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[3]),",")
-writedlm("Trajectory_03_009_0162_0066.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+First_Point_MatCoords[1],zeros(119).+First_Point_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+First_Point_MatCoords[3]),",")
+writedlm("Trajectory_0078_0198_0006_00.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+First_Point_MatCoords[1],zeros(119).+First_Point_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+First_Point_MatCoords[3]),",")
