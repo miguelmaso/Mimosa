@@ -12,7 +12,7 @@ To measure the accuracy of the prediction made by the neural network, the R2 met
 
 Where $y$ is the original data coming from an FE analysis, $y'$ is the predicted data from the neural network and $\hat{y}$ is the mean value of the FE data.
 
-\subsection{First test case: 4-electrode dielectric elastomer}
+\subsection{First example: 4-electrode dielectric elastomer}
 
 \subsubsection{Data generation}
 
@@ -328,6 +328,9 @@ Epochs              &  \multicolumn{3}{c}{1e4}
   \caption{Values used in the parametric study during the training phase. Every combination of these parameters was analysed and parsed to obtain the best performing architecture.}
 \end{table}
 
+\subsubsection{Results}
+
+
 Every possible combination of these parameters was studied, totalling 80 different architectures that were run and analysed. To measure the performance of these architecture, the R2 measurement (\ref{eq:R2_measurement}), was used. This metric allows us to compare the displacements predicted by the neural network against the test data (the remaining data that was not taken into the training process). To provide a clearer outlook on the results of the parametric hyperparameter study, we compiled the output of R2 measurements on every combination of 50 and 200 nodes using 2077 and 10000 experiments. These results can be visualized in Table \ref{tab: R2_measurement}
 
 
@@ -415,12 +418,16 @@ Every possible combination of these parameters was studied, totalling 80 differe
 \end{table}
 
 
-Out of the analysed architectures in Table \ref{tab: R2_values}, the best configuration is a combination of 8 layers, 40 neurons, 10000 experiments, 200 nodes  with an R2 on the test cases of 0.9995. To further visualize this result, we plotted the output displacement from the FE analysis against the displacement predicted by the best performing architecture. Since the displacement data is given per axis in the global coordinate system, we compared the displacement per axis; namely the first and third axis. The output of this analysis is displayed in Figure \ref{fig: R2_plot}
+Out of the analysed architectures in Table \ref{tab: R2_values}, the best configuration is a combination of 8 layers, 40 neurons, 10000 experiments, 200 nodes  with an R2 on the test cases of 0.9995. 
+
+To measure the dispersion of the data generated from the Machine Learning model against the in-silico FE data, we plotted the output displacement from the FE analysis against the displacement predicted by the Machine Learning architecture. Since the displacement data is given per axis in the global coordinate system, we compared the displacement per axis; namely the first and third axis. The output of this analysis is displayed in Figure \ref{fig: R2_plot} for various architectures tested.
 
 \begin{figure}
   \centering
-  \subfloat[Displacement in the first axis of the coordenate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3.pdf}}
-  \subfloat[Displacement in the third axis of the coordenate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3.pdf}}
+  \subfloat[Displacement in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3.pdf}}
+  \subfloat[Displacement in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3.pdf}}\\
+  \subfloat[Displacement in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3.pdf}}
+  \subfloat[Displacement in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3.pdf}}
   \caption{R2 evaluation of the displacements. FE data vs ML predicted output for the better performing neural network architecture. Sampling of 200 nodes at 2000 experiments, randomly chosen. A clear linear distribution can be seen between the predicted and FE displacements, indicating a high R2 and correlation between the data. However, there is a dispersion in the data which can be expected due to the small amount of data taken as a training dataset.}
   \label{fig: R2_plot}
 \end{figure}
@@ -457,3 +464,8 @@ To further analyse the performance of the machine learning architecture, we can 
 
 
 \newpage
+
+\subsection{Second example: 20-electrode dielectric elastomer}
+
+
+

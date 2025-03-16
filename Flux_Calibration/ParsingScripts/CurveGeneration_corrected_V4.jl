@@ -13,10 +13,16 @@ cd("/home/alberto/LINUX_DATA/JuliaRepo/Mimosa/Flux_Calibration/NN_parametric_run
 #---------------------------------------------------------------------------
 # Read the JSON file and create a model with the trained weights and biases
 #---------------------------------------------------------------------------
-model_json = open("Layers:8 Neurons:40 Experiments:10000 Nodes:200Iter:10000 Corrected.json", "r") do file
+# ----------------------------------------------------------------------------------------------------------
+# THIS IS THE BEST PERFORMING ARCHITECTURE, IM JUST TESTING DIFFERENT ONES TO PUT THEM INTO THE PAPER
+# ----------------------------------------------------------------------------------------------------------
+#model_json = open("Layers:8 Neurons:40 Experiments:10000 Nodes:200Iter:10000 Corrected.json", "r") do file
+#    read(file, String)
+#end
+# ----------------------------------------------------------------------------------------------------------
+model_json = open("Layers:4 Neurons:10 Experiments:2077 Nodes:50Iter:10000 Corrected.json", "r") do file
     read(file, String)
 end
-
 # Parse the JSON data
 model_data = JSON.parse(model_json)
 architecture = model_data["architecture"]
@@ -78,7 +84,7 @@ function create_neural_network(input_size::Int, output_size::Int, hidden_layers:
 
     return model
 end
-model = create_neural_network(4,400,8,40,softplus)
+model = create_neural_network(4,100,4,10,softplus)
 # Function to assign weights to model
 function assign_weights!(model, weights)
     idx = 1
@@ -199,14 +205,15 @@ random_indices = rand(1:20577,2000)
 y_pred_whole = model(x_train')
 y_fromFE₁_whole = y_train₁_norm[nodes_indices,random_indices]
 y_fromFE₃_whole = y_train₃_norm[nodes_indices,random_indices]
-y_pred₁ = y_pred_whole[1:200,random_indices]
-y_pred₃ = y_pred_whole[201:400,random_indices]
+y_pred₁ = y_pred_whole[1:50,random_indices]
+y_pred₃ = y_pred_whole[51:100,random_indices]
 plot(y_pred₁[:],y_fromFE₁_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 1 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
-savefig("R2_Coord1_corrected_V3.pdf")
+savefig("R2_Coord1_corrected_V3_L4_N4_E2077_NN50.pdf")
 plot(y_pred₃[:],y_fromFE₃_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 3 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
-savefig("R2_Coord3_corrected_V3.pdf")
+savefig("R2_Coord3_corrected_V3.L4_N4_E2077_NN50.pdf")
 plot(log10.(Losses), linewidth=3,label="", xlabel="Nº Iterations",ylabel="Loss values",legendfontsize=8,tickfontsize=9,guidefontsize=9)
-savefig("Loss_corrected_V3.pdf")
+savefig("Loss_corrected_V3_L4_N4_E2077_NN50.pdf")
+
 
 # function sort_and_apply_indices(original_arr, apply_arr)
 #     # Create a copy of the original array

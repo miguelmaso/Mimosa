@@ -116,11 +116,10 @@ function remove_data(matrix1,matrix2)
 end
 
 input_x_train = readdlm("filenames_parsed_complex_potential.txt")
-input_y_train' = readdlm("contents_output_complex_potential.txt")
-
+input_y_train = readdlm("contents_output_complex_potential.txt")
+input_y_train =  input_y_train'
 failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
 x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.246\", \"0.222\", \"0.186\", \"0.042\", \"0.126\", \"0.03\", \"0.234\", \"0.102\", \"0.006\", \"0.006\", \"0.09\", \"0.27\", \"0.162\", \"0.294\", \"0.3\", \"0.186\", \"0.138\", \"0.102\", \"0.126\", \"0.138\"].txt") #If using quotes, you need to escape them
-
 function find_matching_rows(small_matrix, big_matrix)
     # Ensure both matrices have the same number of columns
     if size(small_matrix, 2) != size(big_matrix, 2)
@@ -148,7 +147,6 @@ comparing_index = find_matching_rows(x_train_subset,x_train)
 #x_train::Matrix{Float64} = readdlm("filenames_parsed.txt")
 #y_train::Matrix{Float64} = readdlm("contents_output.txt")
 
-#TODO CHECK!! Are the rows and columns correct? Maybe when you import you should transpose y_train
 
 n_nodes   =  size(y_train,1)
 y_train₁  =  y_train[1:3:n_nodes,:]
@@ -201,8 +199,8 @@ random_indices = rand(1:20577,2000)
 y_pred_whole = model(x_train')
 y_fromFE₁_whole = y_train₁_norm[nodes_indices,random_indices]
 y_fromFE₃_whole = y_train₃_norm[nodes_indices,random_indices]
-y_pred₁ = y_pred_whole[1:200,random_indices]
-y_pred₃ = y_pred_whole[201:400,random_indices]
+y_pred₁ = y_pred_whole[1:50,random_indices]
+y_pred₃ = y_pred_whole[51:100,random_indices]
 plot(y_pred₁[:],y_fromFE₁_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 1 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
 savefig("R2_Coord1_corrected_V3.pdf")
 plot(y_pred₃[:],y_fromFE₃_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 3 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
@@ -297,15 +295,15 @@ y_fromFE_sorted = y_fromFE[:,sorted_indices]
 y_predicted_sorted = y_predicted[:,sorted_indices]
 
 
-Coord1_y_from_FE_sorted_point = y_fromFE_sorted[1:200,:]
-Coord3_y_from_FE_sorted_point = y_fromFE_sorted[201:400,:]
-Coord1_y_predicted_sorted_point = y_predicted_sorted[1:200,:]
-Coord3_y_predicted_sorted_point = y_predicted_sorted[201:400,:]
+Coord1_y_from_FE_sorted_point = y_fromFE_sorted[1:50,:]
+Coord3_y_from_FE_sorted_point = y_fromFE_sorted[51:100,:]
+Coord1_y_predicted_sorted_point = y_predicted_sorted[1:50,:]
+Coord3_y_predicted_sorted_point = y_predicted_sorted[51:100,:]
 
 # Plot per coordinate
 #plot(y_pred₁[:],y_fromFE₁_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 1 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
-plot(Coord3_y_from_FE_sorted_point[50,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
-plot!(Coord3_y_predicted_sorted_point[50,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
+plot(Coord3_y_from_FE_sorted_point[6,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
+plot!(Coord3_y_predicted_sorted_point[6,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
 savefig("Trajectory_P50_Coord3.pdf")
 
 function denormalise(row::Vector,original_array)
@@ -324,9 +322,9 @@ Coord3_y_predicted_sorted_point_descaled = denormalise(Coord3_y_predicted_sorted
 Coord1_y_fromFE_sorted_point_descaled = denormalise(Coord1_y_from_FE_sorted_point[1,:],y_train₁_whole[:])
 Coord3_y_fromFE_sorted_point_descaled = denormalise(Coord3_y_from_FE_sorted_point[1,:],y_train₃_whole[:])
 
-mat_coords = readdlm("simple_mat_coords.txt")
-mat_coords_reshape = reshape(mat_coords,3,266)
-Point_211_MatCoords = mat_coords_reshape[:,211] # The node 211 corresponds to the first node in the nodes_indices
+mat_coords = readdlm("complex_mat_coords.txt")
+mat_coords_reshape = reshape(mat_coords,3,1330)
+Point_297_MatCoords = mat_coords_reshape[:,297] # The node 297 corresponds to the first node in the nodes_indices
 
-writedlm("PlottingTrajectoryParaview_corrected_Rog_V3.csv", hcat(Coord1_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[1],zeros(480).+Point_211_MatCoords[2],Coord3_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[3]),",")
-writedlm("PlottingTrajectoryParaview_PRED_corrected_Rog_V3.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_211_MatCoords[1],zeros(480).+Point_211_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_211_MatCoords[3]),",")
+#TODO Plot the trajectory, now the material coordinates look OK :)
+writedlm("Trajectory_0246_0222_0186_0042_0126_003_0234_0102.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_297_MatCoords[1],zeros(234).+Point_297_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_297_MatCoords[3]),",")
