@@ -424,11 +424,16 @@ To measure the dispersion of the data generated from the Machine Learning model 
 
 \begin{figure}
   \centering
-  \subfloat[Displacement in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3.pdf}}
-  \subfloat[Displacement in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3.pdf}}\\
-  \subfloat[Displacement in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3.pdf}}
-  \subfloat[Displacement in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3.pdf}}
-  \caption{R2 evaluation of the displacements. FE data vs ML predicted output for the better performing neural network architecture. Sampling of 200 nodes at 2000 experiments, randomly chosen. A clear linear distribution can be seen between the predicted and FE displacements, indicating a high R2 and correlation between the data. However, there is a dispersion in the data which can be expected due to the small amount of data taken as a training dataset.}
+  \subfloat[Displacement in the first axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3.pdf}} \qquad
+  \subfloat[Displacement in the third axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3.pdf}}\\
+  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L4_N10_E2077_NN50.pdf}}\qquad
+  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L4_N10_E2077_NN50.pdf}}\\
+  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L10_N20_E2077_NN50.pdf}} \qquad
+  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L10_N20_E2077_NN50.pdf}}\\
+  \pagebreak
+  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L8_N40_E2077_NN200.pdf}} \qquad
+  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L8_N40_E2077_NN200.pdf}}
+  \caption{R2 evaluation of the displacements. FE data vs ML predicted output for the better performing neural network architecture, and 3 other architectures. A clear linear distribution can be seen between the predicted and FE displacements, indicating a high R2 and correlation between the data. However, there is a dispersion in the data which can be expected due to the small amount of data taken as a training dataset.}
   \label{fig: R2_plot}
 \end{figure}
 
@@ -439,27 +444,50 @@ To further analyse the performance of the machine learning architecture, we can 
 
 \begin{figure}
   \begin{center}
-    \includegraphics[width=0.6\textwidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3.pdf}
+    \subfloat[Evolution of the loss function for the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3.pdf}} \qquad
+    \subfloat[Evolution of the loss function for the  architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3_L4_N10_E2077_NN50.pdf}} \\
+    \subfloat[Evolution of the loss function for the  architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3_L10_N20_E2077_NN50.pdf}} \qquad
+    \subfloat[Evolution of the loss function for the  architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3_L8_N40_E2077_NN200.pdf}} 
   \end{center}
-  \caption{Loss function during the training for the best performant neural network configuration. Convergence is not fully achieved, however a high enough R2 is reached. This effectively means that further trainig the model would cause overfitting. Spikes can be seen in in the loss function during the training process, which are caused by a high value of the $\eta$ parameter in the Adam optimizer. This means that the loss is minimized quicker, at the expense of bigger fluctuating values. This strikes a good balance between effectiveness and precision.}
+  \caption{Loss function during the training for the best performant neural network configuration, and 3 other architectures. Convergence is not fully achieved in every training architecture, however a high enough R2 is reached. This effectively means that further trainig the model would cause overfitting. Spikes can be seen in in the loss function during the training process, which are caused by a high value of the $\eta$ parameter in the Adam optimizer. This means that the loss is minimized quicker, at the expense of bigger fluctuating values. This strikes a good balance between effectiveness and precision.}
   \label{fig: losses}
 \end{figure}
 
 
- To validate the effectiveness in predicting the displacement, we plotted the trajectory of several points, related to a specific potential. Essentially, we are tracking the displacement of random points in the mesha nd comparing it against the displacement from FE.
+Besides the R2 measurement and scatter plot of predicted displacements versus FE generated data, we tracked the trajectory of certain points in the mesh throughout the deformation of the dielectric. By applying a combination of potentials in the electrodes and measuring the elastomer's response, we can compare that displacement against the one predicted by the neural network architecture. This can provide a better outlook on how accurately the machine learning model is predicting the real response of the dielectric. 
+
 
 \begin{figure}
  \centering 
-  \subfloat[X Trajectory of point 50]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_P50_Coord1.pdf}}
-  \subfloat[Z Trajectory of point 50]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_P50_Coord3.pdf}} \\
-  \subfloat[X Trajectory of point 100]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_P100_Coord1.pdf}}
-  \subfloat[Z Trajectory of point 100]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_P100_Coord3.pdf}} \\
-  \subfloat[X Trajectory of point 200]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_P200_Coord1.pdf}} 
-  \subfloat[Z Trajectory of point 200]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_P200_Coord3.pdf}} 
+  \subfloat[Trajectory tracking of point 1 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P1_Coord1.pdf}}
+  \subfloat[Trajectory tracking of point 1 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P1_Coord3.pdf}}\\
+  \subfloat[Trajectory tracking of point 100 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P100_Coord1.pdf}}
+  \subfloat[Trajectory tracking of point 100 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P100_Coord3.pdf}}\\
+  \subfloat[Trajectory tracking of point 150 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P150_Coord1.pdf}}
+  \subfloat[Trajectory tracking of point 150 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P150_Coord3.pdf}}\\
+  \pagebreak
+  \subfloat[Trajectory tracking of point 200 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P200_Coord1.pdf}}
+  \subfloat[Trajectory tracking of point 200 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P200_Coord3.pdf}}
 
-\caption{Trajectory plot of points 50, 100 and 200 for displacements in X and Z. Comparison of the computed trajectory using the traditional FE implementation against the best-performing Machine Learning model. It can be seen that the trajectories are similar across different points, which is in accordance with the high R2 predicted. There is a slight discrepancy in the prediction of the displacement in Z direction, which becomes more evident towards the end of the trajectory.}
+  \caption{Trajectory plot of points 1, 100, 150 and 200 for displacements in X and Z, with a potential combination in the electrodes of [0.3,0.09,.0.162,0.066] Comparison of the computed trajectory using the traditional FE implementation against the best-performing Machine Learning model. It can be seen that the trajectories are similar across different points, which is in accordance with the high R2 predicted. There is a slight discrepancy in the prediction of the displacement in Z direction, which becomes more evident towards the end of the trajectory.}
 \label{fig: Trajectories_2D}
 \end{figure} 
+
+
+The same data can be visualized in a 3D environment, where the overall deformation of the elastomer, computed via FE, can be visualized in Paraview. The predicted displacement of a node in the mesh can be superimposed to the 3D deformation to verify that, indeed, the overall behaviour of the elastomer can be predicted using the proposed Neural Network.
+
+\begin{figure}
+  \subfloat[Frame 1]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME1.png}}
+  \subfloat[Frame 2]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME2.png}}\\
+  \subfloat[Frame 3]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME3.png}}
+  \subfloat[Frame 4]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME4.png}}\\
+  \subfloat[Frame 5]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME5.png}}
+  \subfloat[Frame 6]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME6.png}}\\
+  \subfloat[Frame 7]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME7.png}}
+  \subfloat[Frame 8]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME8.png}}
+  \caption{Trajectory plot  for the potential combination of [0.3,0.09,.0.162,0.066]. The 3D data corresponds to the FE solution, and the point trajectory to the predicted displacement of point 1 using the best performing neural network architecture.}\label{fig:}
+\end{figure}
+
 
 
 
