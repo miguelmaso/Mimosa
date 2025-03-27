@@ -334,4 +334,4 @@ mat_coords_reshape = reshape(mat_coords,3,266)
 First_Point_MatCoords = mat_coords_reshape[:,211] # The node 211 corresponds to the first node in the nodes_indices
 
 #writedlm("Trajectory_00_0114_0078_0102.csv", hcat(Coord1_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[1],zeros(480).+Point_211_MatCoords[2],Coord3_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[3]),",")
-writedlm("Trajectory_0078_0198_0006_00.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+First_Point_MatCoords[1],zeros(119).+First_Point_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+First_Point_MatCoords[3]),",")
+writedlm("Trajectory_0078_0198_0006_00.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+First_Point_MatCoords[1],zeros(26).+First_Point_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+First_Point_MatCoords[3]),",")

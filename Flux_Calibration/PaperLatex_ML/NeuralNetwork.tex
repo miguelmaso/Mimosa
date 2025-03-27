@@ -361,7 +361,7 @@ Every possible combination of these parameters was studied, totalling 80 differe
 % \usepackage{multirow}
 \begin{table}[!hb]
 \centering
-\begin{minipage}{.49\textwidth}
+\begin{minipage}{.45\textwidth}
 
 \begin{tabular}{lllllllcc|ccc}
 \multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=50$\\ $n_{experiments}=2077$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
@@ -373,7 +373,8 @@ Every possible combination of these parameters was studied, totalling 80 differe
 
 \end{minipage}
 
-\begin{minipage}{.49\textwidth}
+  \vspace{1cm}
+\begin{minipage}{.45\textwidth}
 
 \begin{tabular}{lllllllcc|ccc}
 \multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=50$\\ $n_{experiments}=10000$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
@@ -385,7 +386,8 @@ Every possible combination of these parameters was studied, totalling 80 differe
 
 \end{minipage}
 
-\begin{minipage}{.49\textwidth}
+  \vspace{1cm}
+\begin{minipage}{.45\textwidth}
 
 \begin{tabular}{lllllllcc|ccc}
 \multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=200$\\ $n_{experiments}=2077$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
@@ -397,7 +399,8 @@ Every possible combination of these parameters was studied, totalling 80 differe
 
 \end{minipage}
 
-\begin{minipage}{.49\textwidth}
+  \vspace{1cm}
+\begin{minipage}{.45\textwidth}
 
 \begin{tabular}{lllllllcc|ccc}
 \multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=200$\\ $n_{experiments}=10000$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
@@ -424,15 +427,15 @@ To measure the dispersion of the data generated from the Machine Learning model 
 
 \begin{figure}
   \centering
-  \subfloat[Displacement in the first axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3.pdf}} \qquad
-  \subfloat[Displacement in the third axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3.pdf}}\\
-  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L4_N10_E2077_NN50.pdf}}\qquad
-  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L4_N10_E2077_NN50.pdf}}\\
-  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L10_N20_E2077_NN50.pdf}} \qquad
-  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L10_N20_E2077_NN50.pdf}}\\
+  \subfloat[Displacement in the first axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3.jpg}} \qquad
+  \subfloat[Displacement in the third axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3.jpg}}\\
+  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L4_N10_E2077_NN50.jpg}}\qquad
+  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L4_N10_E2077_NN50.jpg}}\\
+  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L10_N20_E2077_NN50.jpg}} \qquad
+  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L10_N20_E2077_NN50.jpg}}\\
   \pagebreak
-  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L8_N40_E2077_NN200.pdf}} \qquad
-  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L8_N40_E2077_NN200.pdf}}
+  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L8_N40_E2077_NN200.jpg}} \qquad
+  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L8_N40_E2077_NN200.jpg}}
   \caption{R2 evaluation of the displacements. FE data vs ML predicted output for the better performing neural network architecture, and 3 other architectures. A clear linear distribution can be seen between the predicted and FE displacements, indicating a high R2 and correlation between the data. However, there is a dispersion in the data which can be expected due to the small amount of data taken as a training dataset.}
   \label{fig: R2_plot}
 \end{figure}
@@ -444,10 +447,10 @@ To further analyse the performance of the machine learning architecture, we can 
 
 \begin{figure}
   \begin{center}
-    \subfloat[Evolution of the loss function for the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3.pdf}} \qquad
-    \subfloat[Evolution of the loss function for the  architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3_L4_N10_E2077_NN50.pdf}} \\
-    \subfloat[Evolution of the loss function for the  architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3_L10_N20_E2077_NN50.pdf}} \qquad
-    \subfloat[Evolution of the loss function for the  architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3_L8_N40_E2077_NN200.pdf}} 
+    \subfloat[Evolution of the loss function for the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3.jpg}} \qquad
+    \subfloat[Evolution of the loss function for the  architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3_L4_N10_E2077_NN50.jpg}} \\
+    \subfloat[Evolution of the loss function for the  architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3_L10_N20_E2077_NN50.jpg}} \qquad
+    \subfloat[Evolution of the loss function for the  architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Loss_corrected_V3_L8_N40_E2077_NN200.jpg}} 
   \end{center}
   \caption{Loss function during the training for the best performant neural network configuration, and 3 other architectures. Convergence is not fully achieved in every training architecture, however a high enough R2 is reached. This effectively means that further trainig the model would cause overfitting. Spikes can be seen in in the loss function during the training process, which are caused by a high value of the $\eta$ parameter in the Adam optimizer. This means that the loss is minimized quicker, at the expense of bigger fluctuating values. This strikes a good balance between effectiveness and precision.}
   \label{fig: losses}
@@ -459,15 +462,15 @@ Besides the R2 measurement and scatter plot of predicted displacements versus FE
 
 \begin{figure}
  \centering 
-  \subfloat[Trajectory tracking of point 1 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P1_Coord1.pdf}}
-  \subfloat[Trajectory tracking of point 1 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P1_Coord3.pdf}}\\
-  \subfloat[Trajectory tracking of point 100 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P100_Coord1.pdf}}
-  \subfloat[Trajectory tracking of point 100 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P100_Coord3.pdf}}\\
-  \subfloat[Trajectory tracking of point 150 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P150_Coord1.pdf}}
-  \subfloat[Trajectory tracking of point 150 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P150_Coord3.pdf}}\\
+  \subfloat[Trajectory tracking of point 1 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P1_Coord1.jpg}}
+  \subfloat[Trajectory tracking of point 1 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P1_Coord3.jpg}}\\
+  \subfloat[Trajectory tracking of point 100 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P100_Coord1.jpg}}
+  \subfloat[Trajectory tracking of point 100 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P100_Coord3.jpg}}\\
+  \subfloat[Trajectory tracking of point 150 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P150_Coord1.jpg}}
+  \subfloat[Trajectory tracking of point 150 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P150_Coord3.jpg}}\\
   \pagebreak
-  \subfloat[Trajectory tracking of point 200 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P200_Coord1.pdf}}
-  \subfloat[Trajectory tracking of point 200 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P200_Coord3.pdf}}
+  \subfloat[Trajectory tracking of point 200 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P200_Coord1.jpg}}
+  \subfloat[Trajectory tracking of point 200 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P200_Coord3.jpg}}
 
   \caption{Trajectory plot of points 1, 100, 150 and 200 for displacements in X and Z, with a potential combination in the electrodes of [0.3,0.09,.0.162,0.066] Comparison of the computed trajectory using the traditional FE implementation against the best-performing Machine Learning model. It can be seen that the trajectories are similar across different points, which is in accordance with the high R2 predicted. There is a slight discrepancy in the prediction of the displacement in Z direction, which becomes more evident towards the end of the trajectory.}
 \label{fig: Trajectories_2D}
