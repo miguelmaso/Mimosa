@@ -335,3 +335,20 @@ First_Point_MatCoords = mat_coords_reshape[:,211] # The node 211 corresponds to 
 
 #writedlm("Trajectory_00_0114_0078_0102.csv", hcat(Coord1_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[1],zeros(480).+Point_211_MatCoords[2],Coord3_y_fromFE_sorted_point_descaled.+Point_211_MatCoords[3]),",")
 writedlm("Trajectory_0078_0198_0006_00.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+First_Point_MatCoords[1],zeros(26).+First_Point_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+First_Point_MatCoords[3]),",")
+
+
+#-------------------------------------------------------
+# Alpha (undeformed and deformed) points for the paper
+#-------------------------------------------------------
+
+Coord1_descaled = stack([denormalise(Vector(row),y_train₁_whole[:]) for row in eachrow(Coord1_y_predicted_sorted_point)])
+Coord1_descaled = Coord1_descaled'
+Coord3_descaled = stack([denormalise(Vector(row),y_train₃_whole[:]) for row in eachrow(Coord3_y_predicted_sorted_point)])
+Coord3_descaled = Coord3_descaled'
+
+# To locate the coordenates of the deformed shape, we need to add the last Δu to the material coordinates
+mat_coords_nodes = mat_coords_reshape[:,nodes_indices]
+deformed_x = Coord1_descaled[:,10].+mat_coords_nodes[1,:]
+deformed_z = Coord3_descaled[:,10].+mat_coords_nodes[3,:]
+
+writedlm("Points_alpha_deformed.csv", hcat(deformed_x,zeros(200).+mat_coords_nodes[2,:],deformed_z),",")

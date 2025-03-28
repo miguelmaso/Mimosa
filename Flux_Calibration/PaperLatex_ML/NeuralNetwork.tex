@@ -427,15 +427,15 @@ To measure the dispersion of the data generated from the Machine Learning model 
 
 \begin{figure}
   \centering
-  \subfloat[Displacement in the first axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3.jpg}} \qquad
-  \subfloat[Displacement in the third axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3.jpg}}\\
-  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L4_N10_E2077_NN50.jpg}}\qquad
-  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L4_N10_E2077_NN50.jpg}}\\
-  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L10_N20_E2077_NN50.jpg}} \qquad
-  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L10_N20_E2077_NN50.jpg}}\\
+  \subfloat[Displacement in the first axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_mod.jpg}} \qquad
+  \subfloat[Displacement in the third axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_mod.jpg}}\\
+  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L4_N10_E2077_NN50_mod.jpg}}\qquad
+  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L4_N10_E2077_NN50_mod.jpg}}\\
+  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L10_N20_E2077_NN50_mod.jpg}} \qquad
+  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L10_N20_E2077_NN50_mod.jpg}}\\
   \pagebreak
-  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L8_N40_E2077_NN200.jpg}} \qquad
-  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L8_N40_E2077_NN200.jpg}}
+  \subfloat[Displacement in the first axis of the coordinate system of the architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L8_N40_E2077_NN200_mod.jpg}} \qquad
+  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 8 layers | 40 neurons | 2077 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L8_N40_E2077_NN200_mod.jpg}}
   \caption{R2 evaluation of the displacements. FE data vs ML predicted output for the better performing neural network architecture, and 3 other architectures. A clear linear distribution can be seen between the predicted and FE displacements, indicating a high R2 and correlation between the data. However, there is a dispersion in the data which can be expected due to the small amount of data taken as a training dataset.}
   \label{fig: R2_plot}
 \end{figure}
@@ -479,11 +479,15 @@ Besides the R2 measurement and scatter plot of predicted displacements versus FE
 
 The same data can be visualized in a 3D environment, where the overall deformation of the elastomer, computed via FE, can be visualized in Paraview. The predicted displacement of a node in the mesh can be superimposed to the 3D deformation to verify that, indeed, the overall behaviour of the elastomer can be predicted using the proposed Neural Network.
 
-\begin{figure}
+\begin{figure}[H]
+  \centering
   \subfloat[Frame 1]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME1.png}}
   \subfloat[Frame 2]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME2.png}}\\
   \subfloat[Frame 3]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME3.png}}
   \subfloat[Frame 4]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME4.png}}\\
+\end{figure}
+\begin{figure}[H]
+  \centering
   \subfloat[Frame 5]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME5.png}}
   \subfloat[Frame 6]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME6.png}}\\
   \subfloat[Frame 7]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_03_009_0162_0066_FRAME7.png}}
@@ -492,10 +496,10 @@ The same data can be visualized in a 3D environment, where the overall deformati
 \end{figure}
 
 \begin{figure}
-  \subfloat[Frame 1]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_0078_0198_0006_00_FRAME1.png}}
-  \subfloat[Frame 2]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_0078_0198_0006_00_FRAME2.png}}\\
-  \subfloat[Frame 3]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_0078_0198_0006_00_FRAME3.png}}
-  \subfloat[Frame 4]{\includegraphics[width=0.45\textwidth]{Figures/NeuralNetworkStudy/Paraview_0078_0198_0006_00_FRAME4.png}}
+  \subfloat[Frame 1]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0078_0198_0006_00_FRAME1.png}}
+  \subfloat[Frame 2]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0078_0198_0006_00_FRAME2.png}}\\
+  \subfloat[Frame 3]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0078_0198_0006_00_FRAME3.png}}
+  \subfloat[Frame 4]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0078_0198_0006_00_FRAME4.png}}
   \caption{Trajectory plot  for the potential combination of [0.078,0.198,.0.006,0.0]. The 3D data corresponds to the FE solution, and the point trajectory to the predicted displacement of point 1 using the best performing neural network architecture.}\label{fig:}
 \end{figure}
 
