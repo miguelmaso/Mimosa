@@ -202,11 +202,11 @@ y_fromFE₃_whole = y_train₃_norm[nodes_indices,random_indices]
 y_pred₁ = y_pred_whole[1:50,random_indices]
 y_pred₃ = y_pred_whole[51:100,random_indices]
 plot(y_pred₁[:],y_fromFE₁_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 1 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
-savefig("R2_Coord1_corrected_V3.pdf")
+savefig("R2_Coord1_corrected_V3_Complex_L2_N8_E10000_NN50_.png")
 plot(y_pred₃[:],y_fromFE₃_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 3 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
-savefig("R2_Coord3_corrected_V3.pdf")
+savefig("R2_Coord3_corrected_V3_Complex_L2_N8_E10000_NN50_.png")
 plot(log10.(Losses), linewidth=3,label="", xlabel="Nº Iterations",ylabel="Loss values",legendfontsize=8,tickfontsize=9,guidefontsize=9)
-savefig("Loss_corrected_V3.pdf")
+savefig("Loss_corrected_V3_Complex_L2_N8_E10000_NN50.png")
 
 # function sort_and_apply_indices(original_arr, apply_arr)
 #     # Create a copy of the original array
@@ -302,9 +302,9 @@ Coord3_y_predicted_sorted_point = y_predicted_sorted[51:100,:]
 
 # Plot per coordinate
 #plot(y_pred₁[:],y_fromFE₁_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 1 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
-plot(Coord3_y_from_FE_sorted_point[6,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
-plot!(Coord3_y_predicted_sorted_point[6,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
-savefig("Trajectory_P50_Coord3.pdf")
+plot(Coord1_y_from_FE_sorted_point[32,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
+plot!(Coord1_y_predicted_sorted_point[32,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
+savefig("Trajectory_COMPLEX_BestArchitecture_P31_Coord3.pdf")
 
 function denormalise(row::Vector,original_array)
     min = minimum(original_array)
