@@ -331,7 +331,102 @@ Epochs              &  \multicolumn{3}{c}{1e4}
 \subsubsection{Results}
 
 
-Every possible combination of these parameters was studied, totalling 80 different architectures that were run and analysed. To measure the performance of these architecture, the R2 measurement (\ref{eq:R2_measurement}), was used. This metric allows us to compare the displacements predicted by the neural network against the test data (the remaining data that was not taken into the training process). To provide a clearer outlook on the results of the parametric hyperparameter study, we compiled the output of R2 measurements on every combination of 50 and 200 nodes using 2077 and 10000 experiments. These results can be visualized in Table \ref{tab: R2_measurement}
+Every possible combination of these parameters was studied, totalling 81 different architectures that were run and analysed. To measure the performance of these architectures, the R2 measurement (\ref{eq:R2_measurement}), was used. This metric allows us to compare the displacements predicted by the neural network against the test data (the remaining data that was not taken into the training process). To provide a clearer outlook on the results of the parametric hyperparameter study, we compiled the output of R2 measurements on every combination of 50 and 200 nodes using 2077 and 10000 experiments. These results can be visualized in Table \ref{tab: R2_measurement}. By analyzing only a subset of 36 architectures out of the total 81, we can establish different relationships between the hyperparameters used in the parametric study, namely: the number of nodes ($n_{nodes}$), the number of neurons ($n_{neurons}$), the number of experiments ($n_{experiments}$) and the number of layers ($n_{layers}$), and how they impact the quality of the predicted output. 
+
+
+\begin{itemize}
+  \item $n_{neurons}$: The number of neurons per layer is directly related to the complexity that the neural network can handle. More neurons per layer means more complex relationships that can be established between each neuron, allowing for deeper understanding of the problem. However, a high number of neurons can overfit the problem, missing generalization and causing low accuracy. In order to control the overfitting behaviour, the training process computes the R2 of the training data, as well as the test data, meaning that even if there is a high R2 at the training points (good training strategy), we will not miss generalization and the overall context of the problem. Hence, the higher the number of neurons, the better predictions we will obtain. 
+  \item  $n_{layers}$: The number of layers is often referred to as the \textit{depth} of the neural network. The deeper the network, the better its ability to understand complex patterns among the data. In our example, the depth of the network is crucial to capture the nonlinear phenomena that characterises the electromechanic problem of a dielectric elastomer. Hence, more layers will allow us to better depict the deformantion accross multiple potential combinations.
+  \item $n_{nodes}$: Out of the total number of nodes available in the top surface of the elastomer, we are selecting only a subset, referred to as $\alpha_n$, where $n$ is the number of nodes in the subset. This reduced dataset of nodal displacement data is related to the amount of information that will be provided to the neural network. By using the full nodal displacement data available, we would be able to predict the displacement at each node accurately, but at a cost of computational efficiency and generalization. Hence, more nodes will mean a broader description of the complete deformation mode of the elastomer. However, this is not related to the accuracy of the neural network, but to how well the network is able to predict the overall physical behaviour. Subsequently, more nodes does not mean higher accuracy.
+  \item  $n_{experiments}$: The number of experiments refers to the amount of combination of potentials that will be fed to the neural network. More experiments used in the training phase will allow the network to better predict the complete test dataset of potential combinations used. Nonetheless, an increase in the amount of experiments used in the training phase will result in higher computational cost. 
+\end{itemize}
+
+We have summarized the effect of the 4 parameters in table \ref{table:summary_NN_params}
+
+\begin{figure}
+\centering
+
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{Parameter} & \textbf{Effect on \( R^2 \)} \\ 
+    \hline
+    Number of Neurons & \textbf{↑ Improves}, but \textbf{↓ overfits if too high} \\ 
+    \hline
+    Number of Layers & \textbf{↑ Improves}, but \textbf{↓ may plateau} \\ 
+    \hline
+    Experiments (Data) & \textbf{↑ Always improves} (more data = better generalization) \\ 
+    \hline
+    Nodes Used & \textbf{↑ Helps} with generalization, but \textbf{not} related to the accuracy  \\ 
+    \hline
+
+\end{tabular}
+  
+  \caption{Summary table on the effect of the number of neurons, nodes, layers and experiments on the accuracy of the neural network, measured via the R2 value}
+  \label{table:summary_NN_params}
+\end{figure}
+
+
+The same qualitative influence of the parameters on the R2 value can be visualize by a spider plot \ref{fig:spiderweb}, where the inner polygon represents the influence of each parameter on the accuracy of the neural network. 
+
+\newcommand{\D}{4} % number of dimensions (config option)
+\newcommand{\U}{4} % number of scale units (config option)
+
+\newdimen\R % maximal diagram radius (config option)
+\R=3.5cm 
+\newdimen\L % radius to put dimension labels (config option)
+\L=4cm
+
+\newcommand{\A}{360/\D} % calculated angle between dimension axes  
+
+\begin{figure}[htbp]
+ \centering
+
+\begin{tikzpicture}[scale=1]
+  \path (0:0cm) coordinate (O); % define coordinate for origin
+
+  % draw the spiderweb (only 1 inner polygon)
+  \foreach \X in {1,...,\D}{
+    \draw (\X*\A:0) -- (\X*\A:\R);
+  }
+
+  % Define coordinates for the data points aligned with the axis vertices
+  \path (1*\A:3.1*\R/\U) coordinate (D1);  % Neurons (similar to layers)
+  \path (2*\A:3.5*\R/\U) coordinate (D2);  % Layers (mid influence)
+  \path (3*\A:1*\R/\U) coordinate (D3);  % Nodes (almost 0 influence)
+  \path (4*\A:3.9*\R/\U) coordinate (D4);  % Experiments (most influence)
+
+  % Draw the inner polygon and fill it with red color for clarity
+  \fill[red,opacity=0.3] (D1) -- (D2) -- (D3) -- (D4) -- cycle; % Shaded inner polygon
+
+  % Draw the border of the inner polygon (thicker line)
+  \draw [color=red,line width=2pt,opacity=0.7]
+    (D1) --
+    (D2) --
+    (D3) --
+    (D4) -- cycle; % Example polygon
+
+  % define labels for each dimension axis (names config option)
+  \path (1*\A:\L) node (L1) {\small Neurons};
+  \path (2*\A:\L+0.36cm) node (L2) {\small Layers};
+  \path (3*\A:\L) node (L3) {\small Nodes};
+  \path (4*\A:\L+0.7cm) node (L4) {\small Experiments}; % Adjusted label position
+
+  % draw scale lines for 4 scale units
+  \foreach \Y in {1,2,3,4} {
+    \foreach \X in {1,...,\D}{
+      \path (\X*\A:\Y*\R/\U) coordinate (D\X-\Y);
+      \fill (D\X-\Y) circle (1.5pt); % Increased size of node points
+    }
+    \draw [opacity=0.3] (0:\Y*\R/\U) \foreach \X in {1,...,\D}{
+        -- (\X*\A:\Y*\R/\U)
+    } -- cycle;
+  }
+
+\end{tikzpicture}
+  \caption{Spiderweb Diagram to show the influence of 4 parameters: the number of nodes, neurons, layers and experiments on the accuracy of the neural network. Each parameter is positioned in a different axis. The higher the influence, the more area covered by the inner polygon, colored in red. By taking a look at the spiderweb figure, we can see that the parameter with the most influence is the number of experiments, followed by the number of neurons and layers. The number of nodes does not affect accuracy (high R2 value), but generalization. }
+\label{fig:spiderweb}
+\end{figure}
+
 
 
 % I will take 4 combinations of n_nodes and n_experiments
@@ -425,12 +520,15 @@ Out of the analysed architectures in Table \ref{tab: R2_values}, the best config
 
 To measure the dispersion of the data generated from the Machine Learning model against the in-silico FE data, we plotted the output displacement from the FE analysis against the displacement predicted by the Machine Learning architecture. Since the displacement data is given per axis in the global coordinate system, we compared the displacement per axis; namely the first and third axis. The output of this analysis is displayed in Figure \ref{fig: R2_plot} for various architectures tested.
 
-\begin{figure}
+\begin{figure}[H]
   \centering
   \subfloat[Displacement in the first axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_mod.jpg}} \qquad
   \subfloat[Displacement in the third axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_mod.jpg}}\\
   \subfloat[Displacement in the first axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L4_N10_E2077_NN50_mod.jpg}}\qquad
-  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L4_N10_E2077_NN50_mod.jpg}}\\
+  \subfloat[Displacement in the third axis of the coordinate system of the architecture: 4 layers | 10 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L4_N10_E2077_NN50_mod.jpg}}
+\end{figure}
+\begin{figure}[H]
+  \centering
   \subfloat[Displacement in the first axis of the coordinate system of the architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_L10_N20_E2077_NN50_mod.jpg}} \qquad
   \subfloat[Displacement in the third axis of the coordinate system of the architecture: 10 layers | 20 neurons | 2077 experiments | 50 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord3_corrected_V3_L10_N20_E2077_NN50_mod.jpg}}\\
   \pagebreak
@@ -439,6 +537,8 @@ To measure the dispersion of the data generated from the Machine Learning model 
   \caption{R2 evaluation of the displacements. FE data vs ML predicted output for the better performing neural network architecture, and 3 other architectures. A clear linear distribution can be seen between the predicted and FE displacements, indicating a high R2 and correlation between the data. However, there is a dispersion in the data which can be expected due to the small amount of data taken as a training dataset.}
   \label{fig: R2_plot}
 \end{figure}
+
+\pagebreak
 
 As can be seen from Figure \ref{fig: R2_plot}, there is a high correlation between the predicted data from the neural network and the data coming from the FE analysis, which was also indicated by a high R2 value.
 
@@ -460,7 +560,7 @@ To further analyse the performance of the machine learning architecture, we can 
 Besides the R2 measurement and scatter plot of predicted displacements versus FE generated data, we tracked the trajectory of certain points in the mesh throughout the deformation of the dielectric. By applying a combination of potentials in the electrodes and measuring the elastomer's response, we can compare that displacement against the one predicted by the neural network architecture. This can provide a better outlook on how accurately the machine learning model is predicting the real response of the dielectric. 
 
 
-\begin{figure}
+\begin{figure}[H]
  \centering 
   \subfloat[Trajectory tracking of point 1 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P1_Coord1.jpg}}
   \subfloat[Trajectory tracking of point 1 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P1_Coord3.jpg}}\\
@@ -468,7 +568,9 @@ Besides the R2 measurement and scatter plot of predicted displacements versus FE
   \subfloat[Trajectory tracking of point 100 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P100_Coord3.jpg}}\\
   \subfloat[Trajectory tracking of point 150 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P150_Coord1.jpg}}
   \subfloat[Trajectory tracking of point 150 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P150_Coord3.jpg}}\\
-  \pagebreak
+\end{figure}
+\begin{figure}[H]
+  \centering
   \subfloat[Trajectory tracking of point 200 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P200_Coord1.jpg}}
   \subfloat[Trajectory tracking of point 200 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P200_Coord3.jpg}}
 
@@ -476,7 +578,7 @@ Besides the R2 measurement and scatter plot of predicted displacements versus FE
 \label{fig: Trajectories_2D}
 \end{figure} 
 
-
+\pagebreak
 The same data can be visualized in a 3D environment, where the overall deformation of the elastomer, computed via FE, can be visualized in Paraview. The predicted displacement of a node in the mesh can be superimposed to the 3D deformation to verify that, indeed, the overall behaviour of the elastomer can be predicted using the proposed Neural Network.
 
 \begin{figure}[H]
@@ -495,7 +597,10 @@ The same data can be visualized in a 3D environment, where the overall deformati
   \caption{Trajectory plot  for the potential combination of [0.3,0.09,.0.162,0.066]. The 3D data corresponds to the FE solution, and the point trajectory to the predicted displacement of point 1 using the best performing neural network architecture.}\label{fig:}
 \end{figure}
 
+\pagebreak
+
 \begin{figure}
+  \centering
   \subfloat[Frame 1]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0078_0198_0006_00_FRAME1.png}}
   \subfloat[Frame 2]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0078_0198_0006_00_FRAME2.png}}\\
   \subfloat[Frame 3]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0078_0198_0006_00_FRAME3.png}}
@@ -505,7 +610,6 @@ The same data can be visualized in a 3D environment, where the overall deformati
 
 
 
-\newpage
 
 \subsection{Second example: 20-electrode dielectric elastomer}
 
@@ -517,6 +621,87 @@ The second example consists of a 20-electrode dielectric elastomer, whose electr
 \subsubsection{Training strategy}
 \subsubsection{Results}
 
+For each of the hyperparameters specified, the values studied were the following:
+
+\begin{table}[!hb]
+  \centering
+\begin{tabular}{l|cccc}
+\textbf{Parameters} & \multicolumn{3}{c}{\textbf{Value}} \\ \hline
+Layers              & 4      & 8       & 10            \\
+Neurons             & 10     & 20      & 40           \\
+Experiments         & 2077    & 7000    & 10000      \\
+Nodes               & 50     & 10      & 200           \\
+Epochs              &  \multicolumn{3}{c}{1e4}        
+\end{tabular}
+  \caption{Values used in the parametric study during the training phase. Every combination of these parameters was analysed and parsed to obtain the best performing architecture.}
+\end{table}
+
+
+
+
+
+
+
+\begin{table}[!hb]
+\centering
+\begin{minipage}{.45\textwidth}
+
+\begin{tabular}{lllllllcc|ccc}
+\multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=50$\\ $n_{experiments}=2077$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
+\multicolumn{9}{c|}{}                                                                                                 & 10        & 20        & 40        \\ \hline
+        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 4        &  0.9969        &  0.9971        &  0.9990        \\
+        &         &         &         &         &         &         &                                      & 8        &  0.9960        &  0.9985       &  0.9973        \\
+        &         &         &         &         &         &         &                                      & 10        &  0.9970        &  0.9985        &  0.9990        
+\end{tabular}
+
+\end{minipage}
+
+  \vspace{1cm}
+\begin{minipage}{.45\textwidth}
+
+\begin{tabular}{lllllllcc|ccc}
+\multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=50$\\ $n_{experiments}=10000$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
+\multicolumn{9}{c|}{}                                                                                                 & 10        & 20        & 40        \\ \hline
+        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 4        &  0.9953        &  0.9986        &  0.9989        \\
+        &         &         &         &         &         &         &                                      & 8        &  0.9968        &  0.9982       &  0.9987        \\
+        &         &         &         &         &         &         &                                      & 10        &  0.9965        &  0.9983        &  0.9990        
+\end{tabular}
+
+\end{minipage}
+
+  \vspace{1cm}
+\begin{minipage}{.45\textwidth}
+
+\begin{tabular}{lllllllcc|ccc}
+\multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=200$\\ $n_{experiments}=2077$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
+\multicolumn{9}{c|}{}                                                                                                 & 10        & 20        & 40        \\ \hline
+        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 4        &  0.9966        &  0.9980        &  0.9988        \\
+        &         &         &         &         &         &         &                                      & 8        &  0.9962        &  0.9982       &  0.9984        \\
+        &         &         &         &         &         &         &                                      & 10        &  0.9891        &  0.9978        &  0.9977        
+\end{tabular}
+
+\end{minipage}
+
+  \vspace{1cm}
+\begin{minipage}{.45\textwidth}
+
+\begin{tabular}{lllllllcc|ccc}
+\multicolumn{9}{c|}{\multirow{2}{*}{\begin{tabular}[c]{@{}c@{}}$n_{nodes}=200$\\ $n_{experiments}=10000$\end{tabular}}} & \multicolumn{3}{c}{$n_{neurons}$} \\
+\multicolumn{9}{c|}{}                                                                                                 & 10        & 20        & 40        \\ \hline
+        &         &         &         &         &         &         & \multirow{4}{*}{\rotatebox{90}{$n_{layers}$}}        & 4        &  0.9944        &  0.9981        &  0.9991        \\
+        &         &         &         &         &         &         &                                      & 8        &  0.9958        &  0.9976       &  0.9995        \\
+        &         &         &         &         &         &         &                                      & 10        &  0.9971        &  0.9977        &  0.9969        
+\end{tabular}
+
+\end{minipage}
+
+
+
+
+
+  \caption{R2 measurement for every combination of neurons and layers for 50 and 200 nodes and 2077 and 10000 experiments.}
+  \label{tab: R2_values}
+\end{table}
 
 
 
