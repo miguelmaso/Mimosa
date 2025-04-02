@@ -454,6 +454,7 @@ The same qualitative influence of the parameters on the R2 value can be visualiz
 % \usepackage{multirow}
 % Please add the following required packages to your document preamble:
 % \usepackage{multirow}
+\pagebreak
 \begin{table}[!hb]
 \centering
 \begin{minipage}{.45\textwidth}
@@ -519,7 +520,7 @@ The same qualitative influence of the parameters on the R2 value can be visualiz
 Out of the analysed architectures in Table \ref{tab: R2_values}, the best configuration is a combination of 8 layers, 40 neurons, 10000 experiments, 200 nodes  with an R2 on the test cases of 0.9995. 
 
 To measure the dispersion of the data generated from the Machine Learning model against the in-silico FE data, we plotted the output displacement from the FE analysis against the displacement predicted by the Machine Learning architecture. Since the displacement data is given per axis in the global coordinate system, we compared the displacement per axis; namely the first and third axis. The output of this analysis is displayed in Figure \ref{fig: R2_plot} for various architectures tested.
-
+\pagebreak
 \begin{figure}[H]
   \centering
   \subfloat[Displacement in the first axis of the coordinate system of the best performing architecture: 8 layers | 40 neurons | 10000 experiments | 200 nodes]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/R2_Coord1_corrected_V3_mod.jpg}} \qquad
@@ -555,7 +556,7 @@ To further analyse the performance of the machine learning architecture, we can 
   \caption{Loss function during the training for the best performant neural network configuration, and 3 other architectures. Convergence is not fully achieved in every training architecture, however a high enough R2 is reached. This effectively means that further trainig the model would cause overfitting. Spikes can be seen in in the loss function during the training process, which are caused by a high value of the $\eta$ parameter in the Adam optimizer. This means that the loss is minimized quicker, at the expense of bigger fluctuating values. This strikes a good balance between effectiveness and precision.}
   \label{fig: losses}
 \end{figure}
-
+\pagebreak
 
 Besides the R2 measurement and scatter plot of predicted displacements versus FE generated data, we tracked the trajectory of certain points in the mesh throughout the deformation of the dielectric. By applying a combination of potentials in the electrodes and measuring the elastomer's response, we can compare that displacement against the one predicted by the neural network architecture. This can provide a better outlook on how accurately the machine learning model is predicting the real response of the dielectric. 
 

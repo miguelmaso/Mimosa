@@ -13,7 +13,7 @@ theme(:wong2,fontfamily="Courier")
 #---------------------------------------------------------------------------
 # Read the JSON file and create a model with the trained weights and biases
 #---------------------------------------------------------------------------
-model_json = open("Layers_2 Neurons_80 Experiments_10000 Nodes_50Iter_100000 Corrected(1).json", "r") do file
+model_json = open("Layers_4 Neurons_160 Experiments_10000 Nodes_50Iter_50000 Corrected.json", "r") do file
     read(file, String)
 end
 
@@ -78,7 +78,7 @@ function create_neural_network(input_size::Int, output_size::Int, hidden_layers:
 
     return model
 end
-model = create_neural_network(20,100,2,80,softplus)
+model = create_neural_network(20,150,4,160,softplus)
 # Function to assign weights to model
 function assign_weights!(model, weights)
     idx = 1
@@ -171,13 +171,16 @@ end
 x_train_norm = x_train_whole
 y_train₁_norm_old = reshape(normalise(y_train₁_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
 y_train₁_norm = map(x -> Float64(x), y_train₁_norm_old)
+y_train₂_norm_old = reshape(normalise(y_train₂_whole[:]),size(y_train₂_whole,1),size(y_train₂_whole,2))
+y_train₂_norm = map(x -> Float64(x), y_train₂_norm_old)
 y_train₃_norm_old = reshape(normalise(y_train₃_whole[:]),size(y_train₁_whole,1),size(y_train₁_whole,2))
 y_train₃_norm = map(x -> Float64(x), y_train₃_norm_old)
 
 
 y_train₁_eval = y_train₁_norm[nodes_indices,comparing_index]
+y_train₂_eval = y_train₂_norm[nodes_indices,comparing_index]
 y_train₃_eval = y_train₃_norm[nodes_indices,comparing_index]
-y_train_eval = vcat(y_train₁_eval,y_train₃_eval)
+y_train_eval = vcat(y_train₁_eval,y_train₂_eval, y_train₃_eval)
 x_train_subset = x_train[comparing_index,:]
 
 #Test_point = 18673
@@ -195,18 +198,22 @@ y_fromFE    = y_train_eval
 # Let's plot the R2
 # --------------------------------
 
-random_indices = rand(1:20577,2000)
+random_indices = rand(1:112341,2000)
 y_pred_whole = model(x_train')
 y_fromFE₁_whole = y_train₁_norm[nodes_indices,random_indices]
+y_fromFE₂_whole = y_train₂_norm[nodes_indices,random_indices]
 y_fromFE₃_whole = y_train₃_norm[nodes_indices,random_indices]
 y_pred₁ = y_pred_whole[1:50,random_indices]
-y_pred₃ = y_pred_whole[51:100,random_indices]
+y_pred₂ = y_pred_whole[51:100,random_indices]
+y_pred₃ = y_pred_whole[101:150,random_indices]
 plot(y_pred₁[:],y_fromFE₁_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 1 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
-savefig("R2_Coord1_corrected_V3_Complex_L2_N8_E10000_NN50_.png")
+savefig("R2_Coord1_corrected_V3_Complex_L4_N160_E10000_NN50_.png")
+plot(y_pred₂[:],y_fromFE₂_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 2 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
+savefig("R2_Coord2_corrected_V3_Complex_L4_N160_E10000_NN50_.png")
 plot(y_pred₃[:],y_fromFE₃_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 3 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
-savefig("R2_Coord3_corrected_V3_Complex_L2_N8_E10000_NN50_.png")
+savefig("R2_Coord3_corrected_V3_Complex_L4_N160_E10000_NN50_.png")
 plot(log10.(Losses), linewidth=3,label="", xlabel="Nº Iterations",ylabel="Loss values",legendfontsize=8,tickfontsize=9,guidefontsize=9)
-savefig("Loss_corrected_V3_Complex_L2_N8_E10000_NN50.png")
+savefig("Loss_corrected_V3_Complex_L4_N160_E10000_NN50.png")
 
 # function sort_and_apply_indices(original_arr, apply_arr)
 #     # Create a copy of the original array
