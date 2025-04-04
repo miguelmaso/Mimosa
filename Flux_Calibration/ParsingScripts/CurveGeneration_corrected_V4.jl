@@ -125,7 +125,7 @@ input_x_train = readdlm("filenames_parsed_corrected_Rogelio.txt")
 input_y_train = readdlm("contents_output_corrected_Rogelio.txt")
 
 failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
-x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.27\", \"0.0\", \"0.15\", \"0.162\"].txt") #If using quotes, you need to escape them
+x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.006\", \"0.03\", \"0.27\", \"0.3\"].txt") #If using quotes, you need to escape them
 
 function find_matching_rows(small_matrix, big_matrix)
     # Ensure both matrices have the same number of columns
@@ -341,14 +341,14 @@ writedlm("Trajectory_027_00_015_0162.csv", hcat(Coord1_y_predicted_sorted_point_
 # Alpha (undeformed and deformed) points for the paper
 #-------------------------------------------------------
 
-Coord1_descaled = stack([denormalise(Vector(row),y_train₁_whole[:]) for row in eachrow(Coord1_y_predicted_sorted_point)])
+Coord1_descaled = stack([denormalise(Vector(row),y_train₁_whole[:]) for row in eachrow(Coord1_y_from_FE_sorted_point)])
 Coord1_descaled = Coord1_descaled'
-Coord3_descaled = stack([denormalise(Vector(row),y_train₃_whole[:]) for row in eachrow(Coord3_y_predicted_sorted_point)])
+Coord3_descaled = stack([denormalise(Vector(row),y_train₃_whole[:]) for row in eachrow(Coord3_y_from_FE_sorted_point)])
 Coord3_descaled = Coord3_descaled'
 
 # To locate the coordenates of the deformed shape, we need to add the last Δu to the material coordinates
 mat_coords_nodes = mat_coords_reshape[:,nodes_indices]
-deformed_x = Coord1_descaled[:,10].+mat_coords_nodes[1,:]
-deformed_z = Coord3_descaled[:,10].+mat_coords_nodes[3,:]
+deformed_x = Coord1_descaled[:,72].+mat_coords_nodes[1,:]
+deformed_z = Coord3_descaled[:,72].+mat_coords_nodes[3,:]
 
-writedlm("Points_alpha_deformed.csv", hcat(deformed_x,zeros(200).+mat_coords_nodes[2,:],deformed_z),",")
+writedlm("Points_alpha_deformed_0006_003_027_03.csv", hcat(deformed_x,zeros(200).+mat_coords_nodes[2,:],deformed_z),",")
