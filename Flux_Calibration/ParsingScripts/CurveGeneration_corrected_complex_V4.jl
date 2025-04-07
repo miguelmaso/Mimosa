@@ -303,15 +303,17 @@ y_predicted_sorted = y_predicted[:,sorted_indices]
 
 
 Coord1_y_from_FE_sorted_point = y_fromFE_sorted[1:50,:]
-Coord3_y_from_FE_sorted_point = y_fromFE_sorted[51:100,:]
+Coord2_y_from_FE_sorted_point = y_fromFE_sorted[51:100,:]
+Coord3_y_from_FE_sorted_point = y_fromFE_sorted[101:150,:]
 Coord1_y_predicted_sorted_point = y_predicted_sorted[1:50,:]
-Coord3_y_predicted_sorted_point = y_predicted_sorted[51:100,:]
+Coord2_y_predicted_sorted_point = y_predicted_sorted[51:100,:]
+Coord3_y_predicted_sorted_point = y_predicted_sorted[101:150,:]
 
 # Plot per coordinate
 #plot(y_pred₁[:],y_fromFE₁_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 1 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
-plot(Coord1_y_from_FE_sorted_point[32,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
-plot!(Coord1_y_predicted_sorted_point[32,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
-savefig("Trajectory_COMPLEX_BestArchitecture_P31_Coord3.pdf")
+plot(Coord2_y_from_FE_sorted_point[6,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
+plot!(Coord2_y_predicted_sorted_point[6,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
+savefig("Trajectory_COMPLEX_BestArchitecture_246_022_pp_P6_Coord2.png")
 
 function denormalise(row::Vector,original_array)
     min = minimum(original_array)
@@ -325,13 +327,14 @@ end
 
 # We are selecting only 1 point, the first one, which corresponds to Node 41 out of 133 of the face
 Coord1_y_predicted_sorted_point_descaled = denormalise(Coord1_y_predicted_sorted_point[1,:],y_train₁_whole[:])
+Coord2_y_predicted_sorted_point_descaled = denormalise(Coord2_y_predicted_sorted_point[1,:],y_train₂_whole[:])
 Coord3_y_predicted_sorted_point_descaled = denormalise(Coord3_y_predicted_sorted_point[1,:],y_train₃_whole[:])
 Coord1_y_fromFE_sorted_point_descaled = denormalise(Coord1_y_from_FE_sorted_point[1,:],y_train₁_whole[:])
+Coord2_y_fromFE_sorted_point_descaled = denormalise(Coord2_y_from_FE_sorted_point[1,:],y_train₂_whole[:])
 Coord3_y_fromFE_sorted_point_descaled = denormalise(Coord3_y_from_FE_sorted_point[1,:],y_train₃_whole[:])
 
 mat_coords = readdlm("complex_mat_coords.txt")
 mat_coords_reshape = reshape(mat_coords,3,1330)
-Point_297_MatCoords = mat_coords_reshape[:,297] # The node 297 corresponds to the first node in the nodes_indices
+Point_694_MatCoords = mat_coords_reshape[:,694] # The node 694 corresponds to the first node in the nodes_indices
 
-#TODO Plot the trajectory, now the material coordinates look OK :)
-writedlm("Trajectory_0246_0222_0186_0042_0126_003_0234_0102.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_297_MatCoords[1],zeros(234).+Point_297_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_297_MatCoords[3]),",")
+writedlm("Trajectory_0246_0222_0186_0042_0126_003_0234_0102.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_694_MatCoords[1],Coord2_y_predicted_sorted_point_descaled.+Point_694_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_694_MatCoords[3]),",")
