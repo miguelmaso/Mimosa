@@ -125,7 +125,7 @@ input_x_train = readdlm("filenames_parsed_corrected_Rogelio.txt")
 input_y_train = readdlm("contents_output_corrected_Rogelio.txt")
 
 failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
-x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.006\", \"0.03\", \"0.27\", \"0.3\"].txt") #If using quotes, you need to escape them
+x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.246\", \"0.0\", \"0.09\", \"0.102\"].txt") #If using quotes, you need to escape them
 
 function find_matching_rows(small_matrix, big_matrix)
     # Ensure both matrices have the same number of columns
@@ -309,10 +309,9 @@ Coord3_y_predicted_sorted_point = y_predicted_sorted[201:400,:]
 
 # Plot per coordinate
 #plot(y_pred₁[:],y_fromFE₁_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 1 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
-plot(Coord3_y_from_FE_sorted_point[1,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
-plot!(Coord3_y_predicted_sorted_point[1,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
-savefig("Trajectory_03_009_0162_0066_P1_Coord3.pdf")
-
+plot(Coord1_y_from_FE_sorted_point[100,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
+plot!(Coord1_y_predicted_sorted_point[100,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
+savefig("Trajectory_0246_00_009_0102_P100_Coord1.png")
 function denormalise(row::Vector,original_array)
     min = minimum(original_array)
     max = maximum(original_array)
