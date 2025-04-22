@@ -560,24 +560,43 @@ To further analyse the performance of the machine learning architecture, we can 
 
 Besides the R2 measurement and scatter plot of predicted displacements versus FE generated data, we tracked the trajectory of certain points in the mesh throughout the deformation of the dielectric. By applying a combination of potentials in the electrodes and measuring the elastomer's response, we can compare that displacement against the one predicted by the neural network architecture. This can provide a better outlook on how accurately the machine learning model is predicting the real response of the dielectric. 
 
+%
+% \begin{figure}[H]
+%  \centering 
+%   \subfloat[Trajectory tracking of point 1 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P1_Coord1.jpg}}
+%   \subfloat[Trajectory tracking of point 1 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P1_Coord3.jpg}}\\
+%   \subfloat[Trajectory tracking of point 100 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P100_Coord1.jpg}}
+%   \subfloat[Trajectory tracking of point 100 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P100_Coord3.jpg}}\\
+%   \subfloat[Trajectory tracking of point 150 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P150_Coord1.jpg}}
+%   \subfloat[Trajectory tracking of point 150 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P150_Coord3.jpg}}\\
+% \end{figure}
+% \begin{figure}[H]
+%   \centering
+%   \subfloat[Trajectory tracking of point 200 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P200_Coord1.jpg}}
+%   \subfloat[Trajectory tracking of point 200 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P200_Coord3.jpg}}
+%
+%   \caption{Trajectory plot of points 1, 100, 150 and 200 for displacements in X and Z, with a potential combination in the electrodes of [0.3,0.09,.0.162,0.066] Comparison of the computed trajectory using the traditional FE implementation against the best-performing Machine Learning model. It can be seen that the trajectories are similar across different points, which is in accordance with the high R2 predicted. There is a slight discrepancy in the prediction of the displacement in Z direction, which becomes more evident towards the end of the trajectory.}
+% \label{fig: Trajectories_2D}
+% \end{figure} 
 
 \begin{figure}[H]
  \centering 
-  \subfloat[Trajectory tracking of point 1 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P1_Coord1.jpg}}
-  \subfloat[Trajectory tracking of point 1 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P1_Coord3.jpg}}\\
-  \subfloat[Trajectory tracking of point 100 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P100_Coord1.jpg}}
-  \subfloat[Trajectory tracking of point 100 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P100_Coord3.jpg}}\\
-  \subfloat[Trajectory tracking of point 150 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P150_Coord1.jpg}}
-  \subfloat[Trajectory tracking of point 150 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P150_Coord3.jpg}}\\
+  \subfloat[Trajectory of point 1 in the X axis for potential (0.006,0.03,0.27,0.3)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0006_003_027_03_P1_Coord1.png}}
+  \subfloat[Trajectory of point 1 in the Z axis for potential (0.006,0.03,0.27,0.3)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0006_003_027_03_P1_Coord3.png}}\\
+  \subfloat[Trajectory of point 1 in the X axis for potential (0.078,0.198,0.006,0.0)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0078_0198_0006_00_P1_Coord1.png}}
+  \subfloat[Trajectory of point 1 in the Z axis for potential (0.078,0.198,0.006,0.0)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0078_0198_0006_00_P1_Coord3.png}}\\
+  \subfloat[Trajectory of point 1 in the X axis for potential (0.15,0.198,0.3,0.294)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_015_0198_03_0294_P1_Coord1.png}}
+  \subfloat[Trajectory of point 1 in the Z axis for potential (0.15,0.198,0.3,0.294)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_015_0198_03_0294_P1_Coord3.png}}\\
 \end{figure}
-\begin{figure}[H]
-  \centering
-  \subfloat[Trajectory tracking of point 200 in the first axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P200_Coord1.jpg}}
-  \subfloat[Trajectory tracking of point 200 in the third axis of the coordinate system]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_03_009_0162_0066_P200_Coord3.jpg}}
-
-  \caption{Trajectory plot of points 1, 100, 150 and 200 for displacements in X and Z, with a potential combination in the electrodes of [0.3,0.09,.0.162,0.066] Comparison of the computed trajectory using the traditional FE implementation against the best-performing Machine Learning model. It can be seen that the trajectories are similar across different points, which is in accordance with the high R2 predicted. There is a slight discrepancy in the prediction of the displacement in Z direction, which becomes more evident towards the end of the trajectory.}
+  \begin{figure}[H]
+    \centering
+  \subfloat[Trajectory of point 1 in the X axis for potential (0.246,0.0,0.09,0.102)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0246_00_009_0102_P1_Coord1.png}}
+  \subfloat[Trajectory of point 1 in the Z axis for potential (0.246,0.0,0.09,0.102)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0246_00_009_0102_P1_Coord3.png}}
+  \caption{Trajectory plot of points 1 in X and Z, with multiple potential combinations in the electrodes. Comparison of the computed trajectory using the traditional FE implementation against the best-performing Machine Learning model. It can be seen that the trajectories are similar across different points, which is in accordance with the high R2 predicted.}
 \label{fig: Trajectories_2D}
-\end{figure} 
+\end{figure}
+
+
 
 \pagebreak
 The same data can be visualized in a 3D environment, where the overall deformation of the elastomer, computed via FE, can be visualized in Paraview. The predicted displacement of a node in the mesh can be superimposed to the 3D deformation to verify that, indeed, the overall behaviour of the elastomer can be predicted using the proposed Neural Network.
@@ -737,8 +756,6 @@ Epochs              &  \multicolumn{3}{c}{1e4}
   \caption{R2 measurement for every combination of neurons and layers for 50 and 200 nodes and 2077 and 10000 experiments.}
   \label{tab: R2_values}
 \end{table}
-
-
 
 
 
