@@ -581,16 +581,16 @@ Besides the R2 measurement and scatter plot of predicted displacements versus FE
 
 \begin{figure}[H]
  \centering 
-  \subfloat[Trajectory of point 1 in the X axis for potential (0.006,0.03,0.27,0.3)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0006_003_027_03_P1_Coord1.png}}
+  \subfloat[Trajectory of point 1 in the X axis for potential (0.006,0.03,0.27,0.3)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0006_003_027_03_P1_Coord1.png}}\quad
   \subfloat[Trajectory of point 1 in the Z axis for potential (0.006,0.03,0.27,0.3)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0006_003_027_03_P1_Coord3.png}}\\
-  \subfloat[Trajectory of point 1 in the X axis for potential (0.078,0.198,0.006,0.0)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0078_0198_0006_00_P1_Coord1.png}}
+  \subfloat[Trajectory of point 1 in the X axis for potential (0.078,0.198,0.006,0.0)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0078_0198_0006_00_P1_Coord1.png}}\quad
   \subfloat[Trajectory of point 1 in the Z axis for potential (0.078,0.198,0.006,0.0)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0078_0198_0006_00_P1_Coord3.png}}\\
-  \subfloat[Trajectory of point 1 in the X axis for potential (0.15,0.198,0.3,0.294)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_015_0198_03_0294_P1_Coord1.png}}
+  \subfloat[Trajectory of point 1 in the X axis for potential (0.15,0.198,0.3,0.294)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_015_0198_03_0294_P1_Coord1.png}}\quad
   \subfloat[Trajectory of point 1 in the Z axis for potential (0.15,0.198,0.3,0.294)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_015_0198_03_0294_P1_Coord3.png}}\\
 \end{figure}
   \begin{figure}[H]
     \centering
-  \subfloat[Trajectory of point 1 in the X axis for potential (0.246,0.0,0.09,0.102)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0246_00_009_0102_P1_Coord1.png}}
+  \subfloat[Trajectory of point 1 in the X axis for potential (0.246,0.0,0.09,0.102)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0246_00_009_0102_P1_Coord1.png}}\quad
   \subfloat[Trajectory of point 1 in the Z axis for potential (0.246,0.0,0.09,0.102)]{\includegraphics[width=0.45\linewidth]{Figures/NeuralNetworkStudy/Trajectory_0246_00_009_0102_P1_Coord3.png}}
   \caption{Trajectory plot of points 1 in X and Z, with multiple potential combinations in the electrodes. Comparison of the computed trajectory using the traditional FE implementation against the best-performing Machine Learning model. It can be seen that the trajectories are similar across different points, which is in accordance with the high R2 predicted.}
 \label{fig: Trajectories_2D}
@@ -758,4 +758,48 @@ Epochs              &  \multicolumn{3}{c}{1e4}
 \end{table}
 
 
+\begin{figure}
+ \centering 
+  \subfloat[Trajectory of point 6 in the X axis for potential (0.018, 0.006, 0.222, 0.258, 0.15 $\dots$)]{\includegraphics[width=0.3\linewidth]{Figures/NeuralNetworkStudy/Trajectory_COMPLEX_BestArchitecture_0018_0006_pp_P6_Coord1.png}} \quad
+  \subfloat[Trajectory of point 6 in the Y axis for potential (0.018, 0.006, 0.222, 0.258, 0.15 $\dots$)]{\includegraphics[width=0.3\linewidth]{Figures/NeuralNetworkStudy/Trajectory_COMPLEX_BestArchitecture_0018_0006_pp_P6_Coord2.png}}\quad
+  \subfloat[Trajectory of point 6 in the Z axis for potential (0.018, 0.006, 0.222, 0.258, 0.15 $\dots$)]{\includegraphics[width=0.3\linewidth]{Figures/NeuralNetworkStudy/Trajectory_COMPLEX_BestArchitecture_0018_0006_pp_P6_Coord3.png}}\\
+  \subfloat[Trajectory of point 6 in the X axis for potential (0.0, 0.234, 0.27, 0.066, 0.234 $\dots$)]{\includegraphics[width=0.3\linewidth]{Figures/NeuralNetworkStudy/Trajectory_COMPLEX_BestArchitecture_00_0234_pp_P6_Coord1.png}} \quad
+  \subfloat[Trajectory of point 6 in the Y axis for potential (0.0, 0.234, 0.27, 0.066, 0.234 $\dots$)]{\includegraphics[width=0.3\linewidth]{Figures/NeuralNetworkStudy/Trajectory_COMPLEX_BestArchitecture_00_0234_pp_P6_Coord2.png}} \quad
+  \subfloat[Trajectory of point 6 in the Z axis for potential (0.0, 0.234, 0.27, 0.066, 0.234 $\dots$)]{\includegraphics[width=0.3\linewidth]{Figures/NeuralNetworkStudy/Trajectory_COMPLEX_BestArchitecture_00_0234_pp_P6_Coord3.png}} \\
+  \subfloat[Trajectory of point 6 in the X axis for potential (0.246, 0.222, 0.186, 0.042, 0.126 $\dots$)]{\includegraphics[width=0.3\linewidth]{Figures/NeuralNetworkStudy/Trajectory_COMPLEX_BestArchitecture_246_022_pp_P6_Coord1.png}}\quad 
+  \subfloat[Trajectory of point 6 in the Y axis for potential (0.246, 0.222, 0.186, 0.042, 0.126 $\dots$)]{\includegraphics[width=0.3\linewidth]{Figures/NeuralNetworkStudy/Trajectory_COMPLEX_BestArchitecture_246_022_pp_P6_Coord2.png}} \quad
+  \subfloat[Trajectory of point 6 in the Z axis for potential (0.246, 0.222, 0.186, 0.042, 0.126 $\dots$)]{\includegraphics[width=0.3\linewidth]{Figures/NeuralNetworkStudy/Trajectory_COMPLEX_BestArchitecture_246_022_pp_P6_Coord3.png}}
+\end{figure}
 
+
+
+Trajectory tracking in 3D in Paraview
+
+
+\begin{figure}
+  \centering
+  \subfloat[Frame 1]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0246_022pp_FRAME1.png}}
+  \subfloat[Frame 2]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0246_022pp_FRAME2.png}}\\
+  \subfloat[Frame 3]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0246_022pp_FRAME3.png}}
+  \subfloat[Frame 4]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0246_022pp_FRAME4.png}}
+  \caption{Trajectory plot  for the potential combination of (0.246,0.222,.0.186,0.042,0.126$\dots$). The 3D data corresponds to the FE solution, and the point trajectory to the predicted displacement of point 1 using the best performing neural network architecture.}\label{fig:}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \subfloat[Frame 1]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0018_006pp_FRAME1.png}}
+  \subfloat[Frame 2]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0018_006pp_FRAME2.png}}\\
+  \subfloat[Frame 3]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0018_006pp_FRAME3.png}}
+  \subfloat[Frame 4]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_0018_006pp_FRAME4.png}}
+  \caption{Trajectory plot  for the potential combination of (0.018,0.006,.0.222,0.258,0.15$\dots$). The 3D data corresponds to the FE solution, and the point trajectory to the predicted displacement of point 1 using the best performing neural network architecture.}\label{fig:}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \subfloat[Frame 1]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_00_0162pp_FRAME1.png}}
+  \subfloat[Frame 2]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_00_0162pp_FRAME2.png}}\\
+  \subfloat[Frame 3]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_00_0162pp_FRAME3.png}}
+  \subfloat[Frame 4]{\includegraphics[width=0.5\linewidth]{Figures/NeuralNetworkStudy/Paraview_00_0162pp_FRAME4.png}}
+  \caption{Trajectory plot  for the potential combination of (0.0,0.162,.0.186,0.138,0.15$\dots$). The 3D data corresponds to the FE solution, and the point trajectory to the predicted displacement of point 1 using the best performing neural network architecture.}\label{fig:}
+\end{figure}

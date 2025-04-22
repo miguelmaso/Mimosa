@@ -119,7 +119,7 @@ input_x_train = readdlm("filenames_parsed_complex_potential.txt")
 input_y_train = readdlm("contents_output_complex_potential.txt")
 input_y_train =  input_y_train'
 failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
-x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.246\", \"0.222\", \"0.186\", \"0.042\", \"0.126\", \"0.03\", \"0.234\", \"0.102\", \"0.006\", \"0.006\", \"0.09\", \"0.27\", \"0.162\", \"0.294\", \"0.3\", \"0.186\", \"0.138\", \"0.102\", \"0.126\", \"0.138\"].txt") #If using quotes, you need to escape them
+x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.018\", \"0.006\", \"0.222\", \"0.258\", \"0.15\", \"0.174\", \"0.234\", \"0.198\", \"0.3\", \"0.15\", \"0.114\", \"0.174\", \"0.222\", \"0.066\", \"0.234\", \"0.27\", \"0.018\", \"0.282\", \"0.09\", \"0.222\"].txt") #If using quotes, you need to escape them
 function find_matching_rows(small_matrix, big_matrix)
     # Ensure both matrices have the same number of columns
     if size(small_matrix, 2) != size(big_matrix, 2)
@@ -311,9 +311,9 @@ Coord3_y_predicted_sorted_point = y_predicted_sorted[101:150,:]
 
 # Plot per coordinate
 #plot(y_pred₁[:],y_fromFE₁_whole[:],seriestype=:scatter, markersize=0.5, markershape=:circle,label="Displacement in Coord 1 ",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Displacement from ML prediction",ylabel="Displacement from FE")
-plot(Coord2_y_from_FE_sorted_point[6,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
-plot!(Coord2_y_predicted_sorted_point[6,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
-savefig("Trajectory_COMPLEX_BestArchitecture_246_022_pp_P6_Coord2.png")
+plot(Coord3_y_from_FE_sorted_point[6,:],seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Z")
+plot!(Coord3_y_predicted_sorted_point[6,:],seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
+savefig("Trajectory_COMPLEX_BestArchitecture_0018_0006_pp_P6_Coord3.png")
 
 function denormalise(row::Vector,original_array)
     min = minimum(original_array)
@@ -337,4 +337,4 @@ mat_coords = readdlm("complex_mat_coords.txt")
 mat_coords_reshape = reshape(mat_coords,3,1330)
 Point_694_MatCoords = mat_coords_reshape[:,694] # The node 694 corresponds to the first node in the nodes_indices
 
-writedlm("Trajectory_0246_0222_0186_0042_0126_003_0234_0102.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_694_MatCoords[1],Coord2_y_predicted_sorted_point_descaled.+Point_694_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_694_MatCoords[3]),",")
+writedlm("Trajectory_0018_0006_0222_0258_015_0174_0234_0198.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_694_MatCoords[1],Coord2_y_predicted_sorted_point_descaled.+Point_694_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_694_MatCoords[3]),",")
