@@ -119,7 +119,7 @@ input_x_train = readdlm("filenames_parsed_complex_potential.txt")
 input_y_train = readdlm("contents_output_complex_potential.txt")
 input_y_train =  input_y_train'
 failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
-x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.018\", \"0.006\", \"0.222\", \"0.258\", \"0.15\", \"0.174\", \"0.234\", \"0.198\", \"0.3\", \"0.15\", \"0.114\", \"0.174\", \"0.222\", \"0.066\", \"0.234\", \"0.27\", \"0.018\", \"0.282\", \"0.09\", \"0.222\"].txt") #If using quotes, you need to escape them
+x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.042\", \"0.234\", \"0.066\", \"0.21\", \"0.246\", \"0.15\", \"0.294\", \"0.246\", \"0.138\", \"0.006\", \"0.234\", \"0.114\", \"0.234\", \"0.3\", \"0.246\", \"0.246\", \"0.078\", \"0.09\", \"0.114\", \"0.018\"].txt") #If using quotes, you need to escape them
 function find_matching_rows(small_matrix, big_matrix)
     # Ensure both matrices have the same number of columns
     if size(small_matrix, 2) != size(big_matrix, 2)
@@ -337,4 +337,4 @@ mat_coords = readdlm("complex_mat_coords.txt")
 mat_coords_reshape = reshape(mat_coords,3,1330)
 Point_694_MatCoords = mat_coords_reshape[:,694] # The node 694 corresponds to the first node in the nodes_indices
 
-writedlm("Trajectory_0018_0006_0222_0258_015_0174_0234_0198.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_694_MatCoords[1],Coord2_y_predicted_sorted_point_descaled.+Point_694_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_694_MatCoords[3]),",")
+writedlm("Trajectory_0042_0234_0066_021_0246_015_0294_0246.csv", hcat(Coord1_y_predicted_sorted_point_descaled.+Point_694_MatCoords[1],Coord2_y_predicted_sorted_point_descaled.+Point_694_MatCoords[2],Coord3_y_predicted_sorted_point_descaled.+Point_694_MatCoords[3]),",")
