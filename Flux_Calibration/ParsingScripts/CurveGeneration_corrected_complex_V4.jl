@@ -119,7 +119,8 @@ input_x_train = readdlm("filenames_parsed_complex_potential.txt")
 input_y_train = readdlm("contents_output_complex_potential.txt")
 input_y_train =  input_y_train'
 failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
-x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.042\", \"0.234\", \"0.066\", \"0.21\", \"0.246\", \"0.15\", \"0.294\", \"0.246\", \"0.138\", \"0.006\", \"0.234\", \"0.114\", \"0.234\", \"0.3\", \"0.246\", \"0.246\", \"0.078\", \"0.09\", \"0.114\", \"0.018\"].txt") #If using quotes, you need to escape them
+x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.246\", \"0.222\", \"0.186\", \"0.042\", \"0.126\", \"0.03\", \"0.234\", \"0.102\", \"0.006\", \"0.006\", \"0.09\", \"0.27\", \"0.162\", \"0.294\", \"0.3\", \"0.186\", \"0.138\", \"0.102\", \"0.126\", \"0.138\"].txt") #If using quotes, you need to escape them
+
 function find_matching_rows(small_matrix, big_matrix)
     # Ensure both matrices have the same number of columns
     if size(small_matrix, 2) != size(big_matrix, 2)
@@ -326,12 +327,19 @@ function denormalise(row::Vector,original_array)
 end
 
 # We are selecting only 1 point, the first one, which corresponds to Node 41 out of 133 of the face
-Coord1_y_predicted_sorted_point_descaled = denormalise(Coord1_y_predicted_sorted_point[1,:],y_train₁_whole[:])
-Coord2_y_predicted_sorted_point_descaled = denormalise(Coord2_y_predicted_sorted_point[1,:],y_train₂_whole[:])
-Coord3_y_predicted_sorted_point_descaled = denormalise(Coord3_y_predicted_sorted_point[1,:],y_train₃_whole[:])
-Coord1_y_fromFE_sorted_point_descaled = denormalise(Coord1_y_from_FE_sorted_point[1,:],y_train₁_whole[:])
-Coord2_y_fromFE_sorted_point_descaled = denormalise(Coord2_y_from_FE_sorted_point[1,:],y_train₂_whole[:])
-Coord3_y_fromFE_sorted_point_descaled = denormalise(Coord3_y_from_FE_sorted_point[1,:],y_train₃_whole[:])
+Coord1_y_predicted_sorted_point_descaled = denormalise(Coord1_y_predicted_sorted_point[6,:],y_train₁_whole[:])
+Coord2_y_predicted_sorted_point_descaled = denormalise(Coord2_y_predicted_sorted_point[6,:],y_train₂_whole[:])
+Coord3_y_predicted_sorted_point_descaled = denormalise(Coord3_y_predicted_sorted_point[6,:],y_train₃_whole[:])
+Coord1_y_fromFE_sorted_point_descaled = denormalise(Coord1_y_from_FE_sorted_point[6,:],y_train₁_whole[:])
+Coord2_y_fromFE_sorted_point_descaled = denormalise(Coord2_y_from_FE_sorted_point[6,:],y_train₂_whole[:])
+Coord3_y_fromFE_sorted_point_descaled = denormalise(Coord3_y_from_FE_sorted_point[6,:],y_train₃_whole[:])
+
+# Plot the unscaled trajectories, which is the only real way to compare FE and ML
+plot(Coord2_y_fromFE_sorted_point_descaled,seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement Y")
+plot!(Coord2_y_predicted_sorted_point_descaled,seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
+savefig("Trajectory_COMPLEX_BestArchitecture_0246_0222_pp_P6_Coord2_corrected.png")
+
+
 
 mat_coords = readdlm("complex_mat_coords.txt")
 mat_coords_reshape = reshape(mat_coords,3,1330)
