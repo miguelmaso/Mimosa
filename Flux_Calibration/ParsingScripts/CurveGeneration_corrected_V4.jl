@@ -125,7 +125,7 @@ input_x_train = readdlm("filenames_parsed_corrected_Rogelio.txt")
 input_y_train = readdlm("contents_output_corrected_Rogelio.txt")
 
 failed_rows, x_train::Matrix{Float64}, y_train::Matrix{Float64} = remove_data(input_x_train,input_y_train)
-x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.246\", \"0.0\", \"0.09\", \"0.102\"].txt") #If using quotes, you need to escape them
+x_train_subset::Matrix{Float64} = readdlm("filenames_output_parsed_forFE_[\"0.006\", \"0.03\", \"0.27\", \"0.3\"].txt") #If using quotes, you need to escape them
 
 function find_matching_rows(small_matrix, big_matrix)
     # Ensure both matrices have the same number of columns
@@ -327,6 +327,13 @@ Coord1_y_predicted_sorted_point_descaled = denormalise(Coord1_y_predicted_sorted
 Coord3_y_predicted_sorted_point_descaled = denormalise(Coord3_y_predicted_sorted_point[1,:],y_train₃_whole[:])
 Coord1_y_fromFE_sorted_point_descaled = denormalise(Coord1_y_from_FE_sorted_point[1,:],y_train₁_whole[:])
 Coord3_y_fromFE_sorted_point_descaled = denormalise(Coord3_y_from_FE_sorted_point[1,:],y_train₃_whole[:])
+
+# Plot the descaled trajectory
+
+plot(Coord1_y_fromFE_sorted_point_descaled,seriestype=:scatter,markersize=2,markershape=:circle, label="FE Trajectory",legendfontsize=7,tickfontsize=9,guidefontsize=9,xlabel="Potential LoadStep",ylabel="Displacement X")
+plot!(Coord1_y_predicted_sorted_point_descaled,seriestype=:scatter,markersize=2,markershape=:circle, label="ML Trajectory")
+savefig("Trajectory_0006_003_027_03_P1_Coord1_descaled.png")
+
 
 mat_coords = readdlm("simple_mat_coords.txt")
 mat_coords_reshape = reshape(mat_coords,3,266)
