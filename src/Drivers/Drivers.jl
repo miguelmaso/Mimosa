@@ -64,10 +64,10 @@ end
  
 
 function setupfolder(folder_path::String)
-  if !isdir(folder_path)
+  if isdir(folder_path)
+    rm(folder_path,recursive=true)
     mkpath(folder_path)
   else
-    rm(folder_path,recursive=true)
     mkpath(folder_path)
   end
 end
