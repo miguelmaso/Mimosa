@@ -3,6 +3,7 @@ module ConstitutiveModels
 using Gridap
 using ForwardDiff
 using LinearAlgebra
+using StaticArrays
 using ..TensorAlgebra
 using ..TensorAlgebra: _δδ_μ_3D
 using ..TensorAlgebra: _δδ_λ_3D
@@ -20,10 +21,20 @@ export ElectroMech
 export ThermoElectroMech
 export ThermoMech
 export Mechano
-
+export Elasto
+export Visco
+export ViscoElastic
+export GeneralizedMaxwell
+export ViscousIncompressible
+export IsochoricNeoHookean3D
+export initializeStateVariables
+export setHistoricalVariables
+export updateStateVariables!
 export DerivativeStrategy
+export StressTensor
 
 struct DerivativeStrategy{Kind} end
+struct StressTensor{Kind} end
 
 abstract type ConstitutiveModel end
 abstract type Mechano <: ConstitutiveModel end
@@ -31,6 +42,9 @@ abstract type Electro <: ConstitutiveModel end
 abstract type Magneto <: ConstitutiveModel end
 abstract type Thermo <: ConstitutiveModel end
 abstract type Multiphysic <: ConstitutiveModel end
+abstract type Elasto <: Mechano end
+abstract type Visco <: Mechano end
+abstract type ViscoElastic <: Mechano end
 
 
 # ===================
@@ -56,23 +70,45 @@ end
 # Mechanical models
 # ===================
 
-@kwdef struct LinearElasticity3D <: Mechano
+@kwdef struct LinearElasticity3D <: Elasto
   λ::Float64
   μ::Float64
   ρ::Float64=0.0
 end
 
-@kwdef struct NeoHookean3D <: Mechano
+@kwdef struct NeoHookean3D <: Elasto
   λ::Float64
   μ::Float64
   ρ::Float64=0.0
 end
 
-@kwdef struct MoneyRivlin3D <: Mechano
+@kwdef struct MoneyRivlin3D <: Elasto
   λ::Float64
   μ1::Float64
   μ2::Float64
   ρ::Float64=0.0
+end
+
+@kwdef struct IsochoricNeoHookean3D <: Elasto
+  μ::Float64
+end
+
+# ===================
+# Visco elastic models
+# ===================
+
+@kwdef struct ViscousIncompressible <: Visco
+  ShortTerm::Elasto
+  τ::Float64
+end
+
+@kwdef struct GeneralizedMaxwell <: ViscoElastic
+  LongTerm::Elasto
+  Branch1::Visco
+  Branches::Array{Visco}
+  function GeneralizedMaxwell(LongTerm::Elasto,Branches::Visco...)
+    new(LongTerm,first(Branches),collect(Branches))
+  end
 end
 
 # ===================
@@ -112,12 +148,19 @@ function _getKinematic(::Electro)
   return E
 end
 
+function _getKinematic(::Visco)
+  F(∇u) = one(∇u) + ∇u
+  C(F) = F' * F
+  Ce(C,Uvα⁻¹) = Uvα⁻¹ * C * Uvα⁻¹
+  return (F, C, Ce)
+end
+
 
 # ===============================
 # Coupling terms for multiphysic
 # ===============================
 
-function _getCoupling(mech::Mechano, elec::IdealDielectric)
+function _getCoupling(mech::Mechano, elec::Electro)
   F, H, J = _getKinematic(mech)
   E = _getKinematic(elec)
 
@@ -173,6 +216,40 @@ end
 # Constitutive models
 # ====================
 
+include("./ViscousModels.jl")
+
+function (obj::ViscousIncompressible)(strategy::DerivativeStrategy{T}) where T
+  Ψe, Se, ∂Se∂Ce          = obj.ShortTerm(strategy, StressTensor{:SecondPiola}())
+  ∂Ψ∂F(∇u, ∇un, Δt, state)   = Piola(obj, Se, ∂Se∂Ce, ∇u, ∇un, Δt, state)
+  ∂Ψ∂F∂F(∇u, ∇un, Δt, state) = Tangent(obj, Se, ∂Se∂Ce, ∇u, ∇un, Δt, state)
+  return Ψe, ∂Ψ∂F, ∂Ψ∂F∂F
+end
+
+
+function (obj::GeneralizedMaxwell)(strategy::DerivativeStrategy{T}) where T
+  Ψe, ∂Ψeu, ∂Ψeuu = obj.LongTerm(strategy)
+  # Ψ1, ∂Ψ1u, ∂Ψ1uu = obj.Branch1(strategy)
+  # Ψ(∇u, ∇un, Δt, state) = Ψe(∇u) + Ψ1(∇u, ∇un, Δt, state)
+  # ∂Ψu(∇u, ∇un, Δt, state) = ∂Ψeu(∇u) + ∂Ψ1u(∇u, ∇un, Δt, state)
+  # ∂Ψuu(∇u, ∇un, Δt, state) = ∂Ψeuu(∇u) + ∂Ψ1uu(∇u, ∇un, Δt, state)
+  # return (Ψ, ∂Ψu, ∂Ψuu)
+  N = length(obj.Branches)
+  Ψα = Array{Function}(undef,N)
+  ∂Ψαu = Array{Function}(undef,N)
+  ∂Ψαuu = Array{Function}(undef,N)
+  for (i, branch) in enumerate(obj.Branches)
+    Ψi, ∂Ψiu, ∂Ψiuu = branch(strategy)
+    Ψα[i] = Ψi
+    ∂Ψαu[i] = ∂Ψiu
+    ∂Ψαuu[i] = ∂Ψiuu
+  end
+  Ψ(∇u, ∇un, Δt, states...) = mapreduce((Ψi, state) -> Ψi(∇u, ∇un, Δt, state), +, Ψα, states; init=Ψe(∇u))
+  ∂Ψu(∇u, ∇un, Δt, states...) = mapreduce((∂Ψiu, state) -> ∂Ψiu(∇u, ∇un, Δt, state), +, ∂Ψαu, states; init=∂Ψeu(∇u))
+  ∂Ψuu(∇u, ∇un, Δt, states...) = mapreduce((∂Ψiuu, state) -> ∂Ψiuu(∇u, ∇un, Δt, state), +, ∂Ψαuu, states; init=∂Ψeuu(∇u))
+  return (Ψ, ∂Ψu, ∂Ψuu)
+end
+
+
 function (obj::LinearElasticity3D)(::DerivativeStrategy{:analytic})
   F, _, _ = _getKinematic(obj)
   # I33 = TensorValue(Matrix(1.0I, 3, 3))
@@ -204,6 +281,41 @@ function (obj::NeoHookean3D)(::DerivativeStrategy{:analytic})
   ∂Ψuu(∇u) = obj.μ * I_ + ∂Ψ2_∂J2(∇u) * (H(F(∇u)) ⊗ H(F(∇u))) + ∂Ψ_∂J(∇u) * ×ᵢ⁴(F(∇u))
   return (Ψ, ∂Ψu, ∂Ψuu)
 end
+
+
+function (obj::IsochoricNeoHookean3D)(strategy::DerivativeStrategy{T}) where T
+  obj(strategy, StressTensor{FirstPiola}())
+end
+
+
+function (obj::IsochoricNeoHookean3D)(::DerivativeStrategy{T}, ::StressTensor{:FirstPiola}) where T
+  F, H, J = _getKinematic(obj)
+  I = I9()
+  Ψ(∇u)       =  obj.μ / 2 * tr((F(∇u))' * F(∇u)) - obj.μ * log(J(F(∇u))) - 3.0 * (obj.μ / 2.0)
+  ∂Ψ_∂J(∇u)   = -obj.μ / J(F(∇u))
+  ∂Ψu(∇u)     =  obj.μ * F(∇u) + ∂Ψ_∂J(∇u) * H(F(∇u))
+  ∂Ψ2_∂J2(∇u) =  obj.μ / (J(F(∇u))^2)
+  ∂Ψuu(∇u)    =  obj.μ * I + ∂Ψ2_∂J2(∇u) * (H(F(∇u)) ⊗ H(F(∇u))) + ∂Ψ_∂J(∇u) * ×ᵢ⁴(F(∇u))
+  return (Ψ, ∂Ψu, ∂Ψuu)
+end
+
+
+function (obj::IsochoricNeoHookean3D)(::DerivativeStrategy{T}, ::StressTensor{:SecondPiola}) where T
+  Ψe(Ce)     = obj.μ / 2 * tr(Ce) * det(Ce)^(-1/3)
+  Se_(Ce)    = 2 * ForwardDiff.gradient(Ce -> Ψe(Ce), get_array(Ce))
+  ∂Se∂Ce_(Ce) = ForwardDiff.jacobian(Ce -> Se_(Ce), get_array(Ce))
+  Se = Se_
+  ∂Se∂Ce = ∂Se∂Ce_
+  # Se(Ce)     = TensorValue(Se_(Ce))
+  # ∂Se∂Ce(Ce) = TensorValue(∂Se∂Ce_(Ce))
+  # TODO: Check correctness of analytical derivatives
+  # Se(Ce)     = obj.μ * det(Ce)^(-1/3) * I - obj.μ / 3 * tr(Ce) * det(Ce)^(-1/3) * inv(Ce')
+  # ∂Se∂Ce(Ce) = -2/3 * obj.μ * det(Ce)^(-1/3) * inv(Ce') ⊗ I -2/9 * obj.μ * tr(Ce) * det(Ce)^(-1/3) * inv(Ce') ⊗ inv(Ce')
+  # ∂Se∂Ce(Ce) = inv(Ce') |> invCe -> -2/3 * obj.μ * det(Ce)^(-1/3) * invCe ⊗ I -2/9 * obj.μ * tr(Ce) * det(Ce)^(-1/3) * invCe ⊗ invCe
+  # ∂Se∂Ce(Ce) = inv(Ce') |> invCe -> -2/3 * obj.μ * det(Ce)^(-1/3) * invCe ⊗ (I + 1/3 * tr(Ce) * invCe)
+  return (Ψe, Se, ∂Se∂Ce)
+end
+
 
 function (obj::MoneyRivlin3D)(::DerivativeStrategy{:autodiff})
   F, H, J = _getKinematic(obj)
@@ -308,6 +420,60 @@ function logreg(J; Threshold=0.01)
   end
 end
 
+
+# ======================================
+# Material formulations: State variables
+# ======================================
+
+# --------------------------------------
+# State variables initialization
+# --------------------------------------
+
+function initializeStateVariables(::ConstitutiveModel, points::Measure)
+  return nothing
+end
+
+function initializeStateVariables(model::GeneralizedMaxwell, points::Measure)
+  # initializeStateVariables(model.Branch1, points)
+  states = []
+  for branch in model.Branches
+    push!(states, initializeStateVariables(branch, points))
+  end
+  return states
+  # map(b -> initializeStateVariables(b, points), model.Branches)  #TODO: Check alternative syntax
+end
+
+function initializeStateVariables(::ViscousIncompressible, points::Measure)
+  # v = SMatrix{3,3}(I)
+  # Uv = CellState(v, points)
+  # λv = CellState(0, points)
+  # return (; Uv, λv)
+  # TODO: Check if named tuple can be used instead of a vector
+  v = VectorValue(1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0)
+  CellState(v, points)
+end
+
+
+# --------------------------------------
+# State variables update
+# --------------------------------------
+
+function updateStateVariables!(::ConstitutiveModel, vars...)
+end
+
+function updateStateVariables!(model::GeneralizedMaxwell, u, un, Δt, stateVars)
+  # updateStateVariables!(model.Branch1, ∇u, ∇un, Δt, stateVars...)
+  @assert length(model.Branches) == length(stateVars)
+  for (branch, state) in zip(model.Branches, stateVars)
+    updateStateVariables!(branch, u, un, Δt, state)
+  end
+end
+
+function updateStateVariables!(model::ViscousIncompressible, u, un, Δt, stateVar)
+  _, Se, ∂Se∂Ce = model.ShortTerm(DerivativeStrategy{:analytic}(), StressTensor{:SecondPiola}())
+  return_mapping(s, ∇u, ∇un) = ReturnMapping(model, Se, ∂Se∂Ce, ∇u, ∇un, Δt, s)
+  update_state!(return_mapping, stateVar, ∇(u)', ∇(un)')
+end
 
 
 end

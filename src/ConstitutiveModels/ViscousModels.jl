@@ -1,0 +1,435 @@
+
+
+using ..TensorAlgebra
+using ..TensorAlgebra: _δδ_μ_3D
+using ..TensorAlgebra: _δδ_λ_3D
+using ..TensorAlgebra: _δδ_μ_2D
+using ..TensorAlgebra: _δδ_λ_2D
+using ..TensorAlgebra: I3
+using ..TensorAlgebra: I9
+
+using .ConstitutiveModels
+using .ConstitutiveModels: ViscousIncompressible
+
+
+"""
+  Get Viscous Uv and its inverse
+
+# Arguments
+- `Ce`
+- `C`
+
+# Return
+- `Ue`
+- `Uv`
+- `invUv`
+"""
+function ViscousStrain(Ce, C)
+  # λCe, nCe = eigen(Ce) # TODO: Remove
+  # Ue = EigDecomposition(sqrt.(λCe), nCe)  # Ue = sqrt(Ce)
+  # Ue_C_Ue = Ue * C * Ue
+  # λ2, n2 = eigen(Ue_C_Ue)
+  # Ue_C_Ue_ = EigDecomposition(sqrt.(λ2), n2)
+  # invUe = inv(Ue)
+  # Uv = invUe * Ue_C_Ue_ * invUe
+  # invUv = inv(Uv)
+  # Alternative form
+  Ue = sqrtM(Ce)
+  Ue_C_Ue = Ue * C * Ue
+  invUe = inv(Ue)
+  Uv = invUe * sqrtM(Ue_C_Ue) * invUe
+  invUv = inv(Uv)
+  return Ue, Uv, invUv
+end
+
+
+"""
+Compute the return mapping algorithm for the incompressible case
+
+# Arguments
+- `obj::ViscousIncompressible`: The viscous model
+- `Se_`: Elastic 2nd Piola-Kirchhoff stress (function of C)    
+- `∂Se_∂Ce_`: Derivatives of elastic 2nd Piola-Kirchhoff stress (function of C)  
+- `Δt`: Time step
+- `F`: Deformation gradient
+- `Ce_trial`
+- `Ce`: Elastic right Green-Cauchy deformation tensor
+- `λα`: Return mapping
+
+# Return
+- `Ce`
+- `λα`
+"""
+function return_mapping_algorithm!(obj::ViscousIncompressible, Se_, ∂Se∂Ce_, Δt, F, Ce_trial, Ce, λα)
+  γα = obj.τ / (obj.τ - Δt)
+  Se_trial = Se_(Ce_trial)
+  res, ∂res = JacobianReturnMapping(γα, Ce, Se_(Ce), Se_trial, ∂Se∂Ce_(Ce), F, λα)
+  maxiter = 20
+  tol = 1e-6
+  for _ in 1:maxiter
+    #----------Update -----------#   
+    Δu = -∂res \ res[:]
+    Ce += reshape(Δu[1:end-1], 3, 3)
+    λα += Δu[end]
+    #----Compute residual and jacobian---------#
+    res, ∂res = JacobianReturnMapping(γα, Ce, Se_(Ce), Se_trial, ∂Se∂Ce_(Ce), F, λα)
+    #----Monitor convergence---------#   
+    if norm(res) < tol
+      break
+    end
+  end
+  return Ce, λα
+end
+
+
+"""
+Residual of the return mapping algorithm and 
+its Jacobian with respect to {Ce,λα} for 
+incompressible case
+
+# Arguments
+
+# Return
+- `res`
+- `∂res`
+"""
+function JacobianReturnMapping(γα, Ce, Se, Se_trial, ∂Se∂Ce, F, λα)
+    detCe = det(Ce)
+    Ge = Cofactor(Ce)
+    #--------------------------------
+    # Residual   
+    #--------------------------------   
+    res1 = Se - γα * Se_trial - (1-γα) * λα * Ge
+    res2 = detCe - (det(F))^2
+    #--------------------------------   
+    #   Derivative of residual
+    #-------------------------------- 
+    ∂res1_∂Ce = ∂Se∂Ce - (1-γα) * λα * Cross_I4_A(Ce)
+    ∂res1_∂λα = -(1-γα) * Ge
+    ∂res2_∂Ce = Ge
+    res = [res1[:]; res2]
+    ∂res = MMatrix{10,10}(zeros(10, 10))
+    ∂res[1:9, 1:9] = ∂res1_∂Ce
+    ∂res[1:9, 10] = ∂res1_∂λα[:]
+    ∂res[10, 1:9] = (∂res2_∂Ce[:])'
+    return res, ∂res
+end
+
+
+"""
+Viscous 1st Piola-Kirchhoff stress
+
+# Arguments
+- `Se` Elastic Piola (function of C)
+- `Ce` Elastic right Green-Cauchy deformation tensor
+- `invUv` Inverse of viscous strain
+- `F` Deformation gradient
+
+# Return
+- `Pα`
+"""
+function ViscousPiola(Se, Ce, invUv, F)
+    Sα = invUv * Se(Ce) * invUv
+    Pα = F * Sα
+    return Pα
+end
+
+
+"""
+  Tangent operator of Ce for the incompressible case
+
+# Arguments
+- `::ViscousIncompressible` The viscous model
+- `γα`: Characteristic time τα / (τα + Δt)
+- `∂Se_∂Ce_`: Function of C
+- ...
+
+# Return
+- `∂Ce∂C`
+"""
+function ∂Ce_∂C(::ViscousIncompressible, γα, ∂Se_∂Ce_, invUvn, Ce, Ce_trial, λα, F)
+    C = F' * F
+    G = Cofactor(C)
+    Ge = Cofactor(Ce)
+    ∂Se∂Ce = ∂Se_∂Ce_(Ce)
+    ∂Se∂Cetrial = ∂Se_∂Ce_(Ce_trial)
+    ∂Ce_trial_∂C = Outer_13_24(invUvn, invUvn)
+    #------------------------------------------
+    # Derivative of return mapping with respect to Ce and λα
+    #------------------------------------------   
+    K11 = ∂Se∂Ce - (1-γα) * λα * Cross_I4_A(Ce)
+    K12 = -(1-γα) * Ge
+    K21 = Ge
+    #------------------------------------------
+    # Derivative of return mapping with respect to C
+    #------------------------------------------   
+    F1 = γα * ∂Se∂Cetrial * ∂Ce_trial_∂C
+    F2 = G
+    #------------------------------------------
+    # Derivative of {Ce,λα} with respect to C
+    #------------------------------------------   
+    K = MMatrix{10,10}(zeros(10, 10))
+    K[1:9, 1:9] = K11
+    K[1:9, 10] = K12[:]
+    K[10, 1:9] = (K21[:])'
+    F = [F1; (F2[:])']
+    ∂u∂C = K \ F
+    ∂Ce∂C = ∂u∂C[1:9, 1:9]
+    return ∂Ce∂C
+end
+
+
+"""
+Tangent operator of Ce for at fixed Uv
+"""
+function ∂Ce_∂C_Uvfixed(invUv)
+  return Outer_13_24(invUv, invUv)
+end
+
+
+"""
+∂Ce∂(Uv^{-1})
+"""
+function ∂Ce_∂invUv(C, invU)
+  invU_C = invU * C
+  Id = SMatrix{3,3}(I)
+  Outer_13_24(invU_C, Id) + Outer_13_24(Id, invU_C)
+end
+
+
+"""
+Tangent operator for the incompressible case
+
+# Arguments
+- `obj::ViscousIncompressible`
+- `Se_`: Function of C
+- `∂Se∂Ce_`: Function of C
+- `Δt`: Time step
+- `F`
+- `Ce_trial`
+- `Ce`
+- `invUv`
+- `invUvn`
+- `λα`
+
+# Return
+- `Cv` A fourth-order tensor
+"""
+function ViscousTangentOperator(obj::ViscousIncompressible, Se_, ∂Se∂Ce_, Δt, F, Ce_trial, Ce, invUv, invUvn, λα)
+  # -----------------------------------------
+  # Characteristic time
+  #------------------------------------------
+  γα = obj.τ / (obj.τ - Δt)
+  #------------------------------------------
+  # Extract τv, Δt, μv
+  #------------------------------------------  
+  C = F' * F
+  DCe_DC = ∂Ce_∂C(obj, γα, ∂Se∂Ce_, invUvn, Ce, Ce_trial, λα, F)
+  DCe_DC_Uvfixed = ∂Ce_∂C_Uvfixed(invUv)
+  DCe_DinvUv = ∂Ce_∂invUv(C, invUv)
+  DinvUv_DC = inv(DCe_DinvUv) * (DCe_DC - DCe_DC_Uvfixed)
+  I2 = SMatrix{3,3}(I)
+  DCDF = Outer_13_24(F', I2) + Outer_14_23(I2, F')
+  #------------------------------------------
+  # 0.5*δC_{Uvfixed}:DSe[ΔC]
+  #------------------------------------------
+  C1 = 0.5 * DCe_DC_Uvfixed' * ∂Se∂Ce_(Ce) * DCe_DC
+  #------------------------------------------
+  # Se:0.5*(DUv^{-1}[ΔC]*δC*Uv^{-1} + Uv^{-1}*δC*DUv^{-1}[ΔC])
+  #------------------------------------------
+  invUv_Se = invUv * Se_(Ce)
+  C2 = 0.5 * (Contraction_IP_JPKL(invUv_Se, DinvUv_DC) +
+              Contraction_IP_PJKL(invUv_Se, DinvUv_DC))
+  #------------------------------------------
+  # Sv:(D(δC_{Uvfixed})[ΔC])
+  #------------------------------------------
+  Sv = invUv_Se * invUv
+  C3 = Outer_13_24(Sv, I2)
+  #------------------------------------------
+  # Total Contribution
+  #------------------------------------------
+  Cv = DCDF' * (C1 + C2) * DCDF + C3
+  return Cv
+end
+
+
+"""
+  This function will be removed in favour of _getKinematic(::Visco)
+"""
+function get_kinematics()
+  F(∇u) = one(∇u) + ∇u
+  return F
+end
+
+
+"""
+  First Piola-Kirchhoff for the incompressible case
+
+# Arguments
+- `obj::ViscousIncompressible`: The visous model
+- `Se_`: Elastic 2nd Piola (function of C)
+- `∂Se∂Ce_`: 2nd Piola Derivatives (function of C)
+- `∇u_`: Current deformation gradient
+- `∇un_`: Previous deformation gradient
+- `Δt`: Current time step
+- `stateVars`: State variables (Uvα and λα)
+
+# Return
+- `Pα::Gridap.TensorValues.TensorValue`
+"""
+function Piola(obj::ViscousIncompressible, Se_, ∂Se∂Ce_, ∇u_, ∇un_, Δt, stateVars)
+  state_vars = get_array(stateVars)
+  Uvn = SMatrix{3,3}(state_vars[1:9])
+  # Uvn = TensorValue(SMatrix{3,3}(state_vars[1:9]))
+  λαn = state_vars[10]
+  ∇u = get_array(∇u_)
+  ∇un = get_array(∇un_)
+  #------------------------------------------
+  # get F and Fn
+  #------------------------------------------
+  F_ = get_kinematics()
+  F = F_(∇u)
+  Fn = F_(∇un)
+  #------------------------------------------
+  # Get C, Cn
+  #------------------------------------------
+  C = F' * F
+  Cn = Fn' * Fn
+  #------------------------------------------
+  # Get Uen
+  #------------------------------------------
+  invUvn = inv(Uvn)
+  Cen = invUvn * Cn * invUvn
+  #------------------------------------------
+  # Get trial strain
+  #------------------------------------------
+  Ceᵗ = invUvn * C * invUvn
+  #------------------------------------------
+  # return mapping algorithm
+  #------------------------------------------
+  Ce, _ = return_mapping_algorithm!(obj, Se_, ∂Se∂Ce_, Δt, F, Ceᵗ, Cen, λαn)
+  #------------------------------------------
+  # Get invUv and Sα
+  #------------------------------------------
+  _, _, invUv = ViscousStrain(Ce, C)
+  Pα = ViscousPiola(Se_, Ce, invUv, F)
+  #------------------------------------------
+  # Tangent operator
+  #------------------------------------------
+  return TensorValue(Pα)
+end
+
+
+"""
+Visco-Elastic model for incompressible case
+
+# Arguments
+- `obj::ViscousIncompressible`: The visous model
+- `Se_`: Elastic 2nd Piola (function of C)
+- `∂Se∂Ce_`: 2nd Piola Derivatives (function of C)
+- `∇u_`: Current deformation gradient
+- `∇un_`: Previous deformation gradient
+- `Δt`: Current time step
+- `stateVars`: State variables (Uvα and λα)
+
+# Return
+- `Cα::Gridap.TensorValues.TensorValue`
+"""
+function Tangent(obj::ViscousIncompressible, Se_, ∂Ce∂Se_, ∇u_, ∇un_, Δt, stateVars)
+  state_vars = get_array(stateVars)
+  Uvn = SMatrix{3,3}(state_vars[1:9])
+  # Uvn = TensorValue(SMatrix{3,3}(state_vars[1:9]))
+  λαn = state_vars[10]
+  ∇u = get_array(∇u_)
+  ∇un = get_array(∇un_)
+  #------------------------------------------
+  # get F and Fn
+  #------------------------------------------
+  F_ = get_kinematics()
+  F = F_(∇u)
+  Fn = F_(∇un)
+  #------------------------------------------
+  # Get C, Cn
+  #------------------------------------------
+  C = F' * F
+  Cn = Fn' * Fn
+  #------------------------------------------
+  # Get Uen
+  #------------------------------------------
+  invUvn = inv(Uvn)
+  Cen = invUvn * Cn * invUvn
+  #------------------------------------------
+  # Get trial strain
+  #------------------------------------------
+  Ceᵗ = invUvn * C * invUvn
+  #------------------------------------------
+  # return mapping algorithm
+  #------------------------------------------
+  Ce, λα = return_mapping_algorithm!(obj, Se_, ∂Ce∂Se_, Δt, F, Ceᵗ, Cen, λαn)
+  #------------------------------------------
+  # Get invUv and Sα
+  #------------------------------------------
+  _, _, invUv = ViscousStrain(Ce, C)
+  #------------------------------------------
+  # Tangent operator
+  #------------------------------------------
+  Cα = ViscousTangentOperator(obj, Se_, ∂Ce∂Se_, Δt, F, Ceᵗ, Ce, invUv, invUvn, λα)
+  return TensorValue(Cα)
+end
+
+
+"""
+    Return mapping for the incompressible case
+
+    # Arguments
+    - `::ViscousIncompressible`
+    - `Se_`: Elastic Piola (function of C)
+    - `∂Se_∂Ce_`: Piola Derivatives (function of C)
+    - `∇u_`
+    - `∇un_`
+    - `Δt`: Time step
+    - `stateVars`: State variables (Uvα and λα)
+
+    # Return
+    - `::bool`: indicates whether the state variables should be updated
+    - `::VectorValue`: State variables at new time
+"""
+function ReturnMapping(obj::ViscousIncompressible, Se_, ∂Se∂Ce_, ∇u_, ∇un_, Δt, stateVars)
+  state_vars = get_array(stateVars)
+  Uvn = SMatrix{3,3}(state_vars[1:9])
+  λαn = state_vars[10]
+  ∇u = get_array(∇u_)
+  ∇un = get_array(∇un_)
+  #------------------------------------------
+  # get F and Fn
+  #------------------------------------------
+  F_ = get_kinematics()
+  F = F_(∇u)
+  Fn = F_(∇un)
+  #------------------------------------------
+  # Get C, Cn
+  #------------------------------------------
+  C = F' * F
+  Cn = Fn' * Fn
+  #------------------------------------------
+  # Get Uen
+  #------------------------------------------
+  invUvn = inv(Uvn)
+  Cen = invUvn * Cn * invUvn
+  #------------------------------------------
+  # Get trial strain
+  #------------------------------------------
+  Ce_trial = invUvn * C * invUvn
+  #------------------------------------------
+  # return mapping algorithm
+  #------------------------------------------
+  Ce, λα = return_mapping_algorithm!(obj, Se_, ∂Se∂Ce_, Δt, F, Ce_trial, Cen, λαn)
+  #------------------------------------------
+  # Get Uv and λα
+  #------------------------------------------
+  _, Uv, _ = ViscousStrain(Ce, C)
+  Cell_ = [Uv[:]; λα]
+  return true, VectorValue(Cell_)
+end
+
+
