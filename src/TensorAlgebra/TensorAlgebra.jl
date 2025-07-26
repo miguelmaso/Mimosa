@@ -761,7 +761,7 @@ end
 
 Compose a 3x3 matrix from its eigenvalues and eigenvectors
 """
-@inline function EigDecomposition(λ::SVector,n::SMatrix)
+@inline function EigDecomposition(λ::SVector{3},n::SMatrix{3,3})
   SMatrix{3,3}(λ[1]*n[1:3]*n[1:3]' + λ[2]*n[4:6]*n[4:6]' + λ[3]*n[7:9]*n[7:9]')
 end
 
@@ -777,9 +777,9 @@ Compute the square root of a 3x3 matrix by means of eigen decomposition.
 # Returns
 - `::SMatrix`: the squared root matrix
 """
-@inline function sqrtM(A::SMatrix)
+@inline function sqrtM(A::SMatrix{3,3})
   λ, Q = eigen(A)
-  EigDecomposition(λ, Q)
+  EigDecomposition(sqrt.(λ), Q)
 end
 
 

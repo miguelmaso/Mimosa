@@ -61,19 +61,19 @@ Compute the return mapping algorithm for the incompressible case
 - `λα`
 """
 function return_mapping_algorithm!(obj::ViscousIncompressible, Se_, ∂Se∂Ce_, Δt, F, Ce_trial, Ce, λα)
-  γα = obj.τ / (obj.τ - Δt)
+  γα = obj.τ / (obj.τ + Δt)
   Se_trial = Se_(Ce_trial)
   res, ∂res = JacobianReturnMapping(γα, Ce, Se_(Ce), Se_trial, ∂Se∂Ce_(Ce), F, λα)
   maxiter = 20
   tol = 1e-6
   for _ in 1:maxiter
-    #----------Update -----------#   
+    #----------Update -----------#
     Δu = -∂res \ res[:]
     Ce += reshape(Δu[1:end-1], 3, 3)
     λα += Δu[end]
     #----Compute residual and jacobian---------#
     res, ∂res = JacobianReturnMapping(γα, Ce, Se_(Ce), Se_trial, ∂Se∂Ce_(Ce), F, λα)
-    #----Monitor convergence---------#   
+    #----Monitor convergence---------#
     if norm(res) < tol
       break
     end
@@ -117,6 +117,8 @@ end
 
 
 """
+  ViscousPiola(Se::Function, Ce::SMatrix, invUv::SMatrix, F::SMatrix)::SMatrix
+
 Viscous 1st Piola-Kirchhoff stress
 
 # Arguments
@@ -126,12 +128,11 @@ Viscous 1st Piola-Kirchhoff stress
 - `F` Deformation gradient
 
 # Return
-- `Pα`
+- `Pα::SMatrix`
 """
-function ViscousPiola(Se, Ce, invUv, F)
+function ViscousPiola(Se::Function, Ce::SMatrix, invUv::SMatrix, F::SMatrix)
     Sα = invUv * Se(Ce) * invUv
-    Pα = F * Sα
-    return Pα
+    F * Sα
 end
 
 
@@ -152,7 +153,7 @@ function ∂Ce_∂C(::ViscousIncompressible, γα, ∂Se_∂Ce_, invUvn, Ce, Ce_
     G = Cofactor(C)
     Ge = Cofactor(Ce)
     ∂Se∂Ce = ∂Se_∂Ce_(Ce)
-    ∂Se∂Cetrial = ∂Se_∂Ce_(Ce_trial)
+    ∂Se∂Ce_trial = ∂Se_∂Ce_(Ce_trial)
     ∂Ce_trial_∂C = Outer_13_24(invUvn, invUvn)
     #------------------------------------------
     # Derivative of return mapping with respect to Ce and λα
@@ -163,7 +164,7 @@ function ∂Ce_∂C(::ViscousIncompressible, γα, ∂Se_∂Ce_, invUvn, Ce, Ce_
     #------------------------------------------
     # Derivative of return mapping with respect to C
     #------------------------------------------   
-    F1 = γα * ∂Se∂Cetrial * ∂Ce_trial_∂C
+    F1 = γα * ∂Se∂Ce_trial * ∂Ce_trial_∂C
     F2 = G
     #------------------------------------------
     # Derivative of {Ce,λα} with respect to C
@@ -219,7 +220,7 @@ function ViscousTangentOperator(obj::ViscousIncompressible, Se_, ∂Se∂Ce_, Δ
   # -----------------------------------------
   # Characteristic time
   #------------------------------------------
-  γα = obj.τ / (obj.τ - Δt)
+  γα = obj.τ / (obj.τ + Δt)
   #------------------------------------------
   # Extract τv, Δt, μv
   #------------------------------------------  
@@ -277,10 +278,9 @@ end
 # Return
 - `Pα::Gridap.TensorValues.TensorValue`
 """
-function Piola(obj::ViscousIncompressible, Se_, ∂Se∂Ce_, ∇u_, ∇un_, Δt, stateVars)
+function Piola(obj::ViscousIncompressible, Se_::Function, ∂Se∂Ce_::Function, ∇u_, ∇un_, Δt, stateVars)
   state_vars = get_array(stateVars)
   Uvn = SMatrix{3,3}(state_vars[1:9])
-  # Uvn = TensorValue(SMatrix{3,3}(state_vars[1:9]))
   λαn = state_vars[10]
   ∇u = get_array(∇u_)
   ∇un = get_array(∇un_)
@@ -335,10 +335,9 @@ Visco-Elastic model for incompressible case
 # Return
 - `Cα::Gridap.TensorValues.TensorValue`
 """
-function Tangent(obj::ViscousIncompressible, Se_, ∂Ce∂Se_, ∇u_, ∇un_, Δt, stateVars)
+function Tangent(obj::ViscousIncompressible, Se_, ∂Se∂Ce_, ∇u_, ∇un_, Δt, stateVars)
   state_vars = get_array(stateVars)
   Uvn = SMatrix{3,3}(state_vars[1:9])
-  # Uvn = TensorValue(SMatrix{3,3}(state_vars[1:9]))
   λαn = state_vars[10]
   ∇u = get_array(∇u_)
   ∇un = get_array(∇un_)
@@ -365,7 +364,7 @@ function Tangent(obj::ViscousIncompressible, Se_, ∂Ce∂Se_, ∇u_, ∇un_, Δ
   #------------------------------------------
   # return mapping algorithm
   #------------------------------------------
-  Ce, λα = return_mapping_algorithm!(obj, Se_, ∂Ce∂Se_, Δt, F, Ceᵗ, Cen, λαn)
+  Ce, λα = return_mapping_algorithm!(obj, Se_, ∂Se∂Ce_, Δt, F, Ceᵗ, Cen, λαn)
   #------------------------------------------
   # Get invUv and Sα
   #------------------------------------------
@@ -373,7 +372,7 @@ function Tangent(obj::ViscousIncompressible, Se_, ∂Ce∂Se_, ∇u_, ∇un_, Δ
   #------------------------------------------
   # Tangent operator
   #------------------------------------------
-  Cα = ViscousTangentOperator(obj, Se_, ∂Ce∂Se_, Δt, F, Ceᵗ, Ce, invUv, invUvn, λα)
+  Cα = ViscousTangentOperator(obj, Se_, ∂Se∂Ce_, Δt, F, Ceᵗ, Ce, invUv, invUvn, λα)
   return TensorValue(Cα)
 end
 
@@ -383,18 +382,20 @@ end
 
     # Arguments
     - `::ViscousIncompressible`
-    - `Se_`: Elastic Piola (function of C)
-    - `∂Se_∂Ce_`: Piola Derivatives (function of C)
-    - `∇u_`
-    - `∇un_`
-    - `Δt`: Time step
-    - `stateVars`: State variables (Uvα and λα)
+    - `Δt::Float64`: Time step
+    - `Se_::Function`: Elastic Piola (function of C)
+    - `∂Se∂Ce_::Function`: Piola Derivatives (function of C)
+    - `∇u_::TensorValue`
+    - `∇un_::TensorValue`
+    - `stateVars::VectorValue`: State variables (10-component vector gathering Uvα and λα)
 
     # Return
     - `::bool`: indicates whether the state variables should be updated
     - `::VectorValue`: State variables at new time
 """
-function ReturnMapping(obj::ViscousIncompressible, Se_, ∂Se∂Ce_, ∇u_, ∇un_, Δt, stateVars)
+function ReturnMapping(obj::ViscousIncompressible, Δt::Float64,
+                       Se_::Function, ∂Se∂Ce_::Function,
+                       ∇u_::TensorValue, ∇un_::TensorValue, stateVars::VectorValue)
   state_vars = get_array(stateVars)
   Uvn = SMatrix{3,3}(state_vars[1:9])
   λαn = state_vars[10]

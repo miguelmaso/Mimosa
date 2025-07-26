@@ -218,34 +218,34 @@ end
 
 include("./ViscousModels.jl")
 
-function (obj::ViscousIncompressible)(strategy::DerivativeStrategy{T}) where T
+function (obj::ViscousIncompressible)(strategy::DerivativeStrategy{T}, Δt::Float64) where T
   Ψe, Se, ∂Se∂Ce          = obj.ShortTerm(strategy, StressTensor{:SecondPiola}())
-  ∂Ψ∂F(∇u, ∇un, Δt, state)   = Piola(obj, Se, ∂Se∂Ce, ∇u, ∇un, Δt, state)
-  ∂Ψ∂F∂F(∇u, ∇un, Δt, state) = Tangent(obj, Se, ∂Se∂Ce, ∇u, ∇un, Δt, state)
+  ∂Ψ∂F(∇u, ∇un, state)    = Piola(obj, Se, ∂Se∂Ce, ∇u, ∇un, Δt, state)
+  ∂Ψ∂F∂F(∇u, ∇un, state)  = Tangent(obj, Se, ∂Se∂Ce, ∇u, ∇un, Δt, state)
   return Ψe, ∂Ψ∂F, ∂Ψ∂F∂F
 end
 
 
-function (obj::GeneralizedMaxwell)(strategy::DerivativeStrategy{T}) where T
+function (obj::GeneralizedMaxwell)(strategy::DerivativeStrategy{T}, Δt::Float64) where T
   Ψe, ∂Ψeu, ∂Ψeuu = obj.LongTerm(strategy)
-  # Ψ1, ∂Ψ1u, ∂Ψ1uu = obj.Branch1(strategy)
-  # Ψ(∇u, ∇un, Δt, state) = Ψe(∇u) + Ψ1(∇u, ∇un, Δt, state)
-  # ∂Ψu(∇u, ∇un, Δt, state) = ∂Ψeu(∇u) + ∂Ψ1u(∇u, ∇un, Δt, state)
-  # ∂Ψuu(∇u, ∇un, Δt, state) = ∂Ψeuu(∇u) + ∂Ψ1uu(∇u, ∇un, Δt, state)
+  # Ψ1, ∂Ψ1u, ∂Ψ1uu = obj.Branch1(strategy, Δt)
+  # Ψ(∇u, ∇un, state) = Ψe(∇u) + Ψ1(∇u, ∇un, state)
+  # ∂Ψu(∇u, ∇un, state) = ∂Ψeu(∇u) + ∂Ψ1u(∇u, ∇un, state)
+  # ∂Ψuu(∇u, ∇un, state) = ∂Ψeuu(∇u) + ∂Ψ1uu(∇u, ∇un, state)
   # return (Ψ, ∂Ψu, ∂Ψuu)
   N = length(obj.Branches)
   Ψα = Array{Function}(undef,N)
   ∂Ψαu = Array{Function}(undef,N)
   ∂Ψαuu = Array{Function}(undef,N)
   for (i, branch) in enumerate(obj.Branches)
-    Ψi, ∂Ψiu, ∂Ψiuu = branch(strategy)
+    Ψi, ∂Ψiu, ∂Ψiuu = branch(strategy, Δt)
     Ψα[i] = Ψi
     ∂Ψαu[i] = ∂Ψiu
     ∂Ψαuu[i] = ∂Ψiuu
   end
-  Ψ(∇u, ∇un, Δt, states...) = mapreduce((Ψi, state) -> Ψi(∇u, ∇un, Δt, state), +, Ψα, states; init=Ψe(∇u))
-  ∂Ψu(∇u, ∇un, Δt, states...) = mapreduce((∂Ψiu, state) -> ∂Ψiu(∇u, ∇un, Δt, state), +, ∂Ψαu, states; init=∂Ψeu(∇u))
-  ∂Ψuu(∇u, ∇un, Δt, states...) = mapreduce((∂Ψiuu, state) -> ∂Ψiuu(∇u, ∇un, Δt, state), +, ∂Ψαuu, states; init=∂Ψeuu(∇u))
+  Ψ(∇u, ∇un, states...) = mapreduce((Ψi, state) -> Ψi(∇u, ∇un, state), +, Ψα, states; init=Ψe(∇u))
+  ∂Ψu(∇u, ∇un, states...) = mapreduce((∂Ψiu, state) -> ∂Ψiu(∇u, ∇un, state), +, ∂Ψαu, states; init=∂Ψeu(∇u))
+  ∂Ψuu(∇u, ∇un, states...) = mapreduce((∂Ψiuu, state) -> ∂Ψiuu(∇u, ∇un, state), +, ∂Ψαuu, states; init=∂Ψeuu(∇u))
   return (Ψ, ∂Ψu, ∂Ψuu)
 end
 
@@ -461,17 +461,17 @@ end
 function updateStateVariables!(::ConstitutiveModel, vars...)
 end
 
-function updateStateVariables!(model::GeneralizedMaxwell, u, un, Δt, stateVars)
-  # updateStateVariables!(model.Branch1, ∇u, ∇un, Δt, stateVars...)
+function updateStateVariables!(model::GeneralizedMaxwell, Δt, u, un, stateVars)
+  # updateStateVariables!(model.Branch1, u, un, Δt, stateVars)
   @assert length(model.Branches) == length(stateVars)
   for (branch, state) in zip(model.Branches, stateVars)
-    updateStateVariables!(branch, u, un, Δt, state)
+    updateStateVariables!(branch, Δt, u, un, state)
   end
 end
 
-function updateStateVariables!(model::ViscousIncompressible, u, un, Δt, stateVar)
+function updateStateVariables!(model::ViscousIncompressible, Δt, u, un, stateVar)
   _, Se, ∂Se∂Ce = model.ShortTerm(DerivativeStrategy{:analytic}(), StressTensor{:SecondPiola}())
-  return_mapping(s, ∇u, ∇un) = ReturnMapping(model, Se, ∂Se∂Ce, ∇u, ∇un, Δt, s)
+  return_mapping(s, ∇u, ∇un) = ReturnMapping(model, Δt, Se, ∂Se∂Ce, ∇u, ∇un, s)
   update_state!(return_mapping, stateVar, ∇(u)', ∇(un)')
 end
 
