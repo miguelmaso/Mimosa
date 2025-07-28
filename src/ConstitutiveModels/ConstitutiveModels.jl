@@ -220,8 +220,8 @@ include("./ViscousModels.jl")
 
 function (obj::ViscousIncompressible)(strategy::DerivativeStrategy{T}, Δt::Float64) where T
   Ψe, Se, ∂Se∂Ce          = obj.ShortTerm(strategy, StressTensor{:SecondPiola}())
-  ∂Ψ∂F(∇u, ∇un, state)    = Piola(obj, Se, ∂Se∂Ce, ∇u, ∇un, Δt, state)
-  ∂Ψ∂F∂F(∇u, ∇un, state)  = Tangent(obj, Se, ∂Se∂Ce, ∇u, ∇un, Δt, state)
+  ∂Ψ∂F(∇u, ∇un, state)    = Piola(obj, Δt, Se, ∂Se∂Ce, ∇u, ∇un, state)
+  ∂Ψ∂F∂F(∇u, ∇un, state)  = Tangent(obj, Δt, Se, ∂Se∂Ce, ∇u, ∇un, state)
   return Ψe, ∂Ψ∂F, ∂Ψ∂F∂F
 end
 
