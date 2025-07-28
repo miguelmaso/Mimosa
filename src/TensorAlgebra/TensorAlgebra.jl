@@ -16,8 +16,8 @@ export (⊗₁²³)
 export (⊗₁₃²⁴)
 export (⊗₁₂³⁴)
 export (⊗₁²)
-export sqrtM
-export Cofactor
+export msqrt
+export cof
 export Cross_I4_A
 export I3
 export I9
@@ -767,7 +767,7 @@ end
 
 
 """
-  sqrtM(A::SMatrix)::SMatrix
+  msqrt(A::SMatrix)::SMatrix
 
 Compute the square root of a 3x3 matrix by means of eigen decomposition.
 
@@ -777,14 +777,14 @@ Compute the square root of a 3x3 matrix by means of eigen decomposition.
 # Returns
 - `::SMatrix`: the squared root matrix
 """
-@inline function sqrtM(A::SMatrix{3,3})
+@inline function msqrt(A::SMatrix{3,3})
   λ, Q = eigen(A)
   EigDecomposition(sqrt.(λ), Q)
 end
 
 
 """
-  Cofactor(A::SMatrix)::SMatrix
+  cof(A::SMatrix)::SMatrix
 
 Calculate the cofactor of a matrix.
 
@@ -794,7 +794,7 @@ Calculate the cofactor of a matrix.
 # Returns
 - `SMatrix`: the cofactor matrix.
 """
-@inline function Cofactor(A::SMatrix)
+@inline function cof(A::SMatrix)
  return det(A)*inv(A')
 end
 

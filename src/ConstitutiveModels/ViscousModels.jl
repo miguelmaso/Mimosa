@@ -50,46 +50,50 @@ Get viscous Uv and its inverse.
 - `invUv`
 """
 function ViscousStrain(Ce, C)
-  Ue = sqrtM(Ce)
+  Ue = msqrt(Ce)
   Ue_C_Ue = Ue * C * Ue
   invUe = inv(Ue)
-  Uv = invUe * sqrtM(Ue_C_Ue) * invUe
+  Uv = invUe * msqrt(Ue_C_Ue) * invUe
   invUv = inv(Uv)
   return Ue, Uv, invUv
 end
 
 
 """
-Compute the return mapping algorithm for the incompressible case
+  return_mapping_algorithm!
+
+Compute the elastic Cauchy deformation tensor and the incompressibility condition.
 
 # Arguments
 - `obj::ViscousIncompressible`: The viscous model
-- `Se_`: Elastic 2nd Piola-Kirchhoff stress (function of C)    
-- `∂Se_∂Ce_`: Derivatives of elastic 2nd Piola-Kirchhoff stress (function of C)  
-- `Δt`: Time step
+- `Δt::Float64`: Time step
+- `Se_::Function`: Elastic 2nd Piola-Kirchhoff stress (function of C)    
+- `∂Se_∂Ce_::Function`: Derivatives of elastic 2nd Piola-Kirchhoff stress (function of C)  
 - `F`: Deformation gradient
-- `Ce_trial`
+- `Ce_trial`: Elastic right Green-Cauchy at intermediate statep
 - `Ce`: Elastic right Green-Cauchy deformation tensor
-- `λα`: Return mapping
+- `λα`: incompressibility constraint (Lagrange multiplier)
 
 # Return
 - `Ce`
 - `λα`
 """
-function return_mapping_algorithm!(obj::ViscousIncompressible, Se_, ∂Se∂Ce_, Δt, F, Ce_trial, Ce, λα)
+function return_mapping_algorithm!(obj::ViscousIncompressible, Δt::Float64,
+                            Se_::Function, ∂Se∂Ce_::Function,
+                            F, Ce_trial, Ce, λα)
   γα = obj.τ / (obj.τ + Δt)
   Se_trial = Se_(Ce_trial)
   res, ∂res = JacobianReturnMapping(γα, Ce, Se_(Ce), Se_trial, ∂Se∂Ce_(Ce), F, λα)
   maxiter = 20
   tol = 1e-6
   for _ in 1:maxiter
-    #----------Update -----------#
+    #---------- Update -----------#
     Δu = -∂res \ res[:]
     Ce += reshape(Δu[1:end-1], 3, 3)
     λα += Δu[end]
-    #----Compute residual and jacobian---------#
+    #---- Residual and jacobian ---------#
     res, ∂res = JacobianReturnMapping(γα, Ce, Se_(Ce), Se_trial, ∂Se∂Ce_(Ce), F, λα)
-    #----Monitor convergence---------#
+    #---- Monitor convergence ---------#
     if norm(res) < tol
       break
     end
@@ -111,15 +115,15 @@ incompressible case
 """
 function JacobianReturnMapping(γα, Ce, Se, Se_trial, ∂Se∂Ce, F, λα)
     detCe = det(Ce)
-    Ge = Cofactor(Ce)
+    Ge = cof(Ce)
     #--------------------------------
-    # Residual   
+    # Residual
     #--------------------------------   
     res1 = Se - γα * Se_trial - (1-γα) * λα * Ge
     res2 = detCe - (det(F))^2
-    #--------------------------------   
-    #   Derivative of residual
-    #-------------------------------- 
+    #--------------------------------
+    # Derivatives of residual
+    #--------------------------------
     ∂res1_∂Ce = ∂Se∂Ce - (1-γα) * λα * Cross_I4_A(Ce)
     ∂res1_∂λα = -(1-γα) * Ge
     ∂res2_∂Ce = Ge
@@ -168,8 +172,8 @@ Tangent operator of Ce for the incompressible case
 """
 function ∂Ce_∂C(::ViscousIncompressible, γα, ∂Se_∂Ce_, invUvn, Ce, Ce_trial, λα, F)
     C = F' * F
-    G = Cofactor(C)
-    Ge = Cofactor(Ce)
+    G = cof(C)
+    Ge = cof(Ce)
     ∂Se∂Ce = ∂Se_∂Ce_(Ce)
     ∂Se∂Ce_trial = ∂Se_∂Ce_(Ce_trial)
     ∂Ce_trial_∂C = Outer_13_24(invUvn, invUvn)
@@ -217,24 +221,28 @@ end
 
 
 """
+  ViscousTangentOperator
+
 Tangent operator for the incompressible case
 
 # Arguments
 - `obj::ViscousIncompressible`
+- `Δt::Float64`: Time step
 - `Se_::Function`: Function of C
 - `∂Se∂Ce_::Function`: Function of C
-- `Δt`: Time step
-- `F`
-- `Ce_trial`
-- `Ce`
+- `F`: Deformation tensor
+- `Ce_trial`: Right Green-Cauchy deformation tensor at intermediate step
+- `Ce`: Right Green-Cauchy deformation tensor at curent step
 - `invUv`
 - `invUvn`
 - `λα`
 
 # Return
-- `Cv` A fourth-order tensor
+- `Cv::SMatrix{9,9}`: A fourth-order tensor in flattened notation
 """
-function ViscousTangentOperator(obj::ViscousIncompressible, Se_, ∂Se∂Ce_, Δt, F, Ce_trial, Ce, invUv, invUvn, λα)
+function ViscousTangentOperator(obj::ViscousIncompressible, Δt::Float64,
+                  Se_::Function, ∂Se∂Ce_::Function,
+                  F, Ce_trial, Ce, invUv, invUvn, λα)
   # -----------------------------------------
   # Characteristic time
   #------------------------------------------
@@ -304,7 +312,7 @@ function Piola(obj::ViscousIncompressible, Δt::Float64,
   #------------------------------------------
   # Return mapping algorithm
   #------------------------------------------
-  Ce, _ = return_mapping_algorithm!(obj, Se_, ∂Se∂Ce_, Δt, F, Ceᵗʳ, Cen, λαn)
+  Ce, _ = return_mapping_algorithm!(obj, Δt, Se_, ∂Se∂Ce_, F, Ceᵗʳ, Cen, λαn)
   #------------------------------------------
   # Get invUv and Sα
   #------------------------------------------
@@ -349,7 +357,7 @@ function Tangent(obj::ViscousIncompressible, Δt::Float64,
   #------------------------------------------
   # Return mapping algorithm
   #------------------------------------------
-  Ce, λα = return_mapping_algorithm!(obj, Se_, ∂Se∂Ce_, Δt, F, Ceᵗʳ, Cen, λαn)
+  Ce, λα = return_mapping_algorithm!(obj, Δt, Se_, ∂Se∂Ce_, F, Ceᵗʳ, Cen, λαn)
   #------------------------------------------
   # Get invUv and Sα
   #------------------------------------------
@@ -357,7 +365,7 @@ function Tangent(obj::ViscousIncompressible, Δt::Float64,
   #------------------------------------------
   # Tangent operator
   #------------------------------------------
-  Cα = ViscousTangentOperator(obj, Se_, ∂Se∂Ce_, Δt, F, Ceᵗʳ, Ce, invUv, invUvn, λα)
+  Cα = ViscousTangentOperator(obj, Δt, Se_, ∂Se∂Ce_, F, Ceᵗʳ, Ce, invUv, invUvn, λα)
   return TensorValue(Cα)
 end
 
@@ -395,7 +403,7 @@ function ReturnMapping(obj::ViscousIncompressible, Δt::Float64,
   #------------------------------------------
   # Return mapping algorithm
   #------------------------------------------
-  Ce, λα = return_mapping_algorithm!(obj, Se_, ∂Se∂Ce_, Δt, F, Ceᵗʳ, Cen, λαn)
+  Ce, λα = return_mapping_algorithm!(obj, Δt, Se_, ∂Se∂Ce_, F, Ceᵗʳ, Cen, λαn)
   #------------------------------------------
   # Get Uv and λα
   #------------------------------------------
