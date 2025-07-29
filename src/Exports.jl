@@ -31,7 +31,7 @@ end
 @publish ConstitutiveModels ViscoElastic
 @publish ConstitutiveModels ViscousIncompressible
 @publish ConstitutiveModels GeneralizedMaxwell
-@publish ConstitutiveModels IsochoricNeoHookean3D
+@publish ConstitutiveModels IncompressibleNeoHookean3D
 @publish ConstitutiveModels initializeStateVariables
 @publish ConstitutiveModels updateStateVariables!
 

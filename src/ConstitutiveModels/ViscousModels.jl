@@ -164,18 +164,18 @@ Tangent operator of Ce for the incompressible case
 # Arguments
 - `::ViscousIncompressible` The viscous model
 - `γα`: Characteristic time τα / (τα + Δt)
-- `∂Se_∂Ce_`: Function of C
+- `∂Se∂Ce_`: Function of C
 - ...
 
 # Return
 - `∂Ce∂C`
 """
-function ∂Ce_∂C(::ViscousIncompressible, γα, ∂Se_∂Ce_, invUvn, Ce, Ce_trial, λα, F)
+function ∂Ce_∂C(::ViscousIncompressible, γα, ∂Se∂Ce_, invUvn, Ce, Ce_trial, λα, F)
     C = F' * F
     G = cof(C)
     Ge = cof(Ce)
-    ∂Se∂Ce = ∂Se_∂Ce_(Ce)
-    ∂Se∂Ce_trial = ∂Se_∂Ce_(Ce_trial)
+    ∂Se∂Ce = ∂Se∂Ce_(Ce)
+    ∂Se∂Ce_trial = ∂Se∂Ce_(Ce_trial)
     ∂Ce_trial_∂C = Outer_13_24(invUvn, invUvn)
     #------------------------------------------
     # Derivative of return mapping with respect to Ce and λα

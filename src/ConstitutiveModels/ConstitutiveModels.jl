@@ -26,9 +26,8 @@ export Visco
 export ViscoElastic
 export GeneralizedMaxwell
 export ViscousIncompressible
-export IsochoricNeoHookean3D
+export IncompressibleNeoHookean3D
 export initializeStateVariables
-export setHistoricalVariables
 export updateStateVariables!
 export DerivativeStrategy
 export StressTensor
@@ -89,7 +88,7 @@ end
   ρ::Float64=0.0
 end
 
-@kwdef struct IsochoricNeoHookean3D <: Elasto
+@kwdef struct IncompressibleNeoHookean3D <: Elasto
   μ::Float64
 end
 
@@ -104,10 +103,9 @@ end
 
 @kwdef struct GeneralizedMaxwell <: ViscoElastic
   LongTerm::Elasto
-  Branch1::Visco
-  Branches::Array{Visco}
-  function GeneralizedMaxwell(LongTerm::Elasto,Branches::Visco...)
-    new(LongTerm,first(Branches),collect(Branches))
+  Branches::NTuple{N,Visco} where N
+  function GeneralizedMaxwell(longTerm::Elasto,branches::Visco...)
+    new(longTerm,branches)
   end
 end
 
@@ -228,21 +226,8 @@ end
 
 function (obj::GeneralizedMaxwell)(strategy::DerivativeStrategy{T}, Δt::Float64) where T
   Ψe, ∂Ψeu, ∂Ψeuu = obj.LongTerm(strategy)
-  # Ψ1, ∂Ψ1u, ∂Ψ1uu = obj.Branch1(strategy, Δt)
-  # Ψ(∇u, ∇un, state) = Ψe(∇u) + Ψ1(∇u, ∇un, state)
-  # ∂Ψu(∇u, ∇un, state) = ∂Ψeu(∇u) + ∂Ψ1u(∇u, ∇un, state)
-  # ∂Ψuu(∇u, ∇un, state) = ∂Ψeuu(∇u) + ∂Ψ1uu(∇u, ∇un, state)
-  # return (Ψ, ∂Ψu, ∂Ψuu)
-  N = length(obj.Branches)
-  Ψα = Array{Function}(undef,N)
-  ∂Ψαu = Array{Function}(undef,N)
-  ∂Ψαuu = Array{Function}(undef,N)
-  for (i, branch) in enumerate(obj.Branches)
-    Ψi, ∂Ψiu, ∂Ψiuu = branch(strategy, Δt)
-    Ψα[i] = Ψi
-    ∂Ψαu[i] = ∂Ψiu
-    ∂Ψαuu[i] = ∂Ψiuu
-  end
+  DΨv = map(b -> b(strategy, Δt), obj.Branches)
+  Ψα, ∂Ψαu, ∂Ψαuu = map(i -> getindex.(DΨv, i), 1:3)
   Ψ(∇u, ∇un, states...) = mapreduce((Ψi, state) -> Ψi(∇u, ∇un, state), +, Ψα, states; init=Ψe(∇u))
   ∂Ψu(∇u, ∇un, states...) = mapreduce((∂Ψiu, state) -> ∂Ψiu(∇u, ∇un, state), +, ∂Ψαu, states; init=∂Ψeu(∇u))
   ∂Ψuu(∇u, ∇un, states...) = mapreduce((∂Ψiuu, state) -> ∂Ψiuu(∇u, ∇un, state), +, ∂Ψαuu, states; init=∂Ψeuu(∇u))
@@ -283,12 +268,12 @@ function (obj::NeoHookean3D)(::DerivativeStrategy{:analytic})
 end
 
 
-function (obj::IsochoricNeoHookean3D)(strategy::DerivativeStrategy{T}) where T
+function (obj::IncompressibleNeoHookean3D)(strategy::DerivativeStrategy{T}) where T
   obj(strategy, StressTensor{FirstPiola}())
 end
 
 
-function (obj::IsochoricNeoHookean3D)(::DerivativeStrategy{T}, ::StressTensor{:FirstPiola}) where T
+function (obj::IncompressibleNeoHookean3D)(::DerivativeStrategy{T}, ::StressTensor{:FirstPiola}) where T
   F, H, J = _getKinematic(obj)
   I = I9()
   Ψ(∇u)       =  obj.μ / 2 * tr((F(∇u))' * F(∇u)) - obj.μ * log(J(F(∇u))) - 3.0 * (obj.μ / 2.0)
@@ -300,19 +285,15 @@ function (obj::IsochoricNeoHookean3D)(::DerivativeStrategy{T}, ::StressTensor{:F
 end
 
 
-function (obj::IsochoricNeoHookean3D)(::DerivativeStrategy{T}, ::StressTensor{:SecondPiola}) where T
+function (obj::IncompressibleNeoHookean3D)(::DerivativeStrategy{T}, ::StressTensor{:SecondPiola}) where T
   Ψe(Ce)     = obj.μ / 2 * tr(Ce) * det(Ce)^(-1/3)
-  Se_(Ce)    = 2 * ForwardDiff.gradient(Ce -> Ψe(Ce), get_array(Ce))
-  ∂Se∂Ce_(Ce) = ForwardDiff.jacobian(Ce -> Se_(Ce), get_array(Ce))
-  Se = Se_
-  ∂Se∂Ce = ∂Se∂Ce_
-  # Se(Ce)     = TensorValue(Se_(Ce))
-  # ∂Se∂Ce(Ce) = TensorValue(∂Se∂Ce_(Ce))
+  Se(Ce)     = 2 * ForwardDiff.gradient(Ce -> Ψe(Ce), get_array(Ce))
+  ∂Se∂Ce(Ce) = ForwardDiff.jacobian(Ce -> Se(Ce), get_array(Ce))
   # TODO: Check correctness of analytical derivatives
-  # Se(Ce)     = obj.μ * det(Ce)^(-1/3) * I - obj.μ / 3 * tr(Ce) * det(Ce)^(-1/3) * inv(Ce')
-  # ∂Se∂Ce(Ce) = -2/3 * obj.μ * det(Ce)^(-1/3) * inv(Ce') ⊗ I -2/9 * obj.μ * tr(Ce) * det(Ce)^(-1/3) * inv(Ce') ⊗ inv(Ce')
-  # ∂Se∂Ce(Ce) = inv(Ce') |> invCe -> -2/3 * obj.μ * det(Ce)^(-1/3) * invCe ⊗ I -2/9 * obj.μ * tr(Ce) * det(Ce)^(-1/3) * invCe ⊗ invCe
-  # ∂Se∂Ce(Ce) = inv(Ce') |> invCe -> -2/3 * obj.μ * det(Ce)^(-1/3) * invCe ⊗ (I + 1/3 * tr(Ce) * invCe)
+  # Se(Ce)     = obj.μ * det(Ce)^(-1/3) * I - obj.μ / 3 * tr(Ce) * det(Ce)^(-1/3) * inv(Ce')  # TODO: det(Ce)^(-2/3) ????? (paper Zeng, Eq. 52)
+  # ∂Se∂Ce(Ce) = -2/3 * obj.μ * det(Ce)^(-1/3) * inv(Ce') ⊗ I + 4/9 * obj.μ * tr(Ce) * det(Ce)^(-1/3) * inv(Ce') ⊗ inv(Ce')
+  # ∂Se∂Ce(Ce) = inv(Ce') |> invCe -> -2/3 * obj.μ * det(Ce)^(-1/3) * invCe ⊗ I + 4/9 * obj.μ * tr(Ce) * det(Ce)^(-1/3) * invCe ⊗ invCe
+  # ∂Se∂Ce(Ce) = inv(Ce') |> invCe -> -2/3 * obj.μ * det(Ce)^(-1/3) * Outer_12_34(invCe, (2/3 * tr(Ce) * invCe) - I)
   return (Ψe, Se, ∂Se∂Ce)
 end
 
@@ -434,21 +415,10 @@ function initializeStateVariables(::ConstitutiveModel, points::Measure)
 end
 
 function initializeStateVariables(model::GeneralizedMaxwell, points::Measure)
-  # initializeStateVariables(model.Branch1, points)
-  states = []
-  for branch in model.Branches
-    push!(states, initializeStateVariables(branch, points))
-  end
-  return states
-  # map(b -> initializeStateVariables(b, points), model.Branches)  #TODO: Check alternative syntax
+  map(b -> initializeStateVariables(b, points), model.Branches)
 end
 
 function initializeStateVariables(::ViscousIncompressible, points::Measure)
-  # v = SMatrix{3,3}(I)
-  # Uv = CellState(v, points)
-  # λv = CellState(0, points)
-  # return (; Uv, λv)
-  # TODO: Check if named tuple can be used instead of a vector
   v = VectorValue(1.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,1.0,0.0)
   CellState(v, points)
 end
@@ -462,7 +432,6 @@ function updateStateVariables!(::ConstitutiveModel, vars...)
 end
 
 function updateStateVariables!(model::GeneralizedMaxwell, Δt, u, un, stateVars)
-  # updateStateVariables!(model.Branch1, u, un, Δt, stateVars)
   @assert length(model.Branches) == length(stateVars)
   for (branch, state) in zip(model.Branches, stateVars)
     updateStateVariables!(branch, Δt, u, un, state)
