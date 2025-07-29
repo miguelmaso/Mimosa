@@ -248,7 +248,7 @@ end
 
 function (obj::NeoHookean3D)(::DerivativeStrategy{:analytic})
   F, H, J = _getKinematic(obj)
-  Ψ(∇u) = obj.μ / 2 * tr((F(∇u))' * F(∇u)) - obj.μ * log(J(F(∇u))) + (obj.λ / 2) * (J(F(∇u)) - 1)^2 - 3.0 * (obj.μ / 2.0)
+  Ψ(∇u) = obj.μ / 2 * tr((F(∇u))' * F(∇u)) - obj.μ * logreg(J(F(∇u))) + (obj.λ / 2) * (J(F(∇u)) - 1)^2 - 3.0 * (obj.μ / 2.0)
   ∂Ψ_∂J(∇u) = -obj.μ / J(F(∇u)) + obj.λ * (J(F(∇u)) - 1)
   ∂Ψu(∇u) = obj.μ * F(∇u) + ∂Ψ_∂J(∇u) * H(F(∇u))
   # I_ = TensorValue(Matrix(1.0I, 9, 9))
@@ -260,7 +260,7 @@ end
 
 function (obj::MoneyRivlin3D)(::DerivativeStrategy{:analytic})
   F, H, J = _getKinematic(obj)
-  Ψ(∇u) = obj.μ1 / 2 * tr((F(∇u))' * F(∇u)) + obj.μ2 / 2.0 * tr((H(F(∇u)))' * H(F(∇u))) - (obj.μ1 + 2 * obj.μ2) * log(J(F(∇u))) +
+  Ψ(∇u) = obj.μ1 / 2 * tr((F(∇u))' * F(∇u)) + obj.μ2 / 2.0 * tr((H(F(∇u)))' * H(F(∇u))) - (obj.μ1 + 2 * obj.μ2) * logreg(J(F(∇u))) +
           (obj.λ / 2.0) * (J(F(∇u)) - 1)^2 - (3.0 / 2.0) * (obj.μ1 + obj.μ2)
   ∂Ψ_∂F(∇u) = obj.μ1 * F(∇u)
   ∂Ψ_∂H(∇u) = obj.μ2 * H(F(∇u))
