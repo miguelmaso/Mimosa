@@ -9,8 +9,6 @@ using ..TensorAlgebra: _δδ_μ_3D
 using ..TensorAlgebra: _δδ_λ_3D
 using ..TensorAlgebra: _δδ_μ_2D
 using ..TensorAlgebra: _δδ_λ_2D
-using ..TensorAlgebra: I3
-using ..TensorAlgebra: I9
 
 export NeoHookean3D
 export MoneyRivlin3D
@@ -273,7 +271,17 @@ function (obj::IncompressibleNeoHookean3D)(strategy::DerivativeStrategy{T}) wher
 end
 
 
-function (obj::IncompressibleNeoHookean3D)(::DerivativeStrategy{T}, ::StressTensor{:FirstPiola}) where T
+function (obj::IncompressibleNeoHookean3D)(::DerivativeStrategy{:autodiff}, ::StressTensor{:FirstPiola})
+  F, _, J = _getKinematic(obj)
+  Ψ(∇u)       =  obj.μ / 2 * tr((F(∇u))' * F(∇u)) - obj.μ * log(J(F(∇u))) - 3.0 * (obj.μ / 2.0)
+  ∂Ψu(∇u)     =  ForwardDiff.gradient(∇u -> Ψ(∇u), get_array(∇u))
+  ∂Ψuu(∇u)    =  ForwardDiff.jacobian(∇u -> ∂Ψu(∇u), get_array(∇u))
+  return (Ψ, ∂Ψu, ∂Ψuu)
+  # return (Ψ, TensorValue∘∂Ψu, TensorValue∘∂Ψuu)
+end
+
+
+function (obj::IncompressibleNeoHookean3D)(::DerivativeStrategy{:analytic}, ::StressTensor{:FirstPiola})
   F, H, J = _getKinematic(obj)
   I = I9()
   Ψ(∇u)       =  obj.μ / 2 * tr((F(∇u))' * F(∇u)) - obj.μ * log(J(F(∇u))) - 3.0 * (obj.μ / 2.0)
@@ -285,16 +293,33 @@ function (obj::IncompressibleNeoHookean3D)(::DerivativeStrategy{T}, ::StressTens
 end
 
 
-function (obj::IncompressibleNeoHookean3D)(::DerivativeStrategy{T}, ::StressTensor{:SecondPiola}) where T
-  Ψe(Ce)     = obj.μ / 2 * tr(Ce) * det(Ce)^(-1/3)
-  Se(Ce)     = 2 * ForwardDiff.gradient(Ce -> Ψe(Ce), get_array(Ce))
-  ∂Se∂Ce(Ce) = ForwardDiff.jacobian(Ce -> Se(Ce), get_array(Ce))
-  # TODO: Check correctness of analytical derivatives
-  # Se(Ce)     = obj.μ * det(Ce)^(-1/3) * I - obj.μ / 3 * tr(Ce) * det(Ce)^(-1/3) * inv(Ce')  # TODO: det(Ce)^(-2/3) ????? (paper Zeng, Eq. 52)
-  # ∂Se∂Ce(Ce) = -2/3 * obj.μ * det(Ce)^(-1/3) * inv(Ce') ⊗ I + 4/9 * obj.μ * tr(Ce) * det(Ce)^(-1/3) * inv(Ce') ⊗ inv(Ce')
-  # ∂Se∂Ce(Ce) = inv(Ce') |> invCe -> -2/3 * obj.μ * det(Ce)^(-1/3) * invCe ⊗ I + 4/9 * obj.μ * tr(Ce) * det(Ce)^(-1/3) * invCe ⊗ invCe
-  # ∂Se∂Ce(Ce) = inv(Ce') |> invCe -> -2/3 * obj.μ * det(Ce)^(-1/3) * Outer_12_34(invCe, (2/3 * tr(Ce) * invCe) - I)
-  return (Ψe, Se, ∂Se∂Ce)
+function (obj::IncompressibleNeoHookean3D)(::DerivativeStrategy{:autodiff}, ::StressTensor{:SecondPiola})
+  Ψ(C)    = obj.μ / 2 * tr(C) * det(C)^(-1/3)
+  S(C)    = 2 * ForwardDiff.gradient(C -> Ψ(C), get_array(C))
+  ∂S∂C(C) =     ForwardDiff.jacobian(C -> S(C), get_array(C))
+  return (Ψ, S, ∂S∂C)
+  # return (Ψ, TensorValue∘S, TensorValue∘∂S∂C)
+end
+
+
+function (obj::IncompressibleNeoHookean3D)(::DerivativeStrategy{:analytic}, ::StressTensor{:SecondPiola})
+  Ψ(C) = obj.μ / 2 * tr(C) * det(C)^(-1/3)
+  S(C) = begin
+    J = det(C)
+    invC = inv(C)
+    obj.μ * J^(-1/3) * I3_ - obj.μ / 3 * tr(C) * J^(-1/3) * invC
+    # obj.μ * J^(-1/3) * SI3 - obj.μ / 3 * tr(C) * J^(-1/3) * invC
+  end
+  ∂S∂C(C) = begin
+    J = det(C)
+    trC = tr(C)
+    invC = inv(C)
+    IinvC = I3_ ⊗ invC
+    1/3 * obj.μ * J^(-1/3) * (4/3*trC*invC⊗invC -(IinvC+IinvC') -trC/J*×ᵢ⁴(C))
+    # IinvC = Outer_12_34(SI3, invC)
+    # 1/3 * obj.μ * J^(-1/3) * (4/3*trC*Outer_12_34(invC, invC) -(IinvC + IinvC') -trC/J*×ᵢ⁴(C))
+  end
+  return (Ψ, S, ∂S∂C)
 end
 
 
