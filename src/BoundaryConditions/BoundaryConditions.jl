@@ -28,8 +28,17 @@ function ϝ(v::Vector{Float64})
 end
 
 function ϝ(v::Function)
-    (x) -> v(x)
+    if Base.return_types(v, (Vector{Float64},)) <: Vector
+        VectorValue ∘ v
+    else
+        v
+    end
 end
+
+function ϝ(v::Vector{Function})
+    v
+end
+
 
 function _get_bc_func(tags_::Vector{String}, values_,  bc_timesteps)
     bc_func_ = Vector{Function}(undef, length(tags_))
@@ -120,5 +129,13 @@ function get_Neumann_dΓ(model,bc::MultiFieldBoundaryCondition,degree::Int64)
 end
 
 
+function _get_bc_func(values, timefunc::Vector{Function})
+    map((v, t) -> bc_func(Λ::Float64) = (x) -> ϝ(v)(x) * t(Λ), values, timefunc)
+end
+
+
+function _get_bc_func(values)
+    map(v -> bc_func(Λ::Float64) = (x) -> ϝ(v)(x), values)
+end
 
 end
