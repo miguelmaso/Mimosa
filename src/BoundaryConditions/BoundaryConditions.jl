@@ -65,6 +65,13 @@ struct DirichletBC <: BoundaryCondition
         tags_,funcs_=_get_bc_func(bc_tags, bc_values, bc_timesteps)
         new(tags_, funcs_, bc_timesteps)
     end
+
+    function DirichletBC(bc_tags::Vector{String}, bc_values)
+        @assert(length(bc_tags) == length(bc_values))
+        bc_timesteps = fill((_) -> 1.0, length(bc_tags))
+        tags, funcs = _get_bc_func(bc_tags, bc_values, bc_timesteps)
+        new(tags, funcs, bc_timesteps)
+    end
 end
  
  
