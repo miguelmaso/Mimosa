@@ -7,6 +7,7 @@ using Mimosa.PhysicalModels
 export residual
 export jacobian
 export mass_term
+export residual_Neumann
 export (+)
 
 import Base: +
@@ -38,6 +39,19 @@ end
 
 function mass_term(u, v, Coeff, dΩ)
     ∫(Coeff* (u⋅v))dΩ
+end
+
+
+function residual_Neumann(t, v, bc, dΓ)
+    # TODO 1: Asignar res=nothing está mal. No se puede aplicar el operador +
+    # TODO 2: La definición de la inegral no está bien, no sé cómo se pasan los argumentos a la función de 'fuerza'
+    # TODO 3: Probar mapreduce
+    # mapreduce(val -> ∫(val(t)(v))dΓ, +, bc.values)
+    res = nothing
+    for i in eachindex(bc.tags)
+        res += ∫(bc.values[i](t)(v))dΓ
+    end
+    return res
 end
 
 
