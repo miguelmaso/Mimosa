@@ -66,7 +66,7 @@ function _getKinematic(::Mechano)
   H(F) = J(F) * inv(F)'
   return (F, H, J)
 end
-struct IncompressibleNeoHookean3D_2dP <: Elasto
+struct IncompressibleNeoHookean3D_2dP <: Mechano
   μ::Float64
 end
 function (obj::IncompressibleNeoHookean3D_2dP)(::DerivativeStrategy{:autodiff})
