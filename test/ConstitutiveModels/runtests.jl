@@ -1,3 +1,5 @@
 using Test
 
-@testset "MechanicalTests" verbose=true include("MechanicalModelsTests.jl")
+@testset "MechanicalModels" verbose=true include("MechanicalModelsTests.jl")
+
+@testset "ThermalModels" verbose=true include("ThermalModelsTests.jl")

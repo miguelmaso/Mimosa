@@ -11,6 +11,7 @@ using ..TensorAlgebra: _δδ_λ_2D
 using ..TensorAlgebra: I3
 using ..TensorAlgebra: I9
 
+export ConstitutiveModel
 export NeoHookean3D
 export MoneyRivlin3D
 export LinearElasticity3D
@@ -296,6 +297,14 @@ function (obj::ThermoElectroMech)(strategy::DerivativeStrategy{:analytic})
   ∂Ψφθ(∇u, ∇φ, δθ) = df(δθ) * ∂Ψem_φ(∇u, ∇φ)
 
   return (Ψ, ∂Ψu, ∂Ψφ, ∂Ψθ, ∂Ψuu, ∂Ψφφ, ∂Ψθθ, ∂Ψφu, ∂Ψuθ, ∂Ψφθ)
+end
+
+
+function (obj::ThermalModel)(::DerivativeStrategy{:autodiff})
+  Ψ(δθ) = obj.Cv * (δθ - (δθ+obj.θr) * log((δθ+obj.θr) / obj.θr))
+  ∂Ψθ(δθ) = ForwardDiff.derivative(Ψ, δθ)
+  ∂Ψθθ(δθ) = ForwardDiff.derivative(∂Ψθ, δθ)
+  return (Ψ, ∂Ψθ, ∂Ψθθ)
 end
 
 function (obj::ThermalModel)(::DerivativeStrategy{:analytic})
