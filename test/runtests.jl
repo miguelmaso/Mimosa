@@ -1,5 +1,4 @@
-module MimosaTests
-
+using Mimosa
 using Test
 
 @testset "MimosaTests" verbose=true begin
@@ -8,6 +7,4 @@ using Test
 
     @testset "TensorAlgebra" verbose=false include("TensorAlgebra/runtests.jl")
 
-end  # @testset "MimosaTests"
-
-end  # module MimosaTests
+end;  # @testset "MimosaTests"
