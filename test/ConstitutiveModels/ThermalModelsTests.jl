@@ -9,5 +9,5 @@ Cv = 1.1
 
 @testset "ThermalModel" begin
     model = ThermalModel(Cv=Cv, θr=θr, α=α)
-    test_constitutive_model_derivatives(model, δθ)
+    test_constitutive_model_derivatives(model, δθ, rtol=1e-14)
 end

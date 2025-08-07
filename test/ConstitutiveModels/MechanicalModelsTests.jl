@@ -9,15 +9,15 @@ C = F' * F
 
 @testset "LinearElasticity3D" begin
     model = LinearElasticity3D(λ=λ, μ=μ)
-    test_constitutive_model_derivatives(model, F; tolerance=1e-14)
+    test_constitutive_model_derivatives(model, F; rtol=1e-14)
 end
 
 @testset "NeoHookean3D" begin
     model = NeoHookean3D(λ=λ, μ=μ)
-    test_constitutive_model_derivatives(model, F; tolerance=1e-14)
+    test_constitutive_model_derivatives(model, F; rtol=1e-14)
 end
 
 @testset "MoneyRivlin3D" begin
     model = MoneyRivlin3D(λ=λ, μ1=μ, μ2=μ)
-    test_constitutive_model_derivatives(model, F; tolerance=1e-14)
+    test_constitutive_model_derivatives(model, F; rtol=1e-14)
 end

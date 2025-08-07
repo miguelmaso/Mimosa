@@ -5,10 +5,6 @@ using Test
 
 import Base:isapprox
 
-# export isapprox
-# export test_constitutive_model_derivatives
-
-
 function isapprox(A::TensorValue, B::AbstractArray; kwargs...)
     isapprox(get_array(A), B; kwargs...)
 end
@@ -32,15 +28,15 @@ The check is performed for the energy density, its first derivative (i.e. stress
 - `model::ConstitutiveModel`
 - `kinematic`: The kinematic definition, F or C
 - `args`: Extra arguments to pass to the physical model, such as `StressTensor{:SecondPiola}()`
-- `tolerance`: the relative tolerance
 - `debug=nothing`: it can be `:energy`, `:gradient` or `:jacobian`
+- `kwargs`: Extra named arguments to pass to isapprox, such as `rtol=1e-12`
 """
-function test_constitutive_model_derivatives(model::ConstitutiveModel, kinematic, args...; tolerance=1e-12, debug=nothing)
+function test_constitutive_model_derivatives(model::ConstitutiveModel, kinematic, args...; debug=nothing, kwargs...)
     Ψ_A, ∂Ψ_A, ∂∂Ψ_A = model(DerivativeStrategy{:analytic}(), args...)
     Ψ_D, ∂Ψ_D, ∂∂Ψ_D = model(DerivativeStrategy{:autodiff}(), args...)
-    @test isapprox(Ψ_A(kinematic), Ψ_D(kinematic), rtol=tolerance)
-    @test isapprox(∂Ψ_A(kinematic), ∂Ψ_D(kinematic), rtol=tolerance)
-    @test isapprox(∂∂Ψ_A(kinematic), ∂∂Ψ_D(kinematic), rtol=tolerance)
+    @test isapprox(Ψ_A(kinematic), Ψ_D(kinematic); kwargs...)
+    @test isapprox(∂Ψ_A(kinematic), ∂Ψ_D(kinematic); kwargs...)
+    @test isapprox(∂∂Ψ_A(kinematic), ∂∂Ψ_D(kinematic); kwargs...)
     if debug == :energy
         @show Ψ_A(kinematic)
         @show Ψ_D(kinematic)
