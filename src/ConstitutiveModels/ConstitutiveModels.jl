@@ -173,13 +173,22 @@ end
 # Constitutive models
 # ====================
 
+function (obj::LinearElasticity3D)(::DerivativeStrategy{:autodiff})
+  Ψ(∇u) = begin
+    ε = 0.5 * (∇u + ∇u')
+    obj.μ * sum(ε.*ε) + 0.5 * obj.λ * tr(ε)^2
+  end
+  ∂Ψ∂∇u(∇u) = ForwardDiff.gradient(∇u -> Ψ(∇u), get_array(∇u))
+  ∂2Ψ∂2∇u(∇u) = ForwardDiff.jacobian(∇u -> ∂Ψ∂∇u(∇u), get_array(∇u))
+  return (Ψ, TensorValue ∘ ∂Ψ∂∇u, TensorValue ∘ ∂2Ψ∂2∇u)
+end
+
 function (obj::LinearElasticity3D)(::DerivativeStrategy{:analytic})
   F, _, _ = _getKinematic(obj)
-  # I33 = TensorValue(Matrix(1.0I, 3, 3))
-  I33=I3()
+  ε(∇u) = 0.5 * (∇u + ∇u')
   ∂Ψuu(∇u) = _δδ_μ_3D(obj.μ) + _δδ_λ_3D(obj.λ)
-  ∂Ψu(∇u) = ∂Ψuu(∇u) ⊙ (F(∇u) - I33)
-  Ψ(∇u) = 0.5 * (F(∇u) - I33) ⊙ (∂Ψuu(∇u) ⊙ (F(∇u) - I33))
+  ∂Ψu(∇u)  = ∂Ψuu(∇u) ⊙ ε(∇u)
+  Ψ(∇u)    = 0.5 * ε(∇u) ⊙ (∂Ψuu(∇u) ⊙ ε(∇u))
   return (Ψ, ∂Ψu, ∂Ψuu)
 end
 
@@ -210,7 +219,7 @@ function (obj::MoneyRivlin3D)(::DerivativeStrategy{:autodiff})
   Ψ(∇u) = obj.μ1 / 2 * tr((F(∇u))' * F(∇u)) + obj.μ2 / 2 * tr((H(F(∇u)))' * H(F(∇u))) - (obj.μ1 + 2 * obj.μ2) * logreg(J(F(∇u))) +
           (obj.λ / 2) * (J(F(∇u)) - 1)^2 - (3.0 / 2.0) * (obj.μ1 + obj.μ2)
   ∂Ψ_∂∇u(∇u) = ForwardDiff.gradient(∇u -> Ψ(∇u), get_array(∇u))
-  ∂2Ψ_∂2∇u(∇u) = TensorValue(ForwardDiff.jacobian(∇u -> ∂Ψ_∂∇u(∇u), get_array(∇u)))
+  ∂2Ψ_∂2∇u(∇u) = ForwardDiff.jacobian(∇u -> ∂Ψ_∂∇u(∇u), get_array(∇u))
   ∂Ψu(∇u) = TensorValue(∂Ψ_∂∇u(∇u))
   ∂Ψuu(∇u) = TensorValue(∂2Ψ_∂2∇u(∇u))
   return (Ψ, ∂Ψu, ∂Ψuu)

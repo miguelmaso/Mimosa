@@ -1,15 +1,15 @@
+using Gridap.Arrays
 using Gridap.TensorValues
 using Mimosa.ConstitutiveModels
-using StaticArrays
 using Test
 import Base:isapprox
 
 
-function isapprox(A::TensorValue, B::StaticArray; kwargs...)
+function isapprox(A::TensorValue, B::AbstractArray; kwargs...)
     isapprox(get_array(A), B; kwargs...)
 end
 
-function isapprox(A::StaticArray, B::TensorValue; kwargs...)
+function isapprox(A::AbstractArray, B::TensorValue; kwargs...)
     isapprox(A, get_array(B); kwargs...)
 end
 
@@ -53,11 +53,21 @@ end
 F = TensorValue(0.01+1.0, 0.02, 0.03, 0.04, 0.05+1.0, 0.06, 0.07, 0.08, 0.09+1.0)
 C = F' * F
 
+μ = 5.832e4
+λ = 10*μ
+
+@testset "LinearElasticity3D" begin
+    model = LinearElasticity3D(λ=λ, μ=μ)
+    testMechanicalModelDerivatives(model, F; tolerance=1e-14)
+end
 
 @testset "NeoHookean3D" begin
-    μ = 5.832e4
-    λ = 10*μ
     model = NeoHookean3D(λ=λ, μ=μ)
+    testMechanicalModelDerivatives(model, F; tolerance=1e-14)
+end
+
+@testset "MoneyRivlin3D" begin
+    model = MoneyRivlin3D(λ=λ, μ1=μ, μ2=μ)
     testMechanicalModelDerivatives(model, F; tolerance=1e-14)
 end
 
