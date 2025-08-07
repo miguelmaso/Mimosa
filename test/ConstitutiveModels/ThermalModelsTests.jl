@@ -7,7 +7,7 @@ Cv = 1.1
 θr = 2.2
 α  = 3.3
 
-@testset "ThermalModels" begin
+@testset "ThermalModels" verbose=true begin
 
     @testset "ThermalModel" begin
         model = ThermalModel(Cv=Cv, θr=θr, α=α)
