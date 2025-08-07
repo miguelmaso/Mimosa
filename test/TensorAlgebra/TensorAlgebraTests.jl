@@ -7,7 +7,7 @@ n_times = 1e6
 A = TensorValue(1, 2, 3, 4, 5, 6, 7, 8, 9)
 S = get_array(A)
 
-@testset "TensorAlgebraTests" verbose=true begin
+@testset "TensorAlgebra" verbose=true begin
 
 @testset "TensorValueSum" begin
     for _ in 1:n_times
@@ -37,4 +37,4 @@ end
     @test true
 end
 
-end
+end   # @testset "TensorAlgebra"

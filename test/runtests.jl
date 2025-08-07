@@ -3,8 +3,8 @@ using Test
 
 @testset "MimosaTests" verbose=true begin
     
-    @testset "ConstitutiveModels" verbose=true include("ConstitutiveModels/runtests.jl")
+    include("ConstitutiveModels/runtests.jl")
 
-    @testset "TensorAlgebra" verbose=false include("TensorAlgebra/runtests.jl")
+    include("TensorAlgebra/runtests.jl")
 
 end;  # @testset "MimosaTests"

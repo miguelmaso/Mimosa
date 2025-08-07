@@ -7,17 +7,21 @@ C = F' * F
 μ = 5.832e4
 λ = 10*μ
 
-@testset "LinearElasticity3D" begin
-    model = LinearElasticity3D(λ=λ, μ=μ)
-    test_constitutive_model_derivatives(model, F; rtol=1e-14)
-end
+@testset "MechanicalModels" verbose=true begin
 
-@testset "NeoHookean3D" begin
-    model = NeoHookean3D(λ=λ, μ=μ)
-    test_constitutive_model_derivatives(model, F; rtol=1e-14)
-end
+    @testset "LinearElasticity3D" begin
+        model = LinearElasticity3D(λ=λ, μ=μ)
+        test_constitutive_model_derivatives(model, F; rtol=1e-14)
+    end
 
-@testset "MoneyRivlin3D" begin
-    model = MoneyRivlin3D(λ=λ, μ1=μ, μ2=μ)
-    test_constitutive_model_derivatives(model, F; rtol=1e-14)
-end
+    @testset "NeoHookean3D" begin
+        model = NeoHookean3D(λ=λ, μ=μ)
+        test_constitutive_model_derivatives(model, F; rtol=1e-14)
+    end
+
+    @testset "MoneyRivlin3D" begin
+        model = MoneyRivlin3D(λ=λ, μ1=μ, μ2=μ)
+        test_constitutive_model_derivatives(model, F; rtol=1e-14)
+    end
+
+end   # @testset "MechanicalModels

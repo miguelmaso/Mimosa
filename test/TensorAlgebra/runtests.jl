@@ -1,3 +1,7 @@
 using Test
 
-@testset "TensorAlgebra" verbose=false include("TensorAlgebraTests.jl")
+@testset "TensorAlgebra" verbose=true begin
+
+    include("TensorAlgebraTests.jl")
+
+end
