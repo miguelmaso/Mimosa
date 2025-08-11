@@ -43,7 +43,7 @@ function _Kroneckerδδ(δδ::Function, N::Int)
     i, j, k, l = _full_idx4(α,N)
     δδ(i,j,k,l) ? 1.0 : 0.0
   end,
-  9*9))
+  N^4))
 end
 
 const δᵢⱼδₖₗ3D = _Kroneckerδδ((i,j,k,l) -> i==j && k==l, 3)
