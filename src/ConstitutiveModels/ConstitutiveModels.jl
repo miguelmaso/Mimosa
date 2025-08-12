@@ -14,6 +14,7 @@ using ..TensorAlgebra: I9
 export NeoHookean3D
 export MoneyRivlin3D
 export LinearElasticity3D
+export Yeoh3D
 export IdealDielectric
 export ThermalModel
 export ElectroMech
@@ -73,6 +74,13 @@ end
   μ1::Float64
   μ2::Float64
   ρ::Float64=0.0
+end
+
+@kwdef struct Yeoh3D <: Mechano
+  C::NTuple{N,FLoat64} where N
+  function Yeoh3D(Ci::Float64...)
+    new(Ci)
+  end
 end
 
 # ===================
@@ -230,6 +238,14 @@ function (obj::MoneyRivlin3D)(::DerivativeStrategy{:analytic})
   # ∂Ψuu(∇u) = obj.μ1 * I_ + obj.μ2 * (F(∇u) × (I_ × F(∇u))) + ∂Ψ2_∂J2(∇u) * (H(F(∇u)) ⊗ H(F(∇u))) + (I_ × (∂Ψ_∂H(∇u) + ∂Ψ_∂J(∇u) * F(∇u)))
   ∂Ψuu(∇u) = obj.μ1 * I_ + obj.μ2 * (F(∇u) × (I_ × F(∇u))) + ∂Ψ2_∂J2(∇u) * (H(F(∇u)) ⊗ H(F(∇u))) + ×ᵢ⁴(∂Ψ_∂H(∇u) + ∂Ψ_∂J(∇u) * F(∇u))
   return (Ψ, ∂Ψu, ∂Ψuu)
+end
+
+function (obj::Yeoh3D)(::DerivativeStrategy{:autodiff})
+  F, _, _ = _getKinematic(obj)
+  Ψ(∇u) = mapreduce(((i,Ci),) -> Ci * (tr(F(∇u)*F(∇u)') - 3)^i, +, enumerate(obj.C))
+  ∂Ψu(∇u) = ForwardDiff.gradient(Ψ, get_array(∇u))
+  ∂Ψuu(∇u) = ForwardDiff.jacobian(∂Ψu, get_array(∇u))
+  return (Ψ, TensorValue ∘ ∂Ψu, TensorValue ∘ ∂Ψuu)
 end
 
 function (obj::ElectroMech)(strategy::DerivativeStrategy{:analytic})
