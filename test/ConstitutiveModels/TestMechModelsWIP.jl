@@ -23,6 +23,6 @@ F = TensorValue{3,3,Float64}(1,2,3,4,5,6,7,8,9)
 
     @test ΨA(F) ≈ ΨD(F)
     @test dΨA(F) ≈ dΨD(F)
-    @test ddΨA(F) ≈ ddΨD(F)
+    @test ddΨA(F) ≈ ddΨD(F)  # TODO: This test is failing. The analytical derivatives are wrong...
 
 end
