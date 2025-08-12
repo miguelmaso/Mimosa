@@ -77,7 +77,7 @@ end
 end
 
 @kwdef struct Yeoh3D <: Mechano
-  C::NTuple{N,FLoat64} where N
+  C::NTuple{N,Float64} where N
   function Yeoh3D(Ci::Float64...)
     new(Ci)
   end
