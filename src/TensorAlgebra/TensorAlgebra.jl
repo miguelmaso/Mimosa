@@ -46,10 +46,37 @@ function _Kroneckerδδ(δδ::Function, N::Int)
   N^4))
 end
 
+
+"""
+    δᵢⱼδₖₗ3D::TensorValue{9,9,Float64}
+
+Constructs the 4th-order tensor (in flattened 9x9 form)
+```math
+T_{ijkl} = δ_{ij} δ_{kl}
+```
+"""
 const δᵢⱼδₖₗ3D = _Kroneckerδδ((i,j,k,l) -> i==j && k==l, 3)
 
+
+"""
+    δᵢₖδⱼₗ3D::TensorValue{9,9,Float64}
+
+Constructs the 4th-order tensor (in flattened 9x9 form)
+```math
+T_{ijkl} = δ_{ik} δ_{jl}
+```
+"""
 const δᵢₖδⱼₗ3D = _Kroneckerδδ((i,j,k,l) -> i==k && j==l, 3)
 
+
+"""
+    δᵢₗδⱼₖ3D::TensorValue{9,9,Float64}
+
+Constructs the 4th-order tensor (in flattened 9x9 form)
+```math
+T_{ijkl} = δ_{il} δ_{jk}
+```
+"""
 const δᵢₗδⱼₖ3D = _Kroneckerδδ((i,j,k,l) -> i==l && j==k, 3)
 
 
