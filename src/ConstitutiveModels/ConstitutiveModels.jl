@@ -248,6 +248,43 @@ function (obj::Yeoh3D)(::DerivativeStrategy{:autodiff})
   return (Ψ, TensorValue ∘ ∂Ψu, TensorValue ∘ ∂Ψuu)
 end
 
+### Esta implementación es temporal y se tiene que mover a TensorAlgebra
+_full_idx2(α,N) = ((α-1)%N+1, (α-1)÷N+1)
+_full_idx4(α,β,N) = (_full_idx2(α,N)..., _full_idx2(β,N)...)
+_full_idx4(α,N) = _full_idx4(_full_idx2(α,N*N)...,N)
+const δᵢₖδⱼₗ = TensorValue{9,9,Float64,81}(ntuple(
+  α -> begin
+    i, j, k, l = _full_idx4(α,3)
+    (i==k && j==l) ? 1.0 : 0.0
+  end,
+  81
+))
+const δⱼₖδᵢₗ = TensorValue{9,9,Float64,81}(ntuple(
+  α -> begin
+    i, j, k, l = _full_idx4(α,3)
+    (j==k && i==l) ? 1.0 : 0.0
+  end,
+  81
+))
+### Fin de la implementación temporal
+
+function (obj::Yeoh3D)(::DerivativeStrategy{:analytic})
+  F_, _, _ = _getKinematic(obj)
+  Ψ(∇u) = mapreduce(((i,Ci),) -> Ci * (tr(F_(∇u)'*F_(∇u)) - 3)^i, +, enumerate(obj.C))
+  ∂Ψu(∇u) = mapreduce(((i,Ci),) -> begin
+    F = F_(∇u)
+    trC = tr(F'*F)
+    Ci * i * (trC-3)^(i-1) * (δⱼₖδᵢₗ ⊙ F + F' ⊙ δᵢₖδⱼₗ)' # TODO: ¿Por qué transpuesto? ¿Está bien definido el producto contraído?
+  end, +, enumerate(obj.C))
+  ∂Ψuu(∇u) = mapreduce(((i,Ci),) -> begin
+    F = F_(∇u)
+    trC = tr(F'*F)
+    H = (δⱼₖδᵢₗ ⊙ F + F' ⊙ δᵢₖδⱼₗ)'
+    Ci * i * (i-1) * (trC-3)^(i-2) * H ⊗ H + Ci * i * (trC-3)^(i-1) * (δⱼₖδᵢₗ * δᵢₖδⱼₗ + δⱼₖδᵢₗ * δᵢₖδⱼₗ) # TODO: Falla algún término que afectan a la diagonal y diagonales secundarias
+  end, +, enumerate(obj.C))
+  return (Ψ, ∂Ψu, ∂Ψuu)
+end
+
 function (obj::ElectroMech)(strategy::DerivativeStrategy{:analytic})
   Ψm, ∂Ψm_u, ∂Ψm_uu = obj.Model1(strategy)
   Ψem, ∂Ψem_u, ∂Ψem_φ, ∂Ψem_uu, ∂Ψem_φu, ∂Ψem_φφ = _getCoupling(obj.Model1, obj.Model2)
