@@ -15,6 +15,7 @@ export NeoHookean3D
 export MoneyRivlin3D
 export LinearElasticity3D
 export Yeoh3D
+export EightChain
 export IdealDielectric
 export ThermalModel
 export ElectroMech
@@ -81,6 +82,11 @@ end
   function Yeoh3D(Ci::Float64...)
     new(Ci)
   end
+end
+
+@kwdef struct EightChain <: Mechano
+  λ::Float64
+  N::Float64
 end
 
 # ===================
@@ -283,6 +289,14 @@ function (obj::Yeoh3D)(::DerivativeStrategy{:analytic})
     Ci * i * (i-1) * (trC-3)^(i-2) * H ⊗ H + Ci * i * (trC-3)^(i-1) * (δⱼₖδᵢₗ * δᵢₖδⱼₗ + δⱼₖδᵢₗ * δᵢₖδⱼₗ) # TODO: Falla algún término que afectan a la diagonal y diagonales secundarias
   end, +, enumerate(obj.C))
   return (Ψ, ∂Ψu, ∂Ψuu)
+end
+
+function (obj::EightChain)(strategy::DerivativeStrategy{:autodiff})
+  F, _, _ = _getKinematic(obj)
+  Ψ(∇u) = 0*tr(F(∇u))
+  ∂Ψu(∇u) = ForwardDiff.gradient(Ψ, get_array(∇u))
+  ∂Ψuu(∇u) = ForwardDiff.jacobian(∂Ψu, get_array(∇u))
+  return (Ψ, TensorValue ∘ ∂Ψu, TensorValue ∘ ∂Ψuu)
 end
 
 function (obj::ElectroMech)(strategy::DerivativeStrategy{:analytic})

@@ -23,6 +23,7 @@ end
 @publish ConstitutiveModels NeoHookean3D
 @publish ConstitutiveModels MoneyRivlin3D
 @publish ConstitutiveModels Yeoh3D
+@publish ConstitutiveModels EightChain
 @publish ConstitutiveModels ThermalModel
 @publish ConstitutiveModels IdealDielectric
 @publish ConstitutiveModels ElectroMech
