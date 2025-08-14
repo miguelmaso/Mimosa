@@ -304,7 +304,7 @@ function (obj::Yeoh3D)(::DerivativeStrategy{:analytic})
   return (Ψ, ∂Ψu, ∂Ψuu)
 end
 
-function (obj::EightChain)(strategy::DerivativeStrategy{:autodiff})
+function (obj::EightChain)(::DerivativeStrategy{:autodiff})
   function inv_Langevin(x)
     3*x*(35 - 12*x^2)/(35 - 33*x^2)
   end
