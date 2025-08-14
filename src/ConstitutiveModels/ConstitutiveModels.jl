@@ -11,11 +11,15 @@ using ..TensorAlgebra: _δδ_λ_2D
 using ..TensorAlgebra: I3
 using ..TensorAlgebra: I9
 
+import Base: +
+
+export (+)
 export NeoHookean3D
 export MoneyRivlin3D
 export LinearElasticity3D
 export Yeoh3D
 export EightChain
+export ComposedMechanicalModel
 export IdealDielectric
 export ThermalModel
 export ElectroMech
@@ -87,6 +91,15 @@ end
 @kwdef struct EightChain <: Mechano
   λ::Float64
   N::Float64
+end
+
+@kwdef struct ComposedMechanicalModel <: Mechano
+  Model1::Mechano
+  Model2::Mechano
+end
+
+function (+)(Model1::Mechano, Model2::Mechano)
+  ComposedMechanicalModel(Model1,Model2)
 end
 
 # ===================
@@ -297,6 +310,13 @@ function (obj::EightChain)(strategy::DerivativeStrategy{:autodiff})
   ∂Ψu(∇u) = ForwardDiff.gradient(Ψ, get_array(∇u))
   ∂Ψuu(∇u) = ForwardDiff.jacobian(∂Ψu, get_array(∇u))
   return (Ψ, TensorValue ∘ ∂Ψu, TensorValue ∘ ∂Ψuu)
+end
+
+function (obj::ComposedMechanicalModel)(strategy::DerivativeStrategy{T}) where T
+  DΨ1 = obj.Model1(strategy)
+  DΨ2 = obj.Model2(strategy)
+  Ψ, ∂Ψ, ∂∂Ψ = map((ψ1,ψ2) -> (x) -> ψ1(x) + ψ2(x), DΨ1, DΨ2)
+  return (Ψ, ∂Ψ, ∂∂Ψ)
 end
 
 function (obj::ElectroMech)(strategy::DerivativeStrategy{:analytic})

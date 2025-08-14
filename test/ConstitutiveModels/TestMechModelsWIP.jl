@@ -11,18 +11,36 @@ end
 
 F = TensorValue{3,3,Float64}(1,2,3,4,5,6,7,8,9)
 
-@testset "Yeoh" begin
+C1 = 1.2e6
+C2 = 1.3e7
+C3 = 1.4e8
 
-    C1 = 1.2e6
-    C2 = 1.3e7
-    C3 = 1.4e8
-    model = Yeoh3D(C1,C2,C3)
+μ = 5.23e6
+λ = 6.78e7
 
-    ΨA, dΨA, ddΨA = model(DerivativeStrategy{:analytic}())
-    ΨD, dΨD, ddΨD = model(DerivativeStrategy{:autodiff}())
+@testset "MechanicalModels" begin
 
-    @test ΨA(F) ≈ ΨD(F)
-    @test dΨA(F) ≈ dΨD(F)
-    @test ddΨA(F) ≈ ddΨD(F)  # TODO: This test is failing. The analytical derivatives are wrong...
+    @testset "Yeoh" begin
+        model = Yeoh3D(C1,C2,C3)
 
-end
+        ΨA, dΨA, ddΨA = model(DerivativeStrategy{:analytic}())
+        ΨD, dΨD, ddΨD = model(DerivativeStrategy{:autodiff}())
+
+        @test ΨA(F) ≈ ΨD(F)
+        @test dΨA(F) ≈ dΨD(F)
+        @test ddΨA(F) ≈ ddΨD(F)  # TODO: This test is failing. The analytical derivatives are wrong...
+    end
+
+    @testset "ComposedMechanicalModel" begin
+        neo = NeoHookean3D(μ=μ,λ=λ)  # TODO: Check neo-Hookean derivatives...
+        yeoh = Yeoh3D(C1,C2,C3)
+        model = neo + yeoh
+        
+        ΨA, dΨA, ddΨA = model(DerivativeStrategy{:analytic}())
+        ΨD, dΨD, ddΨD = model(DerivativeStrategy{:autodiff}())
+
+        @test ΨA(F) ≈ ΨD(F)
+        @test dΨA(F) ≈ dΨD(F)
+        @test ddΨA(F) ≈ ddΨD(F)
+    end
+end;
