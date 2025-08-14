@@ -89,7 +89,7 @@ end
 end
 
 @kwdef struct EightChain <: Mechano
-  λ::Float64
+  μ::Float64
   N::Float64
 end
 
@@ -305,8 +305,17 @@ function (obj::Yeoh3D)(::DerivativeStrategy{:analytic})
 end
 
 function (obj::EightChain)(strategy::DerivativeStrategy{:autodiff})
-  F, _, _ = _getKinematic(obj)
-  Ψ(∇u) = 0*tr(F(∇u))
+  function inv_Langevin(x)
+    3*x*(35 - 12*x^2)/(35 - 33*x^2)
+  end
+  Ψ(∇u) = begin
+    F, _, _ = _getKinematic(obj)
+    C = F(∇u)' * F(∇u)
+    C_iso = det(C)^(-2/3) * C
+    β = sqrt(tr(C_iso) / 3 / obj.N)
+    L = inv_Langevin(β)
+    Ψ = obj.μ * obj.N *(obj.β*L + log(L / sinh(L)))
+  end
   ∂Ψu(∇u) = ForwardDiff.gradient(Ψ, get_array(∇u))
   ∂Ψuu(∇u) = ForwardDiff.jacobian(∂Ψu, get_array(∇u))
   return (Ψ, TensorValue ∘ ∂Ψu, TensorValue ∘ ∂Ψuu)
